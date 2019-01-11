@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:mobile/timer_manager.dart';
 import 'package:mobile/widgets/timer_list_view.dart';
 import 'package:mobile/model/timer.dart';
-import 'package:mobile/res/res.dart';
 
 import 'new_timer_page.dart';
 
@@ -42,9 +41,12 @@ class _TimersPageState extends State<TimersPage>
         elevation: 0,
       ),
       body: ListView(
-        children: TimerListView.getTimerViews(_timers, (Timer timer) {
-          print('Tapped timer: ${timer.name}');
-        }),
+        children: TimerListView.getTimerViews(
+          timers: _timers,
+          onTap: (Timer timer) {
+            print('Tapped timer: ${timer.name}');
+          }
+        ),
       )
     );
   }

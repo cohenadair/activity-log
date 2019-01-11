@@ -6,12 +6,11 @@ import 'package:mobile/res/res.dart';
 typedef OnTapTimerListView = Function(Timer);
 
 class TimerListView extends StatelessWidget {
-  static List<TimerListView> getTimerViews(List<Timer> timers,
-      OnTapTimerListView onTap)
+  static List<TimerListView> getTimerViews(
+      {@required List<Timer> timers, @required OnTapTimerListView onTap})
   {
     return List<TimerListView>.generate(
-        timers.length, (int index) => TimerListView(timers[index], onTap)
-    );
+        timers.length, (int index) => TimerListView(timers[index], onTap));
   }
 
   final Timer _timer;
@@ -21,22 +20,28 @@ class TimerListView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () {
-        _onTap(_timer);
-      },
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Padding(
-            padding: EdgeInsets.all(Dimen.defaultPadding),
-            child: Text(_timer.name)
-          ),
-          Divider(
-            height: 1, // Ensures no extra padding is added automatically.
-          ),
-        ],
-      ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Row(
+          children: <Widget>[
+            Expanded(
+              child: InkWell(
+                onTap: () {
+                  _onTap(_timer);
+                },
+                child: Padding(
+                  padding: EdgeInsets.all(Dimen.defaultPadding),
+                  child: Text(_timer.name)
+                ),
+              ),
+            ),
+          ],
+        ),
+        Divider(
+          height: 1,
+        ),
+      ],
     );
   }
 }
