@@ -1,22 +1,22 @@
 import 'package:flutter/material.dart';
 
-import 'pages/timers_page.dart';
+import 'pages/activities_page.dart';
 
-import 'timer_manager.dart';
+import 'activity_manager.dart';
 
-void main() => runApp(TimeTracker());
+void main() => runApp(ActivityTracker());
 
-class TimeTracker extends StatelessWidget {
-  final TimerManager _timerManager = TimerManager();
+class ActivityTracker extends StatelessWidget {
+  final ActivityManager _activityManager = ActivityManager();
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Time Tracker',
+      title: 'Activity Tracker',
       theme: ThemeData(
         primarySwatch: Colors.red,
       ),
-      home: TimersPage(_timerManager),
+      home: ActivitiesPage(_activityManager),
     );
   }
 }

@@ -1,20 +1,22 @@
 import 'package:flutter/material.dart';
 
-class NewTimerPage extends StatefulWidget {
+import 'package:mobile/widgets/my_app_bar.dart';
+
+class EditActivityPage extends StatefulWidget {
   @override
-  _NewTimerPageState createState() => _NewTimerPageState();
+  _EditActivityPageState createState() => _EditActivityPageState();
 }
 
-class _NewTimerPageState extends State<NewTimerPage> {
+class _EditActivityPageState extends State<EditActivityPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Add Timer'),
+      appBar: MyAppBar(
+        title: Text('Add Activity'),
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.check),
-            tooltip: 'Save timer',
+            tooltip: 'Save activity',
             onPressed: _onPressedSaveButton,
           )
         ],
@@ -24,7 +26,7 @@ class _NewTimerPageState extends State<NewTimerPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Text(
-              'Add timer page',
+              'Add activity page',
             ),
           ],
         ),
