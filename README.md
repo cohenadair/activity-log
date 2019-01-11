@@ -1,4 +1,4 @@
-# Time Tracker
+# Activity Log
 A simple Flutter app for tracking activities.
 
 ## A Plea
@@ -10,7 +10,7 @@ Thank-you!
 
 ## License
 
-The source code to Time Tracker is available under the GNU General Public License. See the [LICENSE](https://raw.githubusercontent.com/cohenadair/time-tracker/master/LICENSE) file for more information.
+The source code is available under the GNU General Public License. See the [LICENSE](https://raw.githubusercontent.com/cohenadair/time-tracker/master/LICENSE) file for more information.
 
 ## Contact
 
