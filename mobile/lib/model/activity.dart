@@ -1,37 +1,64 @@
 import 'package:uuid/uuid.dart';
 
+import 'session.dart';
+
 class Activity {
-  String _id;
-  String _name;
+  final String _id;
+  final String _name;
+  List<Session> _sessions = [];
+  Session _currentSession;
+
+  String get id => _id;
   String get name => _name;
+  List<Session> get sessions => List.from(_sessions);
 
-  Activity(this._name) {
-    _id = Uuid().v1();
+  Activity._fromBuilder(ActivityBuilder builder)
+      : _id = builder.id,
+        _name = builder.name,
+        _sessions = builder.sessions,
+        _currentSession = builder.currentSession;
+
+  int get totalMillisecondsDuration {
+    int result = 0;
+    sessions.forEach((session) => result += session.millisecondsDuration);
+    return result;
   }
 
-  Activity.fromMap(Map<String, dynamic> map)
-      : _id = map['id'],
-        _name = map['string'];
-
-  Activity.fromActivity(Activity activity)
-      : _id = activity._id,
-        _name = activity._name;
-
-  /// Updates all fields of the receiver, with the exception of id.
-  void updateFromActivity(Activity activity) {
-    _name = activity._name;
+  void startSession() {
+    if (_currentSession != null) {
+      // Can't start a new session if one already exists.
+      return;
+    }
+    _currentSession = Session();
   }
 
-  Map<String, dynamic> toMap() => {
-    'id' : _id,
-    'name': _name
-  };
+  void endSession() {
+    if (_currentSession == null) {
+      // Can't end a session that hasn't started yet.
+      return;
+    }
 
-  @override
-  bool operator ==(other) {
-    return _id == other._id;
+    _currentSession.end();
+    sessions.add(_currentSession);
+    _currentSession = null;
   }
+}
 
-  @override
-  int get hashCode => _id.hashCode;
+class ActivityBuilder {
+  String id = Uuid().v1();
+  String name;
+  List<Session> sessions = [];
+  Session currentSession;
+
+  ActivityBuilder(this.name);
+
+  ActivityBuilder.fromActivity(Activity activity)
+      : id = activity._id,
+        name = activity._name,
+        sessions = activity._sessions,
+        currentSession = activity._currentSession;
+
+  Activity get build {
+    return Activity._fromBuilder(this);
+  }
 }

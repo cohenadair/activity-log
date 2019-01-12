@@ -89,10 +89,13 @@ class _EditActivityPageState extends State<EditActivityPage> {
     if (widget.isEditing) {
       widget._activityManager.updateActivity(
         widget._editingActivity,
-        newActivity: Activity(_nameController.text)
+        newActivity: (ActivityBuilder.fromActivity(widget._editingActivity)
+            ..name = _nameController.text)
+            .build
       );
     } else {
-      widget._activityManager.addActivity(Activity(_nameController.text));
+      widget._activityManager.addActivity(
+          ActivityBuilder(_nameController.text).build);
     }
 
     Navigator.pop(context);

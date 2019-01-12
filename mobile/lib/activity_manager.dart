@@ -23,11 +23,7 @@ class ActivityManager {
   }
 
   void updateActivity(Activity activity, {Activity newActivity}) {
-    for (Activity indexActivity in _activities) {
-      if (indexActivity == activity) {
-        indexActivity.updateFromActivity(newActivity);
-      }
-    }
+    _activities[_activities.indexOf(activity)] = newActivity;
   }
 
   /// Trimmed, case-insensitive compare of 'name' to all other activities.

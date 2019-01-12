@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../model/activity.dart';
-import '../res/res.dart';
 import '../widgets/list_item_view.dart';
 
 typedef OnTapActivityListItemView = Function(Activity);
