@@ -1,6 +1,7 @@
 import 'package:uuid/uuid.dart';
 
 import 'session.dart';
+import '../utils/time_utils.dart';
 
 class Activity {
   final String _id;
@@ -18,10 +19,27 @@ class Activity {
         _sessions = builder.sessions,
         _currentSession = builder.currentSession;
 
-  int get totalMillisecondsDuration {
-    int result = 0;
-    sessions.forEach((session) => result += session.millisecondsDuration);
-    return result;
+  bool get isRunning => _currentSession != null;
+
+  String get displayDuration {
+    int totalMillis = 0;
+
+    // Add all previous sessions.
+    sessions.forEach((session) => totalMillis += session.millisecondsDuration);
+
+    // Current session.
+    if (_currentSession != null) {
+      totalMillis += _currentSession.millisecondsDuration;
+    }
+
+    int hours = (totalMillis / TimeUtils.msInHour).floor();
+    totalMillis -= hours * TimeUtils.msInHour;
+    int minutes = (totalMillis / TimeUtils.msInMinute).floor();
+    totalMillis -= minutes * TimeUtils.msInMinute;
+    int seconds = (totalMillis / TimeUtils.msInSecond).floor();
+
+    return hours.toString() + 'h ' + minutes.toString() + 'm '
+        + seconds.toString() + 's';
   }
 
   void startSession() {
@@ -39,7 +57,7 @@ class Activity {
     }
 
     _currentSession.end();
-    sessions.add(_currentSession);
+    _sessions.add(_currentSession);
     _currentSession = null;
   }
 }
