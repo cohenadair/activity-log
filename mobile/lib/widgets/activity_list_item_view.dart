@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'package:mobile/model/activity.dart';
-import 'package:mobile/res/res.dart';
+import '../model/activity.dart';
+import '../res/res.dart';
 
 typedef OnTapActivityListItemView = Function(Activity);
 
@@ -24,19 +24,22 @@ class ActivityListItemView extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Row(
-          children: <Widget>[
-            Expanded(
-              child: InkWell(
-                onTap: () {
-                  _onTap(_activity);
-                },
-                child: Padding(
+        SafeArea(
+          child: Row(
+            children: <Widget>[
+              Expanded(
+                child: InkWell(
+                  onTap: () {
+                    _onTap(_activity);
+                  },
+                  child: Padding(
                     padding: EdgeInsets.all(Dimen.defaultPadding),
-                    child: Text(_activity.name)),
+                    child: Text(_activity.name)
+                  ),
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
         Divider(
           height: 1,

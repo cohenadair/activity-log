@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'pages/activities_page.dart';
-
 import 'activity_manager.dart';
+import 'pages/activities_page.dart';
 
 void main() => runApp(ActivityTracker());
 
@@ -14,7 +13,7 @@ class ActivityTracker extends StatelessWidget {
     return MaterialApp(
       title: 'Activity Tracker',
       theme: ThemeData(
-        primarySwatch: Colors.red,
+        primarySwatch: Colors.green,
       ),
       home: ActivitiesPage(_activityManager),
     );

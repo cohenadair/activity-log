@@ -1,4 +1,9 @@
 import 'model/activity.dart';
+import 'utils/string_utils.dart';
+
+class ActivityManagerListener {
+  void onActivitiesChanged() {}
+}
 
 class ActivityManager {
   List<Activity> _activities = [];
@@ -6,29 +11,44 @@ class ActivityManager {
 
   List<ActivityManagerListener> _listeners = [];
 
-  ActivityManager() {
-    addActivity(Activity('Test 1'));
-    addActivity(Activity('Test 2'));
-    addActivity(Activity('Test 3'));
-    addActivity(Activity('Test 4'));
-  }
-
   void addActivity(Activity activity) {
     _activities.add(activity);
-    _notifyActivityAdded();
+    _notifyActivitiesChanged();
+  }
+
+  void deleteActivity(Activity activity) {
+    if (_activities.remove(activity)) {
+      _notifyActivitiesChanged();
+    }
+  }
+
+  void updateActivity(Activity activity, {Activity newActivity}) {
+    for (Activity indexActivity in _activities) {
+      if (indexActivity == activity) {
+        indexActivity.updateFromActivity(newActivity);
+      }
+    }
+  }
+
+  /// Trimmed, case-insensitive compare of 'name' to all other activities.
+  bool activityNameExists(String name, [String excludingName]) {
+    for (var activity in _activities) {
+      if (StringUtils.isEqualTrimmedLowercase(activity.name, name)) {
+        return true;
+      }
+    }
+    return false;
   }
 
   void addListener(ActivityManagerListener listener) {
     _listeners.add(listener);
   }
 
-  void _notifyActivityAdded() {
-    for (var listener in _listeners) {
-      listener.onActivityAdded();
-    }
+  void removeListener(ActivityManagerListener listener) {
+    _listeners.remove(listener);
   }
-}
 
-class ActivityManagerListener {
-  void onActivityAdded() {}
+  void _notifyActivitiesChanged() {
+    _listeners.forEach((l) => l.onActivitiesChanged());
+  }
 }

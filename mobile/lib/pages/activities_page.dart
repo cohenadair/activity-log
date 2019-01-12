@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-import 'package:mobile/activity_manager.dart';
-import 'package:mobile/widgets/activity_list_item_view.dart';
-import 'package:mobile/widgets/my_app_bar.dart';
-import 'package:mobile/model/activity.dart';
+import '../activity_manager.dart';
+import '../model/activity.dart';
+import '../widgets/activity_list_item_view.dart';
+import '../widgets/my_app_bar.dart';
 
 import 'edit_activity_page.dart';
 
@@ -13,18 +13,25 @@ class ActivitiesPage extends StatefulWidget {
   ActivitiesPage(this._activityManager);
 
   @override
-  _ActivitiesPageState createState() => _ActivitiesPageState(_activityManager);
+  _ActivitiesPageState createState() => _ActivitiesPageState();
 }
 
 class _ActivitiesPageState extends State<ActivitiesPage>
     implements ActivityManagerListener
 {
-  final ActivityManager _activityManager;
   List<Activity> _activities;
 
-  _ActivitiesPageState(this._activityManager) {
-    _activities = _activityManager.activities;
-    _activityManager.addListener(this);
+  @override
+  void initState() {
+    _activities = widget._activityManager.activities;
+    widget._activityManager.addListener(this);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    widget._activityManager.removeListener(this);
+    super.dispose();
   }
 
   @override
@@ -44,25 +51,30 @@ class _ActivitiesPageState extends State<ActivitiesPage>
         children: ActivityListItemView.getViews(
           activities: _activities,
           onTap: (Activity activity) {
-            print('Tapped activity: ${activity.name}');
-          }
+            _openEditActivityPage(activity);
+          },
         ),
       )
     );
   }
 
   void _onPressAddButton() {
+    _openEditActivityPage();
+  }
+
+  void _openEditActivityPage([Activity activity]) {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => EditActivityPage(),
+        builder: (context) => EditActivityPage(widget._activityManager,
+            activity),
         fullscreenDialog: true,
       )
     );
   }
 
   @override
-  void onActivityAdded() {
+  void onActivitiesChanged() {
     setState(() {
       _activities = widget._activityManager.activities;
     });
