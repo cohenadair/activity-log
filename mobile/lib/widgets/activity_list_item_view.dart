@@ -9,9 +9,11 @@ typedef OnTapActivityListItemView = Function(Activity);
 
 class ActivityListItemView extends StatefulWidget {
   static List<ActivityListItemView> getViews({
-      @required List<Activity> activities,
-      @required OnTapActivityListItemView onTap})
-  {
+    @required List<Activity> activities,
+    OnTapActivityListItemView onTap
+  }) {
+    assert(activities != null);
+
     return List<ActivityListItemView>.generate(activities.length,
         (int index) => ActivityListItemView(activities[index], onTap));
   }
@@ -30,7 +32,9 @@ class _ActivityListItemViewState extends State<ActivityListItemView> {
   Widget build(BuildContext context) {
     return ListItemView(
       onTap: () {
-        widget._onTap(widget._activity);
+        if (widget._onTap != null) {
+          widget._onTap(widget._activity);
+        }
       },
       child: Row(
         children: <Widget>[

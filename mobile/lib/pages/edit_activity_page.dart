@@ -104,8 +104,9 @@ class _EditActivityPageState extends State<EditActivityPage> {
   void _onPressedDeleteButton() {
     DialogUtils.showDeleteDialog(
       context: context,
-      description: 'Are you sure you want to delete activity '
-          + '${widget._editingActivity.name}? This action cannot be undone.',
+      description: 'Are you sure you want to delete activity ' +
+                   '${widget._editingActivity.name}? This action cannot be' +
+                   ' undone.',
       onDelete: () {
         widget._activityManager.deleteActivity(widget._editingActivity);
         Navigator.pop(context);

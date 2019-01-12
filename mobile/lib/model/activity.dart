@@ -14,10 +14,10 @@ class Activity {
   List<Session> get sessions => List.from(_sessions);
 
   Activity._fromBuilder(ActivityBuilder builder)
-      : _id = builder.id,
-        _name = builder.name,
-        _sessions = builder.sessions,
-        _currentSession = builder.currentSession;
+    : _id = builder.id,
+      _name = builder.name,
+      _sessions = builder.sessions,
+      _currentSession = builder.currentSession;
 
   bool get isRunning => _currentSession != null;
 
@@ -38,8 +38,9 @@ class Activity {
     totalMillis -= minutes * TimeUtils.msInMinute;
     int seconds = (totalMillis / TimeUtils.msInSecond).floor();
 
-    return hours.toString() + 'h ' + minutes.toString() + 'm '
-        + seconds.toString() + 's';
+    return hours.toString() + 'h ' +
+           minutes.toString() + 'm ' +
+           seconds.toString() + 's';
   }
 
   void startSession() {
@@ -71,10 +72,10 @@ class ActivityBuilder {
   ActivityBuilder(this.name);
 
   ActivityBuilder.fromActivity(Activity activity)
-      : id = activity._id,
-        name = activity._name,
-        sessions = activity._sessions,
-        currentSession = activity._currentSession;
+    : id = activity._id,
+      name = activity._name,
+      sessions = activity._sessions,
+      currentSession = activity._currentSession;
 
   Activity get build {
     return Activity._fromBuilder(this);

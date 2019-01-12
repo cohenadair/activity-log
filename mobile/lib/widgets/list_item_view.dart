@@ -13,8 +13,8 @@ class ListItemView extends StatelessWidget {
   final Widget _child;
 
   ListItemView({@required Widget child, VoidCallback onTap})
-      : _child = child,
-        _onTap = onTap;
+    : _child = child,
+      _onTap = onTap;
 
   @override
   Widget build(BuildContext context) {

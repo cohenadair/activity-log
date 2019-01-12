@@ -11,13 +11,15 @@ class TimerText extends StatefulWidget {
   final TimerTextShouldUpdateCallback _shouldUpdateCallback;
 
   TimerText({
-      @required int durationMillis,
-      @required TimerTextGetTextCallback getTextCallback,
-      @required TimerTextShouldUpdateCallback shouldUpdateCallback
-  })
-      : _durationMillis = durationMillis,
-        _getTextCallback = getTextCallback,
-        _shouldUpdateCallback = shouldUpdateCallback;
+    @required int durationMillis,
+    @required TimerTextGetTextCallback getTextCallback,
+    @required TimerTextShouldUpdateCallback shouldUpdateCallback
+  }) : assert(durationMillis != null),
+       assert(getTextCallback != null),
+       assert(shouldUpdateCallback != null),
+       _durationMillis = durationMillis,
+       _getTextCallback = getTextCallback,
+       _shouldUpdateCallback = shouldUpdateCallback;
 
   @override
   State<StatefulWidget> createState() => _TimerTextState();
@@ -29,11 +31,13 @@ class _TimerTextState extends State<TimerText> {
   @override
   void initState() {
     _timer = Timer.periodic(
-        Duration(milliseconds: widget._durationMillis), (Timer timer) {
-          if (widget._shouldUpdateCallback()) {
-            setState(() {});
-          }
-        });
+      Duration(milliseconds: widget._durationMillis),
+      (Timer timer) {
+        if (widget._shouldUpdateCallback()) {
+          setState(() {});
+        }
+      }
+    );
     super.initState();
   }
 

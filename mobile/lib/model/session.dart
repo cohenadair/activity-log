@@ -6,8 +6,8 @@ class Session {
   int _endTimestamp;
 
   Session()
-      : _id = Uuid().v1(),
-        _startTimestamp = DateTime.now().millisecondsSinceEpoch;
+    : _id = Uuid().v1(),
+      _startTimestamp = DateTime.now().millisecondsSinceEpoch;
 
   int get millisecondsDuration {
     if (_endTimestamp == null) {

@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 
 class DialogUtils {
-  static showDeleteDialog({@required BuildContext context, String title,
-      String description, VoidCallback onDelete})
-  {
+  static showDeleteDialog({
+    @required BuildContext context,
+    String title,
+    String description,
+    VoidCallback onDelete
+  }) {
     showDialog(
       context: context,
       builder: (BuildContext context) => AlertDialog(
