@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-
-import '../activity_manager.dart';
-import '../model/activity.dart';
-import '../res/res.dart';
-import '../utils/dialog_utils.dart';
-import '../utils/string_utils.dart';
-import '../widgets/my_app_bar.dart';
-import '../widgets/page_container.dart';
+import 'package:mobile/activity_manager.dart';
+import 'package:mobile/model/activity.dart';
+import 'package:mobile/res/dimen.dart';
+import 'package:mobile/utils/dialog_utils.dart';
+import 'package:mobile/utils/string_utils.dart';
+import 'package:mobile/widgets/button.dart';
+import 'package:mobile/widgets/my_app_bar.dart';
+import 'package:mobile/widgets/page_container.dart';
 
 class EditActivityPage extends StatefulWidget {
   final ActivityManager _activityManager;
@@ -61,9 +61,8 @@ class _EditActivityPageState extends State<EditActivityPage> {
               ),
               Container(
                 padding: Dimen.defaultTopPadding,
-                child: widget.isEditing ? FlatButton.icon(
-                  label: Text('Delete'.toUpperCase()),
-                  textColor: Colors.white,
+                child: widget.isEditing ? Button.icon(
+                  text: 'Delete',
                   icon: Icon(
                     Icons.delete,
                     color: Colors.white,
