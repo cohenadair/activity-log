@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-import '../res/res.dart';
+import 'package:mobile/res/dimen.dart';
 
 /// A default widget to be used in a ListView. Includes:
 ///   - default padding

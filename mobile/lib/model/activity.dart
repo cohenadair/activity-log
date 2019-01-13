@@ -1,7 +1,6 @@
+import 'package:mobile/model/session.dart';
+import 'package:mobile/utils/time_utils.dart';
 import 'package:uuid/uuid.dart';
-
-import 'session.dart';
-import '../utils/time_utils.dart';
 
 class Activity {
   final String _id;

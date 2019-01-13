@@ -1,15 +1,14 @@
-import 'model/activity.dart';
-import 'utils/string_utils.dart';
+import 'package:mobile/model/activity.dart';
+import 'package:mobile/utils/change_listener.dart';
+import 'package:mobile/utils/string_utils.dart';
 
 class ActivityManagerListener {
   void onActivitiesChanged() {}
 }
 
-class ActivityManager {
+class ActivityManager extends ChangeListener<ActivityManagerListener> {
   List<Activity> _activities = [];
   List<Activity> get activities => _activities;
-
-  List<ActivityManagerListener> _listeners = [];
 
   void addActivity(Activity activity) {
     _activities.add(activity);
@@ -36,15 +35,7 @@ class ActivityManager {
     return false;
   }
 
-  void addListener(ActivityManagerListener listener) {
-    _listeners.add(listener);
-  }
-
-  void removeListener(ActivityManagerListener listener) {
-    _listeners.remove(listener);
-  }
-
   void _notifyActivitiesChanged() {
-    _listeners.forEach((l) => l.onActivitiesChanged());
+    notify((l) => l.onActivitiesChanged());
   }
 }

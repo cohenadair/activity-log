@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-import '../res/res.dart';
+import 'package:mobile/res/dimen.dart';
 
 class PageContainer extends Container {
   PageContainer({Widget child}) : super(
