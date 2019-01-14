@@ -3,6 +3,7 @@ import 'package:mobile/activity_manager.dart';
 import 'package:mobile/auth_manager.dart';
 import 'package:mobile/model/activity.dart';
 import 'package:mobile/pages/edit_activity_page.dart';
+import 'package:mobile/utils/page_utils.dart';
 import 'package:mobile/widgets/activity_list_item_view.dart';
 import 'package:mobile/widgets/page.dart';
 
@@ -71,13 +72,10 @@ class _ActivitiesPageState extends State<ActivitiesPage>
   }
 
   void _openEditActivityPage([Activity activity]) {
-    Navigator.push(
+    PageUtils.push(
       context,
-      MaterialPageRoute(
-        builder: (context) => EditActivityPage(widget._activityManager,
-            activity),
-        fullscreenDialog: true,
-      )
+      EditActivityPage(widget._activityManager, activity),
+      fullscreenDialog: activity == null,
     );
   }
 
