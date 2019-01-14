@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mobile/model/activity.dart';
 import 'package:mobile/res/dimen.dart';
+import 'package:mobile/widgets/button.dart';
 import 'package:mobile/widgets/list_item_view.dart';
 import 'package:mobile/widgets/timer_text.dart';
 
@@ -60,24 +61,21 @@ class _ActivityListItemViewState extends State<ActivityListItemView> {
 
   Widget _getStatusButton() {
     if (widget._activity.isRunning) {
-      return FlatButton(
+      return Button(
+        text: 'Stop',
         onPressed: () {
           widget._activity.endSession();
           _update();
         },
-        child: Text('Stop'.toUpperCase()),
         color: Colors.red,
-        textColor: Colors.white,
       );
     } else {
-      return FlatButton(
+      return Button(
+        text: 'Start',
         onPressed: () {
           widget._activity.startSession();
           _update();
         },
-        child: Text('Start'.toUpperCase()),
-        color: Colors.green,
-        textColor: Colors.white,
       );
     }
   }

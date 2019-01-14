@@ -1,30 +1,38 @@
 import 'package:flutter/material.dart';
 
-class Button extends RaisedButton {
-  Button({
-    String text,
-    bool uppercase = true,
-    @required VoidCallback onPressed,
-    Color color,
-  }) : super(
-    child: Text(uppercase ? text.toUpperCase() : text),
-    onPressed: onPressed,
-    elevation: 0,
-    color: color,
-  );
+class Button extends StatelessWidget {
+  final String _text;
+  final VoidCallback _onPressed;
+  final Icon _icon;
+  final Color _color;
 
-  static Widget icon({
-    String text,
+  Button({
+    @required String text,
+    @required VoidCallback onPressed,
     Icon icon,
-    VoidCallback onPressed,
     Color color,
-  }) {
-    return RaisedButton.icon(
-      onPressed: onPressed,
-      icon: icon,
-      label: Text(text.toUpperCase()),
+  }) : assert(text != null),
+       assert(onPressed != null),
+       _text = text,
+       _onPressed = onPressed,
+       _icon = icon,
+       _color = color;
+
+  @override
+  Widget build(BuildContext context) {
+    return _icon == null ? RaisedButton(
+      child: _textWidget,
+      onPressed: _onPressed,
+      color: _color,
       elevation: 0,
-      color: color,
+    ) : RaisedButton.icon(
+      onPressed: _onPressed,
+      icon: _icon,
+      label: _textWidget,
+      color: _color,
+      elevation: 0,
     );
   }
+
+  Widget get _textWidget => Text(_text.toUpperCase());
 }

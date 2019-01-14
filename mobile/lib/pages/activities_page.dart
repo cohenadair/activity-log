@@ -4,7 +4,7 @@ import 'package:mobile/auth_manager.dart';
 import 'package:mobile/model/activity.dart';
 import 'package:mobile/pages/edit_activity_page.dart';
 import 'package:mobile/widgets/activity_list_item_view.dart';
-import 'package:mobile/widgets/my_app_bar.dart';
+import 'package:mobile/widgets/page.dart';
 
 class ActivitiesPage extends StatefulWidget {
   final ActivityManager _activityManager;
@@ -36,9 +36,9 @@ class _ActivitiesPageState extends State<ActivitiesPage>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: MyAppBar(
-        title: Text('Activities'),
+    return Page(
+      appBarStyle: PageAppBarStyle(
+        title: 'Activities',
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.add),
@@ -54,7 +54,7 @@ class _ActivitiesPageState extends State<ActivitiesPage>
           },
         ),
       ),
-      body: ListView(
+      child: ListView(
         children: ActivityListItemView.getViews(
           activities: _activities,
           onTap: (Activity activity) {

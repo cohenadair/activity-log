@@ -5,7 +5,7 @@ import 'package:mobile/res/dimen.dart';
 import 'package:mobile/res/style.dart';
 import 'package:mobile/utils/string_utils.dart';
 import 'package:mobile/widgets/button.dart';
-import 'package:mobile/widgets/page_container.dart';
+import 'package:mobile/widgets/page.dart';
 
 class LoginPage extends StatefulWidget {
   final AuthManager _authManager;
@@ -55,88 +55,86 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: PageContainer(
-        child: Form(
-          key: _formKey,
-          autovalidate: !_isLoggingIn,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Text(
-                _mode.title,
-                style: Theme.of(context).textTheme.title,
+    return Page(
+      child: Form(
+        key: _formKey,
+        autovalidate: !_isLoggingIn,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Text(
+              _mode.title,
+              style: Theme.of(context).textTheme.title,
+            ),
+            TextFormField(
+              controller: _emailController,
+              keyboardType: TextInputType.emailAddress,
+              decoration: InputDecoration(
+                labelText: 'Email',
               ),
-              TextFormField(
-                controller: _emailController,
-                keyboardType: TextInputType.emailAddress,
-                decoration: InputDecoration(
-                  labelText: 'Email',
-                ),
-                validator: _validateEmail,
+              validator: _validateEmail,
+            ),
+            TextFormField(
+              controller: _passwordController,
+              obscureText: true,
+              decoration: InputDecoration(
+                labelText: 'Password',
               ),
-              TextFormField(
-                controller: _passwordController,
-                obscureText: true,
-                decoration: InputDecoration(
-                  labelText: 'Password',
-                ),
-                validator: _validatePassword,
+              validator: _validatePassword,
+            ),
+            _errorText == null ? Container() : Padding(
+              padding: Dimen.defaultTopPadding,
+              child: Text(
+                _errorText,
+                style: Style.textError,
               ),
-              _errorText == null ? Container() : Padding(
-                padding: Dimen.defaultTopPadding,
-                child: Text(
-                  _errorText,
-                  style: Style.textError,
-                ),
-              ),
-              Padding(
-                padding: Dimen.defaultVerticalPadding,
-                child: Row(
-                  children: <Widget>[
-                    Button(
-                      text: _mode.buttonText,
-                      onPressed: _handleLoginOrSignUp,
+            ),
+            Padding(
+              padding: Dimen.defaultVerticalPadding,
+              child: Row(
+                children: <Widget>[
+                  Button(
+                    text: _mode.buttonText,
+                    onPressed: _handleLoginOrSignUp,
+                  ),
+                  Padding(
+                    padding: Dimen.defaultLeftPadding,
+                    child: SizedBox.fromSize(
+                      size: Size(20, 20),
+                      child: _isLoading ? CircularProgressIndicator(
+                        strokeWidth: 2,
+                      ) : Container(),
                     ),
-                    Padding(
-                      padding: Dimen.defaultLeftPadding,
-                      child: SizedBox.fromSize(
-                        size: Size(20, 20),
-                        child: _isLoading ? CircularProgressIndicator(
-                          strokeWidth: 2,
-                        ) : Container(),
-                      ),
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-              RichText(
-                text: TextSpan(
-                  children: [
-                    TextSpan(
-                      text: _mode.questionText,
-                      style: TextStyle(
-                        color: Colors.black,
-                      )
-                    ),
-                    TextSpan(text: ' '),
-                    TextSpan(
-                      text: _mode.actionText,
-                      style: Style.textHyperlink,
-                      recognizer: TapGestureRecognizer()..onTap = () {
-                        setState(() {
-                          _toggleMode();
-                        });
-                      }
+            ),
+            RichText(
+              text: TextSpan(
+                children: [
+                  TextSpan(
+                    text: _mode.questionText,
+                    style: TextStyle(
+                      color: Colors.black,
                     )
-                  ]
-                ),
+                  ),
+                  TextSpan(text: ' '),
+                  TextSpan(
+                    text: _mode.actionText,
+                    style: Style.textHyperlink,
+                    recognizer: TapGestureRecognizer()..onTap = () {
+                      setState(() {
+                        _toggleMode();
+                      });
+                    }
+                  )
+                ]
               ),
-            ],
-          )
+            ),
+          ],
         )
-      ),
+      )
     );
   }
 

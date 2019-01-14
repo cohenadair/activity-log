@@ -5,8 +5,7 @@ import 'package:mobile/res/dimen.dart';
 import 'package:mobile/utils/dialog_utils.dart';
 import 'package:mobile/utils/string_utils.dart';
 import 'package:mobile/widgets/button.dart';
-import 'package:mobile/widgets/my_app_bar.dart';
-import 'package:mobile/widgets/page_container.dart';
+import 'package:mobile/widgets/page.dart';
 
 class EditActivityPage extends StatefulWidget {
   final ActivityManager _activityManager;
@@ -34,9 +33,9 @@ class _EditActivityPageState extends State<EditActivityPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: MyAppBar(
-        title: Text(widget.isEditing ? 'Edit Activity' : 'New Activity'),
+    return Page(
+      appBarStyle: PageAppBarStyle(
+        title: widget.isEditing ? 'Edit Activity' : 'New Activity',
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.check),
@@ -45,36 +44,34 @@ class _EditActivityPageState extends State<EditActivityPage> {
           )
         ],
       ),
-      body: PageContainer(
-        child: Form(
-          key: _formKey,
-          autovalidate: true,
-          child: Column(
-            children: <Widget>[
-              TextFormField(
-                controller: _nameController,
-                autofocus: true,
-                decoration: InputDecoration(
-                  labelText: 'Name',
+      child: Form(
+        key: _formKey,
+        autovalidate: true,
+        child: Column(
+          children: <Widget>[
+            TextFormField(
+              controller: _nameController,
+              autofocus: true,
+              decoration: InputDecoration(
+                labelText: 'Name',
+              ),
+              validator: (String value) => _validateNameField(value),
+            ),
+            Container(
+              padding: Dimen.defaultTopPadding,
+              child: widget.isEditing ? Button(
+                text: 'Delete',
+                icon: Icon(
+                  Icons.delete,
+                  color: Colors.white,
                 ),
-                validator: (String value) => _validateNameField(value),
-              ),
-              Container(
-                padding: Dimen.defaultTopPadding,
-                child: widget.isEditing ? Button.icon(
-                  text: 'Delete',
-                  icon: Icon(
-                    Icons.delete,
-                    color: Colors.white,
-                  ),
-                  color: Colors.red,
-                  onPressed: () {
-                    _onPressedDeleteButton();
-                  },
-                ) : Container(),
-              ),
-            ],
-          ),
+                color: Colors.red,
+                onPressed: () {
+                  _onPressedDeleteButton();
+                },
+              ) : Container(),
+            ),
+          ],
         ),
       ),
     );
