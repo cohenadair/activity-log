@@ -18,13 +18,16 @@ class PageAppBarStyle {
 class Page extends StatelessWidget {
   final Widget _child;
   final PageAppBarStyle _appBarStyle;
+  final EdgeInsets _padding;
 
   Page({
     @required Widget child,
     PageAppBarStyle appBarStyle,
+    EdgeInsets padding,
   }) : assert(child != null),
        _child = child,
-       _appBarStyle = appBarStyle;
+       _appBarStyle = appBarStyle,
+       _padding = padding;
 
   @override
   Widget build(BuildContext context) {
@@ -36,12 +39,12 @@ class Page extends StatelessWidget {
         elevation: 0,
       ),
       body: Container(
-        padding: EdgeInsets.only(
+        padding: _padding == null ? EdgeInsets.only(
           left: Dimen.defaultPadding,
           right: Dimen.defaultPadding,
           top: Dimen.smallPadding,
           bottom: Dimen.smallPadding
-        ),
+        ) : _padding,
         child: SafeArea(child: _child),
       ),
     );

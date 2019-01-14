@@ -37,6 +37,7 @@ class _ActivitiesPageState extends State<ActivitiesPage>
   @override
   Widget build(BuildContext context) {
     return Page(
+      padding: EdgeInsets.all(0),
       appBarStyle: PageAppBarStyle(
         title: 'Activities',
         actions: <Widget>[

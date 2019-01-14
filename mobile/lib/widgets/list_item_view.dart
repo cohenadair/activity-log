@@ -28,7 +28,12 @@ class ListItemView extends StatelessWidget {
           },
           child: SafeArea(
             child: Padding(
-              padding: EdgeInsets.all(Dimen.defaultPadding),
+              padding: EdgeInsets.only(
+                left: Dimen.defaultPadding,
+                right: Dimen.defaultPadding,
+                top: Dimen.smallPadding,
+                bottom: Dimen.smallPadding,
+              ),
               child: _child
             ),
           ),
