@@ -53,31 +53,21 @@ class _ActivityListItemViewState extends State<ActivityListItemView> {
               shouldUpdateCallback: () => widget._activity.isRunning,
             ),
           ),
-          _getStatusButton(),
+          Button(
+            text: widget._activity.isRunning ? 'Stop' : 'Start',
+            onPressed: () {
+              if (widget._activity.isRunning) {
+                widget._activity.endSession();
+              } else {
+                widget._activity.startSession();
+              }
+              _update();
+            },
+            color: widget._activity.isRunning ? Colors.red : null,
+          ),
         ],
       ),
     );
-  }
-
-  Widget _getStatusButton() {
-    if (widget._activity.isRunning) {
-      return Button(
-        text: 'Stop',
-        onPressed: () {
-          widget._activity.endSession();
-          _update();
-        },
-        color: Colors.red,
-      );
-    } else {
-      return Button(
-        text: 'Start',
-        onPressed: () {
-          widget._activity.startSession();
-          _update();
-        },
-      );
-    }
   }
 
   void _update() {

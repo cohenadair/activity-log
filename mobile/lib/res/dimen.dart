@@ -4,6 +4,7 @@ class Dimen {
   static const defaultPadding = 16.0;
   static const smallPadding = 8.0;
   static const widgetSpacing = defaultPadding;
+  static const smallWidgetSpacing = smallPadding;
 
   static const defaultVerticalPadding = EdgeInsets.only(
       left: 0,
@@ -34,4 +35,7 @@ class Dimen {
   );
 
   static const rightWidgetSpacing = EdgeInsets.only(right: widgetSpacing);
+  static const smallLeftWidgetSpacing = EdgeInsets.only(
+    left: smallWidgetSpacing
+  );
 }

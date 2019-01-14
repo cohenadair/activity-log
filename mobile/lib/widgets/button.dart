@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/res/dimen.dart';
 
 class Button extends StatelessWidget {
   final String _text;
@@ -25,12 +26,16 @@ class Button extends StatelessWidget {
       onPressed: _onPressed,
       color: _color,
       elevation: 0,
+      highlightElevation: 0,
+      disabledElevation: 0,
     ) : RaisedButton.icon(
       onPressed: _onPressed,
       icon: _icon,
       label: _textWidget,
       color: _color,
       elevation: 0,
+      highlightElevation: 0,
+      disabledElevation: 0,
     );
   }
 
