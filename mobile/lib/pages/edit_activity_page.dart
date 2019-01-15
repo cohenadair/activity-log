@@ -48,6 +48,7 @@ class _EditActivityPageState extends State<EditActivityPage> {
         key: _formKey,
         autovalidate: true,
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             TextFormField(
               controller: _nameController,
