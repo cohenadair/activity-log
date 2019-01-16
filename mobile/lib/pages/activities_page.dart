@@ -1,39 +1,27 @@
 import 'package:flutter/material.dart';
-import 'package:mobile/activity_manager.dart';
-import 'package:mobile/auth_manager.dart';
+import 'package:mobile/app_manager.dart';
 import 'package:mobile/model/activity.dart';
 import 'package:mobile/pages/edit_activity_page.dart';
+import 'package:mobile/res/dimen.dart';
+import 'package:mobile/res/style.dart';
 import 'package:mobile/utils/page_utils.dart';
 import 'package:mobile/widgets/activity_list_item_view.dart';
+import 'package:mobile/widgets/loading.dart';
 import 'package:mobile/widgets/page.dart';
 
 class ActivitiesPage extends StatefulWidget {
-  final ActivityManager _activityManager;
-  final AuthManager _authManager;
+  final AppManager _app;
 
-  ActivitiesPage(this._activityManager, this._authManager);
+  ActivitiesPage(this._app);
 
   @override
-  _ActivitiesPageState createState() => _ActivitiesPageState();
+  _ActivitiesPageState createState() => _ActivitiesPageState(_app);
 }
 
-class _ActivitiesPageState extends State<ActivitiesPage>
-    implements ActivityManagerListener
-{
-  List<Activity> _activities;
+class _ActivitiesPageState extends State<ActivitiesPage> {
+  final AppManager _app;
 
-  @override
-  void initState() {
-    _activities = widget._activityManager.activities;
-    widget._activityManager.add(this);
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    widget._activityManager.remove(this);
-    super.dispose();
-  }
+  _ActivitiesPageState(this._app);
 
   @override
   Widget build(BuildContext context) {
@@ -52,18 +40,34 @@ class _ActivitiesPageState extends State<ActivitiesPage>
           icon: Icon(Icons.exit_to_app),
           tooltip: 'Logout',
           onPressed: () {
-            widget._authManager.logout();
+            _app.authManager.logout();
           },
         ),
       ),
-      child: ListView(
-        children: ActivityListItemView.getViews(
-          activities: _activities,
-          onTap: (Activity activity) {
-            _openEditActivityPage(activity);
-          },
+      child: _app.dataManager.getActivitiesListenerWidget(
+        loading: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Loading(
+              padding: Dimen.defaultTopPadding,
+            ),
+          ],
         ),
-      )
+        error: Text(
+          'Error loading activities',
+          style: Style.textError,
+        ),
+        display: (List<Activity> activities) {
+          return ListView(
+            children: ActivityListItemView.getViews(
+              activities: activities,
+              onTap: (Activity activity) {
+                _openEditActivityPage(activity);
+              },
+            ),
+          );
+        }
+      ),
     );
   }
 
@@ -74,15 +78,8 @@ class _ActivitiesPageState extends State<ActivitiesPage>
   void _openEditActivityPage([Activity activity]) {
     PageUtils.push(
       context,
-      EditActivityPage(widget._activityManager, activity),
+      EditActivityPage(_app, activity),
       fullscreenDialog: activity == null,
     );
-  }
-
-  @override
-  void onActivitiesChanged() {
-    setState(() {
-      _activities = widget._activityManager.activities;
-    });
   }
 }

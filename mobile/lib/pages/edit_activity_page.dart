@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mobile/activity_manager.dart';
+import 'package:mobile/app_manager.dart';
 import 'package:mobile/model/activity.dart';
 import 'package:mobile/res/dimen.dart';
 import 'package:mobile/utils/dialog_utils.dart';
@@ -8,20 +8,23 @@ import 'package:mobile/widgets/button.dart';
 import 'package:mobile/widgets/page.dart';
 
 class EditActivityPage extends StatefulWidget {
-  final ActivityManager _activityManager;
+  final AppManager _app;
   final Activity _editingActivity;
 
-  EditActivityPage(this._activityManager, [this._editingActivity]);
+  EditActivityPage(this._app, [this._editingActivity]);
 
   bool get isEditing => _editingActivity != null;
 
   @override
-  _EditActivityPageState createState() => _EditActivityPageState();
+  _EditActivityPageState createState() => _EditActivityPageState(_app);
 }
 
 class _EditActivityPageState extends State<EditActivityPage> {
+  final AppManager _app;
   final _formKey = GlobalKey<FormState>();
   TextEditingController _nameController;
+
+  _EditActivityPageState(this._app);
 
   @override
   void initState() {
@@ -84,14 +87,14 @@ class _EditActivityPageState extends State<EditActivityPage> {
     }
 
     if (widget.isEditing) {
-      widget._activityManager.updateActivity(
+      _app.activityManager.updateActivity(
         widget._editingActivity,
         newActivity: (ActivityBuilder.fromActivity(widget._editingActivity)
             ..name = _nameController.text)
             .build
       );
     } else {
-      widget._activityManager.addActivity(
+      _app.activityManager.addActivity(
           ActivityBuilder(_nameController.text).build);
     }
 
@@ -105,7 +108,7 @@ class _EditActivityPageState extends State<EditActivityPage> {
                    '${widget._editingActivity.name}? This action cannot be' +
                    ' undone.',
       onDelete: () {
-        widget._activityManager.deleteActivity(widget._editingActivity);
+        _app.activityManager.deleteActivity(widget._editingActivity);
         Navigator.pop(context);
       }
     );
@@ -123,7 +126,7 @@ class _EditActivityPageState extends State<EditActivityPage> {
       return "Enter a name for your activity";
     }
 
-    if (widget._activityManager.activityNameExists(name)) {
+    if (_app.activityManager.activityNameExists(name)) {
       return "Activity name already exists";
     }
 

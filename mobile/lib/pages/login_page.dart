@@ -1,19 +1,21 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:mobile/app_manager.dart';
 import 'package:mobile/auth_manager.dart';
 import 'package:mobile/res/dimen.dart';
 import 'package:mobile/res/style.dart';
 import 'package:mobile/utils/string_utils.dart';
 import 'package:mobile/widgets/button.dart';
+import 'package:mobile/widgets/loading.dart';
 import 'package:mobile/widgets/page.dart';
 
 class LoginPage extends StatefulWidget {
-  final AuthManager _authManager;
+  final AppManager _app;
 
-  LoginPage(this._authManager);
+  LoginPage(this._app);
 
   @override
-  State<StatefulWidget> createState() => _LoginPageState();
+  State<StatefulWidget> createState() => _LoginPageState(_app);
 }
 
 class _LoginPageMode {
@@ -45,6 +47,7 @@ class _LoginPageMode {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  final AppManager _app;
   final _formKey = GlobalKey<FormState>();
   _LoginPageMode _mode = _LoginPageMode.loggingIn;
 
@@ -52,6 +55,8 @@ class _LoginPageState extends State<LoginPage> {
   bool _isLoading = false;
   TextEditingController _emailController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
+
+  _LoginPageState(this._app);
 
   @override
   Widget build(BuildContext context) {
@@ -98,15 +103,9 @@ class _LoginPageState extends State<LoginPage> {
                     text: _mode.buttonText,
                     onPressed: _handleLoginOrSignUp,
                   ),
-                  Padding(
-                    padding: Dimen.defaultLeftPadding,
-                    child: SizedBox.fromSize(
-                      size: Size(20, 20),
-                      child: _isLoading ? CircularProgressIndicator(
-                        strokeWidth: 2,
-                      ) : Container(),
-                    ),
-                  ),
+                  _isLoading ? Loading(
+                    padding: Dimen.defaultLeftPadding
+                  ) : Container(),
                 ],
               ),
             ),
@@ -161,7 +160,7 @@ class _LoginPageState extends State<LoginPage> {
 
     _setIsLoading(true);
 
-    widget._authManager.login(_emailController.text, _passwordController.text)
+    _app.authManager.login(_emailController.text, _passwordController.text)
       .then((AuthError error) {
         setState(() {
           _isLoading = false;
@@ -185,7 +184,7 @@ class _LoginPageState extends State<LoginPage> {
   void _signUp() {
     _setIsLoading(true);
 
-    widget._authManager.signUp(_emailController.text, _passwordController.text)
+    _app.authManager.signUp(_emailController.text, _passwordController.text)
       .then((AuthError error) {
         setState(() {
           _isLoading = false;

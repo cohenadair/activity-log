@@ -8,7 +8,18 @@ enum AuthError {
 }
 
 class AuthManager {
-  final _auth = FirebaseAuth.instance;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  String _userId;
+
+  String get userId => _userId;
+
+  AuthManager() {
+    _auth.onAuthStateChanged.listen((FirebaseUser user) {
+      if (user != null) {
+        _userId = user.uid;
+      }
+    });
+  }
 
   /// Returns a widget that listens for authentications changes.
   Widget getAuthStateListenerWidget({
@@ -17,7 +28,7 @@ class AuthManager {
     @required Widget finished
   }) {
     return StreamBuilder<FirebaseUser>(
-      stream: FirebaseAuth.instance.onAuthStateChanged,
+      stream: _auth.onAuthStateChanged,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return loading;

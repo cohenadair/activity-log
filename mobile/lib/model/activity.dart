@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:mobile/model/session.dart';
 import 'package:mobile/utils/time_utils.dart';
 import 'package:uuid/uuid.dart';
@@ -11,6 +12,11 @@ class Activity {
   String get id => _id;
   String get name => _name;
   List<Session> get sessions => List.from(_sessions);
+
+  Activity.fromFirestore(DocumentSnapshot doc)
+    : _id = doc['id'],
+      _name = doc['name'],
+      _currentSession = doc['currentSessionId'];
 
   Activity._fromBuilder(ActivityBuilder builder)
     : _id = builder.id,

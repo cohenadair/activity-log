@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:mobile/res/dimen.dart';
 
 class Button extends StatelessWidget {
   final String _text;
