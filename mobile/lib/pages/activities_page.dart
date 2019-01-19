@@ -58,13 +58,12 @@ class _ActivitiesPageState extends State<ActivitiesPage> {
           style: Style.textError,
         ),
         display: (List<Activity> activities) {
-          return ListView(
-            children: ActivityListItemView.getViews(
-              activities: activities,
-              onTap: (Activity activity) {
-                _openEditActivityPage(activity);
-              },
-            ),
+          return ListView.builder(
+            itemCount: activities.length,
+            itemBuilder: (BuildContext context, int i) {
+              return ActivityListItemView(_app, activities[i],
+                  _openEditActivityPage);
+            },
           );
         }
       ),

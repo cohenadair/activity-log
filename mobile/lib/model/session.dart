@@ -1,13 +1,26 @@
-import 'package:uuid/uuid.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:mobile/model/model.dart';
 
-class Session {
-  final String _id;
+class Session extends Model {
+  static final keyActivityId = "activityId";
+  static final keyStartTimestamp = "startTimestamp";
+  static final keyEndTimestamp = "endTimestamp";
+
+  final String _activityId;
   final int _startTimestamp;
-  int _endTimestamp;
+  final int _endTimestamp;
 
-  Session()
-    : _id = Uuid().v1(),
-      _startTimestamp = DateTime.now().millisecondsSinceEpoch;
+  Session.fromFirestore(DocumentSnapshot doc)
+      : _activityId = doc[keyActivityId],
+        _startTimestamp = doc[keyStartTimestamp],
+        _endTimestamp = doc[keyEndTimestamp],
+        super.fromFirestore(doc);
+
+  Session.fromBuilder(SessionBuilder builder)
+      : _activityId = builder.activityId,
+        _startTimestamp = builder.startTimestamp,
+        _endTimestamp = builder.endTimestamp,
+        super.fromBuilder(builder);
 
   int get millisecondsDuration {
     if (_endTimestamp == null) {
@@ -17,7 +30,35 @@ class Session {
     return _endTimestamp - _startTimestamp;
   }
 
-  void end() {
-    _endTimestamp = DateTime.now().millisecondsSinceEpoch;
+  @override
+  Map<String, dynamic> toMap() {
+    return {
+      keyActivityId : _activityId,
+      keyStartTimestamp : _startTimestamp,
+      keyEndTimestamp : _endTimestamp,
+    };
+  }
+}
+
+class SessionBuilder extends ModelBuilder {
+  String activityId;
+  int startTimestamp = DateTime.now().millisecondsSinceEpoch;
+  int endTimestamp;
+
+  SessionBuilder(this.activityId);
+
+  SessionBuilder.fromSession(Session session)
+      : activityId = session._activityId,
+        startTimestamp = session._startTimestamp,
+        endTimestamp = session._endTimestamp,
+        super.fromModel(session);
+
+  SessionBuilder endNow() {
+    endTimestamp = DateTime.now().millisecondsSinceEpoch;
+    return this;
+  }
+
+  Session get build {
+    return Session.fromBuilder(this);
   }
 }

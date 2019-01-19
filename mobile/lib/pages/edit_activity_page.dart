@@ -22,7 +22,9 @@ class EditActivityPage extends StatefulWidget {
 class _EditActivityPageState extends State<EditActivityPage> {
   final AppManager _app;
   final _formKey = GlobalKey<FormState>();
+
   TextEditingController _nameController;
+  String _nameValidatorValue;
 
   _EditActivityPageState(this._app);
 
@@ -49,7 +51,6 @@ class _EditActivityPageState extends State<EditActivityPage> {
       ),
       child: Form(
         key: _formKey,
-        autovalidate: true,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
@@ -59,7 +60,7 @@ class _EditActivityPageState extends State<EditActivityPage> {
               decoration: InputDecoration(
                 labelText: 'Name',
               ),
-              validator: (String value) => _validateNameField(value),
+              validator: (String value) => _nameValidatorValue,
             ),
             Container(
               padding: Dimen.defaultTopPadding,
@@ -81,23 +82,23 @@ class _EditActivityPageState extends State<EditActivityPage> {
     );
   }
 
-  void _onPressedSaveButton() {
+  void _onPressedSaveButton() async {
+    // Validate name manually since it requires an async call to the database.
+    _nameValidatorValue = await _validateNameField(_nameController.text);
+
     if (!_formKey.currentState.validate()) {
       return;
     }
 
-    if (widget.isEditing) {
-      _app.activityManager.updateActivity(
-        widget._editingActivity,
-        newActivity: (ActivityBuilder.fromActivity(widget._editingActivity)
-            ..name = _nameController.text)
-            .build
-      );
+    ActivityBuilder builder;
+    if (widget._editingActivity == null) {
+      builder = ActivityBuilder(_nameController.text);
     } else {
-      _app.activityManager.addActivity(
-          ActivityBuilder(_nameController.text).build);
+      builder = ActivityBuilder
+          .fromActivity(widget._editingActivity)..name = _nameController.text;
     }
 
+    _app.dataManager.addOrUpdateActivity(builder.build);
     Navigator.pop(context);
   }
 
@@ -108,13 +109,13 @@ class _EditActivityPageState extends State<EditActivityPage> {
                    '${widget._editingActivity.name}? This action cannot be' +
                    ' undone.',
       onDelete: () {
-        _app.activityManager.deleteActivity(widget._editingActivity);
+        _app.dataManager.removeActivity(widget._editingActivity.id);
         Navigator.pop(context);
       }
     );
   }
 
-  String _validateNameField(String name) {
+  Future<String> _validateNameField(String name) async {
     // The name hasn't changed, and therefore is still valid.
     if (widget.isEditing &&
         StringUtils.isEqualTrimmedLowercase(widget._editingActivity.name, name))
@@ -126,7 +127,7 @@ class _EditActivityPageState extends State<EditActivityPage> {
       return "Enter a name for your activity";
     }
 
-    if (_app.activityManager.activityNameExists(name)) {
+    if (await _app.dataManager.activityNameExists(name)) {
       return "Activity name already exists";
     }
 

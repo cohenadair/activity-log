@@ -1,39 +1,37 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/app_manager.dart';
 import 'package:mobile/model/activity.dart';
 import 'package:mobile/res/dimen.dart';
 import 'package:mobile/widgets/button.dart';
 import 'package:mobile/widgets/list_item_view.dart';
-import 'package:mobile/widgets/timer_text.dart';
+import 'package:mobile/widgets/future_timer_text.dart';
 
 typedef OnTapActivityListItemView = Function(Activity);
 
 class ActivityListItemView extends StatefulWidget {
-  static List<ActivityListItemView> getViews({
-    @required List<Activity> activities,
-    OnTapActivityListItemView onTap
-  }) {
-    assert(activities != null);
-
-    return List<ActivityListItemView>.generate(activities.length,
-        (int index) => ActivityListItemView(activities[index], onTap));
-  }
-
+  final AppManager _app;
   final Activity _activity;
   final OnTapActivityListItemView _onTap;
 
-  ActivityListItemView(this._activity, this._onTap);
+  ActivityListItemView(this._app, this._activity, this._onTap);
 
   @override
   State<StatefulWidget> createState() => _ActivityListItemViewState();
 }
 
 class _ActivityListItemViewState extends State<ActivityListItemView> {
+  String _currentDisplayDuration;
+
+  AppManager get _app => widget._app;
+  Activity get _activity => widget._activity;
+  OnTapActivityListItemView get _onTap => widget._onTap;
+
   @override
   Widget build(BuildContext context) {
     return ListItemView(
       onTap: () {
-        if (widget._onTap != null) {
-          widget._onTap(widget._activity);
+        if (_onTap != null) {
+          _onTap(_activity);
         }
       },
       child: Row(
@@ -42,35 +40,50 @@ class _ActivityListItemViewState extends State<ActivityListItemView> {
             flex: 1,
             child: Padding(
               padding: Dimen.rightWidgetSpacing,
-              child: Text(widget._activity.name),
+              child: Text(_activity.name),
             )
           ),
           Padding(
             padding: Dimen.rightWidgetSpacing,
-            child: TimerText(
-              durationMillis: 1000,
-              getTextCallback: () => widget._activity.displayDuration,
-              shouldUpdateCallback: () => widget._activity.isRunning,
+            child: FutureTimerText(
+              shouldUpdateCallback: () => _activity.isRunning,
+              futureBuilder: () => FutureBuilder<String>(
+                future: _app.dataManager
+                    .getDisplayDuration(_activity.id),
+                builder: (BuildContext context,
+                    AsyncSnapshot<String> snapshot)
+                {
+                  switch (snapshot.connectionState) {
+                    case ConnectionState.waiting:
+                    case ConnectionState.none:
+                      break;
+                    default:
+                      _currentDisplayDuration = snapshot.data;
+                      break;
+                  }
+                  return _currentDisplayDuration == null
+                      ? Container() : Text(_currentDisplayDuration);
+                },
+              ),
             ),
           ),
           Button(
-            text: widget._activity.isRunning ? 'Stop' : 'Start',
+            text: _activity.isRunning ? 'Stop' : 'Start',
             onPressed: () {
-              if (widget._activity.isRunning) {
-                widget._activity.endSession();
+              if (_activity.isRunning) {
+                _app.dataManager.endSession(_activity).catchError((error) {
+                  print(error);
+                });
               } else {
-                widget._activity.startSession();
+                _app.dataManager.startSession(_activity).catchError((error) {
+                  print(error);
+                });
               }
-              _update();
             },
-            color: widget._activity.isRunning ? Colors.red : null,
+            color: _activity.isRunning ? Colors.red : null,
           ),
         ],
       ),
     );
-  }
-
-  void _update() {
-    setState(() {});
   }
 }
