@@ -18,15 +18,27 @@ class ActivityListTile extends StatefulWidget {
   State<StatefulWidget> createState() => _ActivityListTileState();
 }
 
+// Used to keep track of start and end progress so multiple requests aren't
+// sent if the button is spam-pressed.
+enum _WaitingStatus {
+  forStart,
+  forEnd
+}
+
 class _ActivityListTileState extends State<ActivityListTile> {
   String _currentDisplayDuration;
+  _WaitingStatus _waitingStatus;
 
   AppManager get _app => widget._app;
   Activity get _activity => widget._activity;
   OnTapActivityListItemView get _onTap => widget._onTap;
 
+  bool get _isWaiting => _waitingStatus != null;
+
   @override
   Widget build(BuildContext context) {
+    _updateWaitingStatus();
+
     return ListTile(
       title: Text(_activity.name),
       onTap: () {
@@ -59,23 +71,58 @@ class _ActivityListTileState extends State<ActivityListTile> {
               ),
             ),
           ),
-          Button(
-            text: _activity.isRunning ? 'Stop' : 'Start',
-            onPressed: () {
-              if (_activity.isRunning) {
-                _app.dataManager.endSession(_activity).catchError((error) {
-                  print(error);
-                });
-              } else {
-                _app.dataManager.startSession(_activity).catchError((error) {
-                  print(error);
-                });
-              }
-            },
-            color: _activity.isRunning ? Colors.red : null,
-          ),
+          _activity.isRunning ? _getStopButton() : _getStartButton(),
         ],
       ),
     );
+  }
+
+  void _updateWaitingStatus() {
+    if (_waitingStatus == null) {
+      return;
+    }
+
+    if ((_waitingStatus == _WaitingStatus.forEnd && !_activity.isRunning)
+        || (_waitingStatus == _WaitingStatus.forStart && _activity.isRunning))
+    {
+      _waitingStatus = null;
+    }
+  }
+
+  Widget _getStartButton() {
+    return _getButton('Start', Colors.green, () {
+      _waitingStatus = _WaitingStatus.forStart;
+      _app.dataManager.startSession(_activity);
+    });
+  }
+
+  Widget _getStopButton() {
+    return _getButton('Stop', Colors.red, () {
+      _waitingStatus = _WaitingStatus.forEnd;
+      _app.dataManager.endSession(_activity);
+    });
+  }
+
+  Widget _getButton(String text, Color color, Function onPressed) {
+    assert(text != null);
+    assert(onPressed != null);
+
+    return Button(
+      text: text,
+      onPressed: () {
+        if (_isWaiting) {
+          return;
+        }
+
+        onPressed();
+        _update();
+      },
+      color: color,
+    );
+  }
+
+  void _update() {
+    setState(() {
+    });
   }
 }
