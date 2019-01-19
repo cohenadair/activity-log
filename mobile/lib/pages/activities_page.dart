@@ -5,7 +5,7 @@ import 'package:mobile/pages/edit_activity_page.dart';
 import 'package:mobile/res/dimen.dart';
 import 'package:mobile/res/style.dart';
 import 'package:mobile/utils/page_utils.dart';
-import 'package:mobile/widgets/activity_list_item_view.dart';
+import 'package:mobile/widgets/activity_list_tile.dart';
 import 'package:mobile/widgets/loading.dart';
 import 'package:mobile/widgets/page.dart';
 
@@ -63,7 +63,7 @@ class _ActivitiesPageState extends State<ActivitiesPage> {
             separatorBuilder: (BuildContext context, int i) =>
                 Divider(height: 1),
             itemBuilder: (BuildContext context, int i) {
-              return ActivityListItemView(_app, activities[i],
+              return ActivityListTile(_app, activities[i],
                   _openEditActivityPage);
             },
           );

@@ -7,18 +7,18 @@ import 'package:mobile/widgets/future_timer_text.dart';
 
 typedef OnTapActivityListItemView = Function(Activity);
 
-class ActivityListItemView extends StatefulWidget {
+class ActivityListTile extends StatefulWidget {
   final AppManager _app;
   final Activity _activity;
   final OnTapActivityListItemView _onTap;
 
-  ActivityListItemView(this._app, this._activity, this._onTap);
+  ActivityListTile(this._app, this._activity, this._onTap);
 
   @override
-  State<StatefulWidget> createState() => _ActivityListItemViewState();
+  State<StatefulWidget> createState() => _ActivityListTileState();
 }
 
-class _ActivityListItemViewState extends State<ActivityListItemView> {
+class _ActivityListTileState extends State<ActivityListTile> {
   String _currentDisplayDuration;
 
   AppManager get _app => widget._app;

@@ -7,11 +7,11 @@ import 'package:mobile/res/dimen.dart';
 ///   - InkWell tap animation
 ///   - safe area support
 ///   - a single Widget child
-class ListItemView extends StatelessWidget {
+class CustomListTile extends StatelessWidget {
   final VoidCallback _onTap;
   final Widget _child;
 
-  ListItemView({@required Widget child, VoidCallback onTap})
+  CustomListTile({@required Widget child, VoidCallback onTap})
     : _child = child,
       _onTap = onTap;
 
