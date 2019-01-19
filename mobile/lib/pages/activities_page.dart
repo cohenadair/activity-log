@@ -58,8 +58,10 @@ class _ActivitiesPageState extends State<ActivitiesPage> {
           style: Style.textError,
         ),
         display: (List<Activity> activities) {
-          return ListView.builder(
+          return ListView.separated(
             itemCount: activities.length,
+            separatorBuilder: (BuildContext context, int i) =>
+                Divider(height: 1),
             itemBuilder: (BuildContext context, int i) {
               return ActivityListItemView(_app, activities[i],
                   _openEditActivityPage);

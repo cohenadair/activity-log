@@ -3,7 +3,6 @@ import 'package:mobile/app_manager.dart';
 import 'package:mobile/model/activity.dart';
 import 'package:mobile/res/dimen.dart';
 import 'package:mobile/widgets/button.dart';
-import 'package:mobile/widgets/list_item_view.dart';
 import 'package:mobile/widgets/future_timer_text.dart';
 
 typedef OnTapActivityListItemView = Function(Activity);
@@ -28,30 +27,23 @@ class _ActivityListItemViewState extends State<ActivityListItemView> {
 
   @override
   Widget build(BuildContext context) {
-    return ListItemView(
+    return ListTile(
+      title: Text(_activity.name),
       onTap: () {
         if (_onTap != null) {
           _onTap(_activity);
         }
       },
-      child: Row(
+      trailing: Row(
+        mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          Expanded(
-            flex: 1,
-            child: Padding(
-              padding: Dimen.rightWidgetSpacing,
-              child: Text(_activity.name),
-            )
-          ),
           Padding(
             padding: Dimen.rightWidgetSpacing,
             child: FutureTimerText(
               shouldUpdateCallback: () => _activity.isRunning,
               futureBuilder: () => FutureBuilder<String>(
-                future: _app.dataManager
-                    .getDisplayDuration(_activity.id),
-                builder: (BuildContext context,
-                    AsyncSnapshot<String> snapshot)
+                future: _app.dataManager.getDisplayDuration(_activity.id),
+                builder: (BuildContext context, AsyncSnapshot<String> snapshot)
                 {
                   switch (snapshot.connectionState) {
                     case ConnectionState.waiting:

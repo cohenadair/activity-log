@@ -37,7 +37,7 @@ class _FutureTimerTextState extends State<FutureTimerText> {
         }
       }
     );
-    
+
     super.initState();
   }
 

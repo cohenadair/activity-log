@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:mobile/res/dimen.dart';
 
-/// A default widget to be used in a ListView. Includes:
+/// A default widget to be used in a ListView where ListTile isn't sufficient.
+/// Includes:
 ///   - default padding
 ///   - InkWell tap animation
 ///   - safe area support
-///   - divider
 ///   - a single Widget child
 class ListItemView extends StatelessWidget {
   final VoidCallback _onTap;
@@ -37,9 +37,6 @@ class ListItemView extends StatelessWidget {
               child: _child
             ),
           ),
-        ),
-        Divider(
-          height: 1,
         ),
       ],
     );
