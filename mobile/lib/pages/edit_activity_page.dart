@@ -55,6 +55,7 @@ class _EditActivityPageState extends State<EditActivityPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             TextFormField(
+              textCapitalization: TextCapitalization.words,
               controller: _nameController,
               autofocus: true,
               decoration: InputDecoration(
