@@ -66,22 +66,18 @@ class DataManager {
     );
   }
 
-  Future<void> addOrUpdateActivity(Activity activity) {
-    return _getActivitiesRef().document(activity.id).setData(activity.toMap());
+  void addOrUpdateActivity(Activity activity) {
+    _getActivitiesRef().document(activity.id).setData(activity.toMap());
   }
 
-  Future<void> removeActivity(String activityId) async {
-    // Stash all sessions for the given activity, so the deleting can be done
-    // in a transaction.
-    QuerySnapshot snapshot = await _getSessionsQuery(activityId).getDocuments();
+  void removeActivity(String activityId) {
+    // Delete Activity.
+    _getActivitiesRef().document(activityId).delete();
 
-    await _firestore.runTransaction((Transaction tx) async {
-      // Delete Activity.
-      await tx.delete(_getActivitiesRef().document(activityId));
-
-      // Delete all the Activity's sessions.
-      snapshot.documents.forEach((DocumentSnapshot doc) async {
-        await tx.delete(doc.reference);
+    // Delete all the Activity's sessions.
+    _getSessionsQuery(activityId).snapshots().listen((snapshot) {
+      snapshot.documents.forEach((DocumentSnapshot doc) {
+        doc.reference.delete();
       });
     });
   }
