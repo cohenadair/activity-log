@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile/app_manager.dart';
 import 'package:mobile/model/activity.dart';
@@ -23,6 +26,7 @@ class _EditActivityPageState extends State<EditActivityPage> {
   final AppManager _app;
   final _formKey = GlobalKey<FormState>();
 
+  StreamSubscription<QuerySnapshot> _nameValidationListener;
   TextEditingController _nameController;
   String _nameValidatorValue;
 
@@ -83,24 +87,29 @@ class _EditActivityPageState extends State<EditActivityPage> {
     );
   }
 
-  void _onPressedSaveButton() async {
-    // Validate name manually since it requires an async call to the database.
-    _nameValidatorValue = await _validateNameField(_nameController.text);
+  void _onPressedSaveButton() {
+    _validateNameField(_nameController.text, (String validationText) {
+      _nameValidatorValue = validationText;
 
-    if (!_formKey.currentState.validate()) {
-      return;
-    }
+      if (!_formKey.currentState.validate()) {
+        return;
+      }
 
-    ActivityBuilder builder;
-    if (widget._editingActivity == null) {
-      builder = ActivityBuilder(_nameController.text);
-    } else {
-      builder = ActivityBuilder
-          .fromActivity(widget._editingActivity)..name = _nameController.text;
-    }
+      ActivityBuilder builder;
+      if (widget._editingActivity == null) {
+        builder = ActivityBuilder(_nameController.text);
+      } else {
+        builder = ActivityBuilder
+            .fromActivity(widget._editingActivity)..name = _nameController.text;
+      }
 
-    _app.dataManager.addOrUpdateActivity(builder.build);
-    Navigator.pop(context);
+      if (_nameValidationListener != null) {
+        _nameValidationListener.cancel();
+      }
+
+      _app.dataManager.addOrUpdateActivity(builder.build);
+      Navigator.pop(context);
+    });
   }
 
   void _onPressedDeleteButton() {
@@ -116,22 +125,26 @@ class _EditActivityPageState extends State<EditActivityPage> {
     );
   }
 
-  Future<String> _validateNameField(String name) async {
+  void _validateNameField(String name,
+      Function(String validationString) onFinish)
+  {
     // The name hasn't changed, and therefore is still valid.
     if (widget.isEditing &&
         StringUtils.isEqualTrimmedLowercase(widget._editingActivity.name, name))
     {
-      return null;
+      onFinish(null);
+      return;
     }
 
     if (name.trim().isEmpty) {
-      return "Enter a name for your activity";
+      onFinish("Enter a name for your activity");
+      return;
     }
 
-    if (await _app.dataManager.activityNameExists(name)) {
-      return "Activity name already exists";
-    }
-
-    return null;
+    _nameValidationListener = _app.dataManager.activityNameExists(name,
+        (bool exists)
+    {
+      onFinish(exists ? "Activity name already exists" : null);
+    });
   }
 }

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile/app_manager.dart';
@@ -130,13 +132,17 @@ class DataManager {
   }
 
   /// Trimmed, case-insensitive compare of 'name' to all other activities.
-  Future<bool> activityNameExists(String name) async {
-    QuerySnapshot snapshot = await _getActivitiesRef().where(
+  /// Returns a StreamSubscription<QuerySnapshot>.
+  StreamSubscription<QuerySnapshot> activityNameExists(String name,
+      Function(bool exists) onFinish)
+  {
+    // TODO: See if I can remove the need for the onFinish parameter.
+    return _getActivitiesRef().where(
       Activity.keyLowercaseName,
       isEqualTo: name.trim().toLowerCase()
-    ).getDocuments();
-
-    return snapshot.documents.isNotEmpty;
+    ).snapshots().listen((snapshot) {
+      onFinish(snapshot.documents.isNotEmpty);
+    });
   }
 
   Future<String> getDisplayDuration(String activityId) async {
