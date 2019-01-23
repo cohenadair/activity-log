@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mobile/app_manager.dart';
 import 'package:mobile/pages/activities_page.dart';
-import 'package:mobile/pages/login_page.dart';
-import 'package:mobile/pages/splash_page.dart';
 import 'package:mobile/res/style.dart';
 
 void main() => runApp(ActivityLog());
@@ -24,11 +22,7 @@ class ActivityLog extends StatelessWidget {
         ),
         errorColor: Colors.red,
       ),
-      home: _app.authManager.getAuthStateListenerWidget(
-        loading: SplashPage(),
-        authenticate: LoginPage(_app),
-        finished: ActivitiesPage(_app),
-      ),
+      home: ActivitiesPage(_app),
       debugShowCheckedModeBanner: false,
     );
   }

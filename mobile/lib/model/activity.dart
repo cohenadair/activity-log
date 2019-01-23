@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:mobile/model/model.dart';
 
 class Activity extends Model {
@@ -12,10 +11,10 @@ class Activity extends Model {
   String get name => _name;
   String get currentSessionId => _currentSessionId;
 
-  Activity.fromFirestore(DocumentSnapshot doc)
-    : _name = doc[keyName],
-      _currentSessionId = doc[keyCurrentSessionId],
-      super.fromFirestore(doc);
+  Activity.fromMap(Map<String, dynamic> map)
+    : _name = map[keyName],
+      _currentSessionId = map[keyCurrentSessionId],
+      super.fromMap(map);
 
   Activity.fromBuilder(ActivityBuilder builder)
     : _name = builder.name,

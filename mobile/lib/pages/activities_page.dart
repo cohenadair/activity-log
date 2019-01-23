@@ -3,7 +3,6 @@ import 'package:mobile/app_manager.dart';
 import 'package:mobile/model/activity.dart';
 import 'package:mobile/pages/edit_activity_page.dart';
 import 'package:mobile/res/dimen.dart';
-import 'package:mobile/res/style.dart';
 import 'package:mobile/utils/page_utils.dart';
 import 'package:mobile/widgets/activity_list_tile.dart';
 import 'package:mobile/widgets/loading.dart';
@@ -15,13 +14,11 @@ class ActivitiesPage extends StatefulWidget {
   ActivitiesPage(this._app);
 
   @override
-  _ActivitiesPageState createState() => _ActivitiesPageState(_app);
+  _ActivitiesPageState createState() => _ActivitiesPageState();
 }
 
 class _ActivitiesPageState extends State<ActivitiesPage> {
-  final AppManager _app;
-
-  _ActivitiesPageState(this._app);
+  AppManager get _app => widget._app;
 
   @override
   Widget build(BuildContext context) {
@@ -36,38 +33,33 @@ class _ActivitiesPageState extends State<ActivitiesPage> {
             onPressed: _onPressAddButton,
           ),
         ],
-        leading: IconButton(
-          icon: Icon(Icons.exit_to_app),
-          tooltip: 'Logout',
-          onPressed: () {
-            _app.authManager.logout();
-          },
-        ),
       ),
-      child: _app.dataManager.getActivitiesListenerWidget(
-        loading: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Loading(
-              padding: Dimen.defaultTopPadding,
-            ),
-          ],
-        ),
-        error: Text(
-          'Error loading activities',
-          style: Style.textError,
-        ),
-        display: (List<Activity> activities) {
+      child: StreamBuilder<List<Activity>>(
+        stream: _app.dataManager.activitiesUpdated,
+        builder: (BuildContext context,
+            AsyncSnapshot<List<Activity>> snapshot)
+        {
+          if (!snapshot.hasData) {
+            return Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Loading(
+                  padding: Dimen.defaultTopPadding,
+                ),
+              ],
+            );
+          }
+
           return ListView.separated(
-            itemCount: activities.length,
+            itemCount: snapshot.data.length,
             separatorBuilder: (BuildContext context, int i) =>
                 Divider(height: 1),
             itemBuilder: (BuildContext context, int i) {
-              return ActivityListTile(_app, activities[i],
+              return ActivityListTile(_app, snapshot.data[i],
                   _openEditActivityPage);
             },
           );
-        }
+        },
       ),
     );
   }

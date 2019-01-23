@@ -1,6 +1,3 @@
-import 'dart:async';
-
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile/app_manager.dart';
 import 'package:mobile/model/activity.dart';
@@ -26,7 +23,6 @@ class _EditActivityPageState extends State<EditActivityPage> {
   final AppManager _app;
   final _formKey = GlobalKey<FormState>();
 
-  StreamSubscription<QuerySnapshot> _nameValidationListener;
   TextEditingController _nameController;
   String _nameValidatorValue;
 
@@ -103,10 +99,6 @@ class _EditActivityPageState extends State<EditActivityPage> {
             .fromActivity(widget._editingActivity)..name = _nameController.text;
       }
 
-      if (_nameValidationListener != null) {
-        _nameValidationListener.cancel();
-      }
-
       _app.dataManager.addOrUpdateActivity(builder.build);
       Navigator.pop(context);
     });
@@ -141,9 +133,7 @@ class _EditActivityPageState extends State<EditActivityPage> {
       return;
     }
 
-    _nameValidationListener = _app.dataManager.activityNameExists(name,
-        (bool exists)
-    {
+    _app.dataManager.activityNameExists(name).then((bool exists) {
       onFinish(exists ? "Activity name already exists" : null);
     });
   }

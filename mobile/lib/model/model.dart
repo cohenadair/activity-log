@@ -1,11 +1,12 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:uuid/uuid.dart';
 
 abstract class Model {
+  static final keyId = "id";
+
   final String _id;
   String get id => _id;
 
-  Model.fromFirestore(DocumentSnapshot doc) : _id = doc.documentID;
+  Model.fromMap(Map<String, dynamic> map) : _id = map[keyId];
   Model.fromBuilder(ModelBuilder builder) : _id = builder.id;
 
   Map<String, dynamic> toMap();

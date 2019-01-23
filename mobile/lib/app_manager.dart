@@ -1,20 +1,12 @@
-import 'package:mobile/auth_manager.dart';
-import 'package:mobile/data_manager.dart';
+import 'package:mobile/data_manageable.dart';
+import 'package:mobile/sql_data_manager.dart';
 
 class AppManager {
-  AuthManager _authManager;
-  DataManager _dataManager;
+  DataManageable _dataManager;
 
-  AuthManager get authManager {
-    if (_authManager == null) {
-      _authManager = AuthManager();
-    }
-    return _authManager;
-  }
-
-  DataManager get dataManager {
+  DataManageable get dataManager {
     if (_dataManager == null) {
-      _dataManager = DataManager(this);
+      _dataManager = SQLiteDataManager();
     }
     return _dataManager;
   }

@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:mobile/model/model.dart';
 
 class Session extends Model {
@@ -10,11 +9,11 @@ class Session extends Model {
   final int _startTimestamp;
   final int _endTimestamp;
 
-  Session.fromFirestore(DocumentSnapshot doc)
-      : _activityId = doc[keyActivityId],
-        _startTimestamp = doc[keyStartTimestamp],
-        _endTimestamp = doc[keyEndTimestamp],
-        super.fromFirestore(doc);
+  Session.fromMap(Map<String, dynamic> map)
+      : _activityId = map[keyActivityId],
+        _startTimestamp = map[keyStartTimestamp],
+        _endTimestamp = map[keyEndTimestamp],
+        super.fromMap(map);
 
   Session.fromBuilder(SessionBuilder builder)
       : _activityId = builder.activityId,

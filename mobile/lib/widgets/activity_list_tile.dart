@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:mobile/app_manager.dart';
 import 'package:mobile/model/activity.dart';
+import 'package:mobile/model/session.dart';
 import 'package:mobile/res/dimen.dart';
+import 'package:mobile/utils/model_utils.dart';
 import 'package:mobile/widgets/button.dart';
 import 'package:mobile/widgets/future_timer_text.dart';
 
@@ -54,7 +56,7 @@ class _ActivityListTileState extends State<ActivityListTile> {
             child: FutureTimerText(
               shouldUpdateCallback: () => _activity.isRunning,
               futureBuilder: () => FutureBuilder<String>(
-                future: _app.dataManager.getDisplayDuration(_activity.id),
+                future: _getDisplayDuration(),
                 builder: (BuildContext context, AsyncSnapshot<String> snapshot)
                 {
                   switch (snapshot.connectionState) {
@@ -119,6 +121,11 @@ class _ActivityListTileState extends State<ActivityListTile> {
       },
       color: color,
     );
+  }
+
+  Future<String> _getDisplayDuration() async {
+    List<Session> sessions = await _app.dataManager.getSessions(_activity.id);
+    return ModelUtils.getDisplayDuration(sessions);
   }
 
   void _update() {
