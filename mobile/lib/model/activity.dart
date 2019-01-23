@@ -2,7 +2,6 @@ import 'package:mobile/model/model.dart';
 
 class Activity extends Model {
   static final keyName = "name";
-  static final keyLowercaseName = "lowercaseName";
   static final keyCurrentSessionId = "currentSessionId";
 
   final String _name;
@@ -27,7 +26,6 @@ class Activity extends Model {
   Map<String, dynamic> toMap() {
     return {
       keyName : name,
-      keyLowercaseName : name.trim().toLowerCase(),
       keyCurrentSessionId : _currentSessionId,
     };
   }
