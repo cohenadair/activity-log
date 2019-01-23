@@ -25,11 +25,11 @@ class _ActivitiesPageState extends State<ActivitiesPage> {
     return Page(
       padding: EdgeInsets.all(0),
       appBarStyle: PageAppBarStyle(
-        title: 'Activities',
+        title: "Activities",
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.add),
-            tooltip: 'Add activity',
+            tooltip: "Add activity",
             onPressed: _onPressAddButton,
           ),
         ],

@@ -40,11 +40,11 @@ class _EditActivityPageState extends State<EditActivityPage> {
   Widget build(BuildContext context) {
     return Page(
       appBarStyle: PageAppBarStyle(
-        title: widget.isEditing ? 'Edit Activity' : 'New Activity',
+        title: widget.isEditing ? "Edit Activity" : "New Activity",
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.check),
-            tooltip: 'Save activity',
+            tooltip: "Save activity",
             onPressed: _onPressedSaveButton,
           )
         ],
@@ -59,14 +59,14 @@ class _EditActivityPageState extends State<EditActivityPage> {
               controller: _nameController,
               autofocus: true,
               decoration: InputDecoration(
-                labelText: 'Name',
+                labelText: "Name",
               ),
               validator: (String value) => _nameValidatorValue,
             ),
             Container(
               padding: Dimen.defaultTopPadding,
               child: widget.isEditing ? Button(
-                text: 'Delete',
+                text: "Delete",
                 icon: Icon(
                   Icons.delete,
                   color: Colors.white,
@@ -107,9 +107,9 @@ class _EditActivityPageState extends State<EditActivityPage> {
   void _onPressedDeleteButton() {
     DialogUtils.showDeleteDialog(
       context: context,
-      description: 'Are you sure you want to delete activity ' +
-                   '${widget._editingActivity.name}? This action cannot be' +
-                   ' undone.',
+      description: "Are you sure you want to delete activity " +
+                   "${widget._editingActivity.name}? This action cannot be" +
+                   " undone.",
       onDelete: () {
         _app.dataManager.removeActivity(widget._editingActivity.id);
         Navigator.pop(context);

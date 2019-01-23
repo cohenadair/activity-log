@@ -92,14 +92,14 @@ class _ActivityListTileState extends State<ActivityListTile> {
   }
 
   Widget _getStartButton() {
-    return _getButton('Start', Colors.green, () {
+    return _getButton("Start", Colors.green, () {
       _waitingStatus = _WaitingStatus.forStart;
       _app.dataManager.startSession(_activity);
     });
   }
 
   Widget _getStopButton() {
-    return _getButton('Stop', Colors.red, () {
+    return _getButton("Stop", Colors.red, () {
       _waitingStatus = _WaitingStatus.forEnd;
       _app.dataManager.endSession(_activity);
     });

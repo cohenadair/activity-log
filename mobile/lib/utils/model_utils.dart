@@ -24,8 +24,8 @@ class ModelUtils {
   }
 
   static String _formatDisplayDuration(int hours, int minutes, int seconds) {
-    return hours.toString() + 'h ' +
-           minutes.toString() + 'm ' +
-           seconds.toString() + 's';
+    return hours.toString() + "h " +
+           minutes.toString() + "m " +
+           seconds.toString() + "s";
   }
 }

@@ -11,7 +11,7 @@ class ActivityLog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Activity Log',
+      title: "Activity Log",
       theme: ThemeData(
         primarySwatch: Colors.green,
         buttonTheme: ButtonThemeData(

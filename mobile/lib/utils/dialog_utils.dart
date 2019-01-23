@@ -14,13 +14,13 @@ class DialogUtils {
         content: description == null ? null : Text(description),
         actions: <Widget>[
           FlatButton(
-            child: Text('Cancel'.toUpperCase()),
+            child: Text("Cancel".toUpperCase()),
             onPressed: () {
               Navigator.pop(context);
             },
           ),
           FlatButton(
-            child: Text('Delete'.toUpperCase()),
+            child: Text("Delete".toUpperCase()),
             textColor: Colors.red,
             onPressed: () {
               if (onDelete != null) {
