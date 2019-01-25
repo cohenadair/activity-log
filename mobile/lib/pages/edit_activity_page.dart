@@ -13,25 +13,24 @@ class EditActivityPage extends StatefulWidget {
 
   EditActivityPage(this._app, [this._editingActivity]);
 
-  bool get isEditing => _editingActivity != null;
-
   @override
-  _EditActivityPageState createState() => _EditActivityPageState(_app);
+  _EditActivityPageState createState() => _EditActivityPageState();
 }
 
 class _EditActivityPageState extends State<EditActivityPage> {
-  final AppManager _app;
   final _formKey = GlobalKey<FormState>();
+
+  AppManager get _app => widget._app;
+  Activity get _editingActivity => widget._editingActivity;
+  bool get _isEditing => widget._editingActivity != null;
 
   TextEditingController _nameController;
   String _nameValidatorValue;
 
-  _EditActivityPageState(this._app);
-
   @override
   void initState() {
     _nameController = TextEditingController(
-      text: widget.isEditing ? widget._editingActivity.name : null
+      text: _isEditing ? _editingActivity.name : null
     );
     super.initState();
   }
@@ -40,7 +39,7 @@ class _EditActivityPageState extends State<EditActivityPage> {
   Widget build(BuildContext context) {
     return Page(
       appBarStyle: PageAppBarStyle(
-        title: widget.isEditing ? "Edit Activity" : "New Activity",
+        title: _isEditing ? "Edit Activity" : "New Activity",
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.check),
@@ -65,7 +64,7 @@ class _EditActivityPageState extends State<EditActivityPage> {
             ),
             Container(
               padding: Dimen.defaultTopPadding,
-              child: widget.isEditing ? Button(
+              child: _isEditing ? Button(
                 text: "Delete",
                 icon: Icon(
                   Icons.delete,
@@ -84,22 +83,24 @@ class _EditActivityPageState extends State<EditActivityPage> {
   }
 
   void _onPressedSaveButton() {
-    _validateNameField(_nameController.text, (String validationText) {
+    // Remove any trailing or leading spaces entered by the user.
+    String nameCandidate = _nameController.text.trim();
+
+    _validateNameField(nameCandidate, (String validationText) {
       _nameValidatorValue = validationText;
 
       if (!_formKey.currentState.validate()) {
         return;
       }
 
-      ActivityBuilder builder;
-      if (widget._editingActivity == null) {
-        builder = ActivityBuilder(_nameController.text);
+      if (_isEditing) {
+        var builder = ActivityBuilder.fromActivity(_editingActivity)
+            ..name = nameCandidate;
+        _app.dataManager.updateActivity(builder.build);
       } else {
-        builder = ActivityBuilder
-            .fromActivity(widget._editingActivity)..name = _nameController.text;
+        _app.dataManager.addActivity(ActivityBuilder(nameCandidate).build);
       }
 
-      _app.dataManager.addOrUpdateActivity(builder.build);
       Navigator.pop(context);
     });
   }
@@ -108,10 +109,10 @@ class _EditActivityPageState extends State<EditActivityPage> {
     DialogUtils.showDeleteDialog(
       context: context,
       description: "Are you sure you want to delete activity " +
-                   "${widget._editingActivity.name}? This action cannot be" +
+                   "${_editingActivity.name}? This action cannot be" +
                    " undone.",
       onDelete: () {
-        _app.dataManager.removeActivity(widget._editingActivity.id);
+        _app.dataManager.removeActivity(_editingActivity.id);
         Navigator.pop(context);
       }
     );
@@ -121,8 +122,8 @@ class _EditActivityPageState extends State<EditActivityPage> {
       Function(String validationString) onFinish)
   {
     // The name hasn't changed, and therefore is still valid.
-    if (widget.isEditing &&
-        StringUtils.isEqualTrimmedLowercase(widget._editingActivity.name, name))
+    if (_isEditing &&
+        StringUtils.isEqualTrimmedLowercase(_editingActivity.name, name))
     {
       onFinish(null);
       return;

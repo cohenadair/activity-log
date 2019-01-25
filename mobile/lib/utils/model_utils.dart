@@ -1,8 +1,7 @@
 import 'package:mobile/model/session.dart';
-import 'package:mobile/utils/time_utils.dart';
 
 class ModelUtils {
-  static String getDisplayDuration(List<Session> sessions) {
+  static String formatTotalDuration(List<Session> sessions) {
     int totalMillis = 0;
 
     // Add all previous sessions.
@@ -10,22 +9,33 @@ class ModelUtils {
       totalMillis += session.millisecondsDuration;
     });
 
-    int hours = (totalMillis / TimeUtils.msInHour).floor();
-    totalMillis -= hours * TimeUtils.msInHour;
-    int minutes = (totalMillis / TimeUtils.msInMinute).floor();
-    totalMillis -= minutes * TimeUtils.msInMinute;
-    int seconds = (totalMillis / TimeUtils.msInSecond).floor();
+    Duration duration = Duration(milliseconds: totalMillis);
+    int hours = duration.inHours.remainder(Duration.hoursPerDay);
+    int minutes = _getMinutes(duration);
+    int seconds = _getSeconds(duration);
 
-    return _formatDisplayDuration(hours, minutes, seconds);
+    return "${duration.inDays}d ${hours}h ${minutes}m ${seconds}s";
   }
 
-  static String getZeroDisplayDuration() {
-    return _formatDisplayDuration(0, 0, 0);
+  static String formatSessionDuration(Session session) {
+    Duration duration = Duration(milliseconds: session.millisecondsDuration);
+
+    // Modified from Duration.toString() implementation.
+    String twoDigits(int n) {
+      return (n >= 10) ? "$n" : "0$n";
+    }
+
+    String minutes = twoDigits(_getMinutes(duration));
+    String seconds = twoDigits(_getSeconds(duration));
+
+    return "${duration.inHours}:$minutes:$seconds";
   }
 
-  static String _formatDisplayDuration(int hours, int minutes, int seconds) {
-    return hours.toString() + "h " +
-           minutes.toString() + "m " +
-           seconds.toString() + "s";
+  static int _getMinutes(Duration duration) {
+    return duration.inMinutes.remainder(Duration.minutesPerHour);
+  }
+
+  static int _getSeconds(Duration duration) {
+    return duration.inSeconds.remainder(Duration.secondsPerMinute);
   }
 }

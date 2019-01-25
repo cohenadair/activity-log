@@ -125,7 +125,7 @@ class _ActivityListTileState extends State<ActivityListTile> {
 
   Future<String> _getDisplayDuration() async {
     List<Session> sessions = await _app.dataManager.getSessions(_activity.id);
-    return ModelUtils.getDisplayDuration(sessions);
+    return ModelUtils.formatTotalDuration(sessions);
   }
 
   void _update() {

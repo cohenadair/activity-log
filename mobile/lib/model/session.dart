@@ -1,9 +1,9 @@
 import 'package:mobile/model/model.dart';
 
 class Session extends Model {
-  static final keyActivityId = "activityId";
-  static final keyStartTimestamp = "startTimestamp";
-  static final keyEndTimestamp = "endTimestamp";
+  static final keyActivityId = "activity_id";
+  static final keyStartTimestamp = "start_timestamp";
+  static final keyEndTimestamp = "end_timestamp";
 
   final String _activityId;
   final int _startTimestamp;
@@ -35,7 +35,7 @@ class Session extends Model {
       keyActivityId : _activityId,
       keyStartTimestamp : _startTimestamp,
       keyEndTimestamp : _endTimestamp,
-    };
+    }..addAll(super.toMap());
   }
 }
 

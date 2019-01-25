@@ -2,7 +2,7 @@ import 'package:mobile/model/model.dart';
 
 class Activity extends Model {
   static final keyName = "name";
-  static final keyCurrentSessionId = "currentSessionId";
+  static final keyCurrentSessionId = "current_session_id";
 
   final String _name;
   final String _currentSessionId;
@@ -27,7 +27,7 @@ class Activity extends Model {
     return {
       keyName : name,
       keyCurrentSessionId : _currentSessionId,
-    };
+    }..addAll(super.toMap());
   }
 }
 
