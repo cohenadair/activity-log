@@ -59,10 +59,17 @@ class SQLiteDataManager implements DataManageable {
 
   @override
   void removeActivity(String activityId) {
-    _database.rawDelete("DELETE FROM activity WHERE id = ?", [activityId])
-        .then((int value) {
-          _notifyActivitiesUpdated();
-        });
+    Batch batch = _database.batch();
+
+    // Delete activity.
+    batch.rawDelete("DELETE FROM activity WHERE id = ?", [activityId]);
+
+    // Delete all associated sessions.
+    batch.rawDelete("DELETE FROM session WHERE activity_id = ?", [activityId]);
+
+    batch.commit().then((value) {
+      _notifyActivitiesUpdated();
+    });
   }
 
   @override
@@ -80,7 +87,7 @@ class SQLiteDataManager implements DataManageable {
       "UPDATE activity SET current_session_id = ? WHERE id = ?",
       [newSession.id, activity.id]
     );
-    batch.commit().then((List value) {
+    batch.commit().then((value) {
       _notifyActivitiesUpdated();
     });
   }
@@ -93,9 +100,8 @@ class SQLiteDataManager implements DataManageable {
     }
 
     Batch batch = _database.batch();
-    batch.rawUpdate(
-      "UPDATE session SET end_timestamp = ?",
-      [DateTime.now().millisecondsSinceEpoch]
+    batch.rawUpdate("UPDATE session SET end_timestamp = ? WHERE id = ?",
+      [DateTime.now().millisecondsSinceEpoch, activity.currentSessionId]
     );
     batch.rawUpdate(
       "UPDATE activity SET current_session_id = NULL WHERE id = ?",
@@ -108,10 +114,19 @@ class SQLiteDataManager implements DataManageable {
 
   @override
   Future<List<Session>> getSessions(String activityId) async {
-    String query = "SELECT * FROM session WHERE activityId = ?";
+    String query = "SELECT * FROM session WHERE activity_id = ?";
     return (await _database.rawQuery(query, [activityId])).map((map) {
       return Session.fromMap(map);
     }).toList();
+  }
+
+  @override
+  Future<Session> getCurrentSession(String activityId) async {
+    String query = "SELECT * FROM session WHERE id = ?";
+
+    Map<String, dynamic> map =
+        (await _database.rawQuery(query, [activityId])).first;
+    return Session.fromMap(map);
   }
 
   @override

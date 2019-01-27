@@ -29,6 +29,7 @@ class SQLiteOpenHelper {
 
   static Future<Database> open() async {
     String path = join(await getDatabasesPath(), _name);
+    print(path.toString());
     return openDatabase(
       path,
       version: _version,

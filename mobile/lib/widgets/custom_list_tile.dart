@@ -28,12 +28,7 @@ class CustomListTile extends StatelessWidget {
           },
           child: SafeArea(
             child: Padding(
-              padding: EdgeInsets.only(
-                left: Dimen.defaultPadding,
-                right: Dimen.defaultPadding,
-                top: Dimen.smallPadding,
-                bottom: Dimen.smallPadding,
-              ),
+              padding: insetsRowDefault,
               child: _child
             ),
           ),

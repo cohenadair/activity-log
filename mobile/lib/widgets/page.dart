@@ -39,12 +39,7 @@ class Page extends StatelessWidget {
         elevation: 0,
       ),
       body: Container(
-        padding: _padding == null ? EdgeInsets.only(
-          left: Dimen.defaultPadding,
-          right: Dimen.defaultPadding,
-          top: Dimen.smallPadding,
-          bottom: Dimen.smallPadding
-        ) : _padding,
+        padding: _padding == null ? insetsRowDefault : _padding,
         child: SafeArea(child: _child),
       ),
     );

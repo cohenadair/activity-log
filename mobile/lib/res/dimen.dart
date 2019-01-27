@@ -1,41 +1,49 @@
 import 'package:flutter/material.dart';
 
-class Dimen {
-  static const defaultPadding = 16.0;
-  static const smallPadding = 8.0;
-  static const widgetSpacing = defaultPadding;
-  static const smallWidgetSpacing = smallPadding;
+const paddingDefault = 16.0;
+const paddingSmall = 8.0;
 
-  static const defaultVerticalPadding = EdgeInsets.only(
-      left: 0,
-      top: defaultPadding,
-      right: 0,
-      bottom: defaultPadding
-  );
+const spacingWidget = paddingDefault;
+const spacingWidgetSmall = paddingSmall;
 
-  static const defaultTopPadding = EdgeInsets.only(
-    left: 0,
-    top: defaultPadding,
-    right: 0,
-    bottom: 0
-  );
+const insetsRowDefault = EdgeInsets.only(
+  left: paddingDefault,
+  right: paddingDefault,
+  top: paddingSmall,
+  bottom: paddingSmall,
+);
 
-  static const defaultBottomPadding = EdgeInsets.only(
-    left: 0,
-    top: 0,
-    right: 0,
-    bottom: defaultPadding
-  );
+const insetsVerticalDefault = EdgeInsets.only(
+  left: 0,
+  top: paddingDefault,
+  right: 0,
+  bottom: paddingDefault
+);
 
-  static const defaultLeftPadding = EdgeInsets.only(
-    left: defaultPadding,
-    top: 0,
-    right: 0,
-    bottom: 0
-  );
+const insetsTopDefault = EdgeInsets.only(
+  left: 0,
+  top: paddingDefault,
+  right: 0,
+  bottom: 0
+);
 
-  static const rightWidgetSpacing = EdgeInsets.only(right: widgetSpacing);
-  static const smallLeftWidgetSpacing = EdgeInsets.only(
-    left: smallWidgetSpacing
-  );
-}
+const insetsBottomDefault = EdgeInsets.only(
+  left: 0,
+  top: 0,
+  right: 0,
+  bottom: paddingDefault
+);
+
+const insetsLeftDefault = EdgeInsets.only(
+  left: paddingDefault,
+  top: 0,
+  right: 0,
+  bottom: 0
+);
+
+const insetsRightWidget = EdgeInsets.only(right: spacingWidget);
+const insetsLeftWidgetSmall = EdgeInsets.only(
+  left: spacingWidgetSmall
+);
+
+const iconSizeLarge = 32.0;

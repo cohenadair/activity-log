@@ -4,7 +4,6 @@ import 'package:mobile/model/activity.dart';
 import 'package:mobile/model/session.dart';
 import 'package:mobile/res/dimen.dart';
 import 'package:mobile/utils/model_utils.dart';
-import 'package:mobile/widgets/button.dart';
 import 'package:mobile/widgets/future_timer_text.dart';
 
 typedef OnTapActivityListItemView = Function(Activity);
@@ -42,7 +41,18 @@ class _ActivityListTileState extends State<ActivityListTile> {
     _updateWaitingStatus();
 
     return ListTile(
+      contentPadding: EdgeInsets.only(right: 0, left: paddingDefault),
       title: Text(_activity.name),
+      subtitle: FutureBuilder<String>(
+        future: _getTotalDuration(),
+        builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+          if (snapshot.hasError) {
+            print('Error building total duration: '
+                + '${snapshot.error.toString()}');
+          }
+          return Text(snapshot.hasData ? snapshot.data : "");
+        },
+      ),
       onTap: () {
         if (_onTap != null) {
           _onTap(_activity);
@@ -51,26 +61,23 @@ class _ActivityListTileState extends State<ActivityListTile> {
       trailing: Row(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          Padding(
-            padding: Dimen.rightWidgetSpacing,
-            child: FutureTimerText(
-              shouldUpdateCallback: () => _activity.isRunning,
-              futureBuilder: () => FutureBuilder<String>(
-                future: _getDisplayDuration(),
-                builder: (BuildContext context, AsyncSnapshot<String> snapshot)
-                {
-                  switch (snapshot.connectionState) {
-                    case ConnectionState.waiting:
-                    case ConnectionState.none:
-                      break;
-                    default:
-                      _currentDisplayDuration = snapshot.data;
-                      break;
-                  }
-                  return _currentDisplayDuration == null
-                      ? Container() : Text(_currentDisplayDuration);
-                },
-              ),
+          FutureTimerText(
+            shouldUpdateCallback: () => _activity.isRunning,
+            futureBuilder: () => FutureBuilder<String>(
+              future: _getSessionDuration(),
+              builder: (BuildContext context, AsyncSnapshot<String> snapshot)
+              {
+                switch (snapshot.connectionState) {
+                  case ConnectionState.waiting:
+                  case ConnectionState.none:
+                    break;
+                  default:
+                    _currentDisplayDuration = snapshot.data;
+                    break;
+                }
+                return _currentDisplayDuration == null
+                    ? Container() : Text(_currentDisplayDuration);
+              },
             ),
           ),
           _activity.isRunning ? _getStopButton() : _getStartButton(),
@@ -92,25 +99,26 @@ class _ActivityListTileState extends State<ActivityListTile> {
   }
 
   Widget _getStartButton() {
-    return _getButton("Start", Colors.green, () {
+    return _getButton(Icons.play_arrow, Colors.green, () {
       _waitingStatus = _WaitingStatus.forStart;
       _app.dataManager.startSession(_activity);
     });
   }
 
   Widget _getStopButton() {
-    return _getButton("Stop", Colors.red, () {
+    return _getButton(Icons.stop, Colors.red, () {
       _waitingStatus = _WaitingStatus.forEnd;
       _app.dataManager.endSession(_activity);
     });
   }
 
-  Widget _getButton(String text, Color color, Function onPressed) {
-    assert(text != null);
+  Widget _getButton(IconData icon, Color color, Function onPressed) {
+    assert(icon != null);
     assert(onPressed != null);
 
-    return Button(
-      text: text,
+    return IconButton(
+      icon: Icon(icon),
+      color: color,
       onPressed: () {
         if (_isWaiting) {
           return;
@@ -119,13 +127,22 @@ class _ActivityListTileState extends State<ActivityListTile> {
         onPressed();
         _update();
       },
-      color: color,
     );
   }
 
-  Future<String> _getDisplayDuration() async {
+  Future<String> _getTotalDuration() async {
     List<Session> sessions = await _app.dataManager.getSessions(_activity.id);
-    return ModelUtils.formatTotalDuration(sessions);
+    return formatTotalDuration(sessions);
+  }
+
+  Future<String> _getSessionDuration() async {
+    if (!_activity.isRunning) {
+      return null;
+    }
+
+    Session session =
+        await _app.dataManager.getCurrentSession(_activity.currentSessionId);
+    return formatSessionDuration(session);
   }
 
   void _update() {

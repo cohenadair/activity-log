@@ -13,6 +13,10 @@ abstract class DataManageable {
   void endSession(Activity activity);
   Future<List<Session>> getSessions(String activityId);
 
+  /// Returns the current session for the given Activity ID, or `null` if
+  /// the given Activity isn't running.
+  Future<Session> getCurrentSession(String activityId);
+
   /// Case-insensitive compare of a given name to all other activity names.
   Future<bool> activityNameExists(String name);
 }

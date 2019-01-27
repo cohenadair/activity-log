@@ -44,7 +44,7 @@ class _ActivitiesPageState extends State<ActivitiesPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Loading(
-                  padding: Dimen.defaultTopPadding,
+                  padding: insetsTopDefault,
                 ),
               ],
             );
@@ -69,7 +69,7 @@ class _ActivitiesPageState extends State<ActivitiesPage> {
   }
 
   void _openEditActivityPage([Activity activity]) {
-    PageUtils.push(
+    push(
       context,
       EditActivityPage(_app, activity),
       fullscreenDialog: activity == null,

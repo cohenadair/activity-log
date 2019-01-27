@@ -63,7 +63,7 @@ class _EditActivityPageState extends State<EditActivityPage> {
               validator: (String value) => _nameValidatorValue,
             ),
             Container(
-              padding: Dimen.defaultTopPadding,
+              padding: insetsTopDefault,
               child: _isEditing ? Button(
                 text: "Delete",
                 icon: Icon(
@@ -106,7 +106,7 @@ class _EditActivityPageState extends State<EditActivityPage> {
   }
 
   void _onPressedDeleteButton() {
-    DialogUtils.showDeleteDialog(
+    showDeleteDialog(
       context: context,
       description: "Are you sure you want to delete activity " +
                    "${_editingActivity.name}? This action cannot be" +
@@ -123,7 +123,7 @@ class _EditActivityPageState extends State<EditActivityPage> {
   {
     // The name hasn't changed, and therefore is still valid.
     if (_isEditing &&
-        StringUtils.isEqualTrimmedLowercase(_editingActivity.name, name))
+        isEqualTrimmedLowercase(_editingActivity.name, name))
     {
       onFinish(null);
       return;

@@ -18,7 +18,7 @@ class ActivityLog extends StatelessWidget {
           textTheme: ButtonTextTheme.primary,
         ),
         textTheme: TextTheme(
-          title: Style.textTitle,
+          title: styleTitle,
         ),
         errorColor: Colors.red,
       ),
