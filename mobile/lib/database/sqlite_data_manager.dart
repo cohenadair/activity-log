@@ -32,7 +32,7 @@ class SQLiteDataManager implements DataManageable {
   Stream<List<Activity>> get activitiesUpdated => _activitiesUpdated.stream;
 
   Future<List<Activity>> _getActivities() async {
-    String query = "SELECT * FROM activity";
+    String query = "SELECT * FROM activity ORDER BY name";
     return (await _database.rawQuery(query)).map((map) {
       return Activity.fromMap(map);
     }).toList();
