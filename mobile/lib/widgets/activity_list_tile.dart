@@ -44,7 +44,7 @@ class _ActivityListTileState extends State<ActivityListTile> {
       contentPadding: EdgeInsets.only(right: 0, left: paddingDefault),
       title: Text(_activity.name),
       subtitle: FutureBuilder<String>(
-        future: _getTotalDuration(),
+        future: _getTotalDuration(context),
         builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
           if (snapshot.hasError) {
             print('Error building total duration: '
@@ -130,9 +130,9 @@ class _ActivityListTileState extends State<ActivityListTile> {
     );
   }
 
-  Future<String> _getTotalDuration() async {
+  Future<String> _getTotalDuration(BuildContext context) async {
     List<Session> sessions = await _app.dataManager.getSessions(_activity.id);
-    return formatTotalDuration(sessions);
+    return formatTotalDuration(context, sessions);
   }
 
   Future<String> _getSessionDuration() async {

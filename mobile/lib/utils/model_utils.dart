@@ -1,6 +1,9 @@
+import 'package:flutter/material.dart';
+import 'package:mobile/i18n/strings.dart';
 import 'package:mobile/model/session.dart';
+import 'package:mobile/utils/string_utils.dart';
 
-String formatTotalDuration(List<Session> sessions) {
+String formatTotalDuration(BuildContext context, List<Session> sessions) {
   int totalMillis = 0;
 
   // Add all previous sessions.
@@ -13,7 +16,8 @@ String formatTotalDuration(List<Session> sessions) {
   int minutes = _getMinutes(duration);
   int seconds = _getSeconds(duration);
 
-  return "${duration.inDays}d ${hours}h ${minutes}m ${seconds}s";
+  return format(Strings.of(context).totalDurationFormat,
+      [duration.inDays, hours, minutes, seconds]);
 }
 
 String formatSessionDuration(Session session) {

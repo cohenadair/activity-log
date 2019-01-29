@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mobile/app_manager.dart';
+import 'package:mobile/i18n/strings.dart';
 import 'package:mobile/model/activity.dart';
 import 'package:mobile/pages/edit_activity_page.dart';
 import 'package:mobile/res/dimen.dart';
@@ -25,11 +26,10 @@ class _ActivitiesPageState extends State<ActivitiesPage> {
     return Page(
       padding: EdgeInsets.all(0),
       appBarStyle: PageAppBarStyle(
-        title: "Activities",
+        title: Strings.of(context).activitiesPageTitle,
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.add),
-            tooltip: "Add activity",
             onPressed: _onPressAddButton,
           ),
         ],

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:mobile/app_manager.dart';
+import 'package:mobile/i18n/strings.dart';
 import 'package:mobile/pages/activities_page.dart';
 import 'package:mobile/res/style.dart';
 
@@ -11,7 +13,7 @@ class ActivityLog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: "Activity Log",
+      onGenerateTitle: (context) => Strings.of(context).appName,
       theme: ThemeData(
         primarySwatch: Colors.green,
         buttonTheme: ButtonThemeData(
@@ -24,6 +26,15 @@ class ActivityLog extends StatelessWidget {
       ),
       home: ActivitiesPage(_app),
       debugShowCheckedModeBanner: false,
+      localizationsDelegates: [
+        StringsDelegate(),
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+      ],
+      supportedLocales: [
+        Locale('en', 'US'),
+        Locale('en', 'CA'),
+      ],
     );
   }
 }

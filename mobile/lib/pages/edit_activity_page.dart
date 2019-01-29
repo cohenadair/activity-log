@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mobile/app_manager.dart';
+import 'package:mobile/i18n/strings.dart';
 import 'package:mobile/model/activity.dart';
 import 'package:mobile/res/dimen.dart';
 import 'package:mobile/utils/dialog_utils.dart';
@@ -39,12 +40,15 @@ class _EditActivityPageState extends State<EditActivityPage> {
   Widget build(BuildContext context) {
     return Page(
       appBarStyle: PageAppBarStyle(
-        title: _isEditing ? "Edit Activity" : "New Activity",
+        title: _isEditing
+            ? Strings.of(context).editActivityPageEditTitle
+            : Strings.of(context).editActivityPageNewTitle,
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.check),
-            tooltip: "Save activity",
-            onPressed: _onPressedSaveButton,
+            onPressed: () {
+              _onPressedSaveButton(context);
+            },
           )
         ],
       ),
@@ -58,14 +62,14 @@ class _EditActivityPageState extends State<EditActivityPage> {
               controller: _nameController,
               autofocus: true,
               decoration: InputDecoration(
-                labelText: "Name",
+                labelText: Strings.of(context).editActivityPageNameLabel,
               ),
               validator: (String value) => _nameValidatorValue,
             ),
             Container(
               padding: insetsTopDefault,
               child: _isEditing ? Button(
-                text: "Delete",
+                text: Strings.of(context).delete,
                 icon: Icon(
                   Icons.delete,
                   color: Colors.white,
@@ -82,11 +86,11 @@ class _EditActivityPageState extends State<EditActivityPage> {
     );
   }
 
-  void _onPressedSaveButton() {
+  void _onPressedSaveButton(BuildContext context) {
     // Remove any trailing or leading spaces entered by the user.
     String nameCandidate = _nameController.text.trim();
 
-    _validateNameField(nameCandidate, (String validationText) {
+    _validateNameField(context, nameCandidate, (String validationText) {
       _nameValidatorValue = validationText;
 
       if (!_formKey.currentState.validate()) {
@@ -108,9 +112,8 @@ class _EditActivityPageState extends State<EditActivityPage> {
   void _onPressedDeleteButton() {
     showDeleteDialog(
       context: context,
-      description: "Are you sure you want to delete activity " +
-                   "${_editingActivity.name}? This action cannot be" +
-                   " undone.",
+      description: format(Strings.of(context).editActivityPageDeleteMessage,
+          [_editingActivity.name]),
       onDelete: () {
         _app.dataManager.removeActivity(_editingActivity.id);
         Navigator.pop(context);
@@ -118,7 +121,7 @@ class _EditActivityPageState extends State<EditActivityPage> {
     );
   }
 
-  void _validateNameField(String name,
+  void _validateNameField(BuildContext context, String name,
       Function(String validationString) onFinish)
   {
     // The name hasn't changed, and therefore is still valid.
@@ -130,12 +133,12 @@ class _EditActivityPageState extends State<EditActivityPage> {
     }
 
     if (name.trim().isEmpty) {
-      onFinish("Enter a name for your activity");
+      onFinish(Strings.of(context).editActivityPageMissingName);
       return;
     }
 
     _app.dataManager.activityNameExists(name).then((bool exists) {
-      onFinish(exists ? "Activity name already exists" : null);
+      onFinish(exists ? Strings.of(context).editActivityPageNameExists : null);
     });
   }
 }

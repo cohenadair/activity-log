@@ -7,3 +7,12 @@ bool isEqualTrimmedLowercase(String s1, String s2) {
 bool isEmpty(String s) {
   return s == null || s.trim().isEmpty;
 }
+
+/// Supported formats:
+///   - %s
+String format(String s, List<dynamic> args) {
+  int index = 0;
+  return s.replaceAllMapped(RegExp(r'%s'), (Match match) {
+    return args[index++].toString();
+  });
+}

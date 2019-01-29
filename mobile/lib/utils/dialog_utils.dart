@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/i18n/strings.dart';
 
 showDeleteDialog({
   @required BuildContext context,
@@ -13,13 +14,13 @@ showDeleteDialog({
       content: description == null ? null : Text(description),
       actions: <Widget>[
         FlatButton(
-          child: Text("Cancel".toUpperCase()),
+          child: Text(Strings.of(context).cancel.toUpperCase()),
           onPressed: () {
             Navigator.pop(context);
           },
         ),
         FlatButton(
-          child: Text("Delete".toUpperCase()),
+          child: Text(Strings.of(context).delete.toUpperCase()),
           textColor: Colors.red,
           onPressed: () {
             if (onDelete != null) {
