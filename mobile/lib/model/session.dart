@@ -9,17 +9,20 @@ class Session extends Model {
   final int _startTimestamp;
   final int _endTimestamp;
 
+  int get startTimestamp => _startTimestamp;
+  int get endTimestamp => _endTimestamp;
+
   Session.fromMap(Map<String, dynamic> map)
-      : _activityId = map[keyActivityId],
-        _startTimestamp = map[keyStartTimestamp],
-        _endTimestamp = map[keyEndTimestamp],
-        super.fromMap(map);
+    : _activityId = map[keyActivityId],
+      _startTimestamp = map[keyStartTimestamp],
+      _endTimestamp = map[keyEndTimestamp],
+      super.fromMap(map);
 
   Session.fromBuilder(SessionBuilder builder)
-      : _activityId = builder.activityId,
-        _startTimestamp = builder.startTimestamp,
-        _endTimestamp = builder.endTimestamp,
-        super.fromBuilder(builder);
+    : _activityId = builder.activityId,
+      _startTimestamp = builder.startTimestamp,
+      _endTimestamp = builder.endTimestamp,
+      super.fromBuilder(builder);
 
   int get millisecondsDuration {
     if (_endTimestamp == null) {
@@ -27,6 +30,10 @@ class Session extends Model {
       return DateTime.now().millisecondsSinceEpoch - _startTimestamp;
     }
     return _endTimestamp - _startTimestamp;
+  }
+
+  bool get inProgress {
+    return _endTimestamp == null;
   }
 
   @override

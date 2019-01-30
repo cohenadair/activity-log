@@ -14,3 +14,17 @@ class ErrorText extends StatelessWidget {
     );
   }
 }
+
+class BoldText extends StatelessWidget {
+  final String _text;
+
+  BoldText(this._text);
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      _text,
+      style: styleHeading,
+    );
+  }
+}

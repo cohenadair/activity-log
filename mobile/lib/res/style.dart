@@ -5,6 +5,11 @@ const TextStyle styleTitle = TextStyle(
   fontWeight: FontWeight.bold,
 );
 
+const TextStyle styleHeading = TextStyle(
+  color: Colors.black54,
+  fontWeight: FontWeight.bold,
+);
+
 const TextStyle styleHyperlink = TextStyle(
   color: Colors.blue,
   decoration: TextDecoration.underline,

@@ -6,6 +6,8 @@ const paddingSmall = 8.0;
 const spacingWidget = paddingDefault;
 const spacingWidgetSmall = paddingSmall;
 
+const insetsZero = EdgeInsets.all(0);
+
 const insetsRowDefault = EdgeInsets.only(
   left: paddingDefault,
   right: paddingDefault,
@@ -18,6 +20,20 @@ const insetsVerticalDefault = EdgeInsets.only(
   top: paddingDefault,
   right: 0,
   bottom: paddingDefault
+);
+
+const insetsVerticalSmall = EdgeInsets.only(
+  left: 0,
+  top: paddingSmall,
+  right: 0,
+  bottom: paddingSmall
+);
+
+const insetsHorizontalDefault = EdgeInsets.only(
+    left: paddingDefault,
+    top: 0,
+    right: paddingDefault,
+    bottom: 0
 );
 
 const insetsTopDefault = EdgeInsets.only(

@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:mobile/app_manager.dart';
 import 'package:mobile/i18n/strings.dart';
 import 'package:mobile/model/activity.dart';
+import 'package:mobile/model/session.dart';
+import 'package:mobile/pages/edit_page.dart';
 import 'package:mobile/res/dimen.dart';
 import 'package:mobile/utils/dialog_utils.dart';
 import 'package:mobile/utils/string_utils.dart';
-import 'package:mobile/widgets/button.dart';
-import 'package:mobile/widgets/page.dart';
+import 'package:mobile/widgets/session_list_tile.dart';
+import 'package:mobile/widgets/text.dart';
 
 class EditActivityPage extends StatefulWidget {
   final AppManager _app;
@@ -38,51 +40,68 @@ class _EditActivityPageState extends State<EditActivityPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Page(
-      appBarStyle: PageAppBarStyle(
-        title: _isEditing
-            ? Strings.of(context).editActivityPageEditTitle
-            : Strings.of(context).editActivityPageNewTitle,
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.check),
-            onPressed: () {
-              _onPressedSaveButton(context);
-            },
-          )
-        ],
-      ),
-      child: Form(
+    return EditPage(
+      title: _isEditing
+          ? Strings.of(context).editActivityPageEditTitle
+          : Strings.of(context).editActivityPageNewTitle,
+      padding: insetsVerticalSmall,
+      onSave: () => _onPressedSaveButton(context),
+      onDelete: _onPressedDeleteButton,
+      isEditingCallback: () => _isEditing,
+      form: Form(
         key: _formKey,
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            TextFormField(
-              textCapitalization: TextCapitalization.words,
-              controller: _nameController,
-              autofocus: true,
-              decoration: InputDecoration(
-                labelText: Strings.of(context).editActivityPageNameLabel,
+            Padding(
+              padding: EdgeInsets.only(
+                left: paddingDefault,
+                right: paddingDefault,
+                bottom: paddingDefault,
               ),
-              validator: (String value) => _nameValidatorValue,
-            ),
-            Container(
-              padding: insetsTopDefault,
-              child: _isEditing ? Button(
-                text: Strings.of(context).delete,
-                icon: Icon(
-                  Icons.delete,
-                  color: Colors.white,
+              child: TextFormField(
+                textCapitalization: TextCapitalization.words,
+                controller: _nameController,
+                decoration: InputDecoration(
+                  labelText: Strings.of(context).editActivityPageNameLabel,
                 ),
-                color: Colors.red,
-                onPressed: () {
-                  _onPressedDeleteButton();
-                },
-              ) : Container(),
+                validator: (String value) => _nameValidatorValue,
+              ),
             ),
+            _isEditing ? _getRecentSessions() : Container(),
           ],
         ),
       ),
+    );
+  }
+
+  FutureBuilder<List<Session>> _getRecentSessions() {
+    return FutureBuilder<List<Session>>(
+      future: _app.dataManager.getRecentSessions(_editingActivity.id),
+      builder: (BuildContext context, AsyncSnapshot<List<Session>> snapshot) {
+        if (snapshot.hasError || !snapshot.hasData || snapshot.data.isEmpty) {
+          return Container();
+        }
+
+        return Container(
+          padding: insetsTopDefault,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: insetsHorizontalDefault,
+                child: BoldText(
+                  Strings.of(context).editActivityPageRecentSessions
+                ),
+              ),
+            ]..addAll(snapshot.data.map((session) {
+              return SessionListTile(
+                  session,
+                  hasDivider: session != snapshot.data.last
+              );
+            })),
+          ),
+        );
+      },
     );
   }
 

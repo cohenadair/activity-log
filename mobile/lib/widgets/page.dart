@@ -33,7 +33,7 @@ class Page extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: _appBarStyle == null ? null : AppBar(
-        title: Text(_appBarStyle._title),
+        title: Text(_appBarStyle._title == null ? "" : _appBarStyle._title),
         actions: _appBarStyle._actions,
         leading: _appBarStyle._leading,
         elevation: 0,

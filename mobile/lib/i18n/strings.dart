@@ -39,6 +39,7 @@ class Strings {
   String get editActivityPageDeleteMessage => _getString("editActivityPage_deleteMessage");
   String get editActivityPageNameExists => _getString("editActivityPage_nameExists");
   String get editActivityPageMissingName => _getString("editActivityPage_missingName");
+  String get editActivityPageRecentSessions => _getString("editActivityPage_recentSessions");
 
   String get totalDurationFormat => _getString("totalDurationFormat");
 }

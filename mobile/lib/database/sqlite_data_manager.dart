@@ -114,8 +114,36 @@ class SQLiteDataManager implements DataManageable {
 
   @override
   Future<List<Session>> getSessions(String activityId) async {
-    String query = "SELECT * FROM session WHERE activity_id = ?";
-    return (await _database.rawQuery(query, [activityId])).map((map) {
+    return getLimitedSessions(activityId, null);
+  }
+
+  @override
+  Future<List<Session>> getRecentSessions(String activityId) async {
+    return getLimitedSessions(activityId, 3);
+  }
+
+  Future<List<Session>> getLimitedSessions(String activityId, int limit) async {
+    String query;
+    List<dynamic> args;
+
+    if (limit == null) {
+      query = """
+        SELECT * FROM session 
+          WHERE activity_id = ? 
+          ORDER BY start_timestamp DESC
+      """;
+      args = [activityId];
+    } else {
+      query = """
+        SELECT * FROM session 
+          WHERE activity_id = ? 
+          ORDER BY start_timestamp DESC
+          LIMIT ?;
+      """;
+      args = [activityId, limit];
+    }
+
+    return (await _database.rawQuery(query, args)).map((map) {
       return Session.fromMap(map);
     }).toList();
   }
