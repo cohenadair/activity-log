@@ -46,9 +46,9 @@ class _EditActivityPageState extends State<EditActivityPage> {
       padding: insetsVerticalSmall,
       onSave: () => _onPressedSaveButton(context),
       onDelete: () => _app.dataManager.removeActivity(_editingActivity.id),
-      deleteDescription: format(
+      deleteDescription: _isEditing ? format(
           Strings.of(context).editActivityPageDeleteMessage,
-          [_editingActivity.name]),
+          [_editingActivity.name]) : null,
       isEditingCallback: () => _isEditing,
       form: Form(
         key: _formKey,
