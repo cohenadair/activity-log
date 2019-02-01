@@ -1,4 +1,4 @@
-import 'package:mobile/data_manageable.dart';
+import 'package:mobile/database/data_manageable.dart';
 import 'package:mobile/database/sqlite_data_manager.dart';
 
 class AppManager {

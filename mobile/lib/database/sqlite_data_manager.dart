@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:mobile/data_manageable.dart';
+import 'package:mobile/database/data_manageable.dart';
 import 'package:mobile/database/sqlite_open_helper.dart';
 import 'package:mobile/model/activity.dart';
 import 'package:mobile/model/session.dart';
