@@ -5,7 +5,6 @@ import 'package:mobile/model/activity.dart';
 import 'package:mobile/model/session.dart';
 import 'package:mobile/pages/edit_page.dart';
 import 'package:mobile/res/dimen.dart';
-import 'package:mobile/utils/dialog_utils.dart';
 import 'package:mobile/utils/string_utils.dart';
 import 'package:mobile/widgets/session_list_tile.dart';
 import 'package:mobile/widgets/text.dart';
@@ -46,7 +45,10 @@ class _EditActivityPageState extends State<EditActivityPage> {
           : Strings.of(context).editActivityPageNewTitle,
       padding: insetsVerticalSmall,
       onSave: () => _onPressedSaveButton(context),
-      onDelete: _onPressedDeleteButton,
+      onDelete: () => _app.dataManager.removeActivity(_editingActivity.id),
+      deleteDescription: format(
+          Strings.of(context).editActivityPageDeleteMessage,
+          [_editingActivity.name]),
       isEditingCallback: () => _isEditing,
       form: Form(
         key: _formKey,
@@ -95,8 +97,12 @@ class _EditActivityPageState extends State<EditActivityPage> {
               ),
             ]..addAll(snapshot.data.map((session) {
               return SessionListTile(
-                  session,
-                  hasDivider: session != snapshot.data.last
+                session,
+                hasDivider: session != snapshot.data.last,
+                confirmedDeleteCallback: () {
+                  _app.dataManager.removeSession(session.id)
+                      .then((value) => setState(() {}));
+                },
               );
             })),
           ),
@@ -126,18 +132,6 @@ class _EditActivityPageState extends State<EditActivityPage> {
 
       Navigator.pop(context);
     });
-  }
-
-  void _onPressedDeleteButton() {
-    showDeleteDialog(
-      context: context,
-      description: format(Strings.of(context).editActivityPageDeleteMessage,
-          [_editingActivity.name]),
-      onDelete: () {
-        _app.dataManager.removeActivity(_editingActivity.id);
-        Navigator.pop(context);
-      }
-    );
   }
 
   void _validateNameField(BuildContext context, String name,

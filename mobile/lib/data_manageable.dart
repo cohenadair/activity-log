@@ -18,6 +18,8 @@ abstract class DataManageable {
   /// the given Activity isn't running.
   Future<Session> getCurrentSession(String activityId);
 
+  Future<void> removeSession(String sessionId);
+
   /// Case-insensitive compare of a given name to all other activity names.
   Future<bool> activityNameExists(String name);
 }

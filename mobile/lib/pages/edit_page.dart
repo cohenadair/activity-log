@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mobile/i18n/strings.dart';
 import 'package:mobile/res/dimen.dart';
+import 'package:mobile/utils/dialog_utils.dart';
 import 'package:mobile/widgets/button.dart';
 import 'package:mobile/widgets/page.dart';
 
@@ -8,6 +9,7 @@ class EditPage extends StatelessWidget {
   final String _title;
   final VoidCallback _onPressedSaveButton;
   final VoidCallback _onPressedDeleteButton;
+  final String _deleteDescription;
   final bool Function() _isEditingCallback;
   final Form _form;
   final EdgeInsets _padding;
@@ -16,6 +18,7 @@ class EditPage extends StatelessWidget {
     String title,
     VoidCallback onSave,
     VoidCallback onDelete,
+    String deleteDescription,
     @required isEditingCallback,
     @required form,
     EdgeInsets padding,
@@ -23,6 +26,7 @@ class EditPage extends StatelessWidget {
        _title = title,
        _onPressedSaveButton = onSave,
        _onPressedDeleteButton = onDelete,
+        _deleteDescription = deleteDescription,
        _isEditingCallback = isEditingCallback,
        _form = form,
        _padding = padding;
@@ -57,7 +61,22 @@ class EditPage extends StatelessWidget {
                 color: Colors.white,
               ),
               color: Colors.red,
-              onPressed: _onPressedDeleteButton,
+              onPressed: () {
+                if (_deleteDescription == null) {
+                  _onPressedDeleteButton();
+                } else {
+                  // If a delete confirmation description is provided,
+                  // show a confirmation dialog.
+                  showDeleteDialog(
+                    context: context,
+                    description: _deleteDescription,
+                    onDelete: () {
+                      _onPressedDeleteButton();
+                      Navigator.pop(context);
+                    }
+                  );
+                }
+              },
             ),
           ) : Container(),
         ],

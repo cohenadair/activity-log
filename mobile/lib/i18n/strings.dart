@@ -41,6 +41,8 @@ class Strings {
   String get editActivityPageMissingName => _getString("editActivityPage_missingName");
   String get editActivityPageRecentSessions => _getString("editActivityPage_recentSessions");
 
+  String get sessionListDeleteMessage => _getString("sessionList_deleteMessage");
+
   String get totalDurationFormat => _getString("totalDurationFormat");
 }
 

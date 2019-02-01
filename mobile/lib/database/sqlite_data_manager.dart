@@ -100,13 +100,18 @@ class SQLiteDataManager implements DataManageable {
     }
 
     Batch batch = _database.batch();
+
+    // Update session's end time.
     batch.rawUpdate("UPDATE session SET end_timestamp = ? WHERE id = ?",
       [DateTime.now().millisecondsSinceEpoch, activity.currentSessionId]
     );
+
+    // Set the associated activity's current session to null.
     batch.rawUpdate(
       "UPDATE activity SET current_session_id = NULL WHERE id = ?",
       [activity.id]
     );
+
     batch.commit().then((List value) {
       _notifyActivitiesUpdated();
     });
@@ -155,6 +160,26 @@ class SQLiteDataManager implements DataManageable {
     Map<String, dynamic> map =
         (await _database.rawQuery(query, [activityId])).first;
     return Session.fromMap(map);
+  }
+
+  @override
+  Future<void> removeSession(String sessionId) async {
+    Batch batch = _database.batch();
+
+    // Disassociate the session from activity if it is in progress.
+    batch.rawUpdate(
+      """
+        UPDATE activity SET current_session_id = NULL 
+          WHERE current_session_id = ?
+      """,
+      [sessionId]
+    );
+
+    // Delete session.
+    batch.rawDelete("DELETE FROM session WHERE id = ?", [sessionId]);
+
+    await batch.commit();
+    _notifyActivitiesUpdated();
   }
 
   @override

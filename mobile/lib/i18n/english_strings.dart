@@ -19,6 +19,8 @@ Map<String, Map<String, String>> englishStrings = {
     "editActivityPage_missingName" : "Enter a name for your activity",
     "editActivityPage_recentSessions" : "Recent Sessions",
 
+    "sessionList_deleteMessage" : "Are you sure you want to delete this session? This action cannot be undone.",
+
     "totalDurationFormat" : "%sd %sh %sm %ss",
   },
 };
