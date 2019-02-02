@@ -32,6 +32,14 @@ class Session extends Model {
     return _endTimestamp - _startTimestamp;
   }
 
+  Duration get duration => Duration(milliseconds: millisecondsDuration);
+
+  DateTime get startDateTime =>
+      DateTime.fromMillisecondsSinceEpoch(startTimestamp);
+
+  DateTime get endDateTime =>
+      DateTime.fromMillisecondsSinceEpoch(endTimestamp);
+
   bool get inProgress {
     return _endTimestamp == null;
   }

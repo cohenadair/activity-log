@@ -20,13 +20,16 @@ String format(String s, List<dynamic> args) {
   });
 }
 
-/// Formats a time of day from the given milliseconds since Epoch. The format
+/// Formats a time of day from the given DateTime object. The format
 /// depends on a combination of the current locale and the user's system time
 /// format setting.
-String formatTime(BuildContext context, int millis) {
-  DateTime time = DateTime.fromMillisecondsSinceEpoch(millis);
-  return DefaultMaterialLocalizations().formatTimeOfDay(
-    TimeOfDay.fromDateTime(time),
+///
+/// Example:
+///   21:35, or
+///   9:35 PM
+String formatTime(BuildContext context, DateTime dateTime) {
+  return MaterialLocalizations.of(context).formatTimeOfDay(
+    TimeOfDay.fromDateTime(dateTime),
     alwaysUse24HourFormat: MediaQuery.of(context).alwaysUse24HourFormat
   );
 }

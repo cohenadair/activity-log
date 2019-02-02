@@ -8,6 +8,8 @@ Map<String, Map<String, String>> englishStrings = {
 
     "cancel" : "Cancel",
     "delete" : "Delete",
+    "today" : "Today",
+    "yesterday" : "Yesterday",
 
     "activitiesPage_title" : "Activities",
 
@@ -21,7 +23,11 @@ Map<String, Map<String, String>> englishStrings = {
 
     "sessionList_deleteMessage" : "Are you sure you want to delete this session? This action cannot be undone.",
     "sessionList_inProgress" : "In progress",
+    "sessionList_titleFormat" : "%s (%s)",
 
-    "totalDurationFormat" : "%sd %sh %sm %ss",
+    "daysFormat" : "%sd",
+    "hoursFormat" : "%sh",
+    "minutesFormat" : "%sm",
+    "secondsFormat" : "%ss",
   },
 };

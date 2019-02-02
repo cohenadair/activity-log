@@ -3,6 +3,7 @@ import 'package:mobile/i18n/strings.dart';
 import 'package:mobile/model/session.dart';
 import 'package:mobile/res/dimen.dart';
 import 'package:mobile/utils/dialog_utils.dart';
+import 'package:mobile/utils/model_utils.dart';
 import 'package:mobile/utils/string_utils.dart';
 
 class SessionListTile extends StatelessWidget {
@@ -26,7 +27,7 @@ class SessionListTile extends StatelessWidget {
           contentPadding: insetsLeftDefault,
           onTap: () {
           },
-          title: Text(_titleText),
+          title: Text(formatSessionTitle(context, _session)),
           subtitle: Text(_getSubtitleText(context)),
           trailing: IconButton(
             color: Colors.red,
@@ -47,17 +48,12 @@ class SessionListTile extends StatelessWidget {
     );
   }
 
-  String get _titleText {
-    // TODO: Format
-    return "Title";
-  }
-
   String _getSubtitleText(BuildContext context) {
     if (_session.inProgress) {
       return Strings.of(context).sessionListInProgress;
     }
 
-    return "${formatTime(context, _session.startTimestamp)} - "
-           "${formatTime(context, _session.endTimestamp)}";
+    return "${formatTime(context, _session.startDateTime)} - "
+           "${formatTime(context, _session.endDateTime)}";
   }
 }

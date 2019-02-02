@@ -30,6 +30,8 @@ class Strings {
 
   String get cancel => _getString("cancel");
   String get delete => _getString("delete");
+  String get today => _getString("today");
+  String get yesterday => _getString("yesterday");
 
   String get activitiesPageTitle => _getString("activitiesPage_title");
 
@@ -43,8 +45,12 @@ class Strings {
 
   String get sessionListDeleteMessage => _getString("sessionList_deleteMessage");
   String get sessionListInProgress => _getString("sessionList_inProgress");
+  String get sessionListTitleFormat => _getString("sessionList_titleFormat");
 
-  String get totalDurationFormat => _getString("totalDurationFormat");
+  String get daysFormat => _getString("daysFormat");
+  String get hoursFormat => _getString("hoursFormat");
+  String get minutesFormat => _getString("minutesFormat");
+  String get secondsFormat => _getString("secondsFormat");
 }
 
 class StringsDelegate extends LocalizationsDelegate<Strings> {

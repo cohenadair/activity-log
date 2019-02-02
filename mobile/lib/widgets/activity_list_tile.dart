@@ -142,7 +142,7 @@ class _ActivityListTileState extends State<ActivityListTile> {
 
     Session session =
         await _app.dataManager.getCurrentSession(_activity.currentSessionId);
-    return formatSessionDuration(session);
+    return formatRunningSessionDuration(session);
   }
 
   void _update() {
