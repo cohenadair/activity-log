@@ -8,6 +8,7 @@ import 'package:mobile/res/dimen.dart';
 import 'package:mobile/utils/string_utils.dart';
 import 'package:mobile/widgets/session_list_tile.dart';
 import 'package:mobile/widgets/text.dart';
+import 'package:mobile/widgets/widget.dart';
 
 class EditActivityPage extends StatefulWidget {
   final AppManager _app;
@@ -69,7 +70,7 @@ class _EditActivityPageState extends State<EditActivityPage> {
                 validator: (String value) => _nameValidatorValue,
               ),
             ),
-            _isEditing ? _getRecentSessions() : Container(),
+            _isEditing ? _getRecentSessions() : MinContainer(),
           ],
         ),
       ),
@@ -81,7 +82,7 @@ class _EditActivityPageState extends State<EditActivityPage> {
       future: _app.dataManager.getRecentSessions(_editingActivity.id),
       builder: (BuildContext context, AsyncSnapshot<List<Session>> snapshot) {
         if (snapshot.hasError || !snapshot.hasData || snapshot.data.isEmpty) {
-          return Container();
+          return MinContainer();
         }
 
         return Container(

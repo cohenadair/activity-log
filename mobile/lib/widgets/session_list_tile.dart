@@ -5,6 +5,7 @@ import 'package:mobile/res/dimen.dart';
 import 'package:mobile/utils/dialog_utils.dart';
 import 'package:mobile/utils/model_utils.dart';
 import 'package:mobile/utils/string_utils.dart';
+import 'package:mobile/widgets/widget.dart';
 
 class SessionListTile extends StatelessWidget {
   final Session _session;
@@ -43,7 +44,7 @@ class SessionListTile extends StatelessWidget {
             }
           ),
         ),
-        _hasDivider ? Divider(height: 1) : Container(),
+        _hasDivider ? Divider(height: 1) : MinContainer(),
       ],
     );
   }

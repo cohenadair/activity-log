@@ -5,6 +5,8 @@ import 'package:mobile/model/session.dart';
 import 'package:mobile/res/dimen.dart';
 import 'package:mobile/utils/model_utils.dart';
 import 'package:mobile/widgets/future_timer_text.dart';
+import 'package:mobile/widgets/text.dart';
+import 'package:mobile/widgets/widget.dart';
 
 typedef OnTapActivityListItemView = Function(Activity);
 
@@ -43,14 +45,19 @@ class _ActivityListTileState extends State<ActivityListTile> {
     return ListTile(
       contentPadding: EdgeInsets.only(right: 0, left: paddingDefault),
       title: Text(_activity.name),
-      subtitle: FutureBuilder<String>(
-        future: _getTotalDuration(context),
-        builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+      subtitle: FutureBuilder<List<Session>>(
+        future: _app.dataManager.getSessions(_activity.id),
+        builder: (BuildContext context, AsyncSnapshot<List<Session>> snapshot) {
           if (snapshot.hasError) {
             print('Error building total duration: '
                 + '${snapshot.error.toString()}');
           }
-          return Text(snapshot.hasData ? snapshot.data : "");
+
+          if (!snapshot.hasData) {
+            return MinContainer();
+          }
+
+          return TotalDurationText(snapshot.data);
         },
       ),
       onTap: () {
@@ -76,7 +83,7 @@ class _ActivityListTileState extends State<ActivityListTile> {
                     break;
                 }
                 return _currentDisplayDuration == null
-                    ? Container() : Text(_currentDisplayDuration);
+                    ? MinContainer() : Text(_currentDisplayDuration);
               },
             ),
           ),
@@ -128,11 +135,6 @@ class _ActivityListTileState extends State<ActivityListTile> {
         _update();
       },
     );
-  }
-
-  Future<String> _getTotalDuration(BuildContext context) async {
-    List<Session> sessions = await _app.dataManager.getSessions(_activity.id);
-    return formatTotalDuration(context, sessions);
   }
 
   Future<String> _getSessionDuration() async {

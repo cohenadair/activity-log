@@ -4,6 +4,7 @@ import 'package:mobile/res/dimen.dart';
 import 'package:mobile/utils/dialog_utils.dart';
 import 'package:mobile/widgets/button.dart';
 import 'package:mobile/widgets/page.dart';
+import 'package:mobile/widgets/widget.dart';
 
 class EditPage extends StatelessWidget {
   final String _title;
@@ -78,7 +79,7 @@ class EditPage extends StatelessWidget {
                 }
               },
             ),
-          ) : Container(),
+          ) : MinContainer(),
         ],
       ),
     );
