@@ -28,6 +28,7 @@ class ActivityLog extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       localizationsDelegates: [
         StringsDelegate(),
+        DefaultMaterialLocalizations.delegate,
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
       ],

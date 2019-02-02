@@ -27,7 +27,7 @@ class SessionListTile extends StatelessWidget {
           onTap: () {
           },
           title: Text(_titleText),
-          subtitle: Text(_subtitleText),
+          subtitle: Text(_getSubtitleText(context)),
           trailing: IconButton(
             color: Colors.red,
             icon: Icon(Icons.delete),
@@ -48,15 +48,16 @@ class SessionListTile extends StatelessWidget {
   }
 
   String get _titleText {
+    // TODO: Format
     return "Title";
   }
 
-  String get _subtitleText {
+  String _getSubtitleText(BuildContext context) {
     if (_session.inProgress) {
-      return "In progress";
+      return Strings.of(context).sessionListInProgress;
     }
 
-    return "${formatTime(_session.startTimestamp)} - "
-           "${formatTime(_session.startTimestamp)}";
+    return "${formatTime(context, _session.startTimestamp)} - "
+           "${formatTime(context, _session.endTimestamp)}";
   }
 }

@@ -42,6 +42,7 @@ class Strings {
   String get editActivityPageRecentSessions => _getString("editActivityPage_recentSessions");
 
   String get sessionListDeleteMessage => _getString("sessionList_deleteMessage");
+  String get sessionListInProgress => _getString("sessionList_inProgress");
 
   String get totalDurationFormat => _getString("totalDurationFormat");
 }
