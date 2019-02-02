@@ -42,18 +42,19 @@ String formatSessionTitle(BuildContext context, Session session) {
   }
 
   // Format the duration.
-  Duration duration = session.duration;
+  DisplayDuration duration =
+      DisplayDuration(session.duration, includesDays: false);
   String formattedDuration = "";
 
-  if (duration.inHours > 0) {
+  if (duration.hours > 0) {
     formattedDuration +=
-        format(Strings.of(context).hoursFormat, [duration.inHours]);
+        format(Strings.of(context).hoursFormat, [duration.hours]);
     formattedDuration += " ";
   }
 
-  if (duration.inMinutes > 0 || formattedDate.isNotEmpty) {
+  if (duration.minutes > 0 || formattedDate.isNotEmpty) {
     formattedDuration +=
-        format(Strings.of(context).minutesFormat, [duration.inMinutes]);
+        format(Strings.of(context).minutesFormat, [duration.minutes]);
   }
 
   return format(Strings.of(context).sessionListTitleFormat,
