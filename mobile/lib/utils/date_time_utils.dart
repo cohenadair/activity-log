@@ -1,4 +1,4 @@
-import 'package:intl/intl.dart';
+import 'package:quiver/time.dart';
 
 /// A representation of a Duration object meant to be shown to the user. Units
 /// are split by largest possible. For example, the hours property is the
@@ -44,9 +44,31 @@ class DisplayDuration {
   }
 }
 
-/// Calculates week number from a date as per
-/// https://en.wikipedia.org/wiki/ISO_week_date#Calculation.
-int getWeekNumber(DateTime dateTime) {
-  int dayOfYear = int.parse(DateFormat("D").format(dateTime));
-  return ((dayOfYear - dateTime.weekday + 10) / 7).floor();
+bool isSameYear(DateTime a, DateTime b) {
+  return a.year == b.year;
+}
+
+bool isSameMonth(DateTime a, DateTime b) {
+  return a.month == b.month;
+}
+
+bool isSameDay(DateTime a, DateTime b) {
+  return a.day == b.day;
+}
+
+/// Returns true if the given DateTime objects are equal. Compares
+/// only year, month, and day.
+bool isSameDate(DateTime a, DateTime b) {
+  return isSameYear(a, b) && isSameMonth(a, b) && isSameDay(a, b);
+}
+
+bool isYesterday(DateTime today, DateTime yesterday) {
+  return isSameDate(yesterday, today.subtract(aDay));
+}
+
+/// Returns true of the  given DateTime objects are within one week of one
+/// another.
+bool isWithinOneWeek(DateTime a, DateTime b) {
+
+  return a.difference(b).inMilliseconds.abs() <= aWeek.inMilliseconds;
 }

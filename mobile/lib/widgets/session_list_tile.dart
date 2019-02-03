@@ -5,6 +5,7 @@ import 'package:mobile/res/dimen.dart';
 import 'package:mobile/utils/dialog_utils.dart';
 import 'package:mobile/utils/model_utils.dart';
 import 'package:mobile/utils/string_utils.dart';
+import 'package:mobile/widgets/text.dart';
 import 'package:mobile/widgets/widget.dart';
 
 class SessionListTile extends StatelessWidget {
@@ -28,7 +29,7 @@ class SessionListTile extends StatelessWidget {
           contentPadding: insetsLeftDefault,
           onTap: () {
           },
-          title: Text(formatSessionTitle(context, _session)),
+          title: DateDurationText(_session.startDateTime, _session.duration),
           subtitle: Text(_getSubtitleText(context)),
           trailing: IconButton(
             color: Colors.red,

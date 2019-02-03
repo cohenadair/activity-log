@@ -57,7 +57,9 @@ class _ActivityListTileState extends State<ActivityListTile> {
             return MinContainer();
           }
 
-          return TotalDurationText(snapshot.data);
+          return TotalDurationText(snapshot.data.map((Session session) {
+            return session.duration;
+          }).toList());
         },
       ),
       onTap: () {

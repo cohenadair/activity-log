@@ -18,9 +18,10 @@ dependencies:
   flutter_localizations:
     sdk: flutter
 
+  intl: ^0.15.7
+  quiver: '>=2.0.0 <3.0.0'
   sqflite: any
   uuid: 1.0.3
-  intl: ^0.15.7
 
 
 dev_dependencies:
