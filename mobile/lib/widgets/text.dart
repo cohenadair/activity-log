@@ -76,11 +76,11 @@ class TotalDurationText extends StatelessWidget {
 /// A Text widget for displaying a formatted date and a duration to the user.
 ///
 /// Examples:
-///   Today (3h 5m)
-///   Yesterday (3h 5m)
-///   Monday (15m)
-///   Jan. 8 (30m)
-///   Dec. 8, 2018 (5h)
+///   - Today (3h 5m)
+///   - Yesterday (3h 5m)
+///   - Monday (15m)
+///   - Jan. 8 (30m)
+///   - Dec. 8, 2018 (5h)
 class DateDurationText extends StatelessWidget {
   final Clock _clock;
   final DateTime _startDateTime;
@@ -137,5 +137,36 @@ class DateDurationText extends StatelessWidget {
 
     return format(Strings.of(context).sessionListTitleFormat,
         [formattedDate, formattedDuration]);
+  }
+}
+
+/// A Text widget that formats a Duration object as if it were running.
+///
+/// Examples:
+///   - 05:44:58
+///   - 00:21:05
+///   - 00:00:37
+class RunningDurationText extends StatelessWidget {
+  final Duration _duration;
+
+  RunningDurationText(this._duration);
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(_format());
+  }
+
+  String _format() {
+    DisplayDuration duration = DisplayDuration(_duration, includesDays: false);
+
+    String twoDigits(int n) {
+      return (n >= 10) ? "$n" : "0$n";
+    }
+
+    String hours = twoDigits(duration.hours);
+    String minutes = twoDigits(duration.minutes);
+    String seconds = twoDigits(duration.seconds);
+
+    return "$hours:$minutes:$seconds";
   }
 }

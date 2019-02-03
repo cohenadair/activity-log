@@ -2,28 +2,28 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
-typedef FutureTimerTextBuilderCallback = FutureBuilder<String> Function();
-typedef FutureTimerTextShouldUpdateCallback = bool Function();
+typedef FutureTimerBuilderCallback = FutureBuilder<dynamic> Function();
+typedef FutureTimerShouldUpdateCallback = bool Function();
 
-class FutureTimerText extends StatefulWidget {
+class FutureTimer extends StatefulWidget {
   final int _durationMillis;
-  final FutureTimerTextBuilderCallback _futureBuilder;
-  final FutureTimerTextShouldUpdateCallback _shouldUpdateCallback;
+  final FutureTimerBuilderCallback _futureBuilder;
+  final FutureTimerShouldUpdateCallback _shouldUpdateCallback;
 
-  FutureTimerText({
-    @required FutureTimerTextBuilderCallback futureBuilder,
+  FutureTimer({
+    @required FutureTimerBuilderCallback futureBuilder,
     int durationMillis = 1000,
-    FutureTimerTextShouldUpdateCallback shouldUpdateCallback,
+    FutureTimerShouldUpdateCallback shouldUpdateCallback,
   }) : assert(futureBuilder != null),
        _durationMillis = durationMillis,
        _futureBuilder = futureBuilder,
        _shouldUpdateCallback = shouldUpdateCallback;
 
   @override
-  State<StatefulWidget> createState() => _FutureTimerTextState();
+  State<StatefulWidget> createState() => _FutureTimerState();
 }
 
-class _FutureTimerTextState extends State<FutureTimerText> {
+class _FutureTimerState extends State<FutureTimer> {
   Timer _timer;
 
   @override

@@ -3,8 +3,7 @@ import 'package:mobile/app_manager.dart';
 import 'package:mobile/model/activity.dart';
 import 'package:mobile/model/session.dart';
 import 'package:mobile/res/dimen.dart';
-import 'package:mobile/utils/model_utils.dart';
-import 'package:mobile/widgets/future_timer_text.dart';
+import 'package:mobile/widgets/future_timer.dart';
 import 'package:mobile/widgets/text.dart';
 import 'package:mobile/widgets/widget.dart';
 
@@ -29,7 +28,7 @@ enum _WaitingStatus {
 }
 
 class _ActivityListTileState extends State<ActivityListTile> {
-  String _currentDisplayDuration;
+  RunningDurationText _currentDisplayDuration;
   _WaitingStatus _waitingStatus;
 
   AppManager get _app => widget._app;
@@ -70,22 +69,28 @@ class _ActivityListTileState extends State<ActivityListTile> {
       trailing: Row(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          FutureTimerText(
+          FutureTimer(
             shouldUpdateCallback: () => _activity.isRunning,
-            futureBuilder: () => FutureBuilder<String>(
-              future: _getSessionDuration(),
-              builder: (BuildContext context, AsyncSnapshot<String> snapshot)
-              {
+            futureBuilder: () => FutureBuilder<Session>(
+              future: _app.dataManager
+                  .getCurrentSession(_activity.currentSessionId),
+              builder: (BuildContext context, AsyncSnapshot<Session> snapshot) {
                 switch (snapshot.connectionState) {
                   case ConnectionState.waiting:
                   case ConnectionState.none:
                     break;
                   default:
-                    _currentDisplayDuration = snapshot.data;
+                    if (snapshot.data == null) {
+                      // If the activity is already running.
+                      _currentDisplayDuration = null;
+                    } else {
+                      _currentDisplayDuration =
+                          RunningDurationText(snapshot.data.duration);
+                    }
                     break;
                 }
                 return _currentDisplayDuration == null
-                    ? MinContainer() : Text(_currentDisplayDuration);
+                    ? MinContainer() : _currentDisplayDuration;
               },
             ),
           ),
@@ -137,16 +142,6 @@ class _ActivityListTileState extends State<ActivityListTile> {
         _update();
       },
     );
-  }
-
-  Future<String> _getSessionDuration() async {
-    if (!_activity.isRunning) {
-      return null;
-    }
-
-    Session session =
-        await _app.dataManager.getCurrentSession(_activity.currentSessionId);
-    return formatRunningSessionDuration(session);
   }
 
   void _update() {

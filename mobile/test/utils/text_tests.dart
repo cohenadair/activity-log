@@ -5,7 +5,7 @@ import 'package:quiver/time.dart';
 import '../test_utils.dart';
 
 void main() {
-  group("TotalDurationText", () {
+  group("DateTotalDurationTextDurationText", () {
     testWidgets("Empty", (WidgetTester tester) async {
       List<Duration> durations = [];
       await tester.pumpWidget(Testable(TotalDurationText(durations)));
@@ -56,7 +56,7 @@ void main() {
     });
   });
   
-  group("SessionDateTime", () {
+  group("DateDurationText", () {
     final DateTime today = DateTime(2019, 1, 15, 10, 5, 0);
     final Clock clock = Clock.fixed(today);
 
@@ -135,6 +135,36 @@ void main() {
         DateDurationText(today, Duration(hours: 1, minutes: 3), clock: clock)
       ));
       expect(find.text("Today (1h 3m)"), findsOneWidget);
+    });
+  });
+
+  group("RunningDurationText", () {
+    testWidgets("All", (WidgetTester tester) async {
+      await tester.pumpWidget(Testable(
+        RunningDurationText(Duration(hours: 5, minutes: 6, seconds: 7))
+      ));
+      expect(find.text("05:06:07"), findsOneWidget);
+    });
+
+    testWidgets("Hours only", (WidgetTester tester) async {
+      await tester.pumpWidget(Testable(
+        RunningDurationText(Duration(hours: 5))
+      ));
+      expect(find.text("05:00:00"), findsOneWidget);
+    });
+
+    testWidgets("Minutes only", (WidgetTester tester) async {
+      await tester.pumpWidget(Testable(
+        RunningDurationText(Duration(minutes: 30))
+      ));
+      expect(find.text("00:30:00"), findsOneWidget);
+    });
+
+    testWidgets("Seconds only", (WidgetTester tester) async {
+      await tester.pumpWidget(Testable(
+        RunningDurationText(Duration(seconds: 7))
+      ));
+      expect(find.text("00:00:07"), findsOneWidget);
     });
   });
 }
