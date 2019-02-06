@@ -170,3 +170,27 @@ class RunningDurationText extends StatelessWidget {
     return "$hours:$minutes:$seconds";
   }
 }
+
+/// A formatted Text widget for a time of day. The display format depends on a
+/// combination of the current locale and the user's system time format setting.
+///
+/// Example:
+///   21:35, or
+///   9:35 PM
+class TimeText extends StatelessWidget {
+  final DateTime _time;
+
+  TimeText(this._time);
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(_format(context));
+  }
+
+  String _format(BuildContext context) {
+    return MaterialLocalizations.of(context).formatTimeOfDay(
+      TimeOfDay.fromDateTime(_time),
+      alwaysUse24HourFormat: MediaQuery.of(context).alwaysUse24HourFormat
+    );
+  }
+}

@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mobile/widgets/text.dart';
 import 'package:quiver/time.dart';
@@ -165,6 +166,36 @@ void main() {
         RunningDurationText(Duration(seconds: 7))
       ));
       expect(find.text("00:00:07"), findsOneWidget);
+    });
+  });
+
+  group("TimeText", () {
+    testWidgets("12 hour", (WidgetTester tester) async {
+      await tester.pumpWidget(MediaQuery(
+        data: MediaQueryData(alwaysUse24HourFormat: false),
+        child: Testable(TimeText(DateTime(2019, 1, 1, 15, 30))),
+      ));
+      expect(find.text("3:30 PM"), findsOneWidget);
+
+      await tester.pumpWidget(MediaQuery(
+        data: MediaQueryData(alwaysUse24HourFormat: false),
+        child: Testable(TimeText(DateTime(2019, 1, 1, 4, 30))),
+      ));
+      expect(find.text("4:30 AM"), findsOneWidget);
+    });
+
+    testWidgets("24 hour", (WidgetTester tester) async {
+      await tester.pumpWidget(MediaQuery(
+        data: MediaQueryData(alwaysUse24HourFormat: true),
+        child: Testable(TimeText(DateTime(2019, 1, 1, 15, 30))),
+      ));
+      expect(find.text("15:30"), findsOneWidget);
+
+      await tester.pumpWidget(MediaQuery(
+        data: MediaQueryData(alwaysUse24HourFormat: true),
+        child: Testable(TimeText(DateTime(2019, 1, 1, 4, 30))),
+      ));
+      expect(find.text("04:30"), findsOneWidget);
     });
   });
 }

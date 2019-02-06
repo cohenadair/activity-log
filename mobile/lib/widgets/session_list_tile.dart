@@ -3,7 +3,6 @@ import 'package:mobile/i18n/strings.dart';
 import 'package:mobile/model/session.dart';
 import 'package:mobile/res/dimen.dart';
 import 'package:mobile/utils/dialog_utils.dart';
-import 'package:mobile/utils/string_utils.dart';
 import 'package:mobile/widgets/text.dart';
 import 'package:mobile/widgets/widget.dart';
 
@@ -29,7 +28,7 @@ class SessionListTile extends StatelessWidget {
           onTap: () {
           },
           title: DateDurationText(_session.startDateTime, _session.duration),
-          subtitle: Text(_getSubtitleText(context)),
+          subtitle: _getSubtitle(context),
           trailing: IconButton(
             color: Colors.red,
             icon: Icon(Icons.delete),
@@ -49,12 +48,17 @@ class SessionListTile extends StatelessWidget {
     );
   }
 
-  String _getSubtitleText(BuildContext context) {
+  Widget _getSubtitle(BuildContext context) {
     if (_session.inProgress) {
-      return Strings.of(context).sessionListInProgress;
+      return Text(Strings.of(context).sessionListInProgress);
     }
 
-    return "${formatTime(context, _session.startDateTime)} - "
-           "${formatTime(context, _session.endDateTime)}";
+    return Row(
+      children: <Widget>[
+        TimeText(_session.startDateTime),
+        Text(" - "),
+        TimeText(_session.endDateTime),
+      ],
+    );
   }
 }
