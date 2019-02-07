@@ -20,7 +20,6 @@ class ActivityLog extends StatelessWidget {
         primarySwatch: primaryColor,
         buttonTheme: ButtonThemeData(
           textTheme: ButtonTextTheme.primary,
-          minWidth: 0,
         ),
         iconTheme: IconThemeData(
           color: primaryColor,

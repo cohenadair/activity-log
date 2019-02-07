@@ -118,14 +118,11 @@ class _EditActivityPageState extends State<EditActivityPage> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
           BoldText(Strings.of(context).editActivityPageRecentSessions),
-          SizedBox(
-            height: iconSizeDefault,
-            child: IconButton(
-              icon: Icon(Icons.add),
-              padding: insetsZero,
-              onPressed: () {
-              },
-            ),
+          IconButton(
+            icon: Icon(Icons.add),
+            padding: insetsZero,
+            onPressed: () {
+            },
           ),
         ],
       ),
