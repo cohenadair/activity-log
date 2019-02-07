@@ -69,6 +69,5 @@ bool isYesterday(DateTime today, DateTime yesterday) {
 /// Returns true of the  given DateTime objects are within one week of one
 /// another.
 bool isWithinOneWeek(DateTime a, DateTime b) {
-
   return a.difference(b).inMilliseconds.abs() <= aWeek.inMilliseconds;
 }

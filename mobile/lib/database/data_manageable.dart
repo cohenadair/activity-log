@@ -12,7 +12,8 @@ abstract class DataManageable {
   void startSession(Activity activity);
   void endSession(Activity activity);
   Future<List<Session>> getSessions(String activityId);
-  Future<List<Session>> getRecentSessions(String activityId);
+  Future<List<Session>> getRecentSessions(String activityId, int limit);
+  Future<int> getSessionCount(String activityId);
 
   /// Returns the current session for the given Activity ID, or `null` if
   /// the given Activity isn't running.

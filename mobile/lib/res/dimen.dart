@@ -30,10 +30,10 @@ const insetsVerticalSmall = EdgeInsets.only(
 );
 
 const insetsHorizontalDefault = EdgeInsets.only(
-    left: paddingDefault,
-    top: 0,
-    right: paddingDefault,
-    bottom: 0
+  left: paddingDefault,
+  top: 0,
+  right: paddingDefault,
+  bottom: 0
 );
 
 const insetsTopDefault = EdgeInsets.only(
@@ -62,4 +62,5 @@ const insetsLeftWidgetSmall = EdgeInsets.only(
   left: spacingWidgetSmall
 );
 
+const iconSizeDefault = 24.0;
 const iconSizeLarge = 32.0;

@@ -22,6 +22,7 @@ class EditActivityPage extends StatefulWidget {
 
 class _EditActivityPageState extends State<EditActivityPage> {
   final _formKey = GlobalKey<FormState>();
+  final _recentSessionLimit = 3;
 
   AppManager get _app => widget._app;
   Activity get _editingActivity => widget._editingActivity;
@@ -79,7 +80,8 @@ class _EditActivityPageState extends State<EditActivityPage> {
 
   FutureBuilder<List<Session>> _getRecentSessions() {
     return FutureBuilder<List<Session>>(
-      future: _app.dataManager.getRecentSessions(_editingActivity.id),
+      future: _app.dataManager
+          .getRecentSessions(_editingActivity.id, _recentSessionLimit),
       builder: (BuildContext context, AsyncSnapshot<List<Session>> snapshot) {
         if (snapshot.hasError || !snapshot.hasData || snapshot.data.isEmpty) {
           return MinContainer();
@@ -90,13 +92,9 @@ class _EditActivityPageState extends State<EditActivityPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Padding(
-                padding: insetsHorizontalDefault,
-                child: BoldText(
-                  Strings.of(context).editActivityPageRecentSessions
-                ),
-              ),
-            ]..addAll(snapshot.data.map((session) {
+              _getRecentSessionsTitle(),
+            ]
+            ..addAll(snapshot.data.map((session) {
               return SessionListTile(
                 session,
                 hasDivider: session != snapshot.data.last,
@@ -105,10 +103,59 @@ class _EditActivityPageState extends State<EditActivityPage> {
                       .then((value) => setState(() {}));
                 },
               );
-            })),
+            }))
+            ..add(_getViewAllButton())
           ),
         );
       },
+    );
+  }
+
+  Widget _getRecentSessionsTitle() {
+    return Padding(
+      padding: insetsLeftDefault,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          BoldText(Strings.of(context).editActivityPageRecentSessions),
+          SizedBox(
+            height: iconSizeDefault,
+            child: IconButton(
+              icon: Icon(Icons.add),
+              padding: insetsZero,
+              onPressed: () {
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _getViewAllButton() {
+    return FutureBuilder<int>(
+      future: _app.dataManager.getSessionCount(_editingActivity.id),
+      builder: (BuildContext context, AsyncSnapshot<int> snapshot) {
+        if (snapshot.hasError ||
+            !snapshot.hasData ||
+            snapshot.data <= _recentSessionLimit)
+        {
+          return MinContainer();
+        }
+
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: <Widget>[
+            FlatButton(
+              padding: insetsHorizontalDefault,
+              onPressed: () {},
+              child: Text(
+                Strings.of(context).editActivityPageMoreSessions.toUpperCase()
+              ),
+            ),
+          ],
+        );
+      }
     );
   }
 

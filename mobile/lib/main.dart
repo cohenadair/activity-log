@@ -12,12 +12,18 @@ class ActivityLog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Color primaryColor = Colors.green;
+
     return MaterialApp(
       onGenerateTitle: (context) => Strings.of(context).appName,
       theme: ThemeData(
-        primarySwatch: Colors.green,
+        primarySwatch: primaryColor,
         buttonTheme: ButtonThemeData(
           textTheme: ButtonTextTheme.primary,
+          minWidth: 0,
+        ),
+        iconTheme: IconThemeData(
+          color: primaryColor,
         ),
         textTheme: TextTheme(
           title: styleTitle,

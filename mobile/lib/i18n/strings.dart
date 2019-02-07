@@ -42,6 +42,7 @@ class Strings {
   String get editActivityPageNameExists => _getString("editActivityPage_nameExists");
   String get editActivityPageMissingName => _getString("editActivityPage_missingName");
   String get editActivityPageRecentSessions => _getString("editActivityPage_recentSessions");
+  String get editActivityPageMoreSessions => _getString("editActivityPage_moreSessions");
 
   String get sessionListDeleteMessage => _getString("sessionList_deleteMessage");
   String get sessionListInProgress => _getString("sessionList_inProgress");

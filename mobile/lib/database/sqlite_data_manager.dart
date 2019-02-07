@@ -123,8 +123,16 @@ class SQLiteDataManager implements DataManageable {
   }
 
   @override
-  Future<List<Session>> getRecentSessions(String activityId) async {
-    return getLimitedSessions(activityId, 3);
+  Future<List<Session>> getRecentSessions(String activityId, int limit) async {
+    return getLimitedSessions(activityId, limit);
+  }
+
+  @override
+  Future<int> getSessionCount(String activityId) async {
+    String query = """
+      SELECT COUNT(*) FROM session WHERE activity_id = ?
+    """;
+    return Sqflite.firstIntValue(await _database.rawQuery(query, [activityId]));
   }
 
   Future<List<Session>> getLimitedSessions(String activityId, int limit) async {
