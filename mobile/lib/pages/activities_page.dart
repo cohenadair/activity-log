@@ -3,11 +3,8 @@ import 'package:mobile/app_manager.dart';
 import 'package:mobile/i18n/strings.dart';
 import 'package:mobile/model/activity.dart';
 import 'package:mobile/pages/edit_activity_page.dart';
-import 'package:mobile/res/dimen.dart';
-import 'package:mobile/utils/page_utils.dart';
+import 'package:mobile/pages/list_page.dart';
 import 'package:mobile/widgets/activity_list_tile.dart';
-import 'package:mobile/widgets/loading.dart';
-import 'package:mobile/widgets/page.dart';
 
 class ActivitiesPage extends StatefulWidget {
   final AppManager _app;
@@ -23,56 +20,16 @@ class _ActivitiesPageState extends State<ActivitiesPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Page(
-      padding: EdgeInsets.all(0),
-      appBarStyle: PageAppBarStyle(
-        title: Strings.of(context).activitiesPageTitle,
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.add),
-            onPressed: _onPressAddButton,
-          ),
-        ],
-      ),
-      child: StreamBuilder<List<Activity>>(
-        stream: _app.dataManager.activitiesUpdated,
-        builder: (BuildContext context,
-            AsyncSnapshot<List<Activity>> snapshot)
-        {
-          if (!snapshot.hasData) {
-            return Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Loading(
-                  padding: insetsTopDefault,
-                ),
-              ],
-            );
-          }
-
-          return ListView.separated(
-            itemCount: snapshot.data.length,
-            separatorBuilder: (BuildContext context, int i) =>
-                Divider(height: 1),
-            itemBuilder: (BuildContext context, int i) {
-              return ActivityListTile(_app, snapshot.data[i],
-                  _openEditActivityPage);
-            },
-          );
-        },
-      ),
-    );
-  }
-
-  void _onPressAddButton() {
-    _openEditActivityPage();
-  }
-
-  void _openEditActivityPage([Activity activity]) {
-    push(
-      context,
-      EditActivityPage(_app, activity),
-      fullscreenDialog: activity == null,
+    return ListPage<Activity>(
+      app: _app,
+      title: Strings.of(context).activitiesPageTitle,
+      onGetEditPageCallback: (activity) {
+        return EditActivityPage(_app, activity);
+      },
+      onBuildTileCallback: (activity, onTapTile) {
+        return ActivityListTile(_app, activity, onTapTile);
+      },
+      stream: _app.dataManager.activitiesUpdated,
     );
   }
 }
