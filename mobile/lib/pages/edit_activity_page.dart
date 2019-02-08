@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:mobile/app_manager.dart';
 import 'package:mobile/i18n/strings.dart';
@@ -29,14 +31,27 @@ class _EditActivityPageState extends State<EditActivityPage> {
   bool get _isEditing => widget._editingActivity != null;
 
   TextEditingController _nameController;
+  StreamSubscription<List<Session>> _sessionsUpdatedSubscription;
   String _nameValidatorValue;
 
   @override
   void initState() {
+    _sessionsUpdatedSubscription = _app.dataManager.sessionsUpdated
+        .listen((List<Session> sessions) {
+          setState(() {});
+        });
+
     _nameController = TextEditingController(
       text: _isEditing ? _editingActivity.name : null
     );
+
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _sessionsUpdatedSubscription.cancel();
+    super.dispose();
   }
 
   @override
@@ -99,8 +114,7 @@ class _EditActivityPageState extends State<EditActivityPage> {
                 session,
                 hasDivider: session != snapshot.data.last,
                 confirmedDeleteCallback: () {
-                  _app.dataManager.removeSession(session.id)
-                      .then((value) => setState(() {}));
+                  _app.dataManager.removeSession(session);
                 },
               );
             }))

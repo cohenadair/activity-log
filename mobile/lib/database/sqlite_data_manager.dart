@@ -9,9 +9,11 @@ import 'package:sqflite/sqflite.dart';
 class SQLiteDataManager implements DataManageable {
   Database _database;
   final StreamController<List<Activity>> _activitiesUpdated;
+  final StreamController<List<Session>> _sessionsUpdated;
 
   SQLiteDataManager()
-      : _activitiesUpdated = StreamController.broadcast()
+      : _activitiesUpdated = StreamController.broadcast(),
+        _sessionsUpdated = StreamController.broadcast()
   {
     SQLiteOpenHelper.open().then((Database db) {
       // Initialize the database.
@@ -30,6 +32,9 @@ class SQLiteDataManager implements DataManageable {
 
   @override
   Stream<List<Activity>> get activitiesUpdated => _activitiesUpdated.stream;
+
+  @override
+  Stream<List<Session>> get sessionsUpdated => _sessionsUpdated.stream;
 
   Future<List<Activity>> _getActivities() async {
     String query = "SELECT * FROM activity ORDER BY name";
@@ -118,6 +123,38 @@ class SQLiteDataManager implements DataManageable {
   }
 
   @override
+  void addSession(Session session) {
+
+  }
+
+  @override
+  void updateSession(Session session) {
+
+  }
+
+  @override
+  void removeSession(Session session) async {
+    Batch batch = _database.batch();
+
+    // Disassociate the session from activity if it is in progress.
+    batch.rawUpdate(
+      """
+        UPDATE activity SET current_session_id = NULL 
+          WHERE current_session_id = ?
+      """,
+      [session.id]
+    );
+
+    // Delete session.
+    batch.rawDelete("DELETE FROM session WHERE id = ?", [session.id]);
+
+    await batch.commit();
+
+    _notifySessionsUpdated(session.activityId);
+    _notifyActivitiesUpdated();
+  }
+
+  @override
   Future<List<Session>> getSessions(String activityId) async {
     return getLimitedSessions(activityId, null);
   }
@@ -171,26 +208,6 @@ class SQLiteDataManager implements DataManageable {
   }
 
   @override
-  Future<void> removeSession(String sessionId) async {
-    Batch batch = _database.batch();
-
-    // Disassociate the session from activity if it is in progress.
-    batch.rawUpdate(
-      """
-        UPDATE activity SET current_session_id = NULL 
-          WHERE current_session_id = ?
-      """,
-      [sessionId]
-    );
-
-    // Delete session.
-    batch.rawDelete("DELETE FROM session WHERE id = ?", [sessionId]);
-
-    await batch.commit();
-    _notifyActivitiesUpdated();
-  }
-
-  @override
   Future<bool> activityNameExists(String name) async {
     String query = """
       SELECT COUNT(*) FROM activity WHERE name = ? COLLATE NOCASE
@@ -201,6 +218,12 @@ class SQLiteDataManager implements DataManageable {
   void _notifyActivitiesUpdated() {
     _getActivities().then((List<Activity> activities) {
       _activitiesUpdated.add(activities);
+    });
+  }
+
+  void _notifySessionsUpdated(String activityId) {
+    getSessions(activityId).then((List<Session> sessions) {
+      _sessionsUpdated.add(sessions);
     });
   }
 }

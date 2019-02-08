@@ -9,6 +9,7 @@ class Session extends Model {
   final int _startTimestamp;
   final int _endTimestamp;
 
+  String get activityId => _activityId;
   int get startTimestamp => _startTimestamp;
   int get endTimestamp => _endTimestamp;
 
