@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile/i18n/english_strings.dart';
@@ -43,6 +45,9 @@ class Strings {
   String get editActivityPageMissingName => _getString("editActivityPage_missingName");
   String get editActivityPageRecentSessions => _getString("editActivityPage_recentSessions");
   String get editActivityPageMoreSessions => _getString("editActivityPage_moreSessions");
+
+  String get editSessionPageNewTitle => _getString("editSessionPage_newTitle");
+  String get editSessionPageEditTitle => _getString("editSessionPage_editTitle");
 
   String get sessionListDeleteMessage => _getString("sessionList_deleteMessage");
   String get sessionListInProgress => _getString("sessionList_inProgress");

@@ -9,32 +9,37 @@ import 'package:sqflite/sqflite.dart';
 class SQLiteDataManager implements DataManageable {
   Database _database;
   final StreamController<List<Activity>> _activitiesUpdated;
-  final StreamController<List<Session>> _sessionsUpdated;
+  final Map<String, StreamController<List<Session>>> _sessionsUpdatedMap;
 
   SQLiteDataManager()
       : _activitiesUpdated = StreamController.broadcast(),
-        _sessionsUpdated = StreamController.broadcast()
-  {
-    SQLiteOpenHelper.open().then((Database db) {
-      // Initialize the database.
-      _database = db;
+        _sessionsUpdatedMap = Map();
 
-      // Database is available, notify listeners.
-      _notifyActivitiesUpdated();
-
-      // When a new listener is added, trigger an event so the listener receives
-      // the activity list immediately.
-      _activitiesUpdated.onListen = () {
-        _notifyActivitiesUpdated();
-      };
-    });
+  @override
+  Future<bool> initialize() async {
+    _database = await SQLiteOpenHelper.open();
+    return true;
   }
 
   @override
-  Stream<List<Activity>> get activitiesUpdated => _activitiesUpdated.stream;
+  void getActivitiesUpdateStream(StreamHandler<List<Activity>> notifyNow) {
+    if (notifyNow(_activitiesUpdated.stream)) {
+      _notifyActivitiesUpdated();
+    }
+  }
 
   @override
-  Stream<List<Session>> get sessionsUpdated => _sessionsUpdated.stream;
+  void getSessionsUpdatedStream(String activityId,
+      StreamHandler<List<Session>> notifyNow)
+  {
+    if (!_sessionsUpdatedMap.containsKey(activityId)) {
+      _sessionsUpdatedMap[activityId] = StreamController.broadcast();
+    }
+
+    if (notifyNow(_sessionsUpdatedMap[activityId].stream)) {
+      _notifySessionsUpdated(activityId);
+    }
+  }
 
   Future<List<Activity>> _getActivities() async {
     String query = "SELECT * FROM activity ORDER BY name";
@@ -217,13 +222,19 @@ class SQLiteDataManager implements DataManageable {
 
   void _notifyActivitiesUpdated() {
     _getActivities().then((List<Activity> activities) {
-      _activitiesUpdated.add(activities);
+      if (_activitiesUpdated.hasListener) {
+        _activitiesUpdated.add(activities);
+      }
     });
   }
 
   void _notifySessionsUpdated(String activityId) {
     getSessions(activityId).then((List<Session> sessions) {
-      _sessionsUpdated.add(sessions);
+      if (_sessionsUpdatedMap.containsKey(activityId) &&
+          _sessionsUpdatedMap[activityId].hasListener)
+      {
+        _sessionsUpdatedMap[activityId].add(sessions);
+      }
     });
   }
 }

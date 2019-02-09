@@ -6,7 +6,10 @@ import 'package:mobile/i18n/strings.dart';
 import 'package:mobile/model/activity.dart';
 import 'package:mobile/model/session.dart';
 import 'package:mobile/pages/edit_page.dart';
+import 'package:mobile/pages/edit_session_page.dart';
+import 'package:mobile/pages/sessions_page.dart';
 import 'package:mobile/res/dimen.dart';
+import 'package:mobile/utils/page_utils.dart';
 import 'package:mobile/utils/string_utils.dart';
 import 'package:mobile/widgets/session_list_tile.dart';
 import 'package:mobile/widgets/text.dart';
@@ -28,7 +31,7 @@ class _EditActivityPageState extends State<EditActivityPage> {
 
   AppManager get _app => widget._app;
   Activity get _editingActivity => widget._editingActivity;
-  bool get _isEditing => widget._editingActivity != null;
+  bool get _isEditing => _editingActivity != null;
 
   TextEditingController _nameController;
   StreamSubscription<List<Session>> _sessionsUpdatedSubscription;
@@ -36,10 +39,14 @@ class _EditActivityPageState extends State<EditActivityPage> {
 
   @override
   void initState() {
-    _sessionsUpdatedSubscription = _app.dataManager.sessionsUpdated
-        .listen((List<Session> sessions) {
+    if (_isEditing) {
+      _app.dataManager.getSessionsUpdatedStream(_editingActivity.id, (stream) {
+        _sessionsUpdatedSubscription = stream.listen((List<Session> sessions) {
           setState(() {});
         });
+        return false;
+      });
+    }
 
     _nameController = TextEditingController(
       text: _isEditing ? _editingActivity.name : null
@@ -50,7 +57,9 @@ class _EditActivityPageState extends State<EditActivityPage> {
 
   @override
   void dispose() {
-    _sessionsUpdatedSubscription.cancel();
+    if (_sessionsUpdatedSubscription != null) {
+      _sessionsUpdatedSubscription.cancel();
+    }
     super.dispose();
   }
 
@@ -98,30 +107,33 @@ class _EditActivityPageState extends State<EditActivityPage> {
       future: _app.dataManager
           .getRecentSessions(_editingActivity.id, _recentSessionLimit),
       builder: (BuildContext context, AsyncSnapshot<List<Session>> snapshot) {
-        if (snapshot.hasError || !snapshot.hasData || snapshot.data.isEmpty) {
+        if (snapshot.hasError || !snapshot.hasData) {
           return MinContainer();
         }
 
-        return Container(
-          padding: insetsTopDefault,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _getRecentSessionsTitle(),
-            ]
-            ..addAll(snapshot.data.map((session) {
-              return SessionListTile(
-                session,
-                hasDivider: session != snapshot.data.last,
-                confirmedDeleteCallback: () {
-                  _app.dataManager.removeSession(session);
-                },
-              );
-            }))
-            ..add(_getViewAllButton())
-          ),
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _getRecentSessionsTitle(),
+          ]
+          ..addAll(snapshot.data.isNotEmpty ? snapshot.data.map((session) {
+            return SessionListTile(
+              app: _app,
+              session: session,
+              hasDivider: session != snapshot.data.last,
+              onTap: (Session session) {
+                push(context, EditSessionPage(
+                  app: _app,
+                  activity: _editingActivity,
+                  editingSession: session,
+                ));
+              },
+            );
+          }) : [MinContainer()])
+          ..add(snapshot.data.isNotEmpty
+              ? _getViewAllButton() : MinContainer())
         );
-      },
+      }
     );
   }
 
@@ -136,6 +148,14 @@ class _EditActivityPageState extends State<EditActivityPage> {
             icon: Icon(Icons.add),
             padding: insetsZero,
             onPressed: () {
+              push(
+                context,
+                EditSessionPage(
+                  app: _app,
+                  activity: _editingActivity
+                ),
+                fullscreenDialog: true
+              );
             },
           ),
         ],
@@ -159,7 +179,9 @@ class _EditActivityPageState extends State<EditActivityPage> {
           children: <Widget>[
             FlatButton(
               padding: insetsHorizontalDefault,
-              onPressed: () {},
+              onPressed: () {
+                push(context, SessionsPage(_app, _editingActivity));
+              },
               child: Text(
                 Strings.of(context).editActivityPageMoreSessions.toUpperCase()
               ),

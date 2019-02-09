@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/app_manager.dart';
 import 'package:mobile/i18n/strings.dart';
 import 'package:mobile/model/session.dart';
 import 'package:mobile/res/dimen.dart';
@@ -6,18 +7,25 @@ import 'package:mobile/utils/dialog_utils.dart';
 import 'package:mobile/widgets/text.dart';
 import 'package:mobile/widgets/widget.dart';
 
+typedef OnTapSessionListTile = Function(Session);
+
 class SessionListTile extends StatelessWidget {
+  final AppManager _app;
   final Session _session;
   final bool _hasDivider;
-  final VoidCallback _confirmedDeleteCallback;
+  final OnTapSessionListTile _onTap;
 
-  SessionListTile(
-    this._session,
-  {
-    bool hasDivider,
-    VoidCallback confirmedDeleteCallback,
-  }) : _hasDivider = hasDivider,
-       _confirmedDeleteCallback = confirmedDeleteCallback;
+  SessionListTile({
+    @required AppManager app,
+    @required Session session,
+    bool hasDivider = false,
+    OnTapSessionListTile onTap,
+  }) : assert(app != null),
+       assert(session != null),
+       _app = app,
+       _session = session,
+       _hasDivider = hasDivider,
+       _onTap = onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -26,6 +34,9 @@ class SessionListTile extends StatelessWidget {
         ListTile(
           contentPadding: insetsLeftDefault,
           onTap: () {
+            if (_onTap != null) {
+              _onTap(_session);
+            }
           },
           title: DateDurationText(_session.startDateTime, _session.duration),
           subtitle: _getSubtitle(context),
@@ -37,7 +48,7 @@ class SessionListTile extends StatelessWidget {
                 context: context,
                 description: Strings.of(context).sessionListDeleteMessage,
                 onDelete: () {
-                  _confirmedDeleteCallback();
+                  _app.dataManager.removeSession(_session);
                 }
               );
             }

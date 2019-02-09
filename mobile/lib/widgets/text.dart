@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:mobile/i18n/strings.dart';
-import 'package:mobile/model/session.dart';
 import 'package:mobile/res/style.dart';
 import 'package:mobile/utils/date_time_utils.dart';
 import 'package:mobile/utils/string_utils.dart';

@@ -1,19 +1,28 @@
+import 'dart:async';
+
 import 'package:mobile/model/activity.dart';
 import 'package:mobile/model/session.dart';
 
-abstract class DataManageable {
-  /// Returns a stream that is notified on Activity data updates.
-  ///
-  /// Subscribe to this stream to be notified when activities are added,
-  /// removed, or modified.
-  Stream<List<Activity>> get activitiesUpdated;
+/// Returns true if the stream should be notified immediately.
+typedef StreamHandler<T> = bool Function(Stream<T>);
 
-  /// Returns a stream that is notified on Session data updates. All Session
-  /// objects returned are guaranteed to belong to the same Activity.
+abstract class DataManageable {
+  Future<bool> initialize();
+
+  /// Call this method to be notified when activities are added,
+  /// removed, or modified.
   ///
-  /// Subscribe to this stream to be notified when sessions are added, removed,
-  /// or modified from any Activity.
-  Stream<List<Session>> get sessionsUpdated;
+  /// If `notifyNow` returns true, the stream will be notified immediately,
+  /// for example, when using a `StreamBuilder` widget.
+  void getActivitiesUpdateStream(StreamHandler<List<Activity>> notifyNow);
+
+  /// Call this method to be notified when sessions are added, removed,
+  /// or modified from the given Activity ID.
+  ///
+  /// If `notifyNow` returns true, the stream will be notified immediately,
+  /// for example, when using a `StreamBuilder` widget.
+  void getSessionsUpdatedStream(String activityId,
+      StreamHandler<List<Session>> notifyNow);
 
   void addActivity(Activity activity);
   void updateActivity(Activity activity);

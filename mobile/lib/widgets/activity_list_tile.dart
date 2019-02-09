@@ -7,12 +7,12 @@ import 'package:mobile/widgets/future_timer.dart';
 import 'package:mobile/widgets/text.dart';
 import 'package:mobile/widgets/widget.dart';
 
-typedef OnTapActivityListItemView = Function(Activity);
+typedef OnTapActivityListTile = Function(Activity);
 
 class ActivityListTile extends StatefulWidget {
   final AppManager _app;
   final Activity _activity;
-  final OnTapActivityListItemView _onTap;
+  final OnTapActivityListTile _onTap;
 
   ActivityListTile(this._app, this._activity, this._onTap);
 
@@ -33,7 +33,7 @@ class _ActivityListTileState extends State<ActivityListTile> {
 
   AppManager get _app => widget._app;
   Activity get _activity => widget._activity;
-  OnTapActivityListItemView get _onTap => widget._onTap;
+  OnTapActivityListTile get _onTap => widget._onTap;
 
   bool get _isWaiting => _waitingStatus != null;
 

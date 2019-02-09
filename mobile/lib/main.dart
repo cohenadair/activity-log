@@ -4,6 +4,7 @@ import 'package:mobile/app_manager.dart';
 import 'package:mobile/i18n/strings.dart';
 import 'package:mobile/pages/activities_page.dart';
 import 'package:mobile/res/style.dart';
+import 'package:mobile/widgets/widget.dart';
 
 void main() => runApp(ActivityLog());
 
@@ -29,7 +30,15 @@ class ActivityLog extends StatelessWidget {
         ),
         errorColor: Colors.red,
       ),
-      home: ActivitiesPage(_app),
+      home: FutureBuilder<bool>(
+        future: _app.dataManager.initialize(),
+        builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
+          if (snapshot.hasError || !snapshot.hasData) {
+            return MinContainer();
+          }
+          return ActivitiesPage(_app);
+        },
+      ),
       debugShowCheckedModeBanner: false,
       localizationsDelegates: [
         StringsDelegate(),

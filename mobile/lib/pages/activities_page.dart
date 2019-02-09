@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:mobile/app_manager.dart';
 import 'package:mobile/i18n/strings.dart';
@@ -17,7 +19,17 @@ class ActivitiesPage extends StatefulWidget {
 
 class _ActivitiesPageState extends State<ActivitiesPage> {
   AppManager get _app => widget._app;
+  Stream<List<Activity>> _stream;
 
+  @override
+  void initState() {
+    _app.dataManager.getActivitiesUpdateStream((stream) {
+      _stream = stream;
+      return true;
+    });
+
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     return ListPage<Activity>(
@@ -29,7 +41,7 @@ class _ActivitiesPageState extends State<ActivitiesPage> {
       onBuildTileCallback: (activity, onTapTile) {
         return ActivityListTile(_app, activity, onTapTile);
       },
-      stream: _app.dataManager.activitiesUpdated,
+      stream: _stream,
     );
   }
 }

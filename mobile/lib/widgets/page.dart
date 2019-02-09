@@ -40,7 +40,12 @@ class Page extends StatelessWidget {
       ),
       body: Container(
         padding: _padding == null ? insetsRowDefault : _padding,
-        child: SafeArea(child: _child),
+        child: SafeArea(
+          // Do not include bottom -- scrollable views are allowed to scroll
+          // in the safe area.
+          bottom: false,
+          child: _child
+        ),
       ),
     );
   }
