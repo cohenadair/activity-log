@@ -5,7 +5,7 @@ import 'package:mobile/app_manager.dart';
 import 'package:mobile/model/activity.dart';
 import 'package:mobile/model/session.dart';
 import 'package:mobile/pages/edit_session_page.dart';
-import 'package:mobile/pages/list_page.dart';
+import 'package:mobile/widgets/list_page.dart';
 import 'package:mobile/widgets/session_list_tile.dart';
 
 class SessionsPage extends StatefulWidget {

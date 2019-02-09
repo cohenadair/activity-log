@@ -5,7 +5,7 @@ import 'package:mobile/app_manager.dart';
 import 'package:mobile/i18n/strings.dart';
 import 'package:mobile/model/activity.dart';
 import 'package:mobile/model/session.dart';
-import 'package:mobile/pages/edit_page.dart';
+import 'package:mobile/widgets/edit_page.dart';
 import 'package:mobile/pages/edit_session_page.dart';
 import 'package:mobile/pages/sessions_page.dart';
 import 'package:mobile/res/dimen.dart';

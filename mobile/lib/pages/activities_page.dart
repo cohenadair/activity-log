@@ -5,7 +5,7 @@ import 'package:mobile/app_manager.dart';
 import 'package:mobile/i18n/strings.dart';
 import 'package:mobile/model/activity.dart';
 import 'package:mobile/pages/edit_activity_page.dart';
-import 'package:mobile/pages/list_page.dart';
+import 'package:mobile/widgets/list_page.dart';
 import 'package:mobile/widgets/activity_list_tile.dart';
 
 class ActivitiesPage extends StatefulWidget {
