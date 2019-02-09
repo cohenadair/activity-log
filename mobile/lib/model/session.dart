@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:mobile/model/model.dart';
 
 class Session extends Model {
@@ -40,6 +41,9 @@ class Session extends Model {
 
   DateTime get endDateTime =>
       DateTime.fromMillisecondsSinceEpoch(endTimestamp);
+
+  TimeOfDay get startTimeOfDay => TimeOfDay.fromDateTime(startDateTime);
+  TimeOfDay get endTimeOfDay => TimeOfDay.fromDateTime(endDateTime);
 
   bool get inProgress {
     return _endTimestamp == null;

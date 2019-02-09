@@ -6,6 +6,9 @@ import 'package:mobile/utils/date_time_utils.dart';
 import 'package:mobile/utils/string_utils.dart';
 import 'package:quiver/time.dart';
 
+const monthDayFormat = "MMM. d";
+const monthDayYearFormat = "MMM. d, yyyy";
+
 class ErrorText extends StatelessWidget {
   final String _text;
 
@@ -98,7 +101,6 @@ class DateDurationText extends StatelessWidget {
     final DateTime now = _clock.now();
 
     // Format the date.
-    final String monthFormat = "MMM.";
     String formattedDate = "";
 
     if (isSameDate(_startDateTime, now)) {
@@ -112,11 +114,10 @@ class DateDurationText extends StatelessWidget {
       formattedDate = DateFormat("EEEE").format(_startDateTime);
     } else if (isSameYear(_startDateTime, now)) {
       // Same year.
-      formattedDate = DateFormat("$monthFormat d").format(_startDateTime);
+      formattedDate = DateFormat(monthDayFormat).format(_startDateTime);
     } else {
       // Different year.
-      formattedDate =
-          DateFormat("$monthFormat d, yyyy").format(_startDateTime);
+      formattedDate = DateFormat(monthDayYearFormat).format(_startDateTime);
     }
 
     // Format the duration.
@@ -177,7 +178,7 @@ class RunningDurationText extends StatelessWidget {
 ///   21:35, or
 ///   9:35 PM
 class TimeText extends StatelessWidget {
-  final DateTime _time;
+  final TimeOfDay _time;
 
   TimeText(this._time);
 
@@ -188,8 +189,23 @@ class TimeText extends StatelessWidget {
 
   String _format(BuildContext context) {
     return MaterialLocalizations.of(context).formatTimeOfDay(
-      TimeOfDay.fromDateTime(_time),
+      _time,
       alwaysUse24HourFormat: MediaQuery.of(context).alwaysUse24HourFormat
     );
+  }
+}
+
+/// A formatted Text widget for a date.
+///
+/// Example:
+///   Dec. 8, 2018
+class DateText extends StatelessWidget {
+  final DateTime _date;
+
+  DateText(this._date);
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(DateFormat(monthDayYearFormat).format(_date));
   }
 }

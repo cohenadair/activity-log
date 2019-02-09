@@ -66,9 +66,9 @@ class SessionListTile extends StatelessWidget {
 
     return Row(
       children: <Widget>[
-        TimeText(_session.startDateTime),
+        TimeText(_session.startTimeOfDay),
         Text(" - "),
-        TimeText(_session.endDateTime),
+        TimeText(_session.endTimeOfDay),
       ],
     );
   }

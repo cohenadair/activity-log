@@ -54,7 +54,7 @@ class EditPage extends StatelessWidget {
                 _form,
                 _isEditingCallback() ? Container(
                   padding: EdgeInsets.only(
-                    top: spacingWidget,
+                    top: paddingDefault,
                     left: _padding.left == 0 ? paddingDefault : 0,
                     right: _padding.right == 0 ? paddingDefault : 0,
                   ),

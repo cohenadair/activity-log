@@ -24,6 +24,10 @@ Map<String, Map<String, String>> englishStrings = {
 
     "editSessionPage_newTitle" : "New %s Session",
     "editSessionPage_editTitle" : "Edit %s Session",
+    "editSessionPage_startDate" : "Start date",
+    "editSessionPage_startTime" : "Start time",
+    "editSessionPage_endDate" : "End date",
+    "editSessionPage_endTime" : "End time",
 
     "sessionList_deleteMessage" : "Are you sure you want to delete this session? This action cannot be undone.",
     "sessionList_inProgress" : "In progress",

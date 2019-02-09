@@ -3,10 +3,10 @@ import 'package:mobile/app_manager.dart';
 import 'package:mobile/i18n/strings.dart';
 import 'package:mobile/model/activity.dart';
 import 'package:mobile/model/session.dart';
+import 'package:mobile/widgets/date_time_picker.dart';
 import 'package:mobile/widgets/edit_page.dart';
 import 'package:mobile/res/dimen.dart';
 import 'package:mobile/utils/string_utils.dart';
-import 'package:mobile/widgets/widget.dart';
 
 class EditSessionPage extends StatefulWidget {
   final AppManager _app;
@@ -35,6 +35,19 @@ class _EditSessionPageState extends State<EditSessionPage> {
   Session get _editingSession => widget._editingSession;
   bool get _isEditing => _editingSession != null;
 
+  DateTime _startDateTime = DateTime.now();
+  DateTime _endDateTime = DateTime.now();
+
+  @override
+  void initState() {
+    if (_isEditing) {
+      _startDateTime = _editingSession.startDateTime;
+      _endDateTime = _editingSession.endDateTime;
+    }
+
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return EditPage(
@@ -43,7 +56,7 @@ class _EditSessionPageState extends State<EditSessionPage> {
               [_activity.name])
           : format(Strings.of(context).editSessionPageNewTitle,
               [_activity.name]),
-      padding: insetsZero,
+      padding: insetsRowDefault,
       onSave: () => {},
       onDelete: () => _app.dataManager.removeSession(_editingSession),
       deleteDescription: Strings.of(context).sessionListDeleteMessage,
@@ -52,7 +65,18 @@ class _EditSessionPageState extends State<EditSessionPage> {
         key: _formKey,
         child: Column(
           children: <Widget>[
-            MinContainer(),
+            DateTimePicker(
+              padding: insetsBottomDefault,
+              dateLabel: Strings.of(context).editSessionPageStartDate,
+              timeLabel: Strings.of(context).editSessionPageStartTime,
+              dateTime: _startDateTime,
+            ),
+            DateTimePicker(
+              padding: insetsBottomDefault,
+              dateLabel: Strings.of(context).editSessionPageEndDate,
+              timeLabel: Strings.of(context).editSessionPageEndTime,
+              dateTime: _endDateTime,
+            ),
           ],
         ),
       ),

@@ -48,6 +48,10 @@ class Strings {
 
   String get editSessionPageNewTitle => _getString("editSessionPage_newTitle");
   String get editSessionPageEditTitle => _getString("editSessionPage_editTitle");
+  String get editSessionPageStartDate => _getString("editSessionPage_startDate");
+  String get editSessionPageStartTime => _getString("editSessionPage_startTime");
+  String get editSessionPageEndDate => _getString("editSessionPage_endDate");
+  String get editSessionPageEndTime => _getString("editSessionPage_endTime");
 
   String get sessionListDeleteMessage => _getString("sessionList_deleteMessage");
   String get sessionListInProgress => _getString("sessionList_inProgress");

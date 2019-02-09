@@ -3,9 +3,6 @@ import 'package:flutter/material.dart';
 const paddingDefault = 16.0;
 const paddingSmall = 8.0;
 
-const spacingWidget = paddingDefault;
-const spacingWidgetSmall = paddingSmall;
-
 const insetsZero = EdgeInsets.all(0);
 
 const insetsRowDefault = EdgeInsets.only(
@@ -57,9 +54,9 @@ const insetsLeftDefault = EdgeInsets.only(
   bottom: 0
 );
 
-const insetsRightWidget = EdgeInsets.only(right: spacingWidget);
+const insetsRightWidget = EdgeInsets.only(right: paddingDefault);
 const insetsLeftWidgetSmall = EdgeInsets.only(
-  left: spacingWidgetSmall
+  left: paddingSmall
 );
 
 const iconSizeDefault = 24.0;
