@@ -52,7 +52,6 @@ class _ListPageState<T> extends State<ListPage> {
   @override
   Widget build(BuildContext context) {
     return Page(
-      padding: insetsZero,
       appBarStyle: PageAppBarStyle(
         title: _title,
         actions: <Widget>[

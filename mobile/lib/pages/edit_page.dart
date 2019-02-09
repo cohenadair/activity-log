@@ -35,7 +35,6 @@ class EditPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Page(
-      padding: _padding,
       appBarStyle: PageAppBarStyle(
         title: _title,
         actions: <Widget>[
@@ -45,43 +44,54 @@ class EditPage extends StatelessWidget {
           ),
         ],
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          _form,
-          _isEditingCallback() ? Container(
-            padding: EdgeInsets.only(
-              top: paddingDefault,
-              left: _padding.left == 0 ? paddingDefault : 0,
-              right: _padding.right == 0 ? paddingDefault : 0,
+      child: SingleChildScrollView(
+        child: SafeArea(
+          child: Container(
+            padding: _padding,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                _form,
+                _isEditingCallback() ? Container(
+                  padding: EdgeInsets.only(
+                    top: spacingWidget,
+                    left: _padding.left == 0 ? paddingDefault : 0,
+                    right: _padding.right == 0 ? paddingDefault : 0,
+                  ),
+                  child: _getDeleteButton(context),
+                ) : MinContainer(),
+              ],
             ),
-            child: Button(
-              text: Strings.of(context).delete,
-              icon: Icon(
-                Icons.delete,
-                color: Colors.white,
-              ),
-              color: Colors.red,
-              onPressed: () {
-                if (_deleteDescription == null) {
-                  _onPressedDeleteButton();
-                } else {
-                  // If a delete confirmation description is provided,
-                  // show a confirmation dialog.
-                  showDeleteDialog(
-                    context: context,
-                    description: _deleteDescription,
-                    onDelete: () {
-                      _onPressedDeleteButton();
-                      Navigator.pop(context);
-                    }
-                  );
-                }
-              },
-            ),
-          ) : MinContainer(),
-        ],
+          ),
+        ),
       ),
+    );
+  }
+
+  Widget _getDeleteButton(BuildContext context) {
+    return Button(
+      text: Strings.of(context).delete,
+      icon: Icon(
+        Icons.delete,
+        color: Colors.white,
+      ),
+      color: Colors.red,
+      onPressed: () {
+        if (_deleteDescription == null) {
+          _onPressedDeleteButton();
+        } else {
+          // If a delete confirmation description is provided,
+          // show a confirmation dialog.
+          showDeleteDialog(
+            context: context,
+            description: _deleteDescription,
+            onDelete: () {
+              _onPressedDeleteButton();
+              Navigator.pop(context);
+            }
+          );
+        }
+      },
     );
   }
 }
