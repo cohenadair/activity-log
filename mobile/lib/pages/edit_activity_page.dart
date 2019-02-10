@@ -70,7 +70,7 @@ class _EditActivityPageState extends State<EditActivityPage> {
           ? Strings.of(context).editActivityPageEditTitle
           : Strings.of(context).editActivityPageNewTitle,
       padding: insetsVerticalSmall,
-      onSave: () => _onPressedSaveButton(context),
+      onSave: () => _onPressedSaveButton(),
       onDelete: () => _app.dataManager.removeActivity(_editingActivity.id),
       deleteDescription: _isEditing ? format(
           Strings.of(context).editActivityPageDeleteMessage,
@@ -192,11 +192,11 @@ class _EditActivityPageState extends State<EditActivityPage> {
     );
   }
 
-  void _onPressedSaveButton(BuildContext context) {
+  void _onPressedSaveButton() {
     // Remove any trailing or leading spaces entered by the user.
     String nameCandidate = _nameController.text.trim();
 
-    _validateNameField(context, nameCandidate, (String validationText) {
+    _validateNameField(nameCandidate, (String validationText) {
       _nameValidatorValue = validationText;
 
       if (!_formKey.currentState.validate()) {
@@ -215,9 +215,7 @@ class _EditActivityPageState extends State<EditActivityPage> {
     });
   }
 
-  void _validateNameField(BuildContext context, String name,
-      Function(String validationString) onFinish)
-  {
+  void _validateNameField(String name, Function(String) onFinish) {
     // The name hasn't changed, and therefore is still valid.
     if (_isEditing &&
         isEqualTrimmedLowercase(_editingActivity.name, name))

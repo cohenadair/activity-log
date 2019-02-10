@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:quiver/time.dart';
 
 /// A representation of a Duration object meant to be shown to the user. Units
@@ -54,6 +55,15 @@ bool isSameMonth(DateTime a, DateTime b) {
 
 bool isSameDay(DateTime a, DateTime b) {
   return a.day == b.day;
+}
+
+bool isSameTimeOfDay(DateTime a, DateTime b) {
+  return TimeOfDay.fromDateTime(a) == TimeOfDay.fromDateTime(b);
+}
+
+/// Returns `true` if `a` is later in the day than `b`.
+bool isLaterToday(TimeOfDay a, TimeOfDay b) {
+  return a.hour > b.hour || (a.hour == b.hour && a.minute > b.minute);
 }
 
 /// Returns true if the given DateTime objects are equal. Compares
