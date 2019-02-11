@@ -128,10 +128,13 @@ class _EditSessionPageState extends State<EditSessionPage> {
     if (_startDate.isAfter(_endDate)) {
       return Strings.of(context).editSessionPageInvalidStartDate;
     }
+
+    return null;
   }
 
   String _validateEndDate(DateTime dateTime) {
     // Nothing required.
+    return null;
   }
 
   String _validateStartTime(TimeOfDay time) {
@@ -140,11 +143,15 @@ class _EditSessionPageState extends State<EditSessionPage> {
     {
       return Strings.of(context).editSessionPageInvalidStartTime;
     }
+
+    return null;
   }
 
   String _validateEndTime(TimeOfDay time) {
     if (isSameDate(_startDate, _endDate) && _startTime == _endTime) {
       return Strings.of(context).editSessionPageInvalidEndTime;
     }
+
+    return null;
   }
 }
