@@ -56,9 +56,9 @@ class DatePicker extends FormField<DateTime> {
               context: state.context,
               initialDate: state.value,
               // Weird requirement of showDatePicker, but essentially
-              // let the user pick any date.
+              // let the user pick any date in the past.
               firstDate: DateTime(1900),
-              lastDate: DateTime(3000)
+              lastDate: DateTime.now()
             ).then((DateTime dateTime) {
               if (dateTime == null) {
                 return;

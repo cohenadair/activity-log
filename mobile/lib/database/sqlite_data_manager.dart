@@ -1,8 +1,10 @@
 import 'dart:async';
 
+import 'package:flutter/material.dart';
 import 'package:mobile/database/data_manageable.dart';
 import 'package:mobile/database/sqlite_open_helper.dart';
 import 'package:mobile/model/activity.dart';
+import 'package:mobile/model/model.dart';
 import 'package:mobile/model/session.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -19,6 +21,17 @@ class SQLiteDataManager implements DataManageable {
   Future<bool> initialize() async {
     _database = await SQLiteOpenHelper.open();
     return true;
+  }
+
+  void _update(String table, Model model, VoidCallback notify) {
+    _database.update(
+      table,
+      model.toMap(),
+      where: "id = ?",
+      whereArgs: [model.id]
+    ).then((int value) {
+      notify();
+    });
   }
 
   @override
@@ -57,14 +70,7 @@ class SQLiteDataManager implements DataManageable {
 
   @override
   void updateActivity(Activity activity) {
-    _database.update(
-      "activity",
-      activity.toMap(),
-      where: "id = ?",
-      whereArgs: [activity.id]
-    ).then((int value) {
-      _notifyActivitiesUpdated();
-    });
+    _update("activity", activity, _notifyActivitiesUpdated);
   }
 
   @override
@@ -129,12 +135,16 @@ class SQLiteDataManager implements DataManageable {
 
   @override
   void addSession(Session session) {
-
+    _database.insert("session", session.toMap()).then((int value) {
+      _notifySessionsUpdated(session.activityId);
+    });
   }
 
   @override
   void updateSession(Session session) {
-
+    _update("session", session, () {
+      _notifySessionsUpdated(session.activityId);
+    });
   }
 
   @override
@@ -175,6 +185,28 @@ class SQLiteDataManager implements DataManageable {
       SELECT COUNT(*) FROM session WHERE activity_id = ?
     """;
     return Sqflite.firstIntValue(await _database.rawQuery(query, [activityId]));
+  }
+
+  @override
+  Future<bool> isSessionOverlapping(Session session) async {
+    String query = """
+      SELECT EXISTS(
+        SELECT * FROM session
+          WHERE activity_id = ?
+          AND id != ?
+          AND start_timestamp < ?
+          AND end_timestamp > ?
+      )
+    """;
+
+    var params = [
+      session.activityId,
+      session.id,
+      session.endTimestamp,
+      session.startTimestamp,
+    ];
+
+    return Sqflite.firstIntValue(await _database.rawQuery(query, params)) > 0;
   }
 
   Future<List<Session>> getLimitedSessions(String activityId, int limit) async {

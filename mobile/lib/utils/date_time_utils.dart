@@ -81,3 +81,10 @@ bool isYesterday(DateTime today, DateTime yesterday) {
 bool isWithinOneWeek(DateTime a, DateTime b) {
   return a.difference(b).inMilliseconds.abs() <= aWeek.inMilliseconds;
 }
+
+/// Returns a [DateTime] object with the given [DateTime] and [TimeOfDay]
+/// combined.
+DateTime combine(DateTime dateTime, TimeOfDay timeOfDay) {
+  return DateTime(dateTime.year, dateTime.month, dateTime.day, timeOfDay.hour,
+      timeOfDay.minute);
+}

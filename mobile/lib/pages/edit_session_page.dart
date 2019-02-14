@@ -8,6 +8,8 @@ import 'package:mobile/widgets/date_time_picker.dart';
 import 'package:mobile/widgets/edit_page.dart';
 import 'package:mobile/res/dimen.dart';
 import 'package:mobile/utils/string_utils.dart';
+import 'package:mobile/widgets/text.dart';
+import 'package:mobile/widgets/widget.dart';
 
 class EditSessionPage extends StatefulWidget {
   final AppManager _app;
@@ -41,6 +43,8 @@ class _EditSessionPageState extends State<EditSessionPage> {
   DateTime _endDate;
   TimeOfDay _endTime;
 
+  String _formValidationValue;
+
   @override
   void initState() {
     if (_isEditing) {
@@ -73,7 +77,12 @@ class _EditSessionPageState extends State<EditSessionPage> {
       form: Form(
         key: _formKey,
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
+            _formValidationValue == null ? MinContainer() : Padding(
+              padding: insetsVerticalSmall,
+              child: ErrorText(_formValidationValue),
+            ),
             DateTimePickerContainer(
               datePicker: DatePicker(
                 label: Strings.of(context).editSessionPageStartDate,
@@ -81,6 +90,7 @@ class _EditSessionPageState extends State<EditSessionPage> {
                 validator: _validateStartDate,
                 onChange: (DateTime dateTime) {
                   _startDate = dateTime;
+                  _clearFormValidationText();
                 },
               ),
               timePicker: TimePicker(
@@ -89,6 +99,7 @@ class _EditSessionPageState extends State<EditSessionPage> {
                 validator: _validateStartTime,
                 onChange: (TimeOfDay time) {
                   _startTime = time;
+                  _clearFormValidationText();
                 },
               ),
             ),
@@ -100,6 +111,7 @@ class _EditSessionPageState extends State<EditSessionPage> {
                 validator: _validateEndDate,
                 onChange: (DateTime dateTime) {
                   _endDate = dateTime;
+                  _clearFormValidationText();
                 },
               ),
               timePicker: TimePicker(
@@ -108,6 +120,7 @@ class _EditSessionPageState extends State<EditSessionPage> {
                 validator: _validateEndTime,
                 onChange: (TimeOfDay time) {
                   _endTime = time;
+                  _clearFormValidationText();
                 },
               ),
             ),
@@ -122,6 +135,42 @@ class _EditSessionPageState extends State<EditSessionPage> {
     if (!_formKey.currentState.validate()) {
       return;
     }
+
+    SessionBuilder builder;
+    if (_isEditing) {
+      builder = SessionBuilder.fromSession(_editingSession);
+    } else {
+      builder = SessionBuilder(_activity.id);
+    }
+
+    Session session = (builder
+        ..startTimestamp = combine(_startDate, _startTime)
+            .millisecondsSinceEpoch
+        ..endTimestamp = combine(_endDate, _endTime).millisecondsSinceEpoch)
+        .build;
+
+    _app.dataManager.isSessionOverlapping(session).then((bool isOverlap) {
+      if (isOverlap) {
+        setState(() {
+          _formValidationValue = Strings.of(context).editSessionPageOverlap;
+        });
+        return;
+      }
+
+      if (_isEditing) {
+        _app.dataManager.updateSession(session);
+      } else {
+        _app.dataManager.addSession(session);
+      }
+
+      Navigator.pop(context);
+    });
+  }
+
+  void _clearFormValidationText() {
+    setState(() {
+      _formValidationValue = null;
+    });
   }
 
   String _validateStartDate(DateTime dateTime) {

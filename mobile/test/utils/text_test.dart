@@ -6,7 +6,7 @@ import 'package:quiver/time.dart';
 import '../test_utils.dart';
 
 void main() {
-  group("DateTotalDurationTextDurationText", () {
+  group("TotalDurationText", () {
     testWidgets("Empty", (WidgetTester tester) async {
       List<Duration> durations = [];
       await tester.pumpWidget(Testable(TotalDurationText(durations)));
