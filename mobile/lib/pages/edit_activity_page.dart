@@ -95,7 +95,7 @@ class _EditActivityPageState extends State<EditActivityPage> {
                 validator: (String value) => _nameValidatorValue,
               ),
             ),
-            _isEditing ? _getRecentSessions() : MinContainer(),
+            _isEditing ? _getRecentSessions() : Empty(),
           ],
         ),
       ),
@@ -108,7 +108,7 @@ class _EditActivityPageState extends State<EditActivityPage> {
           .getRecentSessions(_editingActivity.id, _recentSessionLimit),
       builder: (BuildContext context, AsyncSnapshot<List<Session>> snapshot) {
         if (snapshot.hasError || !snapshot.hasData) {
-          return MinContainer();
+          return Empty();
         }
 
         return Column(
@@ -129,9 +129,9 @@ class _EditActivityPageState extends State<EditActivityPage> {
                 ));
               },
             );
-          }) : [MinContainer()])
+          }) : [Empty()])
           ..add(snapshot.data.isNotEmpty
-              ? _getViewAllButton() : MinContainer())
+              ? _getViewAllButton() : Empty())
         );
       }
     );
@@ -171,7 +171,7 @@ class _EditActivityPageState extends State<EditActivityPage> {
             !snapshot.hasData ||
             snapshot.data <= _recentSessionLimit)
         {
-          return MinContainer();
+          return Empty();
         }
 
         return Row(

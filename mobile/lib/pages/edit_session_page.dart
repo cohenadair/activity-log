@@ -79,9 +79,9 @@ class _EditSessionPageState extends State<EditSessionPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            _formValidationValue == null ? MinContainer() : Padding(
+            ErrorText(
+              _formValidationValue,
               padding: insetsVerticalSmall,
-              child: ErrorText(_formValidationValue),
             ),
             DateTimePickerContainer(
               datePicker: DatePicker(
@@ -90,7 +90,6 @@ class _EditSessionPageState extends State<EditSessionPage> {
                 validator: _validateStartDate,
                 onChange: (DateTime dateTime) {
                   _startDate = dateTime;
-                  _clearFormValidationText();
                 },
               ),
               timePicker: TimePicker(
@@ -99,7 +98,6 @@ class _EditSessionPageState extends State<EditSessionPage> {
                 validator: _validateStartTime,
                 onChange: (TimeOfDay time) {
                   _startTime = time;
-                  _clearFormValidationText();
                 },
               ),
             ),
@@ -111,7 +109,6 @@ class _EditSessionPageState extends State<EditSessionPage> {
                 validator: _validateEndDate,
                 onChange: (DateTime dateTime) {
                   _endDate = dateTime;
-                  _clearFormValidationText();
                 },
               ),
               timePicker: TimePicker(
@@ -120,7 +117,6 @@ class _EditSessionPageState extends State<EditSessionPage> {
                 validator: _validateEndTime,
                 onChange: (TimeOfDay time) {
                   _endTime = time;
-                  _clearFormValidationText();
                 },
               ),
             ),
@@ -132,6 +128,8 @@ class _EditSessionPageState extends State<EditSessionPage> {
   }
 
   void _onPressedSaveButton() {
+    _clearFormValidationText();
+    
     if (!_formKey.currentState.validate()) {
       return;
     }

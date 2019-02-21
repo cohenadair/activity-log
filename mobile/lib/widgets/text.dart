@@ -1,24 +1,96 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:mobile/i18n/strings.dart';
+import 'package:mobile/res/dimen.dart';
 import 'package:mobile/res/style.dart';
 import 'package:mobile/utils/date_time_utils.dart';
 import 'package:mobile/utils/string_utils.dart';
+import 'package:mobile/widgets/widget.dart';
+import 'package:quiver/strings.dart';
 import 'package:quiver/time.dart';
 
 const monthDayFormat = "MMM. d";
 const monthDayYearFormat = "MMM. d, yyyy";
 
-class ErrorText extends StatelessWidget {
-  final String _text;
+class ErrorText extends StatefulWidget {
+  final String text;
+  final EdgeInsets padding;
 
-  ErrorText(this._text);
+  ErrorText(this.text, {
+    EdgeInsets padding = insetsZero
+  }) : padding = padding;
+
+  @override
+  _ErrorTextState createState() => _ErrorTextState();
+}
+
+class _ErrorTextState extends State<ErrorText> with TickerProviderStateMixin {
+  // Animation settings are copied from InputDecorator in order to stay
+  // consistent with other form widgets.
+  final animationDuration = Duration(milliseconds: 200);
+  final yStartOffset = -0.25;
+
+  AnimationController _controller;
+  Animation<Offset> _animationOffset;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _controller = AnimationController(
+      duration: animationDuration,
+      vsync: this,
+    );
+
+    _animationOffset = Tween<Offset>(
+      begin: Offset(0.0, yStartOffset),
+      end: Offset(0.0, 0.0),
+    ).animate(CurvedAnimation(
+      parent: _controller,
+      curve: Curves.linear,
+    ));
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _controller.dispose();
+  }
+
+  @override
+  void didUpdateWidget(ErrorText oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    // Text goes from null to !null or vise-versa.
+    bool textStateChanged = isEmpty(widget.text) != isEmpty(oldWidget.text);
+
+    if (textStateChanged && isNotEmpty(widget.text)) {
+      _controller.forward();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Text(
-      _text,
-      style: styleError,
+    if (isEmpty(widget.text)) {
+      return Empty();
+    } else {
+      return _buildText();
+    }
+  }
+
+  Widget _buildText() {
+    return FadeTransition(
+      opacity: _controller,
+      child: SlideTransition(
+        position: _animationOffset,
+        child: Padding(
+          padding: widget.padding,
+          child: Text(
+            widget.text,
+            style: styleError,
+          ),
+        ),
+      ),
     );
   }
 }

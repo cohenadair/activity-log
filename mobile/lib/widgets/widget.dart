@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-class MinContainer extends StatelessWidget {
+class Empty extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Container(width: 0, height: 0);
+    return SizedBox();
   }
 }

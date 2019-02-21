@@ -59,7 +59,7 @@ class EditPage extends StatelessWidget {
                     right: _padding.right == 0 ? paddingDefault : 0,
                   ),
                   child: _getDeleteButton(context),
-                ) : MinContainer(),
+                ) : Empty(),
               ],
             ),
           ),

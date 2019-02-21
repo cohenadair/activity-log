@@ -53,7 +53,7 @@ class _ActivityListTileState extends State<ActivityListTile> {
           }
 
           if (!snapshot.hasData) {
-            return MinContainer();
+            return Empty();
           }
 
           return TotalDurationText(snapshot.data.map((Session session) {
@@ -90,7 +90,7 @@ class _ActivityListTileState extends State<ActivityListTile> {
                     break;
                 }
                 return _currentDisplayDuration == null
-                    ? MinContainer() : _currentDisplayDuration;
+                    ? Empty() : _currentDisplayDuration;
               },
             ),
           ),

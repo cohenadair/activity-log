@@ -54,7 +54,7 @@ class SessionListTile extends StatelessWidget {
             }
           ),
         ),
-        _hasDivider ? Divider(height: 1) : MinContainer(),
+        _hasDivider ? Divider(height: 1) : Empty(),
       ],
     );
   }

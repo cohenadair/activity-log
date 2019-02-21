@@ -34,7 +34,7 @@ class ActivityLog extends StatelessWidget {
         future: _app.dataManager.initialize(),
         builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
           if (snapshot.hasError || !snapshot.hasData) {
-            return MinContainer();
+            return Empty();
           }
           return ActivitiesPage(_app);
         },
