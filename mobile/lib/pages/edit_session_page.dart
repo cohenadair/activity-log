@@ -146,22 +146,30 @@ class _EditSessionPageState extends State<EditSessionPage> {
         ..endTimestamp = combine(_endDate, _endTime).millisecondsSinceEpoch)
         .build;
 
-    _app.dataManager.isSessionOverlapping(session).then((bool isOverlap) {
-      if (isOverlap) {
-        setState(() {
-          _formValidationValue = Strings.of(context).editSessionPageOverlap;
+    _app.dataManager.getOverlappingSession(session)
+        .then((Session overlappingSession) {
+          if (overlappingSession != null) {
+            setState(() {
+              _formValidationValue =
+                  format(Strings.of(context).editSessionPageOverlap, [
+                    formatTimeOfDay(context, overlappingSession.startTimeOfDay)
+                        + " - "
+                        + formatTimeOfDay(context,
+                            overlappingSession.endTimeOfDay)
+                  ]
+              );
+            });
+            return;
+          }
+
+          if (_isEditing) {
+            _app.dataManager.updateSession(session);
+          } else {
+            _app.dataManager.addSession(session);
+          }
+
+          Navigator.pop(context);
         });
-        return;
-      }
-
-      if (_isEditing) {
-        _app.dataManager.updateSession(session);
-      } else {
-        _app.dataManager.addSession(session);
-      }
-
-      Navigator.pop(context);
-    });
   }
 
   void _clearFormValidationText() {

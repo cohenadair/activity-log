@@ -188,15 +188,14 @@ class SQLiteDataManager implements DataManageable {
   }
 
   @override
-  Future<bool> isSessionOverlapping(Session session) async {
+  Future<Session> getOverlappingSession(Session session) async {
     String query = """
-      SELECT EXISTS(
-        SELECT * FROM session
-          WHERE activity_id = ?
-          AND id != ?
-          AND start_timestamp < ?
-          AND end_timestamp > ?
-      )
+      SELECT * FROM session
+        WHERE activity_id = ?
+        AND id != ?
+        AND start_timestamp < ?
+        AND end_timestamp > ?
+        LIMIT 1
     """;
 
     var params = [
@@ -206,7 +205,12 @@ class SQLiteDataManager implements DataManageable {
       session.startTimestamp,
     ];
 
-    return Sqflite.firstIntValue(await _database.rawQuery(query, params)) > 0;
+    List<Map<String, dynamic>> result = await _database.rawQuery(query, params);
+    if (result.isEmpty) {
+      return null;
+    }
+
+    return Session.fromMap(result.first);
   }
 
   Future<List<Session>> getLimitedSessions(String activityId, int limit) async {

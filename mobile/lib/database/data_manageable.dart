@@ -38,9 +38,9 @@ abstract class DataManageable {
   Future<List<Session>> getRecentSessions(String activityId, int limit);
   Future<int> getSessionCount(String activityId);
 
-  /// Returns `true` if the given session overlaps with another session in
-  /// the same activity.
-  Future<bool> isSessionOverlapping(Session session);
+  /// Returns the [Session] the given session overlaps with, if one exists;
+  /// `null` otherwise.
+  Future<Session> getOverlappingSession(Session session);
 
   /// Returns the current session for the given Activity ID, or `null` if
   /// the given Activity isn't running.

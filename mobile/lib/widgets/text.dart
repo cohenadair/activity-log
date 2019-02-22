@@ -264,10 +264,7 @@ class TimeText extends StatelessWidget {
   }
 
   String _format(BuildContext context) {
-    return MaterialLocalizations.of(context).formatTimeOfDay(
-      _time,
-      alwaysUse24HourFormat: MediaQuery.of(context).alwaysUse24HourFormat
-    );
+    return formatTimeOfDay(context, _time);
   }
 }
 
