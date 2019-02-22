@@ -12,6 +12,10 @@ import 'package:quiver/time.dart';
 const monthDayFormat = "MMM. d";
 const monthDayYearFormat = "MMM. d, yyyy";
 
+/// An animated Text widget, styled as an error.  When the text changes from
+/// null or empty to !empty or !null, the text is animated to show in the same
+/// way [InputDecorator] animates errors into view (slide in from the top with
+/// opacity).
 class ErrorText extends StatefulWidget {
   final String text;
   final EdgeInsets padding;
@@ -26,7 +30,7 @@ class ErrorText extends StatefulWidget {
 
 class _ErrorTextState extends State<ErrorText> with TickerProviderStateMixin {
   // Animation settings are copied from InputDecorator in order to stay
-  // consistent with other form widgets.
+  // consistent with Material form widgets.
   final animationDuration = Duration(milliseconds: 200);
   final yStartOffset = -0.25;
 
@@ -95,10 +99,10 @@ class _ErrorTextState extends State<ErrorText> with TickerProviderStateMixin {
   }
 }
 
-class BoldText extends StatelessWidget {
+class HeadingText extends StatelessWidget {
   final String _text;
 
-  BoldText(this._text);
+  HeadingText(this._text);
 
   @override
   Widget build(BuildContext context) {

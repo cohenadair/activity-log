@@ -129,7 +129,7 @@ class _EditSessionPageState extends State<EditSessionPage> {
 
   void _onPressedSaveButton() {
     _clearFormValidationText();
-    
+
     if (!_formKey.currentState.validate()) {
       return;
     }

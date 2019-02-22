@@ -143,7 +143,7 @@ class _EditActivityPageState extends State<EditActivityPage> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
-          BoldText(Strings.of(context).editActivityPageRecentSessions),
+          HeadingText(Strings.of(context).editActivityPageRecentSessions),
           IconButton(
             icon: Icon(Icons.add),
             padding: insetsZero,
