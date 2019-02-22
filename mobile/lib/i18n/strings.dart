@@ -54,7 +54,10 @@ class Strings {
   String get editSessionPageEndTime => _getString("editSessionPage_endTime");
   String get editSessionPageInvalidStartDate => _getString("editSessionPage_invalidStartDate");
   String get editSessionPageInvalidStartTime => _getString("editSessionPage_invalidStartTime");
-  String get editSessionPageInvalidEndTime => _getString("editSessionPage_invalidEndDate");
+  String get editSessionPageInvalidEndTime => _getString("editSessionPage_invalidEndTime");
+  String get editSessionPageFutureStartTime => _getString("editSessionPageFutureStartTime");
+  String get editSessionPageFutureEndTime => _getString("editSessionPageFutureEndTime");
+
   String get editSessionPageOverlap => _getString("editSessionPage_overlap");
 
   String get sessionListDeleteMessage => _getString("sessionList_deleteMessage");

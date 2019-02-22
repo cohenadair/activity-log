@@ -9,7 +9,6 @@ import 'package:mobile/widgets/edit_page.dart';
 import 'package:mobile/res/dimen.dart';
 import 'package:mobile/utils/string_utils.dart';
 import 'package:mobile/widgets/text.dart';
-import 'package:mobile/widgets/widget.dart';
 
 class EditSessionPage extends StatefulWidget {
   final AppManager _app;
@@ -185,18 +184,31 @@ class _EditSessionPageState extends State<EditSessionPage> {
   }
 
   String _validateStartTime(TimeOfDay time) {
-    if (isSameDate(_startDate, _endDate)
-        && isLaterToday(_startTime, _endTime))
-    {
-      return Strings.of(context).editSessionPageInvalidStartTime;
+    if (isSameDate(_startDate, _endDate)) {
+      // Start time comes after end time.
+      if (isLaterToday(_startTime, _endTime)) {
+        return Strings.of(context).editSessionPageInvalidStartTime;
+      }
+
+      // Start time is in the future.
+      if (isLaterToday(_startTime, TimeOfDay.fromDateTime(DateTime.now()))) {
+        return Strings.of(context).editSessionPageFutureStartTime;
+      }
     }
 
     return null;
   }
 
   String _validateEndTime(TimeOfDay time) {
-    if (isSameDate(_startDate, _endDate) && _startTime == _endTime) {
-      return Strings.of(context).editSessionPageInvalidEndTime;
+    if (isSameDate(_startDate, _endDate)) {
+      if (_startTime == _endTime) {
+        return Strings.of(context).editSessionPageInvalidEndTime;
+      }
+
+      // Start time is in the future.
+      if (isLaterToday(_endTime, TimeOfDay.fromDateTime(DateTime.now()))) {
+        return Strings.of(context).editSessionPageFutureEndTime;
+      }
     }
 
     return null;
