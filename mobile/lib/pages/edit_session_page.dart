@@ -179,7 +179,10 @@ class _EditSessionPageState extends State<EditSessionPage> {
   }
 
   String _validateStartDate(DateTime dateTime) {
-    if (_startDate.isAfter(_endDate)) {
+    // Don't compare times because they are selected and validated separately.
+    if (_startDate.year > _endDate.year || _startDate.month > _endDate.month
+        || _startDate.day > _endDate.day)
+    {
       return Strings.of(context).editSessionPageInvalidStartDate;
     }
 
