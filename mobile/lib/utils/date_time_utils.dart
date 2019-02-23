@@ -62,8 +62,24 @@ bool isSameTimeOfDay(DateTime a, DateTime b) {
 }
 
 /// Returns `true` if `a` is later in the day than `b`.
-bool isLaterToday(TimeOfDay a, TimeOfDay b) {
+bool isLater(TimeOfDay a, TimeOfDay b) {
   return a.hour > b.hour || (a.hour == b.hour && a.minute > b.minute);
+}
+
+/// Returns `true` if the given [DateTime] comes after `now`, to minute
+/// accuracy.
+bool isInFutureWithMinuteAccuracy(DateTime dateTime, DateTime now) {
+  DateTime newDateTime = dateTimeToMinuteAccuracy(dateTime);
+  DateTime newNow = dateTimeToMinuteAccuracy(now);
+  return newDateTime.isAfter(newNow);
+}
+
+/// Returns `true` if the given [DateTime] comes after `now`, to day
+/// accuracy.
+bool isInFutureWithDayAccuracy(DateTime dateTime, DateTime now) {
+  DateTime newDateTime = dateTimeToDayAccuracy(dateTime);
+  DateTime newNow = dateTimeToDayAccuracy(now);
+  return newDateTime.isAfter(newNow);
 }
 
 /// Returns true if the given DateTime objects are equal. Compares
@@ -83,8 +99,21 @@ bool isWithinOneWeek(DateTime a, DateTime b) {
 }
 
 /// Returns a [DateTime] object with the given [DateTime] and [TimeOfDay]
-/// combined.
+/// combined.  Accurate to the minute.
 DateTime combine(DateTime dateTime, TimeOfDay timeOfDay) {
   return DateTime(dateTime.year, dateTime.month, dateTime.day, timeOfDay.hour,
       timeOfDay.minute);
+}
+
+/// Returns a new [DateTime] object, with time properties more granular than
+/// minutes set to 0.
+DateTime dateTimeToMinuteAccuracy(DateTime dateTime) {
+  return DateTime(dateTime.year, dateTime.month, dateTime.day, dateTime.hour,
+      dateTime.minute);
+}
+
+/// Returns a new [DateTime] object, with time properties more granular than
+/// day set to 0.
+DateTime dateTimeToDayAccuracy(DateTime dateTime) {
+  return DateTime(dateTime.year, dateTime.month, dateTime.day);
 }

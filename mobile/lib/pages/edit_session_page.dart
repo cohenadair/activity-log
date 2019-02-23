@@ -199,9 +199,7 @@ class _EditSessionPageState extends State<EditSessionPage> {
     }
 
     // Don't compare times because they are selected and validated separately.
-    if (_startDate.year > _endDate.year || _startDate.month > _endDate.month
-        || _startDate.day > _endDate.day)
-    {
+    if (isInFutureWithDayAccuracy(_startDate, _endDate)) {
       return Strings.of(context).editSessionPageInvalidStartDate;
     }
 
@@ -214,16 +212,17 @@ class _EditSessionPageState extends State<EditSessionPage> {
   }
 
   String _validateStartTime(TimeOfDay time) {
-    if (isSameDate(_startDate, _endDate)) {
-      // Start time comes after end time.
-      if (!_isEditingInProgress && isLaterToday(_startTime, _endTime)) {
-        return Strings.of(context).editSessionPageInvalidStartTime;
-      }
+    // Start time comes after end time.
+    if (!_isEditingInProgress
+        && isSameDate(_startDate, _endDate)
+        && isLater(_startTime, _endTime))
+    {
+      return Strings.of(context).editSessionPageInvalidStartTime;
+    }
 
-      // Start time is in the future.
-      if (isLaterToday(_startTime, TimeOfDay.fromDateTime(DateTime.now()))) {
-        return Strings.of(context).editSessionPageFutureStartTime;
-      }
+    // Start time is in the future.
+    if (isInFutureWithMinuteAccuracy(combine(_startDate, _endTime), DateTime.now())) {
+      return Strings.of(context).editSessionPageFutureStartTime;
     }
 
     return null;
@@ -236,16 +235,18 @@ class _EditSessionPageState extends State<EditSessionPage> {
       return null;
     }
 
-    if (isSameDate(_startDate, _endDate)) {
-      if (_startTime == _endTime) {
-        return Strings.of(context).editSessionPageInvalidEndTime;
-      }
-
-      // Start time is in the future.
-      if (isLaterToday(_endTime, TimeOfDay.fromDateTime(DateTime.now()))) {
-        return Strings.of(context).editSessionPageFutureEndTime;
-      }
+    // Start and end times are equal.
+    if (isSameDate(_startDate, _endDate) && _startTime == _endTime) {
+      return Strings.of(context).editSessionPageInvalidEndTime;
     }
+
+    // End time is in the future.
+    if (isInFutureWithMinuteAccuracy(combine(_endDate, _endTime), DateTime.now())) {
+      return Strings.of(context).editSessionPageFutureEndTime;
+    }
+
+    // The case of the end time coming before the start time is handled in
+    // the start time validation.
 
     return null;
   }
