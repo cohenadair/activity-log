@@ -189,21 +189,42 @@ class SQLiteDataManager implements DataManageable {
 
   @override
   Future<Session> getOverlappingSession(Session session) async {
-    String query = """
-      SELECT * FROM session
-        WHERE activity_id = ?
-        AND id != ?
-        AND start_timestamp < ?
-        AND end_timestamp > ?
-        LIMIT 1
-    """;
+    String query;
+    List<dynamic> params;
 
-    var params = [
-      session.activityId,
-      session.id,
-      session.endTimestamp,
-      session.startTimestamp,
-    ];
+    if (session.inProgress) {
+      // End timestamp is irrelevant for in progress sessions. Existing sessions
+      // will never have an end timestamp greater than the input session, which
+      // in this case can be assumed to be infinity.
+      query = """
+        SELECT * FROM session
+          WHERE activity_id = ?
+          AND id != ?
+          AND ? <= start_timestamp
+      """;
+
+      params = [
+        session.activityId,
+        session.id,
+        session.startTimestamp,
+      ];
+    } else {
+      query = """
+        SELECT * FROM session
+          WHERE activity_id = ?
+          AND id != ?
+          AND start_timestamp < ?
+          AND end_timestamp > ?
+          LIMIT 1
+      """;
+
+      params = [
+        session.activityId,
+        session.id,
+        session.endTimestamp,
+        session.startTimestamp,
+      ];
+    }
 
     List<Map<String, dynamic>> result = await _database.rawQuery(query, params);
     if (result.isEmpty) {
