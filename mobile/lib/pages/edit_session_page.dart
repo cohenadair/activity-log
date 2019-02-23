@@ -48,14 +48,16 @@ class _EditSessionPageState extends State<EditSessionPage> {
   void initState() {
     if (_isEditing) {
       _startDate = _editingSession.startDateTime;
-      _endDate = _editingSession.endDateTime;
+      _endDate = _editingSession.inProgress
+          ? _startDate : _editingSession.endDateTime;
     } else {
       _startDate = DateTime.now();
       _endDate = _startDate;
     }
 
     _startTime = TimeOfDay.fromDateTime(_startDate);
-    _endTime = TimeOfDay.fromDateTime(_endDate);
+    _endTime = _editingSession.inProgress
+        ? _startTime : TimeOfDay.fromDateTime(_endDate);
 
     super.initState();
   }
@@ -106,6 +108,7 @@ class _EditSessionPageState extends State<EditSessionPage> {
                 label: Strings.of(context).editSessionPageEndDate,
                 initialDate: _endDate,
                 validator: _validateEndDate,
+                enabled: !_editingSession.inProgress,
                 onChange: (DateTime dateTime) {
                   _endDate = dateTime;
                 },
@@ -114,10 +117,14 @@ class _EditSessionPageState extends State<EditSessionPage> {
                 label: Strings.of(context).editSessionPageEndTime,
                 initialTime: _endTime,
                 validator: _validateEndTime,
+                enabled: !_editingSession.inProgress,
                 onChange: (TimeOfDay time) {
                   _endTime = time;
                 },
               ),
+              helper: _editingSession.inProgress
+                  ? WarningText(Strings.of(context).editSessionPageInProgress)
+                  : null,
             ),
             Container(height: paddingDefault),
           ],
@@ -143,7 +150,8 @@ class _EditSessionPageState extends State<EditSessionPage> {
     Session session = (builder
         ..startTimestamp = combine(_startDate, _startTime)
             .millisecondsSinceEpoch
-        ..endTimestamp = combine(_endDate, _endTime).millisecondsSinceEpoch)
+        ..endTimestamp = _editingSession.inProgress
+            ? null : combine(_endDate, _endTime).millisecondsSinceEpoch)
         .build;
 
     _app.dataManager.getOverlappingSession(session)
@@ -211,6 +219,12 @@ class _EditSessionPageState extends State<EditSessionPage> {
   }
 
   String _validateEndTime(TimeOfDay time) {
+    // Don't validate end time for in progress sessions. The user can't
+    // modify it anyway.
+    if (_editingSession.inProgress) {
+      return null;
+    }
+
     if (isSameDate(_startDate, _endDate)) {
       if (_startTime == _endTime) {
         return Strings.of(context).editSessionPageInvalidEndTime;

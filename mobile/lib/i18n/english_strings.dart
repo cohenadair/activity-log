@@ -34,6 +34,7 @@ Map<String, Map<String, String>> englishStrings = {
     "editSessionPageFutureStartTime" : "Start time cannot be in the future",
     "editSessionPageFutureEndTime" : "End time cannot be in the future",
     "editSessionPage_overlap" : "Session must not overlap with another session in the same activity\n\nConflicting session: %s",
+    "editSessionPageInProgress" : "End date and time cannot be modified for in progress sessions",
 
     "sessionList_deleteMessage" : "Are you sure you want to delete this session? This action cannot be undone.",
     "sessionList_inProgress" : "In progress",

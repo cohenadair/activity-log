@@ -40,6 +40,13 @@ const insetsTopDefault = EdgeInsets.only(
   bottom: 0
 );
 
+const insetsTopSmall = EdgeInsets.only(
+  left: 0,
+  top: paddingSmall,
+  right: 0,
+  bottom: 0
+);
+
 const insetsBottomDefault = EdgeInsets.only(
   left: 0,
   top: 0,

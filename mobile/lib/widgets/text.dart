@@ -99,6 +99,22 @@ class _ErrorTextState extends State<ErrorText> with TickerProviderStateMixin {
   }
 }
 
+class WarningText extends StatelessWidget {
+  final String text;
+
+  WarningText(this.text);
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      text,
+      style: TextStyle(
+        color: Colors.orange,
+      ),
+    );
+  }
+}
+
 class HeadingText extends StatelessWidget {
   final String _text;
 
@@ -109,6 +125,25 @@ class HeadingText extends StatelessWidget {
     return Text(
       _text,
       style: styleHeading,
+    );
+  }
+}
+
+/// A [Text] widget with an enabled state. If `enabled = false`, the [Text] is
+/// rendered with a `Theme.of(context).disabledColor` color.
+class EnabledText extends StatelessWidget {
+  final String text;
+  final bool enabled;
+
+  EnabledText(this.text, {this.enabled = false});
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      text,
+      style: TextStyle(
+        color: enabled ? null : Theme.of(context).disabledColor,
+      ),
     );
   }
 }
@@ -254,17 +289,23 @@ class RunningDurationText extends StatelessWidget {
 ///   21:35, or
 ///   9:35 PM
 class TimeText extends StatelessWidget {
-  final TimeOfDay _time;
+  final TimeOfDay time;
+  final bool enabled;
 
-  TimeText(this._time);
+  TimeText(this.time, {
+    this.enabled = true,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Text(_format(context));
+    return EnabledText(
+      _format(context),
+      enabled: enabled,
+    );
   }
 
   String _format(BuildContext context) {
-    return formatTimeOfDay(context, _time);
+    return formatTimeOfDay(context, time);
   }
 }
 
@@ -273,12 +314,18 @@ class TimeText extends StatelessWidget {
 /// Example:
 ///   Dec. 8, 2018
 class DateText extends StatelessWidget {
-  final DateTime _date;
+  final DateTime date;
+  final bool enabled;
 
-  DateText(this._date);
+  DateText(this.date, {
+    this.enabled = true,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Text(DateFormat(monthDayYearFormat).format(_date));
+    return EnabledText(
+      DateFormat(monthDayYearFormat).format(date),
+      enabled: enabled,
+    );
   }
 }
