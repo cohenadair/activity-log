@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:mobile/app_manager.dart';
 import 'package:mobile/i18n/strings.dart';
-import 'package:mobile/pages/activities_page.dart';
+import 'package:mobile/pages/main_page.dart';
 import 'package:mobile/res/style.dart';
 import 'package:mobile/widgets/widget.dart';
 
@@ -36,7 +36,7 @@ class ActivityLog extends StatelessWidget {
           if (snapshot.hasError || !snapshot.hasData) {
             return Empty();
           }
-          return ActivitiesPage(_app);
+          return MainPage(_app);
         },
       ),
       debugShowCheckedModeBanner: false,
