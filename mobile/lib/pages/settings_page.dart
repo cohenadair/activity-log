@@ -32,7 +32,9 @@ class SettingsPage extends StatelessWidget {
                       return Text(
                         snapshot.data.version,
                         // Same style used in ListTile.title.
-                        style: Theme.of(context).textTheme.subhead,
+                        style: Theme.of(context).textTheme.subhead.copyWith(
+                          color: Colors.black54,
+                        ),
                       );
                     } else {
                       return Text("...");
