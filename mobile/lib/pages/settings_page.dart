@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/i18n/strings.dart';
 import 'package:mobile/res/dimen.dart';
 import 'package:mobile/widgets/page.dart';
 import 'package:mobile/widgets/text.dart';
@@ -10,7 +11,7 @@ class SettingsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Page(
       appBarStyle: PageAppBarStyle(
-        title: "Settings",
+        title: Strings.of(context).settingsPageTitle,
       ),
       child: ListView(
         children: <Widget>[
@@ -20,10 +21,10 @@ class SettingsPage extends StatelessWidget {
               left: paddingDefault,
               right: paddingDefault,
             ),
-            child: HeadingText("About"),
+            child: HeadingText(Strings.of(context).settingsPageHeadingAbout),
           ),
           ListTile(
-            title: Text("Version"),
+            title: Text(Strings.of(context).settingsPageVersion),
             trailing: FutureBuilder<PackageInfo>(
               future: PackageInfo.fromPlatform(),
               builder: (BuildContext context,

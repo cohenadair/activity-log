@@ -35,6 +35,10 @@ class Strings {
   String get today => _getString("today");
   String get yesterday => _getString("yesterday");
 
+  String get navigationBarHome => _getString("navigationBar_home");
+  String get navigationBarStats => _getString("navigationBar_stats");
+  String get navigationBarSettings => _getString("navigationBar_settings");
+
   String get activitiesPageTitle => _getString("activitiesPage_title");
 
   String get editActivityPageNewTitle => _getString("editActivityPage_newTitle");
@@ -55,15 +59,19 @@ class Strings {
   String get editSessionPageInvalidStartDate => _getString("editSessionPage_invalidStartDate");
   String get editSessionPageInvalidStartTime => _getString("editSessionPage_invalidStartTime");
   String get editSessionPageInvalidEndTime => _getString("editSessionPage_invalidEndTime");
-  String get editSessionPageFutureStartTime => _getString("editSessionPageFutureStartTime");
-  String get editSessionPageFutureEndTime => _getString("editSessionPageFutureEndTime");
-  String get editSessionPageInProgress => _getString("editSessionPageInProgress");
+  String get editSessionPageFutureStartTime => _getString("editSessionPage_futureStartTime");
+  String get editSessionPageFutureEndTime => _getString("editSessionPage_futureEndTime");
+  String get editSessionPageInProgress => _getString("editSessionPage_inProgress");
 
   String get editSessionPageOverlap => _getString("editSessionPage_overlap");
 
   String get sessionListDeleteMessage => _getString("sessionList_deleteMessage");
   String get sessionListInProgress => _getString("sessionList_inProgress");
   String get sessionListTitleFormat => _getString("sessionList_titleFormat");
+
+  String get settingsPageTitle => _getString("settingsPage_title");
+  String get settingsPageVersion => _getString("settingsPage_version");
+  String get settingsPageHeadingAbout => _getString("settingsPage_headingAbout");
 
   String get daysFormat => _getString("daysFormat");
   String get hoursFormat => _getString("hoursFormat");

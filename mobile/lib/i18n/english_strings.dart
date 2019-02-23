@@ -11,6 +11,10 @@ Map<String, Map<String, String>> englishStrings = {
     "today" : "Today",
     "yesterday" : "Yesterday",
 
+    "navigationBar_home" : "Home",
+    "navigationBar_stats" : "Stats",
+    "navigationBar_settings" : "Settings",
+
     "activitiesPage_title" : "Activities",
 
     "editActivityPage_newTitle" : "New Activity",
@@ -31,14 +35,18 @@ Map<String, Map<String, String>> englishStrings = {
     "editSessionPage_invalidStartDate" : "Start date cannot come after end date",
     "editSessionPage_invalidStartTime" : "Start time cannot come after end time",
     "editSessionPage_invalidEndTime" : "End time cannot equal start time",
-    "editSessionPageFutureStartTime" : "Start time cannot be in the future",
-    "editSessionPageFutureEndTime" : "End time cannot be in the future",
+    "editSessionPage_futureStartTime" : "Start time cannot be in the future",
+    "editSessionPage_futureEndTime" : "End time cannot be in the future",
     "editSessionPage_overlap" : "Session must not overlap with another session in the same activity\n\nConflicting session: %s",
-    "editSessionPageInProgress" : "End date and time cannot be modified for in progress sessions",
+    "editSessionPage_inProgress" : "End date and time cannot be modified for in progress sessions",
 
     "sessionList_deleteMessage" : "Are you sure you want to delete this session? This action cannot be undone.",
     "sessionList_inProgress" : "In progress",
     "sessionList_titleFormat" : "%s (%s)",
+
+    "settingsPage_title" : "Settings",
+    "settingsPage_version" : "Version",
+    "settingsPage_headingAbout" : "About",
 
     "daysFormat" : "%sd",
     "hoursFormat" : "%sh",

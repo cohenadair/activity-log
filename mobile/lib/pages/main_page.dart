@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mobile/app_manager.dart';
+import 'package:mobile/i18n/strings.dart';
 import 'package:mobile/pages/activities_page.dart';
 import 'package:mobile/pages/settings_page.dart';
 import 'package:mobile/pages/stats_page.dart';
@@ -14,38 +15,33 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
-  List<_BarItemData> _navItems;
   int _currentItemIndex = 0;
 
-  @override
-  void initState() {
-    super.initState();
-    _navItems = [
-      _BarItemData(
-        page: ActivitiesPage(widget._app),
-        item: BottomNavigationBarItem(
-          icon: Icon(Icons.home),
-          title: Text("Home"),
-        ),
+  List<_BarItemData> get _navItems => [
+    _BarItemData(
+      page: ActivitiesPage(widget._app),
+      item: BottomNavigationBarItem(
+        icon: Icon(Icons.home),
+        title: Text(Strings.of(context).navigationBarHome),
       ),
+    ),
 
-      _BarItemData(
-        page: StatsPage(),
-        item: BottomNavigationBarItem(
-          icon: Icon(Icons.show_chart),
-          title: Text("Stats"),
-        ),
+    _BarItemData(
+      page: StatsPage(),
+      item: BottomNavigationBarItem(
+        icon: Icon(Icons.show_chart),
+        title: Text(Strings.of(context).navigationBarStats),
       ),
+    ),
 
-      _BarItemData(
-        page: SettingsPage(),
-        item: BottomNavigationBarItem(
-          icon: Icon(Icons.settings),
-          title: Text("Settings"),
-        ),
+    _BarItemData(
+      page: SettingsPage(),
+      item: BottomNavigationBarItem(
+        icon: Icon(Icons.settings),
+        title: Text(Strings.of(context).navigationBarSettings),
       ),
-    ];
-  }
+    ),
+  ];
 
   @override
   Widget build(BuildContext context) {
