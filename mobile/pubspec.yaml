@@ -20,6 +20,7 @@ dependencies:
 
   intl: ^0.15.7
   quiver: '>=2.0.0 <3.0.0'
+  package_info: any
   sqflite: any
   uuid: 1.0.3
 

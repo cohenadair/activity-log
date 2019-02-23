@@ -6,6 +6,7 @@ import 'package:mobile/res/dimen.dart';
 import 'package:mobile/utils/page_utils.dart';
 import 'package:mobile/widgets/loading.dart';
 import 'package:mobile/widgets/page.dart';
+import 'package:mobile/widgets/widget.dart';
 
 // TODO: Investigate why generic typedefs do not work here.
 typedef OnGetEditPageCallback = Widget Function(dynamic t);
@@ -78,7 +79,7 @@ class _ListPageState<T> extends State<ListPage> {
           return ListView.separated(
             itemCount: snapshot.data.length,
             separatorBuilder: (BuildContext context, int i) =>
-                Divider(height: 1),
+                MinDivider(),
             itemBuilder: (BuildContext context, int i) {
               return _onBuildTileCallback(snapshot.data[i], _openEditPage);
             },

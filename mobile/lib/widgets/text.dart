@@ -124,7 +124,9 @@ class HeadingText extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       _text,
-      style: styleHeading,
+      style: Theme.of(context).textTheme.body2.copyWith(
+        color: Theme.of(context).primaryColor,
+      ),
     );
   }
 }
