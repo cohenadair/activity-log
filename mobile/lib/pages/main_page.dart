@@ -27,7 +27,7 @@ class _MainPageState extends State<MainPage> {
     ),
 
     _BarItemData(
-      page: StatsPage(),
+      page: StatsPage(widget._app),
       item: BottomNavigationBarItem(
         icon: Icon(Icons.show_chart),
         title: Text(Strings.of(context).navigationBarStats),

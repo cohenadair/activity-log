@@ -48,6 +48,8 @@ Map<String, Map<String, String>> englishStrings = {
     "settingsPage_version" : "Version",
     "settingsPage_headingAbout" : "About",
 
+    "activityDropdown_allActivities" : "All activities",
+
     "daysFormat" : "%sd",
     "hoursFormat" : "%sh",
     "minutesFormat" : "%sm",

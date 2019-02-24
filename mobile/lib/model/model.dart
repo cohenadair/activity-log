@@ -9,7 +9,6 @@ abstract class Model {
   Model.fromMap(Map<String, dynamic> map) : _id = map[keyId];
   Model.fromBuilder(ModelBuilder builder) : _id = builder.id;
 
-
   Map<String, dynamic> toMap() {
     return {
       keyId : _id

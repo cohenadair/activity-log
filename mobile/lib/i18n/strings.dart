@@ -73,6 +73,8 @@ class Strings {
   String get settingsPageVersion => _getString("settingsPage_version");
   String get settingsPageHeadingAbout => _getString("settingsPage_headingAbout");
 
+  String get activityDropdownAllActivities => _getString("activityDropdown_allActivities");
+
   String get daysFormat => _getString("daysFormat");
   String get hoursFormat => _getString("hoursFormat");
   String get minutesFormat => _getString("minutesFormat");

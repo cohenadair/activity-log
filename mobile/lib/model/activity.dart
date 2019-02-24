@@ -29,6 +29,14 @@ class Activity extends Model {
       keyCurrentSessionId : _currentSessionId,
     }..addAll(super.toMap());
   }
+
+  @override
+  bool operator ==(other) {
+    return other.name == _name;
+  }
+
+  @override
+  int get hashCode => _name.hashCode;
 }
 
 class ActivityBuilder extends ModelBuilder {
