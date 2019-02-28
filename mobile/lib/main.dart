@@ -34,7 +34,9 @@ class ActivityLog extends StatelessWidget {
         future: _app.dataManager.initialize(),
         builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
           if (snapshot.hasError || !snapshot.hasData) {
-            return Empty();
+            return Scaffold(
+              appBar: AppBar(),
+            );
           }
           return MainPage(_app);
         },
