@@ -48,7 +48,24 @@ Map<String, Map<String, String>> englishStrings = {
     "settingsPage_version" : "Version",
     "settingsPage_headingAbout" : "About",
 
+    "statsPage_title" : "Stats",
+
     "activityDropdown_allActivities" : "All activities",
+
+    "analysisDuration_allDates" : "All dates",
+    "analysisDuration_today" : "Today",
+    "analysisDuration_thisWeek" : "This week",
+    "analysisDuration_thisMonth" : "This month",
+    "analysisDuration_thisYear" : "This year",
+    "analysisDuration_lastWeek" : "Last week",
+    "analysisDuration_lastMonth" : "Last month",
+    "analysisDuration_lastYear" : "Last year",
+    "analysisDuration_last7Days" : "Last 7 days",
+    "analysisDuration_last14Days" : "Last 14 days",
+    "analysisDuration_last30Days" : "Last 30 days",
+    "analysisDuration_last60Days" : "Last 60 days",
+    "analysisDuration_last12Months" : "Last 12 months",
+    "analysisDuration_custom" : "Custom",
 
     "daysFormat" : "%sd",
     "hoursFormat" : "%sh",

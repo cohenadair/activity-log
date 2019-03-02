@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:quiver/time.dart';
 
-/// A representation of a Duration object meant to be shown to the user. Units
+/// A representation of a [Duration] object meant to be shown to the user. Units
 /// are split by largest possible. For example, the hours property is the
 /// number of hours in the duration, minus the number of days.
 class DisplayDuration {
@@ -43,6 +43,12 @@ class DisplayDuration {
       return _duration.inSeconds;
     }
   }
+}
+
+class DateRange {
+  final DateTime startDate;
+  final DateTime endDate;
+  DateRange({this.startDate, this.endDate});
 }
 
 bool isSameYear(DateTime a, DateTime b) {
@@ -116,4 +122,22 @@ DateTime dateTimeToMinuteAccuracy(DateTime dateTime) {
 /// day set to 0.
 DateTime dateTimeToDayAccuracy(DateTime dateTime) {
   return DateTime(dateTime.year, dateTime.month, dateTime.day);
+}
+
+/// Returns a [DateTime] representing the start of the week to which `now`
+/// belongs.
+DateTime getStartOfWeek(DateTime now) {
+  return dateTimeToDayAccuracy(now).subtract(Duration(days: now.weekday - 1));
+}
+
+/// Returns a [DateTime] representing the start of the month to which `now`
+/// belongs.
+DateTime getStartOfMonth(DateTime now) {
+  return DateTime(now.year, now.month);
+}
+
+/// Returns a [DateTime] representing the start of the year to which `now`
+/// belongs.
+DateTime getStartOfYear(DateTime now) {
+  return DateTime(now.year);
 }

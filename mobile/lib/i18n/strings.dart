@@ -73,7 +73,24 @@ class Strings {
   String get settingsPageVersion => _getString("settingsPage_version");
   String get settingsPageHeadingAbout => _getString("settingsPage_headingAbout");
 
+  String get statsPageTitle => _getString("statsPage_title");
+
   String get activityDropdownAllActivities => _getString("activityDropdown_allActivities");
+
+  String get analysisDurationAllDates => _getString("analysisDuration_allDates");
+  String get analysisDurationToday => _getString("analysisDuration_today");
+  String get analysisDurationThisWeek => _getString("analysisDuration_thisWeek");
+  String get analysisDurationThisMonth => _getString("analysisDuration_thisMonth");
+  String get analysisDurationThisYear => _getString("analysisDuration_thisYear");
+  String get analysisDurationLastWeek => _getString("analysisDuration_lastWeek");
+  String get analysisDurationLastMonth => _getString("analysisDuration_lastMonth");
+  String get analysisDurationLastYear => _getString("analysisDuration_lastYear");
+  String get analysisDurationLast7Days => _getString("analysisDuration_last7Days");
+  String get analysisDurationLast14Days => _getString("analysisDuration_last14Days");
+  String get analysisDurationLast30Days => _getString("analysisDuration_last30Days");
+  String get analysisDurationLast60Days => _getString("analysisDuration_last60Days");
+  String get analysisDurationLast12Months => _getString("analysisDuration_last12Months");
+  String get analysisDurationCustom => _getString("analysisDuration_custom");
 
   String get daysFormat => _getString("daysFormat");
   String get hoursFormat => _getString("hoursFormat");

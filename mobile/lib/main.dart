@@ -4,7 +4,6 @@ import 'package:mobile/app_manager.dart';
 import 'package:mobile/i18n/strings.dart';
 import 'package:mobile/pages/main_page.dart';
 import 'package:mobile/res/style.dart';
-import 'package:mobile/widgets/widget.dart';
 
 void main() => runApp(ActivityLog());
 
@@ -35,7 +34,9 @@ class ActivityLog extends StatelessWidget {
         builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
           if (snapshot.hasError || !snapshot.hasData) {
             return Scaffold(
-              appBar: AppBar(),
+              appBar: AppBar(
+                elevation: 0,
+              ),
             );
           }
           return MainPage(_app);
