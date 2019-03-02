@@ -114,31 +114,46 @@ class StatsDateRange {
   });
 
   static final last7Days = StatsDateRange._((DateTime now) {
-    return DateRange(startDate: DateTime.now(), endDate: DateTime.now());
+    return DateRange(
+      startDate: now.subtract(Duration(days: 7)),
+      endDate: now,
+    );
   }, (BuildContext context) {
     return Strings.of(context).analysisDurationLast7Days;
   });
 
   static final last14Days = StatsDateRange._((DateTime now) {
-    return DateRange(startDate: DateTime.now(), endDate: DateTime.now());
+    return DateRange(
+      startDate: now.subtract(Duration(days: 14)),
+      endDate: now,
+    );
   }, (BuildContext context) {
     return Strings.of(context).analysisDurationLast14Days;
   });
 
   static final last30Days = StatsDateRange._((DateTime now) {
-    return DateRange(startDate: DateTime.now(), endDate: DateTime.now());
+    return DateRange(
+      startDate: now.subtract(Duration(days: 30)),
+      endDate: now,
+    );
   }, (BuildContext context) {
     return Strings.of(context).analysisDurationLast30Days;
   });
 
   static final last60Days = StatsDateRange._((DateTime now) {
-    return DateRange(startDate: DateTime.now(), endDate: DateTime.now());
+    return DateRange(
+      startDate: now.subtract(Duration(days: 60)),
+      endDate: now,
+    );
   }, (BuildContext context) {
     return Strings.of(context).analysisDurationLast60Days;
   });
 
   static final last12Months = StatsDateRange._((DateTime now) {
-    return DateRange(startDate: DateTime.now(), endDate: DateTime.now());
+    return DateRange(
+      startDate: now.subtract(Duration(days: 365)),
+      endDate: now,
+    );
   }, (BuildContext context) {
     return Strings.of(context).analysisDurationLast12Months;
   });
