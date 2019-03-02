@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:mobile/utils/page_utils.dart';
 import 'package:mobile/widgets/page.dart';
@@ -40,9 +42,7 @@ class _ListPickerState<T> extends State<ListPicker<T>> {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      title: widget.options.singleWhere((ListPickerItem<T> item) {
-        return item.value == _selectedItem;
-      }).child,
+      title: getListPickerItem(_selectedItem).child,
       trailing: Icon(Icons.chevron_right),
       onTap: () {
         push(context, _ListPickerPage<T>(
@@ -53,12 +53,20 @@ class _ListPickerState<T> extends State<ListPicker<T>> {
               _selectedItem = pickedItem;
             });
 
-            Navigator.pop(context);
+            if (getListPickerItem(pickedItem).popsListOnPicked) {
+              Navigator.pop(context);
+            }
           },
           options: widget.options,
         ));
       },
     );
+  }
+
+  ListPickerItem<T> getListPickerItem(T item) {
+    return widget.options.singleWhere((ListPickerItem<T> indexItem) {
+      return indexItem.value == item;
+    });
   }
 }
 
@@ -67,22 +75,32 @@ class ListPickerItem<T> {
   final Widget child;
   final T value;
 
-  /// Allows custom behaviour of individual items. If this is not `null`, it is
-  /// called instead of [ListPicker.onChanged].
-  final VoidCallback onTap;
+  /// Allows custom behaviour of individual items. Returns `true` to invoke
+  /// [ListPicker.onChanged]; `false` otherwise.
+  ///
+  /// Implemented as a [Future] because presumably, setting this method is
+  /// for custom picker behaviour and will need to wait for that behaviour to
+  /// finish.
+  final Future<bool> Function() onTap;
 
   final bool isDivider;
+
+  /// Whether or not to dismiss the list picker when this item is picked.
+  /// Defaults to `true`.
+  final bool popsListOnPicked;
 
   ListPickerItem.divider()
     : value = null,
       child = Divider(),
       isDivider = true,
+      popsListOnPicked = false,
       onTap = null;
 
   ListPickerItem({
     @required this.child,
     this.value,
     this.onTap,
+    this.popsListOnPicked = true,
   }) : assert(value != null || (value == null && onTap != null)),
        assert(child != null),
        isDivider = false;
@@ -99,8 +117,8 @@ class _ListPickerPage<T> extends StatelessWidget {
     @required this.options,
     @required this.onItemPicked,
   }) : assert(selectedItem != null),
-        assert(options != null),
-        assert(onItemPicked!= null);
+       assert(options != null),
+       assert(onItemPicked!= null);
 
   @override
   Widget build(BuildContext context) {
@@ -118,10 +136,10 @@ class _ListPickerPage<T> extends StatelessWidget {
               Icons.check,
               color: Theme.of(context).primaryColor,
             ) : null,
-            onTap: () {
-              if (item.onTap != null) {
-                item.onTap();
-              } else {
+            onTap: () async {
+              if (item.onTap == null) {
+                onItemPicked(item.value);
+              } else if (await item.onTap()) {
                 onItemPicked(item.value);
               }
             },

@@ -1,6 +1,10 @@
+import 'dart:async';
+
+import 'package:date_range_picker/date_range_picker.dart' as DateRangePicker;
 import 'package:flutter/material.dart';
 import 'package:mobile/i18n/strings.dart';
 import 'package:mobile/utils/date_time_utils.dart';
+import 'package:mobile/utils/string_utils.dart';
 import 'package:mobile/widgets/list_picker.dart';
 
 /// A [ListPicker] wrapper widget for selecting a date range, such as the
@@ -37,9 +41,10 @@ class StatsDateRangePicker extends StatelessWidget {
         _buildItem(context, StatsDateRange.last12Months),
         ListPickerItem.divider(),
         ListPickerItem<StatsDateRange>(
-          child: Text(Strings.of(context).analysisDurationCustom),
-          onTap: () {
-          },
+          popsListOnPicked: false,
+          child: Text(StatsDateRange.custom.getTitle(context)),
+          onTap: () => _onTapCustom(context),
+          value: StatsDateRange.custom,
         ),
       ],
     );
@@ -52,6 +57,34 @@ class StatsDateRangePicker extends StatelessWidget {
       child: Text(duration.getTitle(context)),
       value: duration,
     );
+  }
+
+  Future<bool> _onTapCustom(BuildContext context) async {
+    DateTime now = DateTime.now();
+    DateRange customValue = StatsDateRange.custom.getValue(now);
+
+    List<DateTime> pickedRange = await DateRangePicker.showDatePicker(
+      context: context,
+      initialFirstDate: customValue.startDate,
+      initialLastDate: customValue.endDate,
+      firstDate: DateTime.fromMillisecondsSinceEpoch(0),
+      lastDate: now,
+    );
+
+    DateRange dateRange = DateRange(
+      startDate: pickedRange.first,
+      endDate: pickedRange.last,
+    );
+
+    // Reset StatsDateRange.custom properties to return the picked DateRange.
+    StatsDateRange.custom.getValue = (DateTime dateTime) => dateRange;
+    StatsDateRange.custom.getTitle =
+        (BuildContext context) => formatDateRange(dateRange);
+
+    onDurationPicked(StatsDateRange.custom);
+
+    Navigator.pop(context);
+    return true;
   }
 }
 
@@ -158,8 +191,17 @@ class StatsDateRange {
     return Strings.of(context).analysisDurationLast12Months;
   });
 
-  final DateRange Function(DateTime now) getValue;
-  final String Function(BuildContext context) getTitle;
+  /// Used for a custom picker row. Defaults to "this month". We use a static
+  /// instance in order for `==` to work correctly. Overriding `==` isn't
+  /// easy for classes whose properties are functions.
+  static final custom = StatsDateRange._((DateTime now) {
+    return thisMonth.getValue(now);
+  }, (BuildContext context) {
+    return Strings.of(context).analysisDurationCustom;
+  });
+
+  DateRange Function(DateTime now) getValue;
+  String Function(BuildContext context) getTitle;
 
   StatsDateRange._(this.getValue, this.getTitle);
 }

@@ -18,9 +18,10 @@ dependencies:
   flutter_localizations:
     sdk: flutter
 
+  date_range_picker: ^1.0.3
   intl: ^0.15.7
-  quiver: '>=2.0.0 <3.0.0'
   package_info: any
+  quiver: '>=2.0.0 <3.0.0'
   sqflite: any
   uuid: 1.0.3
 

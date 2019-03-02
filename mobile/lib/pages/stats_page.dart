@@ -17,13 +17,13 @@ class StatsPage extends StatefulWidget {
 
 class _StatsPageState extends State<StatsPage> {
   Activity _currentActivity;
-  StatsDateRange _currentDuration;
+  StatsDateRange _currentDateRange;
 
   @override
   void initState() {
     super.initState();
     _currentActivity = null;
-    _currentDuration = StatsDateRange.allDates;
+    _currentDateRange = StatsDateRange.allDates;
   }
 
   @override
@@ -42,9 +42,9 @@ class _StatsPageState extends State<StatsPage> {
             },
           ),
           StatsDateRangePicker(
-            initialValue: _currentDuration,
-            onDurationPicked: (StatsDateRange pickedDuration) {
-              _currentDuration = pickedDuration;
+            initialValue: _currentDateRange,
+            onDurationPicked: (StatsDateRange pickedDateRange) {
+              _currentDateRange = pickedDateRange;
             },
           )
         ],
