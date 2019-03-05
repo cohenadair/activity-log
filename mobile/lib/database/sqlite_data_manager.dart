@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:mobile/database/data_manageable.dart';
-import 'package:mobile/database/sqlite_open_helper.dart';
 import 'package:mobile/model/activity.dart';
 import 'package:mobile/model/model.dart';
 import 'package:mobile/model/session.dart';
@@ -20,9 +19,8 @@ class SQLiteDataManager implements DataManageable {
         _sessionsUpdatedMap = Map();
 
   @override
-  Future<bool> initialize() async {
-    _database = await SQLiteOpenHelper.open();
-    return true;
+  void initialize(Database database) {
+    _database = database;
   }
 
   void _update(String table, Model model, VoidCallback notify) {
@@ -288,6 +286,10 @@ class SQLiteDataManager implements DataManageable {
   Future<List<SummarizedActivity>> getSummarizedActivities(DateRange dateRange)
       async
   {
+    if (dateRange == null) {
+      return [];
+    }
+
     // Get all activities.
     List<Map<String, dynamic>> mapList =
         await _database.rawQuery("SELECT * FROM activity");

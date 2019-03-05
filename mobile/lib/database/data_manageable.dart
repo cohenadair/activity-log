@@ -4,12 +4,13 @@ import 'package:mobile/model/activity.dart';
 import 'package:mobile/model/session.dart';
 import 'package:mobile/model/summarized_activity.dart';
 import 'package:mobile/utils/date_time_utils.dart';
+import 'package:sqflite/sqflite.dart';
 
 /// Returns true if the stream should be notified immediately.
 typedef StreamHandler<T> = bool Function(Stream<T>);
 
 abstract class DataManageable {
-  Future<bool> initialize();
+  void initialize(Database database);
 
   /// Call this method to be notified when activities are added,
   /// removed, or modified.

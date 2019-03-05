@@ -1,6 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:mobile/app_manager.dart';
+import 'package:mobile/database/sqlite_open_helper.dart';
 import 'package:mobile/i18n/strings.dart';
 import 'package:mobile/pages/main_page.dart';
 import 'package:mobile/res/style.dart';
@@ -30,7 +33,7 @@ class ActivityLog extends StatelessWidget {
         errorColor: Colors.red,
       ),
       home: FutureBuilder<bool>(
-        future: _app.dataManager.initialize(),
+        future: initializeDataManager(),
         builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
           if (snapshot.hasError || !snapshot.hasData) {
             return Scaffold(
@@ -54,5 +57,10 @@ class ActivityLog extends StatelessWidget {
         Locale('en', 'CA'),
       ],
     );
+  }
+
+  Future<bool> initializeDataManager() async {
+    _app.dataManager.initialize(await SQLiteOpenHelper.open());
+    return true;
   }
 }
