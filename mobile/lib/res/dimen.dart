@@ -68,3 +68,5 @@ const insetsLeftWidgetSmall = EdgeInsets.only(
 
 const iconSizeDefault = 24.0;
 const iconSizeLarge = 32.0;
+
+const chartBarHeightDefault = 75.0;

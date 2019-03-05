@@ -48,7 +48,11 @@ class DisplayDuration {
 class DateRange {
   final DateTime startDate;
   final DateTime endDate;
+
   DateRange({this.startDate, this.endDate});
+
+  int get startMs => startDate.millisecondsSinceEpoch;
+  int get endMs => endDate.millisecondsSinceEpoch;
 }
 
 bool isSameYear(DateTime a, DateTime b) {

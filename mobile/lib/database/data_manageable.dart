@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:mobile/model/activity.dart';
 import 'package:mobile/model/session.dart';
+import 'package:mobile/model/summarized_activity.dart';
+import 'package:mobile/utils/date_time_utils.dart';
 
 /// Returns true if the stream should be notified immediately.
 typedef StreamHandler<T> = bool Function(Stream<T>);
@@ -48,4 +50,7 @@ abstract class DataManageable {
 
   /// Case-insensitive compare of a given name to all other activity names.
   Future<bool> activityNameExists(String name);
+
+  Future<SummarizedActivity> getSummarizedActivity(DateRange dateRange);
+  Future<List<SummarizedActivity>> getSummarizedActivities(DateRange dateRange);
 }

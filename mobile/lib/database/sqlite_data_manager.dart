@@ -6,6 +6,8 @@ import 'package:mobile/database/sqlite_open_helper.dart';
 import 'package:mobile/model/activity.dart';
 import 'package:mobile/model/model.dart';
 import 'package:mobile/model/session.dart';
+import 'package:mobile/model/summarized_activity.dart';
+import 'package:mobile/utils/date_time_utils.dart';
 import 'package:sqflite/sqflite.dart';
 
 class SQLiteDataManager implements DataManageable {
@@ -275,6 +277,69 @@ class SQLiteDataManager implements DataManageable {
       SELECT COUNT(*) FROM activity WHERE name = ? COLLATE NOCASE
     """;
     return Sqflite.firstIntValue(await _database.rawQuery(query, [name])) == 1;
+  }
+
+  @override
+  Future<SummarizedActivity> getSummarizedActivity(DateRange dateRange) async {
+    // TODO: Implement
+  }
+
+  @override
+  Future<List<SummarizedActivity>> getSummarizedActivities(DateRange dateRange)
+      async
+  {
+    // Get all activities.
+    List<Map<String, dynamic>> mapList =
+        await _database.rawQuery("SELECT * FROM activity");
+    List<Activity> activityList = [];
+
+    mapList.forEach((Map<String, dynamic> map) {
+      activityList.add(Activity.fromMap(map));
+    });
+
+    List<SummarizedActivity> result = [];
+
+    // Get all sessions for all activities and construct a SummarizedActivity
+    // object.
+    for (Activity activity in activityList) {
+      // Query for sessions that belong to this Activity and overlap the
+      // desired date range.
+      List<Map<String, dynamic>> sessionMapList = await _database.rawQuery("""
+        SELECT * FROM session
+          WHERE activity_id = ?
+          AND start_timestamp < ?
+          AND (end_timestamp IS NULL OR end_timestamp > ?)
+        """, [
+          activity.id,
+          dateRange.endMs,
+          dateRange.startMs,
+        ],
+      );
+
+      List<Session> sessionList = [];
+      sessionMapList.forEach((Map<String, dynamic> map) {
+        sessionList.add(SessionBuilder
+            .fromSession(Session.fromMap(map))
+            .pinToDateRange(dateRange)
+            .build);
+      });
+
+      int totalMs = 0;
+      sessionList.forEach((Session session) {
+        totalMs += session.millisecondsDuration;
+      });
+
+      if (totalMs > 0) {
+        result.add(SummarizedActivity(
+          value: activity,
+          totalDuration: Duration(milliseconds: totalMs),
+        ));
+      }
+    }
+
+    result.sort((a, b) => a.value.name.compareTo(b.value.name));
+
+    return result;
   }
 
   void _notifyActivitiesUpdated() {

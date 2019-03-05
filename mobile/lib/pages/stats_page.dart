@@ -2,9 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:mobile/app_manager.dart';
 import 'package:mobile/i18n/strings.dart';
 import 'package:mobile/model/activity.dart';
+import 'package:mobile/model/summarized_activity.dart';
+import 'package:mobile/res/dimen.dart';
+import 'package:mobile/widgets/activities_bar_chart.dart';
 import 'package:mobile/widgets/activity_picker.dart';
 import 'package:mobile/widgets/stats_date_range_picker.dart';
 import 'package:mobile/widgets/page.dart';
+import 'package:mobile/widgets/widget.dart';
 
 class StatsPage extends StatefulWidget {
   final AppManager app;
@@ -46,7 +50,27 @@ class _StatsPageState extends State<StatsPage> {
             onDurationPicked: (StatsDateRange pickedDateRange) {
               _currentDateRange = pickedDateRange;
             },
-          )
+          ),
+          MinDivider(),
+          Padding(
+            padding: EdgeInsets.only(
+              top: paddingSmall,
+              bottom: paddingDefault,
+            ),
+            child: FutureBuilder<List<SummarizedActivity>>(
+              future: widget.app.dataManager.getSummarizedActivities(
+                _currentDateRange.value,
+              ),
+              builder: (BuildContext context,
+                  AsyncSnapshot<List<SummarizedActivity>> snapshot)
+              {
+                if (!snapshot.hasData) {
+                  return Empty();
+                }
+                return ActivitiesBarChart(snapshot.data);
+              },
+            ),
+          ),
         ],
       ),
     );

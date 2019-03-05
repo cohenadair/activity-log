@@ -4,6 +4,7 @@ import 'package:mobile/i18n/strings.dart';
 import 'package:mobile/model/session.dart';
 import 'package:mobile/res/dimen.dart';
 import 'package:mobile/utils/dialog_utils.dart';
+import 'package:mobile/widgets/list_item.dart';
 import 'package:mobile/widgets/text.dart';
 import 'package:mobile/widgets/widget.dart';
 
@@ -31,7 +32,7 @@ class SessionListTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: <Widget>[
-        ListTile(
+        ListItem(
           contentPadding: insetsLeftDefault,
           onTap: () {
             if (_onTap != null) {

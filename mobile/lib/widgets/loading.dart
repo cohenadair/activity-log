@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/res/dimen.dart';
 
 class Loading extends StatelessWidget {
   final EdgeInsets _padding;
 
-  Loading({EdgeInsets padding}) : _padding = padding;
+  // ignore: missing_identifier
+  Loading({
+    EdgeInsets padding = insetsZero
+  }) : _padding = padding;
 
   @override
   Widget build(BuildContext context) {

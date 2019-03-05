@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:mobile/i18n/strings.dart';
 import 'package:mobile/utils/date_time_utils.dart';
 import 'package:mobile/widgets/text.dart';
 
@@ -39,4 +40,80 @@ String formatDateRange(DateRange dateRange) {
   return DateFormat(monthDayYearFormat).format(dateRange.startDate)
       + " - "
       + DateFormat(monthDayYearFormat).format(dateRange.endDate);
+}
+
+/// Returns formatted text to display the total duration of list of [Duration]
+/// objects, in the format Dd Hh Mm Ss.
+///
+/// Example:
+///   - 0d 5h 30m 0s
+String formatTotalDuration({
+  BuildContext context,
+  List<Duration> durations,
+  bool includesDays = true,
+  bool includesHours = true,
+  bool includesMinutes = true,
+  bool includesSeconds = true,
+
+  /// If `true`, values equal to 0 will not be included.
+  bool condensed = false,
+
+  /// If `true`, only the largest 2 quantities will be shown.
+  ///
+  /// Examples:
+  ///   - 1d 12h
+  ///   - 12h 30m
+  ///   - 30m 45s
+  bool showHighestTwoOnly = false,
+}) {
+  int totalMillis = 0;
+
+  durations.forEach((Duration duration) {
+    totalMillis += duration.inMilliseconds;
+  });
+
+  DisplayDuration duration = DisplayDuration(
+    Duration(milliseconds: totalMillis),
+    includesDays: includesDays,
+    includesHours: includesHours,
+    includesMinutes: includesMinutes,
+  );
+
+  String result = "";
+
+  maybeAddSpace() {
+    if (result.isNotEmpty) {
+      result += " ";
+    }
+  }
+
+  int numberIncluded = 0;
+
+  bool shouldAdd(bool include, int value) {
+    return include && (!condensed || value > 0) && numberIncluded < 2;
+  }
+
+  if (shouldAdd(includesDays, duration.days)) {
+    result += format(Strings.of(context).daysFormat, [duration.days]);
+    numberIncluded++;
+  }
+
+  if (shouldAdd(includesHours, duration.hours)) {
+    maybeAddSpace();
+    result += format(Strings.of(context).hoursFormat, [duration.hours]);
+    numberIncluded++;
+  }
+
+  if (shouldAdd(includesMinutes, duration.minutes)) {
+    maybeAddSpace();
+    result += format(Strings.of(context).minutesFormat, [duration.minutes]);
+    numberIncluded++;
+  }
+
+  if (shouldAdd(includesSeconds, duration.seconds)) {
+    maybeAddSpace();
+    result += format(Strings.of(context).secondsFormat, [duration.seconds]);
+  }
+
+  return result;
 }

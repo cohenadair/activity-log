@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mobile/model/model.dart';
+import 'package:mobile/utils/date_time_utils.dart';
 
 class Session extends Model {
   static final keyActivityId = "activity_id";
@@ -74,6 +75,20 @@ class SessionBuilder extends ModelBuilder {
 
   SessionBuilder endNow() {
     endTimestamp = DateTime.now().millisecondsSinceEpoch;
+    return this;
+  }
+
+  /// Pins the session start and end time to the given [DateRange], if the
+  /// session falls outside said range.
+  SessionBuilder pinToDateRange(DateRange dateRange) {
+    if (startTimestamp < dateRange.startMs) {
+      startTimestamp = dateRange.startMs;
+    }
+
+    if (endTimestamp != null && endTimestamp < dateRange.startMs) {
+      startTimestamp = dateRange.startMs;
+    }
+
     return this;
   }
 

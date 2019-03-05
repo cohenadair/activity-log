@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:mobile/i18n/strings.dart';
 import 'package:mobile/res/dimen.dart';
+import 'package:mobile/widgets/list_item.dart';
+import 'package:mobile/widgets/loading.dart';
 import 'package:mobile/widgets/page.dart';
 import 'package:mobile/widgets/text.dart';
 import 'package:mobile/widgets/widget.dart';
@@ -21,9 +23,11 @@ class SettingsPage extends StatelessWidget {
               left: paddingDefault,
               right: paddingDefault,
             ),
-            child: HeadingText(Strings.of(context).settingsPageHeadingAbout),
+            child: SafeArea(
+              child: HeadingText(Strings.of(context).settingsPageHeadingAbout),
+            ),
           ),
-          ListTile(
+          ListItem(
             title: Text(Strings.of(context).settingsPageVersion),
             trailing: FutureBuilder<PackageInfo>(
               future: PackageInfo.fromPlatform(),
@@ -38,7 +42,7 @@ class SettingsPage extends StatelessWidget {
                         ),
                       );
                     } else {
-                      return Text("...");
+                      return Loading();
                     }
                   },
             ),

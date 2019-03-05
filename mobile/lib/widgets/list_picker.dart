@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:mobile/utils/page_utils.dart';
+import 'package:mobile/widgets/list_item.dart';
 import 'package:mobile/widgets/page.dart';
 
 typedef OnListPickerChanged<T> = void Function(T);
@@ -41,7 +42,7 @@ class _ListPickerState<T> extends State<ListPicker<T>> {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
+    return ListItem(
       title: getListPickerItem(_selectedItem).child,
       trailing: Icon(Icons.chevron_right),
       onTap: () {
@@ -130,7 +131,7 @@ class _ListPickerPage<T> extends StatelessWidget {
             return item.child;
           }
 
-          return ListTile(
+          return ListItem(
             title: item.child,
             trailing: selectedItem == item.value ? Icon(
               Icons.check,

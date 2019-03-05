@@ -4,6 +4,7 @@ import 'package:mobile/model/activity.dart';
 import 'package:mobile/model/session.dart';
 import 'package:mobile/res/dimen.dart';
 import 'package:mobile/widgets/future_timer.dart';
+import 'package:mobile/widgets/list_item.dart';
 import 'package:mobile/widgets/text.dart';
 import 'package:mobile/widgets/widget.dart';
 
@@ -41,7 +42,7 @@ class _ActivityListTileState extends State<ActivityListTile> {
   Widget build(BuildContext context) {
     _updateWaitingStatus();
 
-    return ListTile(
+    return ListItem(
       contentPadding: EdgeInsets.only(right: 0, left: paddingDefault),
       title: Text(_activity.name),
       subtitle: FutureBuilder<List<Session>>(

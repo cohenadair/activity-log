@@ -204,4 +204,6 @@ class StatsDateRange {
   String Function(BuildContext context) getTitle;
 
   StatsDateRange._(this.getValue, this.getTitle);
+
+  DateRange get value => getValue(DateTime.now());
 }

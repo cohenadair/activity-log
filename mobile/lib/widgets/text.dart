@@ -150,41 +150,39 @@ class EnabledText extends StatelessWidget {
   }
 }
 
-/// A Text widget that displays the total duration of list of Duration objects,
-/// in the format Dd Hh Mm Ss.
-///
-/// Example:
-///   - 0d 5h 30m 0s
+/// A Text widget that displays the total duration of list of [Duration]
+/// objects. This widget is basically a wrapper for the String utility method,
+/// [formatTotalDuration].
 class TotalDurationText extends StatelessWidget {
-  final List<Duration> _durations;
+  final List<Duration> durations;
+  final bool includesDays;
+  final bool includesHours;
+  final bool includesMinutes;
+  final bool includesSeconds;
+  final bool condensed;
+  final bool showHighestTwoOnly;
 
-  TotalDurationText(this._durations);
+  TotalDurationText(this.durations, {
+    this.includesDays = true,
+    this.includesHours = true,
+    this.includesMinutes = true,
+    this.includesSeconds = true,
+    this.condensed = false,
+    this.showHighestTwoOnly = false,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Text(_format(context));
-  }
-
-  String _format(BuildContext context) {
-    int totalMillis = 0;
-
-    _durations.forEach((Duration duration) {
-      totalMillis += duration.inMilliseconds;
-    });
-
-    DisplayDuration duration =
-        DisplayDuration(Duration(milliseconds: totalMillis));
-
-    String days =
-        format(Strings.of(context).daysFormat, [duration.days]);
-    String hours =
-        format(Strings.of(context).hoursFormat, [duration.hours]);
-    String minutes =
-        format(Strings.of(context).minutesFormat, [duration.minutes]);
-    String seconds =
-        format(Strings.of(context).secondsFormat, [duration.seconds]);
-
-    return "$days $hours $minutes $seconds";
+    return Text(formatTotalDuration(
+      context: context,
+      durations: durations,
+      includesDays: includesDays,
+      includesHours: includesHours,
+      includesMinutes: includesMinutes,
+      includesSeconds: includesSeconds,
+      condensed: condensed,
+      showHighestTwoOnly: showHighestTwoOnly,
+    ));
   }
 }
 

@@ -18,6 +18,7 @@ dependencies:
   flutter_localizations:
     sdk: flutter
 
+  charts_flutter: 0.6.0
   date_range_picker: ^1.0.3
   intl: ^0.15.7
   package_info: any
