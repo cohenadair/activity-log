@@ -90,7 +90,9 @@ String formatTotalDuration({
   int numberIncluded = 0;
 
   bool shouldAdd(bool include, int value) {
-    return include && (!condensed || value > 0) && numberIncluded < 2;
+    return include
+        && (!condensed || value > 0)
+        && (!showHighestTwoOnly || numberIncluded < 2);
   }
 
   if (shouldAdd(includesDays, duration.days)) {
