@@ -49,6 +49,7 @@ Map<String, Map<String, String>> englishStrings = {
     "settingsPage_headingAbout" : "About",
 
     "statsPage_title" : "Stats",
+    "statsPage_noDataMessage" : "No data to show; try different filter options.",
 
     "activityDropdown_allActivities" : "All activities",
 

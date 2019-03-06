@@ -74,6 +74,7 @@ class Strings {
   String get settingsPageHeadingAbout => _getString("settingsPage_headingAbout");
 
   String get statsPageTitle => _getString("statsPage_title");
+  String get statsPageNoDataMessage => _getString("statsPage_noDataMessage");
 
   String get activityDropdownAllActivities => _getString("activityDropdown_allActivities");
 

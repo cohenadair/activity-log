@@ -82,7 +82,7 @@ class _EditSessionPageState extends State<EditSessionPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            ErrorText(
+            AnimatedErrorText(
               _formValidationValue,
               padding: insetsVerticalSmall,
             ),

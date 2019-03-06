@@ -8,6 +8,7 @@ import 'package:mobile/widgets/activities_bar_chart.dart';
 import 'package:mobile/widgets/activity_picker.dart';
 import 'package:mobile/widgets/stats_date_range_picker.dart';
 import 'package:mobile/widgets/page.dart';
+import 'package:mobile/widgets/text.dart';
 import 'package:mobile/widgets/widget.dart';
 
 class StatsPage extends StatefulWidget {
@@ -48,7 +49,9 @@ class _StatsPageState extends State<StatsPage> {
           StatsDateRangePicker(
             initialValue: _currentDateRange,
             onDurationPicked: (StatsDateRange pickedDateRange) {
-              _currentDateRange = pickedDateRange;
+              setState(() {
+                _currentDateRange = pickedDateRange;
+              });
             },
           ),
           MinDivider(),
@@ -67,6 +70,16 @@ class _StatsPageState extends State<StatsPage> {
                 if (!snapshot.hasData) {
                   return Empty();
                 }
+
+                if (snapshot.data.isEmpty) {
+                  return Padding(
+                    padding: insetsRowDefault,
+                    child: ErrorText(
+                      Strings.of(context).statsPageNoDataMessage
+                    ),
+                  );
+                }
+
                 return ActivitiesBarChart(snapshot.data);
               },
             ),

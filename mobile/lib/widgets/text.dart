@@ -16,19 +16,21 @@ const monthDayYearFormat = "MMM. d, yyyy";
 /// null or empty to !empty or !null, the text is animated to show in the same
 /// way [InputDecorator] animates errors into view (slide in from the top with
 /// opacity).
-class ErrorText extends StatefulWidget {
+class AnimatedErrorText extends StatefulWidget {
   final String text;
   final EdgeInsets padding;
 
-  ErrorText(this.text, {
+  AnimatedErrorText(this.text, {
     EdgeInsets padding = insetsZero
   }) : padding = padding;
 
   @override
-  _ErrorTextState createState() => _ErrorTextState();
+  _AnimatedErrorTextState createState() => _AnimatedErrorTextState();
 }
 
-class _ErrorTextState extends State<ErrorText> with TickerProviderStateMixin {
+class _AnimatedErrorTextState extends State<AnimatedErrorText>
+    with TickerProviderStateMixin
+{
   // Animation settings are copied from InputDecorator in order to stay
   // consistent with Material form widgets.
   final animationDuration = Duration(milliseconds: 200);
@@ -62,7 +64,7 @@ class _ErrorTextState extends State<ErrorText> with TickerProviderStateMixin {
   }
 
   @override
-  void didUpdateWidget(ErrorText oldWidget) {
+  void didUpdateWidget(AnimatedErrorText oldWidget) {
     super.didUpdateWidget(oldWidget);
 
     // Text goes from null to !null or vise-versa.
@@ -89,12 +91,23 @@ class _ErrorTextState extends State<ErrorText> with TickerProviderStateMixin {
         position: _animationOffset,
         child: Padding(
           padding: widget.padding,
-          child: Text(
-            widget.text,
-            style: styleError,
-          ),
+          child: ErrorText(widget.text),
         ),
       ),
+    );
+  }
+}
+
+class ErrorText extends StatelessWidget {
+  final String text;
+
+  ErrorText(this.text);
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      text,
+      style: styleError,
     );
   }
 }
