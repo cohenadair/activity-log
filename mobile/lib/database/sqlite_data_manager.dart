@@ -318,6 +318,10 @@ class SQLiteDataManager implements DataManageable {
         ],
       );
 
+      if (sessionMapList == null || sessionMapList.isEmpty) {
+        continue;
+      }
+
       List<Session> sessionList = [];
       sessionMapList.forEach((Map<String, dynamic> map) {
         sessionList.add(SessionBuilder

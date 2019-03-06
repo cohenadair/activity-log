@@ -85,8 +85,8 @@ class SessionBuilder extends ModelBuilder {
       startTimestamp = dateRange.startMs;
     }
 
-    if (endTimestamp != null && endTimestamp < dateRange.startMs) {
-      startTimestamp = dateRange.startMs;
+    if (endTimestamp != null && endTimestamp > dateRange.endMs) {
+      endTimestamp = dateRange.endMs;
     }
 
     return this;
