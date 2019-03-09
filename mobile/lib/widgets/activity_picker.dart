@@ -75,9 +75,9 @@ class _ActivityPickerState extends State<ActivityPicker> {
           allItem: _buildItem(_allActivitiesActivity),
           items: activities.map((activity) => _buildItem(activity)).toList(),
           titleBuilder: (Set<Activity> selectedActivities) {
-            return CombinedText(
-              selectedActivities.map((activity) => activity.name).toList(),
-              separator: ", ",
+            return Text(
+              selectedActivities.map((activity) => activity.name)
+                  .toList().join(", "),
             );
           },
         );

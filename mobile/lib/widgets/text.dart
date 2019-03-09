@@ -144,28 +144,6 @@ class HeadingText extends StatelessWidget {
   }
 }
 
-/// A [Text] widget that combines a given [String] array with the given
-/// separator.
-class CombinedText extends StatelessWidget {
-  final List<String> strings;
-  final String separator;
-
-  CombinedText(this.strings, {
-    this.separator = "",
-  }) : assert(strings != null),
-       assert(strings.length > 0);
-
-  @override
-  Widget build(BuildContext context) {
-    String text = "";
-    strings.forEach((string) {
-      text += string;
-      text += string != strings.last ? separator : "";
-    });
-    return Text(text);
-  }
-}
-
 /// A [Text] widget with an enabled state. If `enabled = false`, the [Text] is
 /// rendered with a `Theme.of(context).disabledColor` color.
 class EnabledText extends StatelessWidget {
