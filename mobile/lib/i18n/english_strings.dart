@@ -7,6 +7,7 @@ Map<String, Map<String, String>> englishStrings = {
     "appName" : "Activity Log",
 
     "cancel" : "Cancel",
+    "done" : "Done",
     "delete" : "Delete",
     "today" : "Today",
     "yesterday" : "Yesterday",

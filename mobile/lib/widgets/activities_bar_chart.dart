@@ -22,7 +22,9 @@ class _ActivitiesBarChartState extends State<ActivitiesBarChart> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: (data.length * chartBarHeightDefault).toDouble(),
+      height: data.length == 1
+          ? chartBarHeightSingle
+          : (data.length * chartBarHeightDefault).toDouble(),
       child: SafeArea(
         child: Charts.BarChart(
           seriesList,

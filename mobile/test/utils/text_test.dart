@@ -6,6 +6,27 @@ import 'package:quiver/time.dart';
 import '../test_utils.dart';
 
 void main() {
+  group("CombinedText", () {
+    testWidgets("Normal case", (WidgetTester tester) async {
+      await tester.pumpWidget(Testable(CombinedText([
+        "Test", "Test1", "Test2", "Test3",
+      ], separator: ", ")));
+      expect(find.text("Test, Test1, Test2, Test3"), findsOneWidget);
+    });
+
+    testWidgets("Only one entry", (WidgetTester tester) async {
+      await tester.pumpWidget(Testable(CombinedText(["Test"], separator: ",")));
+      expect(find.text("Test"), findsOneWidget);
+    });
+
+    testWidgets("No separator", (WidgetTester tester) async {
+      await tester.pumpWidget(Testable(CombinedText([
+        "Test", "Test1", "Test2", "Test3",
+      ])));
+      expect(find.text("TestTest1Test2Test3"), findsOneWidget);
+    });
+  });
+
   group("TotalDurationText", () {
     testWidgets("Empty", (WidgetTester tester) async {
       List<Duration> durations = [];

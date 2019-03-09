@@ -5,6 +5,7 @@ import 'package:mobile/app_manager.dart';
 import 'package:mobile/i18n/strings.dart';
 import 'package:mobile/model/activity.dart';
 import 'package:mobile/widgets/list_picker.dart';
+import 'package:mobile/widgets/text.dart';
 
 typedef OnActivityDropdownItemSelected = void Function(Activity);
 
@@ -12,15 +13,15 @@ typedef OnActivityDropdownItemSelected = void Function(Activity);
 /// "All activities".
 class ActivityPicker extends StatefulWidget {
   final AppManager app;
-  final Activity initialActivity;
+  final Set<Activity> initialActivities;
 
   /// This function is invoked with `null` if "All activities" is selected.
-  final OnListPickerChanged<Activity> onActivityPicked;
+  final OnListPickerChanged<Set<Activity>> onPickedActivitiesChanged;
 
   ActivityPicker({
     @required this.app,
-    @required this.initialActivity,
-    @required this.onActivityPicked,
+    @required this.initialActivities,
+    @required this.onPickedActivitiesChanged,
   });
 
   @override
@@ -29,6 +30,7 @@ class ActivityPicker extends StatefulWidget {
 
 class _ActivityPickerState extends State<ActivityPicker> {
   Stream<List<Activity>> _stream;
+  Activity _allActivitiesActivity;
 
   @override
   void initState() {
@@ -45,33 +47,48 @@ class _ActivityPickerState extends State<ActivityPicker> {
     return StreamBuilder<List<Activity>>(
       stream: _stream,
       builder: (BuildContext context, AsyncSnapshot<List<Activity>> snapshot) {
-        Activity allItems = ActivityBuilder(
-          Strings.of(context).activityDropdownAllActivities
-        ).build;
-        List<Activity> activities = [allItems];
+        if (_allActivitiesActivity == null) {
+          _allActivitiesActivity = ActivityBuilder(
+            Strings.of(context).activityDropdownAllActivities,
+          ).build;
+        }
 
+        List<Activity> activities = [];
         if (snapshot.hasData) {
           activities.addAll(snapshot.data);
         }
 
         return ListPicker<Activity>(
-          initialValue: widget.initialActivity ?? activities.first,
-          onChanged: (Activity activity) {
-            if (activity == activities.first) {
+          allowsMultiSelect: true,
+          initialValues: widget.initialActivities
+              ?? Set.of([_allActivitiesActivity]),
+          onChanged: (Set<Activity> newActivities) {
+            if (newActivities == null
+                || newActivities.first == _allActivitiesActivity)
+            {
               // Invoke the callback with null if "All activities" was picked.
-              widget.onActivityPicked(null);
+              widget.onPickedActivitiesChanged(null);
             } else {
-              widget.onActivityPicked(activity);
+              widget.onPickedActivitiesChanged(newActivities);
             }
           },
-          options: activities.map((Activity activity) {
-            return ListPickerItem<Activity>(
-              value: activity,
-              child: Text(activity.name),
+          allItem: _buildItem(_allActivitiesActivity),
+          items: activities.map((activity) => _buildItem(activity)).toList(),
+          titleBuilder: (Set<Activity> selectedActivities) {
+            return CombinedText(
+              selectedActivities.map((activity) => activity.name).toList(),
+              separator: ", ",
             );
-          }).toList(),
+          },
         );
       }
+    );
+  }
+
+  ListPickerItem<Activity> _buildItem(Activity activity) {
+    return ListPickerItem<Activity>(
+      value: activity,
+      child: Text(activity.name),
     );
   }
 }

@@ -18,6 +18,10 @@ class Strings {
 
   Strings(this._locale);
 
+  /// Should only be used in utility widgets or methods for common strings.
+  /// See [ActionButton] for an example.
+  String fromId(String id) => _getString(id);
+
   /// If a specific string for a language and country exists, use it, otherwise
   /// use the default.
   String _getString(String key) {
@@ -31,6 +35,7 @@ class Strings {
   String get appName => _getString("appName");
 
   String get cancel => _getString("cancel");
+  String get done => _getString("done");
   String get delete => _getString("delete");
   String get today => _getString("today");
   String get yesterday => _getString("yesterday");

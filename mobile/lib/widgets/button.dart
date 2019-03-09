@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/i18n/strings.dart';
 
 class Button extends StatelessWidget {
   final String _text;
@@ -39,4 +40,32 @@ class Button extends StatelessWidget {
   }
 
   Widget get _textWidget => Text(_text.toUpperCase());
+}
+
+/// A [FlatButton] wrapper meant to be used as an action in an [AppBar].
+class ActionButton extends StatelessWidget {
+  final String text;
+  final VoidCallback onPressed;
+
+  final String _stringId;
+
+  ActionButton({
+    @required this.text,
+    this.onPressed,
+  }) : _stringId = null;
+
+  ActionButton.done({this.onPressed})
+    : _stringId = "done",
+      text = null;
+
+  @override
+  Widget build(BuildContext context) {
+    return FlatButton(
+      onPressed: onPressed,
+      child: Text((text == null ? Strings.of(context).fromId(_stringId) : text)
+          .toUpperCase()
+      ),
+      textColor: Colors.white,
+    );
+  }
 }

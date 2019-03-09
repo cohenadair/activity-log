@@ -70,3 +70,4 @@ const iconSizeDefault = 24.0;
 const iconSizeLarge = 32.0;
 
 const chartBarHeightDefault = 75.0;
+const chartBarHeightSingle = 100.0;
