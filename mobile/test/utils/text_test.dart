@@ -17,7 +17,7 @@ void main() {
         durations,
         condensed: true,
       )));
-      expect(find.text(""), findsOneWidget);
+      expect(find.text("0m"), findsOneWidget);
     });
 
     testWidgets("All", (WidgetTester tester) async {

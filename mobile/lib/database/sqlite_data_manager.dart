@@ -283,21 +283,20 @@ class SQLiteDataManager implements DataManageable {
   }
 
   @override
-  Future<List<SummarizedActivity>> getSummarizedActivities(DateRange dateRange)
-      async
+  Future<List<SummarizedActivity>> getSummarizedActivities(DateRange dateRange,
+      [List<Activity> activities]) async
   {
     if (dateRange == null) {
       return [];
     }
 
-    // Get all activities.
-    List<Map<String, dynamic>> mapList =
-        await _database.rawQuery("SELECT * FROM activity");
-    List<Activity> activityList = [];
+    List<Activity> activityList = activities == null ? [] : List.of(activities);
 
-    mapList.forEach((Map<String, dynamic> map) {
-      activityList.add(Activity.fromMap(map));
-    });
+    // Get all activities if none were provided.
+    if (activities == null || activities.length == 0) {
+      var mapList = await _database.rawQuery("SELECT * FROM activity");
+      mapList.forEach((map) => activityList.add(Activity.fromMap(map)));
+    }
 
     List<SummarizedActivity> result = [];
 
@@ -318,29 +317,26 @@ class SQLiteDataManager implements DataManageable {
         ],
       );
 
-      if (sessionMapList == null || sessionMapList.isEmpty) {
-        continue;
-      }
-
       List<Session> sessionList = [];
-      sessionMapList.forEach((Map<String, dynamic> map) {
-        sessionList.add(SessionBuilder
-            .fromSession(Session.fromMap(map))
-            .pinToDateRange(dateRange)
-            .build);
-      });
+
+      if (sessionMapList != null) {
+        sessionMapList.forEach((Map<String, dynamic> map) {
+          sessionList.add(SessionBuilder
+              .fromSession(Session.fromMap(map))
+              .pinToDateRange(dateRange)
+              .build);
+        });
+      }
 
       int totalMs = 0;
       sessionList.forEach((Session session) {
         totalMs += session.millisecondsDuration;
       });
 
-      if (totalMs > 0) {
-        result.add(SummarizedActivity(
-          value: activity,
-          totalDuration: Duration(milliseconds: totalMs),
-        ));
-      }
+      result.add(SummarizedActivity(
+        value: activity,
+        totalDuration: Duration(milliseconds: totalMs),
+      ));
     }
 
     result.sort((a, b) => a.value.name.compareTo(b.value.name));

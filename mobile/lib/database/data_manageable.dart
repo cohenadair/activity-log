@@ -53,5 +53,13 @@ abstract class DataManageable {
   Future<bool> activityNameExists(String name);
 
   Future<SummarizedActivity> getSummarizedActivity(DateRange dateRange);
-  Future<List<SummarizedActivity>> getSummarizedActivities(DateRange dateRange);
+
+  /// Returns a list of [SummarizedActivity] objects within the given date
+  /// range. If the activities parameter is not `null`, the result is
+  /// restricted to only those activities.
+  ///
+  /// Note that this will return a [SummarizedActivity], even if there were no
+  /// sessions for the associated [Activity] within the given [DateRange].
+  Future<List<SummarizedActivity>> getSummarizedActivities(DateRange dateRange,
+      [List<Activity> activities]);
 }

@@ -94,6 +94,37 @@ void main() {
       expect(result.length, equals(0));
     });
 
+    test("Activities provided as parameter", () async {
+      DateRange dateRange = DateRange(
+        startDate: DateTime(2018, 1, 1),
+        endDate: DateTime(2018, 2, 1),
+      );
+
+      Activity activity = ActivityBuilder("").build;
+
+      stubActivities([activity.toMap()]);
+      stubOverlappingSessions(activity.id, dateRange, [
+        buildSession(
+          activity.id,
+          DateTime(2018, 1, 15, 5),
+          DateTime(2018, 1, 15, 7),
+        ),
+      ]);
+
+      var result = await dataManager.getSummarizedActivities(dateRange, [
+        activity,
+      ]);
+
+      expect(result.length, equals(1));
+      expect(result[0].totalDuration, equals(Duration(hours: 2)));
+
+      // Non-null input, 0 length.
+      stubActivities([activity.toMap()]);
+      result = await dataManager.getSummarizedActivities(dateRange, []);
+      expect(result.length, equals(1));
+      expect(result[0].totalDuration, equals(Duration(hours: 2)));
+    });
+
     test("Session start outside range, session end inside range", () async {
       await assertSummarizedActivities(
         startDate: DateTime(2018, 1, 15, 4, 30),
@@ -164,8 +195,8 @@ void main() {
             endDate: DateTime(2018, 1, 15, 4, 30),
           ),
         ],
-        expectedLength: 0,
-        expectedDuration: null,
+        expectedLength: 1,
+        expectedDuration: Duration(),
       );
     });
 
@@ -179,8 +210,8 @@ void main() {
             endDate: DateTime(2018, 1, 18, 4, 30),
           ),
         ],
-        expectedLength: 0,
-        expectedDuration: null,
+        expectedLength: 1,
+        expectedDuration: Duration(),
       );
     });
 
@@ -195,6 +226,7 @@ void main() {
         ActivityBuilder("Activity 3").build,
         ActivityBuilder("Activity 0").build,
         ActivityBuilder("Activity 2").build,
+        ActivityBuilder("Activity 4").build,
       ];
 
       stubActivities(activities.map((Activity activity) => activity.toMap())
@@ -254,7 +286,7 @@ void main() {
 
       var result = await dataManager.getSummarizedActivities(dateRange);
 
-      expect(result.length, equals(4));
+      expect(result.length, equals(5));
 
       // Should be sorted alphabetically and have the correct duration.
 
@@ -269,6 +301,9 @@ void main() {
 
       expect(result[3].value.name, equals(activities[1].name));
       expect(result[3].totalDuration, equals(Duration(hours: 8)));
+
+      expect(result[4].value.name, equals(activities[4].name));
+      expect(result[4].totalDuration, equals(Duration()));
 
       // Last two activities do not have any overlapping sessions.
     });

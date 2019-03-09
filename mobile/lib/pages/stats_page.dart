@@ -27,7 +27,6 @@ class _StatsPageState extends State<StatsPage> {
   @override
   void initState() {
     super.initState();
-    _currentActivities = null;
     _currentDateRange = StatsDateRange.allDates;
   }
 
@@ -65,6 +64,7 @@ class _StatsPageState extends State<StatsPage> {
             child: FutureBuilder<List<SummarizedActivity>>(
               future: widget.app.dataManager.getSummarizedActivities(
                 _currentDateRange.value,
+                _currentActivities == null ? [] : List.of(_currentActivities),
               ),
               builder: (BuildContext context,
                   AsyncSnapshot<List<SummarizedActivity>> snapshot)

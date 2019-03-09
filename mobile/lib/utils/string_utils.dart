@@ -117,5 +117,12 @@ String formatTotalDuration({
     result += format(Strings.of(context).secondsFormat, [duration.seconds]);
   }
 
+  // If there is no result and not everything is excluded, default to 0m.
+  if (result.isEmpty
+      && (includesSeconds || includesMinutes || includesHours || includesDays))
+  {
+    result += format(Strings.of(context).minutesFormat, [0]);
+  }
+
   return result;
 }
