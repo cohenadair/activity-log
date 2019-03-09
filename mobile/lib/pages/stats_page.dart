@@ -6,6 +6,7 @@ import 'package:mobile/model/summarized_activity.dart';
 import 'package:mobile/res/dimen.dart';
 import 'package:mobile/widgets/activities_bar_chart.dart';
 import 'package:mobile/widgets/activity_picker.dart';
+import 'package:mobile/widgets/list_item.dart';
 import 'package:mobile/widgets/stats_date_range_picker.dart';
 import 'package:mobile/widgets/page.dart';
 import 'package:mobile/widgets/text.dart';
@@ -56,35 +57,41 @@ class _StatsPageState extends State<StatsPage> {
             },
           ),
           MinDivider(),
-          Padding(
-            padding: EdgeInsets.only(
-              top: paddingSmall,
-              bottom: paddingDefault,
+          FutureBuilder<List<SummarizedActivity>>(
+            future: widget.app.dataManager.getSummarizedActivities(
+              _currentDateRange.value,
+              _currentActivities == null ? [] : List.of(_currentActivities),
             ),
-            child: FutureBuilder<List<SummarizedActivity>>(
-              future: widget.app.dataManager.getSummarizedActivities(
-                _currentDateRange.value,
-                _currentActivities == null ? [] : List.of(_currentActivities),
-              ),
-              builder: (BuildContext context,
-                  AsyncSnapshot<List<SummarizedActivity>> snapshot)
-              {
-                if (!snapshot.hasData) {
-                  return Empty();
-                }
+            builder: (BuildContext context,
+                AsyncSnapshot<List<SummarizedActivity>> snapshot)
+            {
+              if (!snapshot.hasData) {
+                return Empty();
+              }
 
-                if (snapshot.data.isEmpty) {
-                  return Padding(
-                    padding: insetsRowDefault,
-                    child: ErrorText(
-                      Strings.of(context).statsPageNoDataMessage
-                    ),
-                  );
-                }
+              if (snapshot.data.isEmpty) {
+                return Padding(
+                  padding: insetsRowDefault,
+                  child: ErrorText(
+                    Strings.of(context).statsPageNoDataMessage
+                  ),
+                );
+              }
 
-                return ActivitiesBarChart(snapshot.data);
-              },
-            ),
+              return Column(
+                children: <Widget>[
+                  ActivitiesDurationBarChart(
+                    snapshot.data,
+                    padding: insetsVerticalDefault,
+                  ),
+                  MinDivider(),
+                  ActivitiesNumberOfSessionsBarChart(
+                    snapshot.data,
+                    padding: insetsVerticalDefault,
+                  ),
+                ],
+              );
+            },
           ),
         ],
       ),

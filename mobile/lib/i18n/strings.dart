@@ -80,6 +80,8 @@ class Strings {
 
   String get statsPageTitle => _getString("statsPage_title");
   String get statsPageNoDataMessage => _getString("statsPage_noDataMessage");
+  String get statsPageDurationTitle => _getString("statsPage_durationTitle");
+  String get statsPageNumberOfSessionsTitle => _getString("statsPage_numberOfSessionsTitle");
 
   String get activityDropdownAllActivities => _getString("activityDropdown_allActivities");
 

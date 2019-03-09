@@ -144,6 +144,22 @@ class HeadingText extends StatelessWidget {
   }
 }
 
+class LargeHeadingText extends StatelessWidget {
+  final String _text;
+
+  LargeHeadingText(this._text);
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      _text,
+      style: TextStyle(
+        fontSize: 18
+      ),
+    );
+  }
+}
+
 /// A [Text] widget with an enabled state. If `enabled = false`, the [Text] is
 /// rendered with a `Theme.of(context).disabledColor` color.
 class EnabledText extends StatelessWidget {
