@@ -77,7 +77,7 @@ class _StatsDateRangePickerState extends State<StatsDateRangePicker> {
     );
   }
 
-  Future<bool> _onTapCustom(BuildContext context) async {
+  Future<StatsDateRange> _onTapCustom(BuildContext context) async {
     DateTime now = DateTime.now();
     DateRange customValue = _customDateRange.getValue(now);
 
@@ -89,9 +89,16 @@ class _StatsDateRangePickerState extends State<StatsDateRangePicker> {
       lastDate: now,
     );
 
+    DateTime endDate;
+    if (pickedRange.first == pickedRange.last) {
+      // If only the start date was picked, or the start and end time are equal,
+      // set the end date to a range of 1 day.
+      endDate = pickedRange.first.add(Duration(days: 1));
+    }
+
     DateRange dateRange = DateRange(
       startDate: pickedRange.first,
-      endDate: pickedRange.last,
+      endDate: endDate ?? pickedRange.last,
     );
 
     // Reset StatsDateRange.custom properties to return the picked DateRange.
@@ -103,7 +110,7 @@ class _StatsDateRangePickerState extends State<StatsDateRangePicker> {
       );
     });
 
-    return true;
+    return _customDateRange;
   }
 }
 

@@ -116,13 +116,14 @@ class ListPickerItem<T> {
   final Widget child;
   final T value;
 
-  /// Allows custom behaviour of individual items. Returns `true` to invoke
-  /// [ListPicker.onChanged]; `false` otherwise.
+  /// Allows custom behaviour of individual items. Returns a non-null object
+  /// of type T that was picked to invoke [ListPicker.onChanged]; `null`
+  /// otherwise.
   ///
   /// Implemented as a [Future] because presumably, setting this method is
   /// for custom picker behaviour and will need to wait for that behaviour to
   /// finish.
-  final Future<bool> Function() onTap;
+  final Future<T> Function() onTap;
 
   final bool isDivider;
 
@@ -217,9 +218,12 @@ class _ListPickerPageState<T> extends State<_ListPickerPage<T>> {
                   widget.onItemPicked(item.value);
                 }
                 _updateState(item.value);
-              } else if (await item.onTap()) {
-                widget.onItemPicked(item.value);
-                _updateState(item.value);
+              } else {
+                T pickedItem = await item.onTap();
+                if (pickedItem != null) {
+                  widget.onItemPicked(pickedItem);
+                  _updateState(pickedItem);
+                }
               }
             },
           );
