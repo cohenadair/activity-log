@@ -51,8 +51,12 @@ Map<String, Map<String, String>> englishStrings = {
 
     "statsPage_title" : "Stats",
     "statsPage_noDataMessage" : "No data to show; try different filter options.",
+    "statsPage_summaryTitle" : "Summary",
     "statsPage_durationTitle" : "Session duration",
     "statsPage_numberOfSessionsTitle" : "Number of sessions",
+    "statsPage_longestSessionLabel" : "Longest session",
+    "statsPage_mostFrequentActivityLabel" : "Most frequent activity",
+    "statsPage_mostFrequentActivityValue" : "%s sessions",
 
     "activityDropdown_allActivities" : "All activities",
 

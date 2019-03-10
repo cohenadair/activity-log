@@ -4,11 +4,12 @@ import 'package:mobile/i18n/strings.dart';
 import 'package:mobile/model/activity.dart';
 import 'package:mobile/model/summarized_activity.dart';
 import 'package:mobile/res/dimen.dart';
+import 'package:mobile/utils/string_utils.dart';
 import 'package:mobile/widgets/activities_bar_chart.dart';
 import 'package:mobile/widgets/activity_picker.dart';
-import 'package:mobile/widgets/list_item.dart';
 import 'package:mobile/widgets/stats_date_range_picker.dart';
 import 'package:mobile/widgets/page.dart';
+import 'package:mobile/widgets/summary.dart';
 import 'package:mobile/widgets/text.dart';
 import 'package:mobile/widgets/widget.dart';
 
@@ -57,19 +58,20 @@ class _StatsPageState extends State<StatsPage> {
             },
           ),
           MinDivider(),
-          FutureBuilder<List<SummarizedActivity>>(
+          FutureBuilder<SummarizedActivityList>(
             future: widget.app.dataManager.getSummarizedActivities(
               _currentDateRange.value,
               _currentActivities == null ? [] : List.of(_currentActivities),
             ),
             builder: (BuildContext context,
-                AsyncSnapshot<List<SummarizedActivity>> snapshot)
+                AsyncSnapshot<SummarizedActivityList> snapshot)
             {
               if (!snapshot.hasData) {
                 return Empty();
               }
 
-              if (snapshot.data.isEmpty) {
+              List<SummarizedActivity> activities = snapshot.data.activities;
+              if (activities == null || activities.isEmpty) {
                 return Padding(
                   padding: insetsRowDefault,
                   child: ErrorText(
@@ -78,23 +80,80 @@ class _StatsPageState extends State<StatsPage> {
                 );
               }
 
-              return Column(
-                children: <Widget>[
-                  ActivitiesDurationBarChart(
-                    snapshot.data,
-                    padding: insetsVerticalDefault,
-                  ),
-                  MinDivider(),
-                  ActivitiesNumberOfSessionsBarChart(
-                    snapshot.data,
-                    padding: insetsVerticalDefault,
-                  ),
-                ],
-              );
+              if (activities.length == 1) {
+                return _buildForSingleActivity(activities.first);
+              } else {
+                return _buildForMultipleActivities(snapshot.data);
+              }
             },
           ),
         ],
       ),
     );
+  }
+
+  Widget _buildForMultipleActivities(SummarizedActivityList summary) {
+    return Column(
+      children: <Widget>[
+        _buildSummary(summary),
+        ActivitiesDurationBarChart(
+          summary.activities,
+          padding: insetsVerticalDefault,
+        ),
+        MinDivider(),
+        ActivitiesNumberOfSessionsBarChart(
+          summary.activities,
+          padding: insetsVerticalDefault,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSummary(SummarizedActivityList summary) {
+    if (summary.longestSession == null && summary.mostFrequentActivity == null)
+    {
+      return Empty();
+    }
+
+    return Summary(
+      title: Strings.of(context).statsPageSummaryTitle,
+      padding: insetsVerticalDefault,
+      items: _getSummaryItems(summary),
+    );
+  }
+
+  List<SummaryItem> _getSummaryItems(SummarizedActivityList summary) {
+    List<SummaryItem> result = [];
+
+    if (summary.mostFrequentActivity != null) {
+      result.add(SummaryItem(
+        title: Strings.of(context).statsPageMostFrequentActivityLabel,
+        subtitle: summary.mostFrequentActivity.first.name,
+        value: format(
+          Strings.of(context).statsPageMostFrequentActivityValue,
+          [summary.mostFrequentActivity.second],
+        ),
+      ));
+    }
+
+    if (summary.longestSession != null) {
+      result.add(SummaryItem(
+        title: Strings.of(context).statsPageLongestSessionLabel,
+        subtitle: summary.longestSession.first.name,
+        value: formatTotalDuration(
+          context: context,
+          durations: [summary.longestSession.second.duration],
+          includesSeconds: false,
+          condensed: true,
+          showHighestTwoOnly: true,
+        ),
+      ));
+    }
+
+    return result;
+  }
+
+  Widget _buildForSingleActivity(SummarizedActivity activity) {
+    return Text("TODO single activity");
   }
 }

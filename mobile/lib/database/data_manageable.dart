@@ -60,6 +60,6 @@ abstract class DataManageable {
   ///
   /// Note that this will return a [SummarizedActivity], even if there were no
   /// sessions for the associated [Activity] within the given [DateRange].
-  Future<List<SummarizedActivity>> getSummarizedActivities(DateRange dateRange,
+  Future<SummarizedActivityList> getSummarizedActivities(DateRange dateRange,
       [List<Activity> activities]);
 }

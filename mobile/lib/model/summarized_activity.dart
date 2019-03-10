@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:mobile/model/activity.dart';
+import 'package:mobile/model/session.dart';
+import 'package:mobile/utils/tuple.dart';
 
-/// A class that stores summarized data for an [Activity]. Used for analysis.
+/// A class that stores summarized data for an [Activity].
 @immutable
 class SummarizedActivity {
   final Activity value;
@@ -10,15 +12,32 @@ class SummarizedActivity {
 
   SummarizedActivity({
     @required this.value,
-    @required this.totalDuration,
-    @required this.numberOfSessions,
-  }) : assert(value != null),
-       assert(totalDuration != null),
-       assert(numberOfSessions != null);
+    this.totalDuration = const Duration(),
+    this.numberOfSessions = 0,
+  }) : assert(value != null);
 
   @override
   String toString() {
     return "{activity=${value.name}; duration=$totalDuration; "
         + "numberOfSessions=$numberOfSessions}";
   }
+}
+
+/// A class that stores summarized data for multiple [Activity] objects,
+/// including summary data across all of its activities.
+@immutable
+class SummarizedActivityList {
+  final List<SummarizedActivity> activities;
+
+  /// A [Tuple] of [Activity] and its longest [Session].
+  final Tuple<Activity, Session> longestSession;
+
+  /// A [Tuple] of [Activity] and its number of sessions.
+  final Tuple<Activity, int> mostFrequentActivity;
+
+  SummarizedActivityList({
+    this.activities,
+    this.longestSession,
+    this.mostFrequentActivity
+  });
 }

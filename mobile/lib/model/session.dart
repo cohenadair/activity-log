@@ -58,6 +58,24 @@ class Session extends Model {
       keyEndTimestamp : _endTimestamp,
     }..addAll(super.toMap());
   }
+
+  operator >(other) {
+    return other is Session
+        && millisecondsDuration > other.millisecondsDuration;
+  }
+
+  operator >=(other) {
+    return other is Session
+        && millisecondsDuration >= other.millisecondsDuration;
+  }
+
+  operator <(other) {
+    return !(this >= other);
+  }
+
+  operator <=(other) {
+    return !(this > other);
+  }
 }
 
 class SessionBuilder extends ModelBuilder {

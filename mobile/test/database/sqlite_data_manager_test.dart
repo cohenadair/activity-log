@@ -76,22 +76,24 @@ void main() {
 
       var result = await dataManager.getSummarizedActivities(dateRange);
 
-      expect(result.length, equals(expectedLength));
+      expect(result.activities.length, equals(expectedLength));
       if (expectedLength > 0) {
-        expect(result[0].totalDuration, equals(expectedDuration));
+        expect(result.activities[0].totalDuration, equals(expectedDuration));
       }
     }
 
     test("Null input", () async {
       var result = await dataManager.getSummarizedActivities(null);
-      expect(result.length, equals(0));
+      expect(result, isNull);
     });
 
     test("No activities", () async {
       stubActivities([]);
       var result = await dataManager.getSummarizedActivities(
           DateRange(startDate: DateTime.now(), endDate: DateTime.now()));
-      expect(result.length, equals(0));
+      expect(result.activities, isEmpty);
+      expect(result.longestSession, isNull);
+      expect(result.mostFrequentActivity, isNull);
     });
 
     test("Activities provided as parameter", () async {
@@ -115,14 +117,17 @@ void main() {
         activity,
       ]);
 
-      expect(result.length, equals(1));
-      expect(result[0].totalDuration, equals(Duration(hours: 2)));
+      expect(result.activities, isNotNull);
+      expect(result.activities.length, equals(1));
+      expect(result.activities[0].totalDuration, equals(Duration(hours: 2)));
 
       // Non-null input, 0 length.
       stubActivities([activity.toMap()]);
       result = await dataManager.getSummarizedActivities(dateRange, []);
-      expect(result.length, equals(1));
-      expect(result[0].totalDuration, equals(Duration(hours: 2)));
+
+      expect(result.activities, isNotNull);
+      expect(result.activities.length, equals(1));
+      expect(result.activities[0].totalDuration, equals(Duration(hours: 2)));
     });
 
     test("Session start outside range, session end inside range", () async {
@@ -286,26 +291,98 @@ void main() {
 
       var result = await dataManager.getSummarizedActivities(dateRange);
 
-      expect(result.length, equals(5));
+      expect(result.activities, isNotNull);
+      expect(result.activities.length, equals(5));
 
       // Should be sorted alphabetically and have the correct duration.
 
-      expect(result[0].value.name, equals(activities[2].name));
-      expect(result[0].totalDuration, equals(Duration(hours: 36)));
+      expect(result.activities[0].value.name, equals(activities[2].name));
+      expect(result.activities[0].totalDuration, equals(Duration(hours: 36)));
 
-      expect(result[1].value.name, equals(activities[0].name));
-      expect(result[1].totalDuration, equals(Duration(hours: 16)));
+      expect(result.activities[1].value.name, equals(activities[0].name));
+      expect(result.activities[1].totalDuration, equals(Duration(hours: 16)));
 
-      expect(result[2].value.name, equals(activities[3].name));
-      expect(result[2].totalDuration, equals(Duration(days: 31)));
+      expect(result.activities[2].value.name, equals(activities[3].name));
+      expect(result.activities[2].totalDuration, equals(Duration(days: 31)));
 
-      expect(result[3].value.name, equals(activities[1].name));
-      expect(result[3].totalDuration, equals(Duration(hours: 8)));
+      expect(result.activities[3].value.name, equals(activities[1].name));
+      expect(result.activities[3].totalDuration, equals(Duration(hours: 8)));
 
-      expect(result[4].value.name, equals(activities[4].name));
-      expect(result[4].totalDuration, equals(Duration()));
+      expect(result.activities[4].value.name, equals(activities[4].name));
+      expect(result.activities[4].totalDuration, equals(Duration()));
 
       // Last two activities do not have any overlapping sessions.
+    });
+
+    test("Longest session returns correct result", () async {
+      DateRange dateRange = DateRange(
+        startDate: DateTime(2018, 1, 1),
+        endDate: DateTime(2018, 2, 1),
+      );
+
+      Activity activity1 = ActivityBuilder("Activity1").build;
+      Activity activity2 = ActivityBuilder("Activity2").build;
+      Activity activity3 = ActivityBuilder("Activity3").build;
+
+      stubActivities([
+        activity1.toMap(),
+        activity2.toMap(),
+        activity3.toMap(),
+      ]);
+
+      stubOverlappingSessions(activity1.id, dateRange, [
+        buildSession(
+          activity1.id,
+          DateTime(2018, 1, 15, 5),
+          DateTime(2018, 1, 15, 7),
+        ),
+        buildSession(
+          activity1.id,
+          DateTime(2018, 1, 15, 7),
+          DateTime(2018, 1, 15, 10),
+        ),
+      ]);
+
+      stubOverlappingSessions(activity2.id, dateRange, [
+        buildSession(
+          activity2.id,
+          DateTime(2018, 1, 10, 12),
+          DateTime(2018, 1, 10, 15),
+        ),
+        buildSession(
+          activity2.id,
+          DateTime(2018, 1, 15, 7),
+          DateTime(2018, 1, 15, 10),
+        ),
+        buildSession(
+          activity2.id,
+          DateTime(2018, 1, 20, 20),
+          DateTime(2018, 1, 20, 21),
+        ),
+      ]);
+
+      Session longestSession = Session.fromMap(buildSession(
+        activity3.id,
+        DateTime(2018, 1, 25, 1),
+        DateTime(2018, 1, 25, 7),
+      ));
+      stubOverlappingSessions(activity3.id, dateRange, [
+        longestSession.toMap()
+      ]);
+
+      var result = await dataManager.getSummarizedActivities(dateRange, [
+        activity1, activity2, activity3,
+      ]);
+
+      expect(result.activities, isNotNull);
+      expect(result.activities.length, equals(3));
+
+      expect(result.mostFrequentActivity.first, equals(activity2));
+      expect(result.mostFrequentActivity.second, equals(3));
+
+      expect(result.longestSession.first, equals(activity3));
+      expect(result.longestSession.second.millisecondsDuration,
+          equals(longestSession.millisecondsDuration));
     });
   });
 }

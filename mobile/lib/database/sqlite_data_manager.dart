@@ -7,6 +7,7 @@ import 'package:mobile/model/model.dart';
 import 'package:mobile/model/session.dart';
 import 'package:mobile/model/summarized_activity.dart';
 import 'package:mobile/utils/date_time_utils.dart';
+import 'package:mobile/utils/tuple.dart';
 import 'package:sqflite/sqflite.dart';
 
 class SQLiteDataManager implements DataManageable {
@@ -283,11 +284,11 @@ class SQLiteDataManager implements DataManageable {
   }
 
   @override
-  Future<List<SummarizedActivity>> getSummarizedActivities(DateRange dateRange,
+  Future<SummarizedActivityList> getSummarizedActivities(DateRange dateRange,
       [List<Activity> activities]) async
   {
     if (dateRange == null) {
-      return [];
+      return null;
     }
 
     List<Activity> activityList = activities == null ? [] : List.of(activities);
@@ -298,7 +299,9 @@ class SQLiteDataManager implements DataManageable {
       mapList.forEach((map) => activityList.add(Activity.fromMap(map)));
     }
 
-    List<SummarizedActivity> result = [];
+    List<SummarizedActivity> summarizedActivities = [];
+    Tuple<Activity, Session> longestSession;
+    Tuple<Activity, int> mostFrequentActivity;
 
     // Get all sessions for all activities and construct a SummarizedActivity
     // object.
@@ -328,21 +331,35 @@ class SQLiteDataManager implements DataManageable {
         });
       }
 
+      if (mostFrequentActivity == null
+          || sessionList.length > mostFrequentActivity.second)
+      {
+        mostFrequentActivity = Tuple(activity, sessionList.length);
+      }
+
       int totalMs = 0;
       sessionList.forEach((Session session) {
         totalMs += session.millisecondsDuration;
+
+        if (longestSession == null || session > longestSession.second) {
+          longestSession = Tuple(activity, session);
+        }
       });
 
-      result.add(SummarizedActivity(
+      summarizedActivities.add(SummarizedActivity(
         value: activity,
         totalDuration: Duration(milliseconds: totalMs),
         numberOfSessions: sessionList.length,
       ));
     }
 
-    result.sort((a, b) => a.value.name.compareTo(b.value.name));
+    summarizedActivities.sort((a, b) => a.value.name.compareTo(b.value.name));
 
-    return result;
+    return SummarizedActivityList(
+      activities: summarizedActivities,
+      longestSession: longestSession,
+      mostFrequentActivity: mostFrequentActivity,
+    );
   }
 
   void _notifyActivitiesUpdated() {

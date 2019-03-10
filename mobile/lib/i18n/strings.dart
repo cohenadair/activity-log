@@ -80,8 +80,12 @@ class Strings {
 
   String get statsPageTitle => _getString("statsPage_title");
   String get statsPageNoDataMessage => _getString("statsPage_noDataMessage");
+  String get statsPageSummaryTitle => _getString("statsPage_summaryTitle");
   String get statsPageDurationTitle => _getString("statsPage_durationTitle");
   String get statsPageNumberOfSessionsTitle => _getString("statsPage_numberOfSessionsTitle");
+  String get statsPageLongestSessionLabel => _getString("statsPage_longestSessionLabel");
+  String get statsPageMostFrequentActivityLabel => _getString("statsPage_mostFrequentActivityLabel");
+  String get statsPageMostFrequentActivityValue => _getString("statsPage_mostFrequentActivityValue");
 
   String get activityDropdownAllActivities => _getString("activityDropdown_allActivities");
 
