@@ -19,4 +19,35 @@ void main() {
       expect(session.endDateTime, equals(dateRange.endDate));
     });
   });
+
+  group("Operators", () {
+    test(">=, <=, <, >", () {
+      SessionBuilder builder1 = SessionBuilder("")
+        ..startTimestamp = 0
+        ..endTimestamp = 750;
+
+      SessionBuilder builder2 = SessionBuilder("")
+        ..startTimestamp = 500
+        ..endTimestamp = 1000;
+
+      // >
+      expect(builder1.build > builder2.build, isTrue);
+
+      builder1..endTimestamp = 250;
+      expect(builder1.build > builder2.build, isFalse);
+
+      // <
+      expect(builder1.build < builder2.build, isTrue);
+
+      builder1..endTimestamp = 750;
+      expect(builder1.build < builder2.build, isFalse);
+
+      // <=
+      builder1..endTimestamp = 500;
+      expect(builder1.build <= builder2.build, true);
+
+      // >=
+      expect(builder1.build >= builder2.build, true);
+    });
+  });
 }
