@@ -38,56 +38,59 @@ class _StatsPageState extends State<StatsPage> {
       appBarStyle: PageAppBarStyle(
         title: Strings.of(context).statsPageTitle,
       ),
-      child: ListView(
-        children: <Widget>[
-          ActivityPicker(
-            app: widget.app,
-            initialActivities: _currentActivities,
-            onPickedActivitiesChanged: (Set<Activity> pickedActivities) {
-              setState(() {
-                _currentActivities = pickedActivities;
-              });
-            },
-          ),
-          StatsDateRangePicker(
-            initialValue: _currentDateRange,
-            onDurationPicked: (StatsDateRange pickedDateRange) {
-              setState(() {
-                _currentDateRange = pickedDateRange;
-              });
-            },
-          ),
-          MinDivider(),
-          FutureBuilder<SummarizedActivityList>(
-            future: widget.app.dataManager.getSummarizedActivities(
-              _currentDateRange.value,
-              _currentActivities == null ? [] : List.of(_currentActivities),
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ActivityPicker(
+              app: widget.app,
+              initialActivities: _currentActivities,
+              onPickedActivitiesChanged: (Set<Activity> pickedActivities) {
+                setState(() {
+                  _currentActivities = pickedActivities;
+                });
+              },
             ),
-            builder: (BuildContext context,
-                AsyncSnapshot<SummarizedActivityList> snapshot)
-            {
-              if (!snapshot.hasData) {
-                return Empty();
-              }
+            StatsDateRangePicker(
+              initialValue: _currentDateRange,
+              onDurationPicked: (StatsDateRange pickedDateRange) {
+                setState(() {
+                  _currentDateRange = pickedDateRange;
+                });
+              },
+            ),
+            MinDivider(),
+            FutureBuilder<SummarizedActivityList>(
+              future: widget.app.dataManager.getSummarizedActivities(
+                _currentDateRange.value,
+                _currentActivities == null ? [] : List.of(_currentActivities),
+              ),
+              builder: (BuildContext context,
+                  AsyncSnapshot<SummarizedActivityList> snapshot)
+              {
+                if (!snapshot.hasData) {
+                  return Empty();
+                }
 
-              List<SummarizedActivity> activities = snapshot.data.activities;
-              if (activities == null || activities.isEmpty) {
-                return Padding(
-                  padding: insetsRowDefault,
-                  child: ErrorText(
-                    Strings.of(context).statsPageNoDataMessage
-                  ),
-                );
-              }
+                List<SummarizedActivity> activities = snapshot.data.activities;
+                if (activities == null || activities.isEmpty) {
+                  return Padding(
+                    padding: insetsRowDefault,
+                    child: ErrorText(
+                        Strings.of(context).statsPageNoDataMessage
+                    ),
+                  );
+                }
 
-              if (activities.length == 1) {
-                return _buildForSingleActivity(activities.first);
-              } else {
-                return _buildForMultipleActivities(snapshot.data);
-              }
-            },
-          ),
-        ],
+                if (activities.length == 1) {
+                  return _buildForSingleActivity(activities.first);
+                } else {
+                  return _buildForMultipleActivities(snapshot.data);
+                }
+              },
+            ),
+          ],
+        ),
       ),
     );
   }
