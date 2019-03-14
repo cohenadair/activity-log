@@ -6,6 +6,7 @@ import 'package:mobile/res/dimen.dart';
 import 'package:mobile/utils/string_utils.dart';
 import 'package:mobile/widgets/text.dart';
 import 'package:mobile/widgets/widget.dart';
+import 'package:quiver/strings.dart';
 
 class ActivitiesDurationBarChart extends StatelessWidget {
   final EdgeInsets padding;
@@ -18,6 +19,7 @@ class ActivitiesDurationBarChart extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return _ActivitiesBarChart(
+      chartId: "ActivitiesDurationBarChart",
       title: Strings.of(context).statsPageDurationTitle,
       padding: padding,
       activities: activities,
@@ -49,6 +51,7 @@ class ActivitiesNumberOfSessionsBarChart extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return _ActivitiesBarChart(
+      chartId: "ActivitiesNumberOfSessionsBarChart",
       title: Strings.of(context).statsPageNumberOfSessionsTitle,
       padding: padding,
       activities: activities,
@@ -59,7 +62,8 @@ class ActivitiesNumberOfSessionsBarChart extends StatelessWidget {
   }
 }
 
-class _ActivitiesBarChart extends StatefulWidget {
+class _ActivitiesBarChart extends StatelessWidget {
+  final String chartId;
   final String title;
   final EdgeInsets padding;
   final List<SummarizedActivity> activities;
@@ -72,44 +76,37 @@ class _ActivitiesBarChart extends StatefulWidget {
   final String Function(SummarizedActivity) onBuildLabel;
 
   _ActivitiesBarChart({
+    @required this.chartId,
     this.title,
     this.padding = insetsZero,
     this.activities,
     this.onMeasure,
     this.onBuildLabel,
     this.primaryAxisSpec,
-  }) : assert(activities.isNotEmpty);
-
-  @override
-  _ActivitiesBarChartState createState() => _ActivitiesBarChartState();
-}
-
-class _ActivitiesBarChartState extends State<_ActivitiesBarChart> {
-  final String chartId = "all_activities_chart";
-
-  List<SummarizedActivity> get data => widget.activities;
+  }) : assert(!isEmpty(chartId)),
+       assert(activities.isNotEmpty);
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: widget.padding,
+      padding: padding,
       child: Column(
         children: <Widget>[
-          widget.title == null ? Empty() : LargeHeadingText(widget.title),
+          title == null ? Empty() : LargeHeadingText(title),
           Container(
-            height: data.length == 1
+            height: activities.length == 1
                 ? chartBarHeightSingle
-                : (data.length * chartBarHeightDefault).toDouble(),
+                : (activities.length * chartBarHeightDefault).toDouble(),
             child: SafeArea(
               child: Charts.BarChart(
-                seriesList,
+                _getSeriesList(context),
                 animate: true,
                 vertical: false,
                 barRendererDecorator: Charts.BarLabelDecorator<String>(),
                 domainAxis: Charts.OrdinalAxisSpec(
                   renderSpec: Charts.NoneRenderSpec(),
                 ),
-                primaryMeasureAxis: widget.primaryAxisSpec,
+                primaryMeasureAxis: primaryAxisSpec,
               ),
             ),
           ),
@@ -118,18 +115,19 @@ class _ActivitiesBarChartState extends State<_ActivitiesBarChart> {
     );
   }
 
-  List<Charts.Series<SummarizedActivity, String>> get seriesList {
+  List<Charts.Series<SummarizedActivity, String>>
+      _getSeriesList(BuildContext context)
+  {
     return [
       Charts.Series<SummarizedActivity, String>(
         id: chartId,
-        data: data,
+        data: activities,
         domainFn: (SummarizedActivity activity, _) => activity.value.name,
-        measureFn: (SummarizedActivity activity, _) =>
-            widget.onMeasure(activity),
+        measureFn: (SummarizedActivity activity, _) => onMeasure(activity),
         colorFn: (_, __) => Charts.ColorUtil
             .fromDartColor(Theme.of(context).primaryColor),
         labelAccessorFn: (SummarizedActivity activity, _) =>
-            widget.onBuildLabel(activity),
+            onBuildLabel(activity),
       ),
     ];
   }

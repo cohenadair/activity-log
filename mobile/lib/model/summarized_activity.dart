@@ -8,13 +8,15 @@ import 'package:mobile/utils/tuple.dart';
 class SummarizedActivity {
   final Activity value;
   final Duration totalDuration;
-  final int numberOfSessions;
+  final List<Session> sessions;
 
   SummarizedActivity({
     @required this.value,
     this.totalDuration = const Duration(),
-    this.numberOfSessions = 0,
+    this.sessions,
   }) : assert(value != null);
+
+  int get numberOfSessions => sessions.length;
 
   @override
   String toString() {

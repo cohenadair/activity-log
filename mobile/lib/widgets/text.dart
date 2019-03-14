@@ -224,55 +224,61 @@ class TotalDurationText extends StatelessWidget {
 ///   - Jan. 8 (30m)
 ///   - Dec. 8, 2018 (5h)
 class DateDurationText extends StatelessWidget {
-  final Clock _clock;
-  final DateTime _startDateTime;
-  final Duration _duration;
+  final Clock clock;
+  final DateTime startDateTime;
+  final Duration duration;
+  final TextStyle style;
 
-  DateDurationText(this._startDateTime, this._duration, {
-    Clock clock = const Clock()
-  }) : _clock = clock;
+  DateDurationText(this.startDateTime, this.duration, {
+    this.clock = const Clock(),
+    this.style,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Text(_format(context));
+    return Text(
+      _format(context),
+      style: style,
+    );
   }
 
   String _format(BuildContext context) {
-    final DateTime now = _clock.now();
+    final DateTime now = clock.now();
 
     // Format the date.
     String formattedDate = "";
 
-    if (isSameDate(_startDateTime, now)) {
+    if (isSameDate(startDateTime, now)) {
       // Today.
       formattedDate = Strings.of(context).today;
-    } else if (isYesterday(now, _startDateTime)) {
+    } else if (isYesterday(now, startDateTime)) {
       // Yesterday.
       formattedDate = Strings.of(context).yesterday;
-    } else if (isWithinOneWeek(_startDateTime, now)) {
+    } else if (isWithinOneWeek(startDateTime, now)) {
       // 2 days ago to 6 days ago.
-      formattedDate = DateFormat("EEEE").format(_startDateTime);
-    } else if (isSameYear(_startDateTime, now)) {
+      formattedDate = DateFormat("EEEE").format(startDateTime);
+    } else if (isSameYear(startDateTime, now)) {
       // Same year.
-      formattedDate = DateFormat(monthDayFormat).format(_startDateTime);
+      formattedDate = DateFormat(monthDayFormat).format(startDateTime);
     } else {
       // Different year.
-      formattedDate = DateFormat(monthDayYearFormat).format(_startDateTime);
+      formattedDate = DateFormat(monthDayYearFormat).format(startDateTime);
     }
 
     // Format the duration.
-    DisplayDuration duration = DisplayDuration(_duration, includesDays: false);
+    DisplayDuration displayDuration =
+        DisplayDuration(duration, includesDays: false);
     String formattedDuration = "";
 
-    if (duration.hours > 0) {
+    if (displayDuration.hours > 0) {
       formattedDuration +=
-          format(Strings.of(context).hoursFormat, [duration.hours]);
+          format(Strings.of(context).hoursFormat, [displayDuration.hours]);
       formattedDuration += " ";
     }
 
-    if (duration.minutes >= 0) {
+    if (displayDuration.minutes >= 0) {
       formattedDuration +=
-          format(Strings.of(context).minutesFormat, [duration.minutes]);
+          format(Strings.of(context).minutesFormat, [displayDuration.minutes]);
     }
 
     return format(Strings.of(context).sessionListTitleFormat,
@@ -335,6 +341,31 @@ class TimeText extends StatelessWidget {
 
   String _format(BuildContext context) {
     return formatTimeOfDay(context, time);
+  }
+}
+
+/// Two [TimeText] widgets in a row, separated by a dash.
+class TimeRangeText extends StatelessWidget {
+  final TimeOfDay startTime;
+  final TimeOfDay endTime;
+  final bool enabled;
+
+  TimeRangeText({
+    @required this.startTime,
+    @required this.endTime,
+    this.enabled = false,
+  }) : assert(startTime != null && endTime != null);
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        TimeText(startTime, enabled: enabled),
+        EnabledText(" - ", enabled: enabled),
+        TimeText(endTime, enabled: enabled),
+      ],
+    );
   }
 }
 

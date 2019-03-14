@@ -7,6 +7,7 @@ import 'package:mobile/res/dimen.dart';
 import 'package:mobile/utils/string_utils.dart';
 import 'package:mobile/widgets/activities_bar_chart.dart';
 import 'package:mobile/widgets/activity_picker.dart';
+import 'package:mobile/widgets/activity_summary.dart';
 import 'package:mobile/widgets/stats_date_range_picker.dart';
 import 'package:mobile/widgets/page.dart';
 import 'package:mobile/widgets/summary.dart';
@@ -99,6 +100,7 @@ class _StatsPageState extends State<StatsPage> {
     return Column(
       children: <Widget>[
         _buildSummary(summary),
+        MinDivider(),
         ActivitiesDurationBarChart(
           summary.activities,
           padding: insetsVerticalDefault,
@@ -119,7 +121,7 @@ class _StatsPageState extends State<StatsPage> {
     }
 
     return Summary(
-      title: Strings.of(context).statsPageSummaryTitle,
+      title: Strings.of(context).summaryDefaultTitle,
       padding: insetsVerticalDefault,
       items: _getSummaryItems(summary),
     );
@@ -157,6 +159,6 @@ class _StatsPageState extends State<StatsPage> {
   }
 
   Widget _buildForSingleActivity(SummarizedActivity activity) {
-    return Text("TODO single activity");
+    return ActivitySummary(activity);
   }
 }

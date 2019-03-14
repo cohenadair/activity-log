@@ -65,12 +65,9 @@ class SessionListTile extends StatelessWidget {
       return Text(Strings.of(context).sessionListInProgress);
     }
 
-    return Row(
-      children: <Widget>[
-        TimeText(_session.startTimeOfDay),
-        Text(" - "),
-        TimeText(_session.endTimeOfDay),
-      ],
+    return TimeRangeText(
+      startTime: _session.startTimeOfDay,
+      endTime: _session.endTimeOfDay,
     );
   }
 }
