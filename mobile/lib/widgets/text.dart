@@ -243,27 +243,12 @@ class DateDurationText extends StatelessWidget {
   }
 
   String _format(BuildContext context) {
-    final DateTime now = clock.now();
-
     // Format the date.
-    String formattedDate = "";
-
-    if (isSameDate(startDateTime, now)) {
-      // Today.
-      formattedDate = Strings.of(context).today;
-    } else if (isYesterday(now, startDateTime)) {
-      // Yesterday.
-      formattedDate = Strings.of(context).yesterday;
-    } else if (isWithinOneWeek(startDateTime, now)) {
-      // 2 days ago to 6 days ago.
-      formattedDate = DateFormat("EEEE").format(startDateTime);
-    } else if (isSameYear(startDateTime, now)) {
-      // Same year.
-      formattedDate = DateFormat(monthDayFormat).format(startDateTime);
-    } else {
-      // Different year.
-      formattedDate = DateFormat(monthDayYearFormat).format(startDateTime);
-    }
+    String formattedDate = formatDateAsRecent(
+      context: context,
+      dateTime: startDateTime,
+      clock: clock,
+    );
 
     // Format the duration.
     DisplayDuration displayDuration =
@@ -281,7 +266,7 @@ class DateDurationText extends StatelessWidget {
           format(Strings.of(context).minutesFormat, [displayDuration.minutes]);
     }
 
-    return format(Strings.of(context).sessionListTitleFormat,
+    return format(Strings.of(context).dateDurationFormat,
         [formattedDate, formattedDuration]);
   }
 }

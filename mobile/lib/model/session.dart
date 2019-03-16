@@ -43,6 +43,9 @@ class Session extends Model implements Comparable<Session> {
   DateTime get endDateTime =>
       DateTime.fromMillisecondsSinceEpoch(endTimestamp);
 
+  DateRange get dateRange =>
+      DateRange(startDate: startDateTime, endDate: endDateTime);
+
   TimeOfDay get startTimeOfDay => TimeOfDay.fromDateTime(startDateTime);
   TimeOfDay get endTimeOfDay => TimeOfDay.fromDateTime(endDateTime);
 

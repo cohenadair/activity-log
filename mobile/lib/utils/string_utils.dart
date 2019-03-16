@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:mobile/i18n/strings.dart';
 import 'package:mobile/utils/date_time_utils.dart';
 import 'package:mobile/widgets/text.dart';
+import 'package:quiver/time.dart';
 
 /// A trimmed, case-insensitive string comparison.
 bool isEqualTrimmedLowercase(String s1, String s2) {
@@ -32,6 +33,26 @@ String formatTimeOfDay(BuildContext context, TimeOfDay time) {
   );
 }
 
+/// Returns a formatted [DateTime] to be displayed to the user. Includes date
+/// and time.
+///
+/// Examples:
+///   - Today at 2:35 PM
+///   - Yesterday at 2:35 PM
+///   - Monday at 2:35 PM
+///   - Jan. 8 at 2:35 PM
+///   - Dec. 8, 2018 at 2:35 PM
+String formatDateTime({
+  BuildContext context,
+  DateTime dateTime,
+  clock = const Clock(),
+}) {
+  return format(Strings.of(context).dateTimeFormat, [
+    formatDateAsRecent(context: context, dateTime: dateTime, clock: clock),
+    formatTimeOfDay(context, TimeOfDay.fromDateTime(dateTime)),
+  ]);
+}
+
 /// Returns a formatted [DateRange] to be displayed to the user.
 ///
 /// Example:
@@ -40,6 +61,40 @@ String formatDateRange(DateRange dateRange) {
   return DateFormat(monthDayYearFormat).format(dateRange.startDate)
       + " - "
       + DateFormat(monthDayYearFormat).format(dateRange.endDate);
+}
+
+/// Returns a formatted [DateTime] to be displayed to the user. Includes
+/// date only.
+///
+/// Examples:
+///   - Today
+///   - Yesterday
+///   - Monday
+///   - Jan. 8
+///   - Dec. 8, 2018
+String formatDateAsRecent({
+  @required BuildContext context,
+  @required DateTime dateTime,
+  clock = const Clock(),
+}) {
+  final DateTime now = clock.now();
+
+  if (isSameDate(dateTime, now)) {
+    // Today.
+    return Strings.of(context).today;
+  } else if (isYesterday(now, dateTime)) {
+    // Yesterday.
+    return Strings.of(context).yesterday;
+  } else if (isWithinOneWeek(dateTime, now)) {
+    // 2 days ago to 6 days ago.
+    return DateFormat("EEEE").format(dateTime);
+  } else if (isSameYear(dateTime, now)) {
+    // Same year.
+    return DateFormat(monthDayFormat).format(dateTime);
+  } else {
+    // Different year.
+    return DateFormat(monthDayYearFormat).format(dateTime);
+  }
 }
 
 /// Returns formatted text to display the total duration of list of [Duration]

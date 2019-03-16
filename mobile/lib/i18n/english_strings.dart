@@ -43,7 +43,6 @@ Map<String, Map<String, String>> englishStrings = {
 
     "sessionList_deleteMessage" : "Are you sure you want to delete this session? This action cannot be undone.",
     "sessionList_inProgress" : "In progress",
-    "sessionList_titleFormat" : "%s (%s)",
 
     "settingsPage_title" : "Settings",
     "settingsPage_version" : "Version",
@@ -58,6 +57,15 @@ Map<String, Map<String, String>> englishStrings = {
     "statsPage_mostFrequentActivityValue" : "%s sessions",
 
     "activitySummary_sessionTitle" : "Sessions",
+    "activitySummary_numberOfSessions" : "Number of sessions",
+    "activitySummary_averageOverall" : "Average overall duration",
+    "activitySummary_averagePerDay" : "Average duration per day",
+    "activitySummary_averagePerWeek" : "Average duration per week",
+    "activitySummary_averagePerMonth" : "Average duration per month",
+    "activitySummary_shortestSession" : "Shortest session",
+    "activitySummary_longestSession" : "Longest session",
+    "activitySummary_streak" : "Longest streak",
+    "activitySummary_streakDescription" : "Days in a row",
 
     "summary_defaultTitle" : "Summary",
 
@@ -82,5 +90,7 @@ Map<String, Map<String, String>> englishStrings = {
     "hoursFormat" : "%sh",
     "minutesFormat" : "%sm",
     "secondsFormat" : "%ss",
+    "dateTimeFormat" : "%s at %s",
+    "dateDurationFormat" : "%s (%s)",
   },
 };

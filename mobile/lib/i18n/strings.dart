@@ -72,7 +72,6 @@ class Strings {
 
   String get sessionListDeleteMessage => _getString("sessionList_deleteMessage");
   String get sessionListInProgress => _getString("sessionList_inProgress");
-  String get sessionListTitleFormat => _getString("sessionList_titleFormat");
 
   String get settingsPageTitle => _getString("settingsPage_title");
   String get settingsPageVersion => _getString("settingsPage_version");
@@ -87,6 +86,15 @@ class Strings {
   String get statsPageMostFrequentActivityValue => _getString("statsPage_mostFrequentActivityValue");
 
   String get activitySummarySessionTitle => _getString("activitySummary_sessionTitle");
+  String get activitySummaryNumberOfSessions => _getString("activitySummary_numberOfSessions");
+  String get activitySummaryAverageOverall => _getString("activitySummary_averageOverall");
+  String get activitySummaryAveragePerDay => _getString("activitySummary_averagePerDay");
+  String get activitySummaryAveragePerWeek => _getString("activitySummary_averagePerWeek");
+  String get activitySummaryAveragePerMonth => _getString("activitySummary_averagePerMonth");
+  String get activitySummaryShortestSession => _getString("activitySummary_shortestSession");
+  String get activitySummaryLongestSession => _getString("activitySummary_longestSession");
+  String get activitySummaryStreak => _getString("activitySummary_streak");
+  String get activitySummaryStreakDescription => _getString("activitySummary_streakDescription");
 
   String get summaryDefaultTitle => _getString("summary_defaultTitle");
 
@@ -111,6 +119,8 @@ class Strings {
   String get hoursFormat => _getString("hoursFormat");
   String get minutesFormat => _getString("minutesFormat");
   String get secondsFormat => _getString("secondsFormat");
+  String get dateTimeFormat => _getString("dateTimeFormat");
+  String get dateDurationFormat => _getString("dateDurationFormat");
 }
 
 class StringsDelegate extends LocalizationsDelegate<Strings> {
