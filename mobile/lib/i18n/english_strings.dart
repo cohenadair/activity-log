@@ -11,6 +11,7 @@ Map<String, Map<String, String>> englishStrings = {
     "delete" : "Delete",
     "today" : "Today",
     "yesterday" : "Yesterday",
+    "none" : "None",
 
     "navigationBar_home" : "Home",
     "navigationBar_stats" : "Stats",

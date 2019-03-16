@@ -306,6 +306,7 @@ class SQLiteDataManager implements DataManageable {
           WHERE activity_id = ?
           AND start_timestamp < ?
           AND (end_timestamp IS NULL OR end_timestamp > ?)
+          ORDER BY start_timestamp
         """, [
           activity.id,
           dateRange.endMs,

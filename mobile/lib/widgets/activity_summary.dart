@@ -45,26 +45,32 @@ class ActivitySummary extends StatelessWidget {
             ),
             SummaryItem(
               title: Strings.of(context).activitySummaryShortestSession,
-              subtitle: formatDateTime(
-                context: context,
-                dateTime: activity.shortestSession.startDateTime,
-              ),
-              value: _formatDuration(context,
-                  activity.shortestSession.duration),
+              subtitle: activity.shortestSession == null
+                  ? null
+                  : formatDateTime(
+                    context: context,
+                    dateTime: activity.shortestSession.startDateTime,
+                  ),
+              value: activity.shortestSession == null
+                  ? Strings.of(context).none
+                  : _formatDuration(context, activity.shortestSession.duration),
             ),
             SummaryItem(
               title: Strings.of(context).activitySummaryLongestSession,
-              subtitle: formatDateTime(
-                context: context,
-                dateTime: activity.longestSession.startDateTime,
-              ),
-              value: _formatDuration(context,
-                  activity.longestSession.duration),
+              subtitle: activity.longestSession == null
+                  ? null
+                  : formatDateTime(
+                    context: context,
+                    dateTime: activity.longestSession.startDateTime,
+                  ),
+              value: activity.longestSession == null
+                  ? Strings.of(context).none
+                  : _formatDuration(context, activity.longestSession.duration),
             ),
             SummaryItem(
               title: Strings.of(context).activitySummaryStreak,
               subtitle: Strings.of(context).activitySummaryStreakDescription,
-              value: "TODO",
+              value: activity.longestStreak,
             ),
           ],
         ),
@@ -82,12 +88,8 @@ class ActivitySummary extends StatelessWidget {
   }
 
   Widget _buildSessionsChart() {
-    if (activity.sessions == null || activity.sessions.isEmpty) {
-      return Empty();
-    }
-
     return SessionsLineChart(
-      activity.sessions,
+      activity.sessions == null ? [] : activity.sessions,
       padding: insetsVerticalDefault,
     );
   }

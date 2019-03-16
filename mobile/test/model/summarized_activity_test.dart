@@ -28,6 +28,7 @@ void main() {
       expect(activity.averageDurationPerDay, equals(Duration()));
       expect(activity.averageDurationPerWeek, equals(Duration()));
       expect(activity.averageDurationPerMonth, equals(Duration()));
+      expect(activity.longestStreak, equals(0));
     });
 
     test("Null sessions", () {
@@ -45,6 +46,7 @@ void main() {
       expect(activity.averageDurationPerDay, equals(Duration()));
       expect(activity.averageDurationPerWeek, equals(Duration()));
       expect(activity.averageDurationPerMonth, equals(Duration()));
+      expect(activity.longestStreak, equals(0));
     });
 
     test("Same month", () {
@@ -74,6 +76,7 @@ void main() {
       expect(activity.averageDurationPerDay.inMilliseconds, equals(2700000));
       expect(activity.averageDurationPerWeek, equals(Duration(hours: 4)));
       expect(activity.averageDurationPerMonth, equals(Duration(hours: 12)));
+      expect(activity.longestStreak, equals(1));
     });
 
     test("Span multiple months in the same year", () {
@@ -107,6 +110,7 @@ void main() {
       expect(activity.averageDurationPerDay.inMilliseconds, equals(544538));
       expect(activity.averageDurationPerWeek.inMilliseconds, equals(3600000));
       expect(activity.averageDurationPerMonth.inMilliseconds, equals(12960000));
+      expect(activity.longestStreak, equals(1));
     });
 
     test("Span multiple months in different years", () {
@@ -140,6 +144,7 @@ void main() {
       expect(activity.averageDurationPerDay.inMilliseconds, equals(544538));
       expect(activity.averageDurationPerWeek.inMilliseconds, equals(3600000));
       expect(activity.averageDurationPerMonth.inMilliseconds, equals(12960000));
+      expect(activity.longestStreak, equals(1));
     });
   });
 
@@ -180,6 +185,83 @@ void main() {
     test("Min", () {
       expect(activity.shortestSession.millisecondsDuration,
           sessions[1].millisecondsDuration);
+    });
+  });
+
+  group("Longest streak is calculated correctly", () {
+    test("Longest streak", () {
+      Activity activity = ActivityBuilder("Activity").build;
+      SummarizedActivity summarizedActivity = SummarizedActivity(
+        value: activity,
+        dateRange: DateRange(
+          startDate: DateTime(2018, 1, 5, 12),
+          endDate: DateTime(2018, 1, 25, 21),
+        ),
+        sessions: [
+          buildSession(
+            activity.id,
+            DateTime(2018, 1, 8, 12),
+            DateTime(2018, 1, 8, 15),
+          ),
+          buildSession(
+            activity.id,
+            DateTime(2018, 1, 9, 12),
+            DateTime(2018, 1, 9, 15),
+          ),
+          buildSession(
+            activity.id,
+            DateTime(2018, 1, 10, 12),
+            DateTime(2018, 1, 10, 15),
+          ),
+          buildSession(
+            activity.id,
+            DateTime(2018, 1, 11, 7),
+            DateTime(2018, 1, 11, 10),
+          ),
+          buildSession(
+            activity.id,
+            DateTime(2018, 1, 12, 7),
+            DateTime(2018, 1, 12, 10),
+          ),
+          buildSession(
+            activity.id,
+            DateTime(2018, 1, 20, 20),
+            DateTime(2018, 1, 20, 21),
+          ),
+          buildSession(
+            activity.id,
+            DateTime(2018, 3, 10, 20),
+            DateTime(2018, 3, 10, 21),
+          ),
+          buildSession(
+            activity.id,
+            DateTime(2018, 3, 10, 15),
+            DateTime(2018, 3, 10, 18),
+          ),
+          buildSession(
+            activity.id,
+            DateTime(2018, 3, 10, 4),
+            DateTime(2018, 3, 10, 5),
+          ),
+          buildSession(
+            activity.id,
+            DateTime(2018, 3, 11, 20),
+            DateTime(2018, 3, 11, 21),
+          ),
+          buildSession(
+            activity.id,
+            DateTime(2018, 3, 12, 20),
+            DateTime(2018, 3, 12, 21),
+          ),
+          buildSession(
+            activity.id,
+            DateTime(2018, 3, 13, 20),
+            DateTime(2018, 3, 13, 21),
+          ),
+        ],
+      );
+
+      expect(summarizedActivity.longestStreak, equals(5));
     });
   });
 

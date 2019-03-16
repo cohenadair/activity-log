@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:flutter/material.dart';
 import 'package:mobile/model/activity.dart';
 import 'package:mobile/model/session.dart';
@@ -18,6 +20,8 @@ class SummarizedActivity {
   Duration _cachedDurationPerDay;
   Duration _cachedDurationPerWeek;
   Duration _cachedDurationPerMonth;
+
+  int _cachedLongestStreak;
 
   SummarizedActivity({
     @required this.value,
@@ -72,18 +76,30 @@ class SummarizedActivity {
     return _cachedDurationPerMonth;
   }
 
+  int get longestStreak {
+    if (_cachedLongestStreak == null) {
+      _calculate();
+    }
+    return _cachedLongestStreak;
+  }
+
   void _calculate() {
     if (sessions == null || sessions.isEmpty) {
       _cachedTotalDuration = Duration();
       _cachedDurationPerDay = Duration();
       _cachedDurationPerWeek = Duration();
       _cachedDurationPerMonth = Duration();
+      _cachedLongestStreak = 0;
       return;
     }
+
+    Set<DateTime> allDateTimes = SplayTreeSet();
 
     int totalMs = 0;
     sessions.forEach((Session session) {
       totalMs += session.millisecondsDuration;
+      allDateTimes.add(dateTimeToDayAccuracy(session.startDateTime));
+      allDateTimes.add(dateTimeToDayAccuracy(session.endDateTime));
     });
 
     _cachedTotalDuration = Duration(milliseconds: totalMs);
@@ -104,6 +120,33 @@ class SummarizedActivity {
     }
 
     _cachedDurationPerMonth = getAverage(numberOfMonths);
+
+    // Iterate all days, keeping track of the longest streak.
+    int currentStreak = 1;
+    _cachedLongestStreak = currentStreak;
+
+    List<DateTime> dateTimeList = List.from(allDateTimes);
+    DateTime last = dateTimeList.first;
+
+    for (int i = 1; i < dateTimeList.length; i++) {
+      DateTime current = dateTimeList[i];
+      if (isSameYear(current, last)
+          && isSameMonth(current, last)
+          && current.day == last.day + 1)
+      {
+        currentStreak++;
+      } else {
+        currentStreak = 1;
+      }
+
+      if (_cachedLongestStreak == null
+          || currentStreak > _cachedLongestStreak)
+      {
+        _cachedLongestStreak = currentStreak;
+      }
+
+      last = current;
+    }
   }
 
   Duration getAverage(int divisor) {

@@ -39,6 +39,7 @@ class Strings {
   String get delete => _getString("delete");
   String get today => _getString("today");
   String get yesterday => _getString("yesterday");
+  String get none => _getString("none");
 
   String get navigationBarHome => _getString("navigationBar_home");
   String get navigationBarStats => _getString("navigationBar_stats");
