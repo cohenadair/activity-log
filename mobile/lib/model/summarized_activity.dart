@@ -10,7 +10,10 @@ import 'package:quiver/iterables.dart';
 /// A class that stores summarized data for an [Activity].
 class SummarizedActivity {
   final Activity value;
+
+  /// The [DateRange] for the summary. Set to `null` for "all dates".
   final DateRange dateRange;
+
   final List<Session> sessions;
 
   Session _cachedShortestSession;
@@ -27,8 +30,7 @@ class SummarizedActivity {
     @required this.value,
     @required this.dateRange,
     this.sessions,
-  }) : assert(value != null),
-       assert(dateRange != null);
+  }) : assert(value != null);
 
   int get numberOfSessions => sessions == null ? 0 : sessions.length;
 
@@ -94,9 +96,19 @@ class SummarizedActivity {
     }
 
     Set<DateTime> allDateTimes = SplayTreeSet();
+    Session earliestSession = sessions.first;
+    Session latestSession = sessions.first;
 
     int totalMs = 0;
     sessions.forEach((Session session) {
+      if (session.startTimestamp < earliestSession.startTimestamp) {
+        earliestSession = session;
+      }
+
+      if (session.endTimestamp > latestSession.endTimestamp) {
+        latestSession = session;
+      }
+
       totalMs += session.millisecondsDuration;
       allDateTimes.add(dateTimeToDayAccuracy(session.startDateTime));
       allDateTimes.add(dateTimeToDayAccuracy(session.endDateTime));
@@ -104,7 +116,14 @@ class SummarizedActivity {
 
     _cachedTotalDuration = Duration(milliseconds: totalMs);
 
-    Duration difference = dateRange.endDate.difference(dateRange.startDate);
+    // If the date range is null, restrict the range to the earliest
+    // and latest sessions.
+    DateRange range = dateRange ?? DateRange(
+      startDate: earliestSession.startDateTime,
+      endDate: latestSession.endDateTime,
+    );
+
+    Duration difference = range.endDate.difference(range.startDate);
     int numberOfDays = difference.inDays + 1;
 
     _cachedDurationPerDay = getAverage(numberOfDays);
@@ -112,11 +131,11 @@ class SummarizedActivity {
         getAverage((numberOfDays / DateTime.daysPerWeek).floor() + 1);
 
     int numberOfMonths = 0;
-    if (isSameYear(dateRange.startDate, dateRange.endDate)) {
-      numberOfMonths = dateRange.endDate.month - dateRange.startDate.month + 1;
+    if (isSameYear(range.startDate, range.endDate)) {
+      numberOfMonths = range.endDate.month - range.startDate.month + 1;
     } else {
-      numberOfMonths = dateRange.endDate.month +
-          (DateTime.monthsPerYear - dateRange.startDate.month + 1);
+      numberOfMonths = range.endDate.month +
+          (DateTime.monthsPerYear - range.startDate.month + 1);
     }
 
     _cachedDurationPerMonth = getAverage(numberOfMonths);

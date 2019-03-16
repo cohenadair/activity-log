@@ -282,10 +282,6 @@ class SQLiteDataManager implements DataManageable {
   Future<SummarizedActivityList> getSummarizedActivities(DateRange dateRange,
       [List<Activity> activities]) async
   {
-    if (dateRange == null) {
-      return null;
-    }
-
     List<Activity> activityList = activities == null ? [] : List.of(activities);
 
     // Get all activities if none were provided.
@@ -299,20 +295,32 @@ class SQLiteDataManager implements DataManageable {
     // Get all sessions for all activities and construct a SummarizedActivity
     // object.
     for (Activity activity in activityList) {
-      // Query for sessions that belong to this Activity and overlap the
-      // desired date range.
-      List<Map<String, dynamic>> sessionMapList = await _database.rawQuery("""
-        SELECT * FROM session
-          WHERE activity_id = ?
-          AND start_timestamp < ?
-          AND (end_timestamp IS NULL OR end_timestamp > ?)
-          ORDER BY start_timestamp
-        """, [
-          activity.id,
-          dateRange.endMs,
-          dateRange.startMs,
-        ],
-      );
+      List<Map<String, dynamic>> sessionMapList;
+      if (dateRange == null) {
+        // No date range was provided, get all sessions.
+        sessionMapList = await _database.rawQuery("""
+          SELECT * FROM session
+            WHERE activity_id = ?
+            ORDER BY start_timestamp
+          """, [
+          activity.id
+        ]);
+      } else {
+        // Query for sessions that belong to this Activity and overlap the
+        // desired date range.
+        sessionMapList = await _database.rawQuery("""
+          SELECT * FROM session
+            WHERE activity_id = ?
+            AND start_timestamp < ?
+            AND (end_timestamp IS NULL OR end_timestamp > ?)
+            ORDER BY start_timestamp
+          """, [
+            activity.id,
+            dateRange.endMs,
+            dateRange.startMs,
+          ],
+        );
+      }
 
       List<Session> sessionList = [];
 

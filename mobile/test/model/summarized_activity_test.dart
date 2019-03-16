@@ -3,6 +3,7 @@ import 'package:mobile/model/activity.dart';
 import 'package:mobile/model/session.dart';
 import 'package:mobile/model/summarized_activity.dart';
 import 'package:mobile/utils/date_time_utils.dart';
+import 'package:mobile/widgets/stats_date_range_picker.dart';
 
 void main() {
   Session buildSession(String activityId, DateTime start, DateTime end) {
@@ -165,7 +166,7 @@ void main() {
       buildSession("",
         DateTime(2019, 10, 10, 1),
         DateTime(2019, 10, 10, 20),
-      ), // 20 hours
+      ), // 19 hours
     ];
 
     SummarizedActivity activity = SummarizedActivity(
@@ -262,6 +263,38 @@ void main() {
       );
 
       expect(summarizedActivity.longestStreak, equals(5));
+    });
+  });
+
+  group("Date range pinning", () {
+    test("Infinte date range is pinned to earliest/latest sessions", () {
+      List<Session> sessions = [
+        buildSession("",
+          DateTime(2019, 3, 15, 3),
+          DateTime(2019, 3, 15, 10),
+        ), // 7 hours
+        buildSession("",
+          DateTime(2018, 11, 24, 7),
+          DateTime(2018, 11, 24, 12),
+        ), // 5 hours
+        buildSession("",
+          DateTime(2019, 1, 10, 15),
+          DateTime(2019, 1, 10, 21),
+        ), // 6 hours
+        buildSession("",
+          DateTime(2019, 10, 10, 1),
+          DateTime(2019, 10, 10, 20),
+        ), // 19 hours
+      ];
+
+      SummarizedActivity activity = SummarizedActivity(
+        value: ActivityBuilder("").build,
+        dateRange: null,
+        sessions: sessions,
+      );
+
+      // Average is only over 12 months.
+      expect(activity.averageDurationPerMonth.inMilliseconds, equals(11100000));
     });
   });
 

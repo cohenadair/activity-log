@@ -9,12 +9,15 @@ void main() {
           ..startTimestamp = DateTime(2018, 1, 15, 3).millisecondsSinceEpoch
           ..endTimestamp = DateTime(2018, 3, 10).millisecondsSinceEpoch;
 
+      Session session = builder.pinToDateRange(null).build;
+      expect(session.startDateTime, equals(session.startDateTime));
+
       DateRange dateRange = DateRange(
         startDate: DateTime(2018, 2, 1),
         endDate: DateTime(2018, 2, 15),
       );
 
-      Session session = builder.pinToDateRange(dateRange).build;
+      session = builder.pinToDateRange(dateRange).build;
       expect(session.startDateTime, equals(dateRange.startDate));
       expect(session.endDateTime, equals(dateRange.endDate));
     });

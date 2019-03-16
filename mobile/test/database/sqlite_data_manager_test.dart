@@ -34,12 +34,12 @@ void main() {
         List<Map<String, dynamic>> result)
     {
       when(database.rawQuery("""
-        SELECT * FROM session
-          WHERE activity_id = ?
-          AND start_timestamp < ?
-          AND (end_timestamp IS NULL OR end_timestamp > ?)
-          ORDER BY start_timestamp
-        """, [activityId, dateRange.endMs, dateRange.startMs]
+          SELECT * FROM session
+            WHERE activity_id = ?
+            AND start_timestamp < ?
+            AND (end_timestamp IS NULL OR end_timestamp > ?)
+            ORDER BY start_timestamp
+          """, [activityId, dateRange.endMs, dateRange.startMs]
       )).thenAnswer((_) async => result);
     }
 
@@ -82,11 +82,6 @@ void main() {
         expect(result.activities[0].totalDuration, equals(expectedDuration));
       }
     }
-
-    test("Null input", () async {
-      var result = await dataManager.getSummarizedActivities(null);
-      expect(result, isNull);
-    });
 
     test("No activities", () async {
       stubActivities([]);

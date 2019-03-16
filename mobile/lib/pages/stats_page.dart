@@ -63,7 +63,9 @@ class _StatsPageState extends State<StatsPage> {
             MinDivider(),
             FutureBuilder<SummarizedActivityList>(
               future: widget.app.dataManager.getSummarizedActivities(
-                _currentDateRange.value,
+                _currentDateRange == StatsDateRange.allDates
+                    ? null
+                    : _currentDateRange.value,
                 _currentActivities == null ? [] : List.of(_currentActivities),
               ),
               builder: (BuildContext context,

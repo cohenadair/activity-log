@@ -115,6 +115,10 @@ class SessionBuilder extends ModelBuilder {
   /// Pins the session start and end time to the given [DateRange], if the
   /// session falls outside said range.
   SessionBuilder pinToDateRange(DateRange dateRange) {
+    if (dateRange == null) {
+      return this;
+    }
+
     if (startTimestamp < dateRange.startMs) {
       startTimestamp = dateRange.startMs;
     }
