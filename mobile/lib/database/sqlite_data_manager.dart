@@ -279,11 +279,6 @@ class SQLiteDataManager implements DataManageable {
   }
 
   @override
-  Future<SummarizedActivity> getSummarizedActivity(DateRange dateRange) async {
-    // TODO: Implement
-  }
-
-  @override
   Future<SummarizedActivityList> getSummarizedActivities(DateRange dateRange,
       [List<Activity> activities]) async
   {
@@ -300,8 +295,6 @@ class SQLiteDataManager implements DataManageable {
     }
 
     List<SummarizedActivity> summarizedActivities = [];
-    Tuple<Activity, Session> longestSession;
-    Tuple<Activity, int> mostFrequentActivity;
 
     // Get all sessions for all activities and construct a SummarizedActivity
     // object.
@@ -331,35 +324,14 @@ class SQLiteDataManager implements DataManageable {
         });
       }
 
-      if (mostFrequentActivity == null
-          || sessionList.length > mostFrequentActivity.second)
-      {
-        mostFrequentActivity = Tuple(activity, sessionList.length);
-      }
-
-      int totalMs = 0;
-      sessionList.forEach((Session session) {
-        totalMs += session.millisecondsDuration;
-
-        if (longestSession == null || session > longestSession.second) {
-          longestSession = Tuple(activity, session);
-        }
-      });
-
       summarizedActivities.add(SummarizedActivity(
         value: activity,
-        totalDuration: Duration(milliseconds: totalMs),
         sessions: sessionList,
       ));
     }
 
     summarizedActivities.sort((a, b) => a.value.name.compareTo(b.value.name));
-
-    return SummarizedActivityList(
-      activities: summarizedActivities,
-      longestSession: longestSession,
-      mostFrequentActivity: mostFrequentActivity,
-    );
+    return SummarizedActivityList(summarizedActivities);
   }
 
   void _notifyActivitiesUpdated() {

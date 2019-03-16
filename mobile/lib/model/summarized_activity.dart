@@ -8,22 +8,20 @@ import 'package:quiver/iterables.dart';
 /// A class that stores summarized data for an [Activity].
 class SummarizedActivity {
   final Activity value;
-  final Duration totalDuration;
   final List<Session> sessions;
 
   Session _cachedShortestSession;
   Session _cachedLongestSession;
 
+  Duration _cachedTotalDuration;
   Duration _cachedDurationPerDay;
   Duration _cachedDurationPerWeek;
   Duration _cachedDurationPerMonth;
 
   SummarizedActivity({
     @required this.value,
-    this.totalDuration = const Duration(),
     this.sessions,
-  }) : assert(value != null),
-       assert(totalDuration != null);
+  }) : assert(value != null);
 
   int get numberOfSessions => sessions == null ? 0 : sessions.length;
 
@@ -43,29 +41,37 @@ class SummarizedActivity {
 
   Duration get averageDurationOverall => getAverage(numberOfSessions);
 
+  Duration get totalDuration {
+    if (_cachedTotalDuration == null) {
+      _calculate();
+    }
+    return _cachedTotalDuration;
+  }
+
   Duration get averageDurationPerDay {
     if (_cachedDurationPerDay == null) {
-      _calculateAverages();
+      _calculate();
     }
     return _cachedDurationPerDay;
   }
 
   Duration get averageDurationPerWeek {
     if (_cachedDurationPerWeek == null) {
-      _calculateAverages();
+      _calculate();
     }
     return _cachedDurationPerWeek;
   }
 
   Duration get averageDurationPerMonth {
     if (_cachedDurationPerMonth == null) {
-      _calculateAverages();
+      _calculate();
     }
     return _cachedDurationPerMonth;
   }
 
-  void _calculateAverages() {
+  void _calculate() {
     if (sessions == null || sessions.isEmpty) {
+      _cachedTotalDuration = Duration();
       _cachedDurationPerDay = Duration();
       _cachedDurationPerWeek = Duration();
       _cachedDurationPerMonth = Duration();
@@ -75,6 +81,7 @@ class SummarizedActivity {
     Session earliestSession = sessions.first;
     Session latestSession = sessions.first;
 
+    int totalMs = 0;
     sessions.forEach((Session session) {
       if (session.startTimestamp < earliestSession.startTimestamp) {
         earliestSession = session;
@@ -83,7 +90,11 @@ class SummarizedActivity {
       if (session.endTimestamp > latestSession.endTimestamp) {
         latestSession = session;
       }
+
+      totalMs += session.millisecondsDuration;
     });
+
+    _cachedTotalDuration = Duration(milliseconds: totalMs);
 
     Duration difference =
         latestSession.endDateTime.difference(earliestSession.startDateTime);
@@ -125,19 +136,46 @@ class SummarizedActivity {
 
 /// A class that stores summarized data for multiple [Activity] objects,
 /// including summary data across all of its activities.
-@immutable
 class SummarizedActivityList {
   final List<SummarizedActivity> activities;
 
+  Tuple<Activity, Session> _cachedLongestSession;
+  Tuple<Activity, int> _cachedMostFrequentActivity;
+
   /// A [Tuple] of [Activity] and its longest [Session].
-  final Tuple<Activity, Session> longestSession;
+  Tuple<Activity, Session> get longestSession {
+    if (_cachedLongestSession == null) {
+      _calculate();
+    }
+    return _cachedLongestSession;
+  }
 
   /// A [Tuple] of [Activity] and its number of sessions.
-  final Tuple<Activity, int> mostFrequentActivity;
+  Tuple<Activity, int> get mostFrequentActivity {
+    if (_cachedMostFrequentActivity == null) {
+      _calculate();
+    }
+    return _cachedMostFrequentActivity;
+  }
 
-  SummarizedActivityList({
-    this.activities,
-    this.longestSession,
-    this.mostFrequentActivity
-  });
+  SummarizedActivityList(this.activities);
+
+  void _calculate() {
+    activities.forEach((SummarizedActivity activity) {
+      if (_cachedMostFrequentActivity == null
+          || activity.sessions.length > _cachedMostFrequentActivity.second)
+      {
+        _cachedMostFrequentActivity =
+            Tuple(activity.value, activity.sessions.length);
+      }
+
+      activity.sessions.forEach((Session session) {
+        if (_cachedLongestSession == null
+            || session > _cachedLongestSession.second)
+        {
+          _cachedLongestSession = Tuple(activity.value, session);
+        }
+      });
+    });
+  }
 }

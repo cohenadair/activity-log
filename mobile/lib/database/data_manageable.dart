@@ -52,8 +52,6 @@ abstract class DataManageable {
   /// Case-insensitive compare of a given name to all other activity names.
   Future<bool> activityNameExists(String name);
 
-  Future<SummarizedActivity> getSummarizedActivity(DateRange dateRange);
-
   /// Returns a list of [SummarizedActivity] objects within the given date
   /// range. If the activities parameter is not `null`, the result is
   /// restricted to only those activities.

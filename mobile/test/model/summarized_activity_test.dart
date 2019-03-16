@@ -18,6 +18,7 @@ void main() {
         sessions: [],
       );
 
+      expect(activity.totalDuration, equals(Duration()));
       expect(activity.averageDurationOverall, equals(Duration()));
       expect(activity.averageDurationPerDay, equals(Duration()));
       expect(activity.averageDurationPerWeek, equals(Duration()));
@@ -30,6 +31,7 @@ void main() {
         sessions: null,
       );
 
+      expect(activity.totalDuration, equals(Duration()));
       expect(activity.averageDurationOverall, equals(Duration()));
       expect(activity.averageDurationPerDay, equals(Duration()));
       expect(activity.averageDurationPerWeek, equals(Duration()));
@@ -50,10 +52,10 @@ void main() {
 
       SummarizedActivity activity = SummarizedActivity(
         value: ActivityBuilder("").build,
-        totalDuration: Duration(hours: 12),
         sessions: sessions,
       );
 
+      expect(activity.totalDuration, equals(Duration(hours: 12)));
       expect(activity.averageDurationOverall, equals(Duration(hours: 6)));
       expect(activity.averageDurationPerDay.inMilliseconds, equals(4320000));
       expect(activity.averageDurationPerWeek, equals(Duration(hours: 6)));
@@ -78,10 +80,10 @@ void main() {
 
       SummarizedActivity activity = SummarizedActivity(
         value: ActivityBuilder("").build,
-        totalDuration: Duration(hours: 18),
         sessions: sessions,
       );
 
+      expect(activity.totalDuration, equals(Duration(hours: 18)));
       expect(activity.averageDurationOverall, equals(Duration(hours: 6)));
       expect(activity.averageDurationPerDay.inMilliseconds, equals(578571));
       expect(activity.averageDurationPerWeek.inMilliseconds, equals(3811765));
@@ -106,10 +108,10 @@ void main() {
 
       SummarizedActivity activity = SummarizedActivity(
         value: ActivityBuilder("").build,
-        totalDuration: Duration(hours: 18),
         sessions: sessions,
       );
 
+      expect(activity.totalDuration, equals(Duration(hours: 18)));
       expect(activity.averageDurationOverall, equals(Duration(hours: 6)));
       expect(activity.averageDurationPerDay.inMilliseconds, equals(578571));
       expect(activity.averageDurationPerWeek.inMilliseconds, equals(3811765));
@@ -150,6 +152,78 @@ void main() {
     test("Min", () {
       expect(activity.shortestSession.millisecondsDuration,
           sessions[1].millisecondsDuration);
+    });
+  });
+
+  group("Summarized activity list", () {
+    test("Longest and most frequent session returns correct result", () async {
+      Activity activity1 = ActivityBuilder("Activity1").build;
+      Activity activity2 = ActivityBuilder("Activity2").build;
+      Activity activity3 = ActivityBuilder("Activity3").build;
+
+      SummarizedActivity summarizedActivity1 = SummarizedActivity(
+        value: activity1,
+        sessions: [
+          buildSession(
+            activity1.id,
+            DateTime(2018, 1, 15, 5),
+            DateTime(2018, 1, 15, 7),
+          ),
+          buildSession(
+            activity1.id,
+            DateTime(2018, 1, 15, 7),
+            DateTime(2018, 1, 15, 10),
+          ),
+        ],
+      );
+
+      SummarizedActivity summarizedActivity2 = SummarizedActivity(
+        value: activity2,
+        sessions: [
+          buildSession(
+            activity2.id,
+            DateTime(2018, 1, 10, 12),
+            DateTime(2018, 1, 10, 15),
+          ),
+          buildSession(
+            activity2.id,
+            DateTime(2018, 1, 15, 7),
+            DateTime(2018, 1, 15, 10),
+          ),
+          buildSession(
+            activity2.id,
+            DateTime(2018, 1, 20, 20),
+            DateTime(2018, 1, 20, 21),
+          ),
+        ],
+      );
+
+      Session longestSession = buildSession(
+        activity3.id,
+        DateTime(2018, 1, 25, 1),
+        DateTime(2018, 1, 25, 7),
+      );
+
+      SummarizedActivity summarizedActivity3 = SummarizedActivity(
+        value: activity3,
+        sessions: [longestSession],
+      );
+
+      SummarizedActivityList result = SummarizedActivityList([
+        summarizedActivity1,
+        summarizedActivity2,
+        summarizedActivity3,
+      ]);
+
+      expect(result.activities, isNotNull);
+      expect(result.activities.length, equals(3));
+
+      expect(result.mostFrequentActivity.first, equals(activity2));
+      expect(result.mostFrequentActivity.second, equals(3));
+
+      expect(result.longestSession.first, equals(activity3));
+      expect(result.longestSession.second.millisecondsDuration,
+          equals(longestSession.millisecondsDuration));
     });
   });
 }
