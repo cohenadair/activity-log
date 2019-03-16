@@ -8,6 +8,7 @@ import 'package:quiver/iterables.dart';
 /// A class that stores summarized data for an [Activity].
 class SummarizedActivity {
   final Activity value;
+  final DateRange dateRange;
   final List<Session> sessions;
 
   Session _cachedShortestSession;
@@ -20,8 +21,10 @@ class SummarizedActivity {
 
   SummarizedActivity({
     @required this.value,
+    @required this.dateRange,
     this.sessions,
-  }) : assert(value != null);
+  }) : assert(value != null),
+       assert(dateRange != null);
 
   int get numberOfSessions => sessions == null ? 0 : sessions.length;
 
@@ -78,41 +81,26 @@ class SummarizedActivity {
       return;
     }
 
-    Session earliestSession = sessions.first;
-    Session latestSession = sessions.first;
-
     int totalMs = 0;
     sessions.forEach((Session session) {
-      if (session.startTimestamp < earliestSession.startTimestamp) {
-        earliestSession = session;
-      }
-
-      if (session.endTimestamp > latestSession.endTimestamp) {
-        latestSession = session;
-      }
-
       totalMs += session.millisecondsDuration;
     });
 
     _cachedTotalDuration = Duration(milliseconds: totalMs);
 
-    Duration difference =
-        latestSession.endDateTime.difference(earliestSession.startDateTime);
+    Duration difference = dateRange.endDate.difference(dateRange.startDate);
     int numberOfDays = difference.inDays + 1;
 
     _cachedDurationPerDay = getAverage(numberOfDays);
     _cachedDurationPerWeek =
         getAverage((numberOfDays / DateTime.daysPerWeek).floor() + 1);
 
-    DateTime startDate = earliestSession.startDateTime;
-    DateTime endDate = latestSession.endDateTime;
-
     int numberOfMonths = 0;
-    if (isSameYear(startDate, endDate)) {
-      numberOfMonths = endDate.month - startDate.month + 1;
+    if (isSameYear(dateRange.startDate, dateRange.endDate)) {
+      numberOfMonths = dateRange.endDate.month - dateRange.startDate.month + 1;
     } else {
-      numberOfMonths = endDate.month +
-          (DateTime.monthsPerYear - startDate.month + 1);
+      numberOfMonths = dateRange.endDate.month +
+          (DateTime.monthsPerYear - dateRange.startDate.month + 1);
     }
 
     _cachedDurationPerMonth = getAverage(numberOfMonths);

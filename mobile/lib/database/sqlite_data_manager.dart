@@ -326,6 +326,7 @@ class SQLiteDataManager implements DataManageable {
 
       summarizedActivities.add(SummarizedActivity(
         value: activity,
+        dateRange: dateRange,
         sessions: sessionList,
       ));
     }

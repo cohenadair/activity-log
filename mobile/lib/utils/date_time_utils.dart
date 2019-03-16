@@ -50,7 +50,9 @@ class DateRange {
   final DateTime startDate;
   final DateTime endDate;
 
-  DateRange({this.startDate, this.endDate});
+  DateRange({this.startDate, this.endDate})
+      : assert(startDate.isAtSameMomentAs(endDate) ||
+          startDate.isBefore(endDate));
 
   int get startMs => startDate.millisecondsSinceEpoch;
   int get endMs => endDate.millisecondsSinceEpoch;
