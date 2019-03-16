@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mobile/model/model.dart';
 import 'package:mobile/utils/date_time_utils.dart';
 
-class Session extends Model {
+class Session extends Model implements Comparable<Session> {
   static final keyActivityId = "activity_id";
   static final keyStartTimestamp = "start_timestamp";
   static final keyEndTimestamp = "end_timestamp";
@@ -75,6 +75,19 @@ class Session extends Model {
 
   operator <=(other) {
     return !(this > other);
+  }
+
+  @override
+  int compareTo(Session other) {
+    int durationCompare =
+        this.millisecondsDuration.compareTo(other.millisecondsDuration);
+
+    if (durationCompare == 0) {
+      // Fallback on session start time.
+      return this.startDateTime.compareTo(other.startDateTime);
+    }
+
+    return durationCompare;
   }
 }
 

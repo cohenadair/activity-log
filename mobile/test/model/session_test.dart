@@ -50,4 +50,38 @@ void main() {
       expect(builder1.build >= builder2.build, true);
     });
   });
+
+  group("Comparable", () {
+    SessionBuilder builder1 = SessionBuilder("")
+      ..startTimestamp = 0
+      ..endTimestamp = 750;
+
+    SessionBuilder builder2 = SessionBuilder("")
+      ..startTimestamp = 500
+      ..endTimestamp = 1000;
+
+    test("Sessions with different durations", () {
+      // Greater than
+      expect(builder1.build.compareTo(builder2.build), equals(1));
+
+      // Less than
+      builder1..endTimestamp = 100;
+      expect(builder1.build.compareTo(builder2.build), equals(-1));
+    });
+
+    test("Sessions with equal durations and different start times", () {
+      builder1..startTimestamp = 0..endTimestamp = 250;
+      builder1..startTimestamp = 500..endTimestamp = 750;
+
+      // Less than
+      expect(builder1.build.compareTo(builder2.build), equals(-1));
+
+      // Greater than
+      expect(builder2.build.compareTo(builder1.build), equals(1));
+
+      // Equal
+      builder1..startTimestamp = 0..endTimestamp = 250;
+      expect(builder2.build.compareTo(builder1.build), equals(1));
+    });
+  });
 }

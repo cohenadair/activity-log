@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:quiver/time.dart';
 
 /// A representation of a [Duration] object meant to be shown to the user. Units
@@ -144,4 +145,15 @@ DateTime getStartOfMonth(DateTime now) {
 /// belongs.
 DateTime getStartOfYear(DateTime now) {
   return DateTime(now.year);
+}
+
+/// Calculates week number from a date as per
+/// https://en.wikipedia.org/wiki/ISO_week_date#Calculation.
+int weekOfYear(DateTime date) {
+  return ((dayOfYear(date) - date.weekday + 10) / DateTime.daysPerWeek).floor();
+}
+
+/// Returns the day of the year for the given [DateTime]. For example, 185.
+int dayOfYear(DateTime date) {
+  return int.parse(DateFormat("D").format(date));
 }
