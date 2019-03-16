@@ -115,47 +115,38 @@ class _StatsPageState extends State<StatsPage> {
   }
 
   Widget _buildSummary(SummarizedActivityList summary) {
-    if (summary.longestSession == null && summary.mostFrequentActivity == null)
-    {
-      return Empty();
-    }
-
     return Summary(
       title: Strings.of(context).summaryDefaultTitle,
       padding: insetsVerticalDefault,
-      items: _getSummaryItems(summary),
+      items: [
+        SummaryItem(
+          title: Strings.of(context).statsPageMostFrequentActivityLabel,
+          subtitle: summary.mostFrequentActivity == null
+              ? null
+              : summary.mostFrequentActivity.first.name,
+          value: summary.mostFrequentActivity == null
+              ? Strings.of(context).none
+              : format(Strings.of(context).statsPageMostFrequentActivityValue, [
+                  summary.mostFrequentActivity.second
+                ]),
+        ),
+        SummaryItem(
+          title: Strings.of(context).statsPageLongestSessionLabel,
+          subtitle: summary.longestSession == null
+              ? null
+              : summary.longestSession.first.name,
+          value: summary.longestSession == null
+              ? Strings.of(context).none
+              : formatTotalDuration(
+                context: context,
+                durations: [summary.longestSession.second.duration],
+                includesSeconds: false,
+                condensed: true,
+                showHighestTwoOnly: true,
+              ),
+        ),
+      ],
     );
-  }
-
-  List<SummaryItem> _getSummaryItems(SummarizedActivityList summary) {
-    List<SummaryItem> result = [];
-
-    if (summary.mostFrequentActivity != null) {
-      result.add(SummaryItem(
-        title: Strings.of(context).statsPageMostFrequentActivityLabel,
-        subtitle: summary.mostFrequentActivity.first.name,
-        value: format(
-          Strings.of(context).statsPageMostFrequentActivityValue,
-          [summary.mostFrequentActivity.second],
-        ),
-      ));
-    }
-
-    if (summary.longestSession != null) {
-      result.add(SummaryItem(
-        title: Strings.of(context).statsPageLongestSessionLabel,
-        subtitle: summary.longestSession.first.name,
-        value: formatTotalDuration(
-          context: context,
-          durations: [summary.longestSession.second.duration],
-          includesSeconds: false,
-          condensed: true,
-          showHighestTwoOnly: true,
-        ),
-      ));
-    }
-
-    return result;
   }
 
   Widget _buildForSingleActivity(SummarizedActivity activity) {
