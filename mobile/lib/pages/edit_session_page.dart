@@ -221,7 +221,9 @@ class _EditSessionPageState extends State<EditSessionPage> {
     }
 
     // Start time is in the future.
-    if (isInFutureWithMinuteAccuracy(combine(_startDate, _endTime), DateTime.now())) {
+    if (isInFutureWithMinuteAccuracy(combine(_startDate, _startTime),
+        DateTime.now()))
+    {
       return Strings.of(context).editSessionPageFutureStartTime;
     }
 
@@ -241,7 +243,9 @@ class _EditSessionPageState extends State<EditSessionPage> {
     }
 
     // End time is in the future.
-    if (isInFutureWithMinuteAccuracy(combine(_endDate, _endTime), DateTime.now())) {
+    if (isInFutureWithMinuteAccuracy(combine(_endDate, _endTime),
+        DateTime.now()))
+    {
       return Strings.of(context).editSessionPageFutureEndTime;
     }
 
