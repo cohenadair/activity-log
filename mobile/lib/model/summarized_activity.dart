@@ -6,6 +6,7 @@ import 'package:mobile/model/session.dart';
 import 'package:mobile/utils/date_time_utils.dart';
 import 'package:mobile/utils/tuple.dart';
 import 'package:quiver/iterables.dart';
+import 'package:quiver/time.dart';
 
 /// A class that stores summarized data for an [Activity].
 class SummarizedActivity {
@@ -15,6 +16,7 @@ class SummarizedActivity {
   final DateRange dateRange;
 
   final List<Session> sessions;
+  final Clock clock;
 
   Session _cachedShortestSession;
   Session _cachedLongestSession;
@@ -30,6 +32,7 @@ class SummarizedActivity {
     @required this.value,
     @required this.dateRange,
     this.sessions,
+    this.clock = const Clock(),
   }) : assert(value != null);
 
   int get numberOfSessions => sessions == null ? 0 : sessions.length;
@@ -105,13 +108,19 @@ class SummarizedActivity {
         earliestSession = session;
       }
 
-      if (session.endTimestamp > latestSession.endTimestamp) {
+      if (session.endTimestamp == null
+          || (latestSession.endTimestamp != null
+              && session.endTimestamp > latestSession.endTimestamp))
+      {
         latestSession = session;
       }
 
       totalMs += session.millisecondsDuration;
       allDateTimes.add(dateTimeToDayAccuracy(session.startDateTime));
-      allDateTimes.add(dateTimeToDayAccuracy(session.endDateTime));
+
+      if (session.endDateTime != null) {
+        allDateTimes.add(dateTimeToDayAccuracy(session.endDateTime));
+      }
     });
 
     _cachedTotalDuration = Duration(milliseconds: totalMs);
@@ -120,7 +129,7 @@ class SummarizedActivity {
     // and latest sessions.
     DateRange range = dateRange ?? DateRange(
       startDate: earliestSession.startDateTime,
-      endDate: latestSession.endDateTime,
+      endDate: latestSession.endDateTime ?? clock.now(),
     );
 
     Duration difference = range.endDate.difference(range.startDate);

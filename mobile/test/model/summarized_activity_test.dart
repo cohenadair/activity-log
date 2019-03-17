@@ -3,14 +3,21 @@ import 'package:mobile/model/activity.dart';
 import 'package:mobile/model/session.dart';
 import 'package:mobile/model/summarized_activity.dart';
 import 'package:mobile/utils/date_time_utils.dart';
-import 'package:mobile/widgets/stats_date_range_picker.dart';
+import 'package:quiver/time.dart';
 
 void main() {
-  Session buildSession(String activityId, DateTime start, DateTime end) {
-    return (SessionBuilder(activityId)
-        ..startTimestamp = start.millisecondsSinceEpoch
-        ..endTimestamp = end.millisecondsSinceEpoch)
-        .build;
+  Session buildSession(String activityId, DateTime start, DateTime end, {
+    Clock clock = const Clock(),
+  }) {
+    SessionBuilder builder = SessionBuilder(activityId)
+      ..startTimestamp = start.millisecondsSinceEpoch
+      ..clock = clock;
+
+    if (end != null) {
+      builder.endTimestamp = end.millisecondsSinceEpoch;
+    }
+
+    return builder.build;
   }
 
   group("Averages are calculated correctly", () {
@@ -379,6 +386,81 @@ void main() {
       expect(result.longestSession.first, equals(activity3));
       expect(result.longestSession.second.millisecondsDuration,
           equals(longestSession.millisecondsDuration));
+    });
+  });
+
+  group("In-progress sessions", () {
+    test("Single in-progress session", () {
+      Clock clock = Clock.fixed(DateTime(2019, 11, 1));
+
+      List<Session> sessions = [
+        buildSession("",
+          DateTime(2019, 3, 15, 3),
+          DateTime(2019, 3, 15, 10),
+        ), // 7 hours
+        buildSession("",
+          DateTime(2018, 11, 24, 7),
+          DateTime(2018, 11, 24, 12),
+        ), // 5 hours
+        buildSession("",
+          DateTime(2019, 10, 31, 23),
+          null,
+          clock: clock,
+        ), // 1 hours
+        buildSession("",
+          DateTime(2019, 10, 10, 1),
+          DateTime(2019, 10, 10, 20),
+        ), // 19 hours
+      ];
+
+      SummarizedActivity activity = SummarizedActivity(
+        value: ActivityBuilder("").build,
+        dateRange: null,
+        sessions: sessions,
+        clock: clock,
+      );
+
+      // Average is over 13 months.
+      expect(activity.averageDurationPerMonth.inMilliseconds, equals(8861538));
+    });
+
+    test("Multiple in-progress session", () {
+      Clock clock = Clock.fixed(DateTime(2019, 11, 1));
+
+      List<Session> sessions = [
+        buildSession("",
+          DateTime(2019, 3, 15, 3),
+          DateTime(2019, 3, 15, 10),
+        ), // 7 hours
+        buildSession("",
+          DateTime(2018, 11, 24, 7),
+          DateTime(2018, 11, 24, 12),
+        ), // 5 hours
+        buildSession("",
+          DateTime(2019, 10, 31, 23),
+          null,
+          clock: clock,
+        ), // 1 hour
+        buildSession("",
+          DateTime(2019, 10, 10, 1),
+          DateTime(2019, 10, 10, 20),
+        ), // 19 hours
+        buildSession("",
+          DateTime(2019, 10, 31, 22),
+          null,
+          clock: clock,
+        ), // 2 hours
+      ];
+
+      SummarizedActivity activity = SummarizedActivity(
+        value: ActivityBuilder("").build,
+        dateRange: null,
+        sessions: sessions,
+        clock: clock,
+      );
+
+      // Average is over 13 months.
+      expect(activity.averageDurationPerMonth.inMilliseconds, equals(9415385));
     });
   });
 }

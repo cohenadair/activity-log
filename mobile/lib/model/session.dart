@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mobile/model/model.dart';
 import 'package:mobile/utils/date_time_utils.dart';
+import 'package:quiver/time.dart';
 
 class Session extends Model implements Comparable<Session> {
   static final keyActivityId = "activity_id";
@@ -10,6 +11,7 @@ class Session extends Model implements Comparable<Session> {
   final String _activityId;
   final int _startTimestamp;
   final int _endTimestamp;
+  final Clock _clock;
 
   String get activityId => _activityId;
   int get startTimestamp => _startTimestamp;
@@ -19,18 +21,20 @@ class Session extends Model implements Comparable<Session> {
     : _activityId = map[keyActivityId],
       _startTimestamp = map[keyStartTimestamp],
       _endTimestamp = map[keyEndTimestamp],
+      _clock = Clock(),
       super.fromMap(map);
 
   Session.fromBuilder(SessionBuilder builder)
     : _activityId = builder.activityId,
       _startTimestamp = builder.startTimestamp,
       _endTimestamp = builder.endTimestamp,
+      _clock = builder.clock,
       super.fromBuilder(builder);
 
   int get millisecondsDuration {
     if (_endTimestamp == null) {
       // Session isn't over yet.
-      return DateTime.now().millisecondsSinceEpoch - _startTimestamp;
+      return _clock.now().millisecondsSinceEpoch - _startTimestamp;
     }
     return _endTimestamp - _startTimestamp;
   }
@@ -40,8 +44,9 @@ class Session extends Model implements Comparable<Session> {
   DateTime get startDateTime =>
       DateTime.fromMillisecondsSinceEpoch(startTimestamp);
 
-  DateTime get endDateTime =>
-      DateTime.fromMillisecondsSinceEpoch(endTimestamp);
+  DateTime get endDateTime => endTimestamp == null
+      ? null
+      : DateTime.fromMillisecondsSinceEpoch(endTimestamp);
 
   DateRange get dateRange =>
       DateRange(startDate: startDateTime, endDate: endDateTime);
@@ -96,8 +101,9 @@ class Session extends Model implements Comparable<Session> {
 
 class SessionBuilder extends ModelBuilder {
   String activityId;
-  int startTimestamp = DateTime.now().millisecondsSinceEpoch;
+  int startTimestamp;
   int endTimestamp;
+  Clock clock;
 
   SessionBuilder(this.activityId);
 
@@ -131,6 +137,14 @@ class SessionBuilder extends ModelBuilder {
   }
 
   Session get build {
+    if (clock == null) {
+      clock = Clock();
+    }
+
+    if (startTimestamp == null) {
+      startTimestamp = clock.now().millisecondsSinceEpoch;
+    }
+
     return Session.fromBuilder(this);
   }
 }
