@@ -115,6 +115,8 @@ class _SessionsLineChartState extends State<SessionsLineChart> {
       result.add(Charts.InitialSelection(selectedDataConfig: [
         new Charts.SeriesDatumConfig(_chartId, selectedIndex)
       ]));
+    } else {
+      _selectedSession = null;
     }
 
     return result;
