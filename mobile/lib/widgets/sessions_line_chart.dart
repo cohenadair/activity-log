@@ -108,7 +108,9 @@ class _SessionsLineChartState extends State<SessionsLineChart> {
   }
 
   List<Charts.ChartBehavior> get _behaviors {
-    List<Charts.ChartBehavior> result = [];
+    List<Charts.ChartBehavior> result = [
+      Charts.PanAndZoomBehavior(),
+    ];
 
     int selectedIndex = widget.sessions.indexOf(_selectedSession);
     if (selectedIndex >= 0) {
