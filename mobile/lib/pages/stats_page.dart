@@ -105,12 +105,12 @@ class _StatsPageState extends State<StatsPage> {
         MinDivider(),
         ActivitiesDurationBarChart(
           summary.activities,
-          padding: insetsVerticalDefault,
+          padding: insetsVerticalDefaultHorizontalSmall,
         ),
         MinDivider(),
         ActivitiesNumberOfSessionsBarChart(
           summary.activities,
-          padding: insetsVerticalDefault,
+          padding: insetsVerticalDefaultHorizontalSmall,
         ),
       ],
     );

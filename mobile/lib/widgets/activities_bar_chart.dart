@@ -31,12 +31,53 @@ class ActivitiesDurationBarChart extends StatelessWidget {
           condensed: true,
           showHighestTwoOnly: true,
         )})",
-      onMeasure: (SummarizedActivity activity) =>
-          activity.totalDuration.inSeconds,
+      onMeasure: (activity) => activity.totalDuration.inSeconds,
       primaryAxisSpec: Charts.NumericAxisSpec(
-        tickFormatterSpec: _DurationMeasureAxisFormatter(context),
+        tickFormatterSpec: _DurationTickFormatter(
+          context: context,
+          formatCallback: _getFormatCallback(context),
+        ),
       ),
     );
+  }
+
+  _DurationTickFormatCallback _getFormatCallback(BuildContext context) {
+    Duration longestDuration = Duration();
+
+    activities.forEach((SummarizedActivity activity) {
+      if (activity.totalDuration != null
+          && activity.totalDuration > longestDuration)
+      {
+        longestDuration = activity.totalDuration;
+      }
+    });
+
+    if (longestDuration.inDays > 0) {
+      // 0d 0h
+      return (Duration duration) => formatTotalDuration(
+        context: context,
+        durations: [duration],
+        includesSeconds: false,
+        includesMinutes: false,
+      );
+    } else if (longestDuration.inHours > 0) {
+      // 0h 0m
+      return (Duration duration) => formatTotalDuration(
+        context: context,
+        durations: [duration],
+        includesDays: false,
+        includesSeconds: false,
+      );
+    } else {
+      // 0m
+      return (Duration duration) => formatTotalDuration(
+        context: context,
+        durations: [duration],
+        includesDays: false,
+        includesHours: false,
+        includesSeconds: false,
+      );
+    }
   }
 }
 
@@ -133,32 +174,31 @@ class _ActivitiesBarChart extends StatelessWidget {
   }
 }
 
+typedef _DurationTickFormatCallback = String Function(Duration);
+
 /// A custom formatter for the measure axis, so units can be displayed as "5d"
 /// rather than "5".
-class _DurationMeasureAxisFormatter extends Charts.SimpleTickFormatterBase<num>
+class _DurationTickFormatter extends Charts.SimpleTickFormatterBase<num>
     implements Charts.NumericTickFormatterSpec
 {
   final BuildContext context;
+  final _DurationTickFormatCallback formatCallback;
 
-  _DurationMeasureAxisFormatter(this.context);
+  _DurationTickFormatter({
+    this.context,
+    this.formatCallback,
+  });
 
   @override
   String formatValue(num value) {
-    Duration duration = Duration(seconds: value.toInt());
-
-    if (duration.inDays > 0) {
-      return format(Strings.of(context).daysFormat, [duration.inDays]);
-    }
-
-    if (duration.inHours > 0) {
-      return format(Strings.of(context).hoursFormat, [duration.inHours]);
-    }
-
-    return format(Strings.of(context).minutesFormat, [duration.inMinutes]);
+    return formatCallback(Duration(seconds: value.toInt()));
   }
 
   @override
   Charts.TickFormatter<num> createTickFormatter(Charts.ChartContext context) {
-    return _DurationMeasureAxisFormatter(this.context);
+    return _DurationTickFormatter(
+      context: this.context,
+      formatCallback: formatCallback,
+    );
   }
 }
