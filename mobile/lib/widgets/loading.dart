@@ -2,6 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:mobile/res/dimen.dart';
 
 class Loading extends StatelessWidget {
+  static Widget centered() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        Loading(padding: insetsDefault),
+      ],
+    );
+  }
+
   final EdgeInsets _padding;
 
   // ignore: missing_identifier

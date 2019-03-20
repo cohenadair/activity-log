@@ -8,6 +8,7 @@ import 'package:mobile/utils/string_utils.dart';
 import 'package:mobile/widgets/activities_bar_chart.dart';
 import 'package:mobile/widgets/activity_picker.dart';
 import 'package:mobile/widgets/activity_summary.dart';
+import 'package:mobile/widgets/loading.dart';
 import 'package:mobile/widgets/stats_date_range_picker.dart';
 import 'package:mobile/widgets/page.dart';
 import 'package:mobile/widgets/summary.dart';
@@ -72,7 +73,7 @@ class _StatsPageState extends State<StatsPage> {
                   AsyncSnapshot<SummarizedActivityList> snapshot)
               {
                 if (!snapshot.hasData) {
-                  return Empty();
+                  return Loading.centered();
                 }
 
                 List<SummarizedActivity> activities = snapshot.data.activities;

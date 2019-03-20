@@ -66,14 +66,7 @@ class _ListPageState<T> extends State<ListPage> {
         stream: _stream,
         builder: (BuildContext context, AsyncSnapshot<List<T>> snapshot) {
           if (!snapshot.hasData) {
-            return Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Loading(
-                  padding: insetsTopDefault,
-                ),
-              ],
-            );
+            return Loading.centered();
           }
 
           return ListView.separated(
