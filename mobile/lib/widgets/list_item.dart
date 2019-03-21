@@ -19,6 +19,8 @@ class ListItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
+      top: false,
+      bottom: false,
       child: ListTile(
         contentPadding: contentPadding,
         title: title,

@@ -3,7 +3,9 @@ import 'package:mobile/app_manager.dart';
 import 'package:mobile/i18n/strings.dart';
 import 'package:mobile/model/activity.dart';
 import 'package:mobile/model/summarized_activity.dart';
+import 'package:mobile/pages/stats_activity_summary_page.dart';
 import 'package:mobile/res/dimen.dart';
+import 'package:mobile/utils/page_utils.dart';
 import 'package:mobile/utils/string_utils.dart';
 import 'package:mobile/widgets/activities_bar_chart.dart';
 import 'package:mobile/widgets/activity_picker.dart';
@@ -107,14 +109,20 @@ class _StatsPageState extends State<StatsPage> {
         ActivitiesDurationBarChart(
           summary.activities,
           padding: insetsVerticalDefaultHorizontalSmall,
+          onSelect: _onSelectChartActivity,
         ),
         MinDivider(),
         ActivitiesNumberOfSessionsBarChart(
           summary.activities,
           padding: insetsVerticalDefaultHorizontalSmall,
+          onSelect: _onSelectChartActivity,
         ),
       ],
     );
+  }
+
+  void _onSelectChartActivity(SummarizedActivity activity) {
+    push(context, StatsActivitySummaryPage(activity));
   }
 
   Widget _buildSummary(SummarizedActivityList summary) {

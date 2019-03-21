@@ -8,12 +8,16 @@ import 'package:mobile/widgets/text.dart';
 import 'package:mobile/widgets/widget.dart';
 import 'package:quiver/strings.dart';
 
+typedef ActivitiesBarChartOnSelectCallback = Function(SummarizedActivity);
+
 class ActivitiesDurationBarChart extends StatelessWidget {
   final EdgeInsets padding;
   final List<SummarizedActivity> activities;
+  final ActivitiesBarChartOnSelectCallback onSelect;
 
   ActivitiesDurationBarChart(this.activities, {
     this.padding,
+    this.onSelect,
   });
 
   @override
@@ -38,6 +42,7 @@ class ActivitiesDurationBarChart extends StatelessWidget {
           formatCallback: _getFormatCallback(context),
         ),
       ),
+      onSelect: onSelect,
     );
   }
 
@@ -84,9 +89,11 @@ class ActivitiesDurationBarChart extends StatelessWidget {
 class ActivitiesNumberOfSessionsBarChart extends StatelessWidget {
   final EdgeInsets padding;
   final List<SummarizedActivity> activities;
+  final ActivitiesBarChartOnSelectCallback onSelect;
 
   ActivitiesNumberOfSessionsBarChart(this.activities, {
     this.padding,
+    this.onSelect,
   });
 
   @override
@@ -99,6 +106,7 @@ class ActivitiesNumberOfSessionsBarChart extends StatelessWidget {
       onBuildLabel: (SummarizedActivity activity) =>
           "${activity.value.name} (${activity.numberOfSessions})",
       onMeasure: (SummarizedActivity activity) => activity.numberOfSessions,
+      onSelect: onSelect,
     );
   }
 }
@@ -109,6 +117,7 @@ class _ActivitiesBarChart extends StatelessWidget {
   final EdgeInsets padding;
   final List<SummarizedActivity> activities;
   final Charts.AxisSpec primaryAxisSpec;
+  final ActivitiesBarChartOnSelectCallback onSelect;
 
   /// Return the quantity value for the given [SummarizedActivity].
   final num Function(SummarizedActivity) onMeasure;
@@ -124,6 +133,7 @@ class _ActivitiesBarChart extends StatelessWidget {
     this.onMeasure,
     this.onBuildLabel,
     this.primaryAxisSpec,
+    this.onSelect,
   }) : assert(!isEmpty(chartId)),
        assert(activities.isNotEmpty);
 
@@ -148,6 +158,15 @@ class _ActivitiesBarChart extends StatelessWidget {
                   renderSpec: Charts.NoneRenderSpec(),
                 ),
                 primaryMeasureAxis: primaryAxisSpec,
+                selectionModels: [
+                  Charts.SelectionModelConfig(
+                    changedListener: (Charts.SelectionModel model) {
+                      if (onSelect != null) {
+                        onSelect(model.selectedDatum.first.datum);
+                      }
+                    },
+                  ),
+                ],
               ),
             ),
           ),

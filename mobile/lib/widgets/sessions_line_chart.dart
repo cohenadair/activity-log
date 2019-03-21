@@ -38,6 +38,7 @@ class _SessionsLineChartState extends State<SessionsLineChart> {
             ),
           ),
           SafeArea(
+            bottom: false,
             child: Column(
               children: <Widget>[
                 Container(
