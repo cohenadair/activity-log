@@ -75,6 +75,7 @@ Map<String, Map<String, String>> englishStrings = {
 
     "analysisDuration_allDates" : "All dates",
     "analysisDuration_today" : "Today",
+    "analysisDuration_yesterday" : "Yesterday",
     "analysisDuration_thisWeek" : "This week",
     "analysisDuration_thisMonth" : "This month",
     "analysisDuration_thisYear" : "This year",

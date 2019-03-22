@@ -15,6 +15,27 @@ void main() {
     expect(range.endDate, equals(expectedEnd ?? now));
   }
 
+  group("StatsDateRange.today", () {
+    test("Today", () {
+      assertStatsDateRange(
+        dateRange: StatsDateRange.today,
+        now: DateTime(2019, 1, 15, 15, 30),
+        expectedStart: DateTime(2019, 1, 15),
+      );
+    });
+  });
+
+  group("StatsDateRange.yesterday", () {
+    test("Yesterday", () {
+      assertStatsDateRange(
+        dateRange: StatsDateRange.yesterday,
+        now: DateTime(2019, 1, 15, 15, 30),
+        expectedStart: DateTime(2019, 1, 14),
+        expectedEnd: DateTime(2019, 1, 15),
+      );
+    });
+  });
+
   group("StatsDateRange.thisWeek", () {
     test("This week - year overlap", () {
       assertStatsDateRange(

@@ -104,6 +104,7 @@ class Strings {
 
   String get analysisDurationAllDates => _getString("analysisDuration_allDates");
   String get analysisDurationToday => _getString("analysisDuration_today");
+  String get analysisDurationYesterday => _getString("analysisDuration_yesterday");
   String get analysisDurationThisWeek => _getString("analysisDuration_thisWeek");
   String get analysisDurationThisMonth => _getString("analysisDuration_thisMonth");
   String get analysisDurationThisYear => _getString("analysisDuration_thisYear");

@@ -44,6 +44,9 @@ class _StatsDateRangePickerState extends State<StatsDateRangePicker> {
       allItem: _buildItem(context, StatsDateRange.allDates),
       items: [
         ListPickerItem.divider(),
+        _buildItem(context, StatsDateRange.today),
+        _buildItem(context, StatsDateRange.yesterday),
+        ListPickerItem.divider(),
         _buildItem(context, StatsDateRange.thisWeek),
         _buildItem(context, StatsDateRange.thisMonth),
         _buildItem(context, StatsDateRange.thisYear),
@@ -123,6 +126,24 @@ class StatsDateRange {
       endDate: now,
     ),
     getTitle: (context) => Strings.of(context).analysisDurationAllDates,
+  );
+
+  static final today = StatsDateRange(
+    id: "today",
+    getValue: (DateTime now) => DateRange(
+      startDate: dateTimeToDayAccuracy(now),
+      endDate: now,
+    ),
+    getTitle: (context) => Strings.of(context).analysisDurationToday,
+  );
+
+  static final yesterday = StatsDateRange(
+    id: "yesterday",
+    getValue: (DateTime now) => DateRange(
+      startDate: dateTimeToDayAccuracy(now).subtract(Duration(days: 1)),
+      endDate: dateTimeToDayAccuracy(now),
+    ),
+    getTitle: (context) => Strings.of(context).analysisDurationYesterday,
   );
 
   static final thisWeek = StatsDateRange(
