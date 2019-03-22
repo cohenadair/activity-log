@@ -87,6 +87,7 @@ class _EditActivityPageState extends State<EditActivityPage> {
                 bottom: paddingDefault,
               ),
               child: TextFormField(
+                autofocus: !_isEditing,
                 textCapitalization: TextCapitalization.words,
                 controller: _nameController,
                 decoration: InputDecoration(
