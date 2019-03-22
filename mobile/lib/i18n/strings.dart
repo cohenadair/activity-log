@@ -36,6 +36,7 @@ class Strings {
 
   String get cancel => _getString("cancel");
   String get done => _getString("done");
+  String get save => _getString("save");
   String get delete => _getString("delete");
   String get today => _getString("today");
   String get yesterday => _getString("yesterday");

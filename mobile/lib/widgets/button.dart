@@ -55,8 +55,12 @@ class ActionButton extends StatelessWidget {
   }) : _stringId = null;
 
   ActionButton.done({this.onPressed})
-    : _stringId = "done",
-      text = null;
+      : _stringId = "done",
+        text = null;
+
+  ActionButton.save({this.onPressed})
+      : _stringId = "save",
+        text = null;
 
   @override
   Widget build(BuildContext context) {

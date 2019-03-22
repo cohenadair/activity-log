@@ -8,6 +8,7 @@ Map<String, Map<String, String>> englishStrings = {
 
     "cancel" : "Cancel",
     "done" : "Done",
+    "save" : "Save",
     "delete" : "Delete",
     "today" : "Today",
     "yesterday" : "Yesterday",

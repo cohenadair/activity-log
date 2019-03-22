@@ -38,8 +38,7 @@ class EditPage extends StatelessWidget {
       appBarStyle: PageAppBarStyle(
         title: _title,
         actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.check),
+          ActionButton.save(
             onPressed: _onPressedSaveButton,
           ),
         ],
