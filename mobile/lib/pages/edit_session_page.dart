@@ -160,16 +160,23 @@ class _EditSessionPageState extends State<EditSessionPage> {
         .then((Session overlappingSession) {
           if (overlappingSession != null) {
             setState(() {
+              String conflictingString =
+                  DateFormat(monthDayFormat)
+                      .format(overlappingSession.startDateTime)
+                  + ", "
+                  + formatTimeOfDay(context, overlappingSession.startTimeOfDay);
+
+              if (overlappingSession.inProgress) {
+                conflictingString +=
+                    " (${Strings.of(context).sessionListInProgress})";
+              } else {
+                conflictingString += " - "
+                    + formatTimeOfDay(context, overlappingSession.endTimeOfDay);
+              }
+
               _formValidationValue =
                   format(Strings.of(context).editSessionPageOverlap, [
-                    DateFormat(monthDayFormat)
-                        .format(overlappingSession.startDateTime)
-                            + ", "
-                            + formatTimeOfDay(context,
-                                overlappingSession.startTimeOfDay)
-                            + " - "
-                            + formatTimeOfDay(context,
-                                overlappingSession.endTimeOfDay)
+                    conflictingString
                   ]
               );
             });

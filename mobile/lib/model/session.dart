@@ -52,7 +52,9 @@ class Session extends Model implements Comparable<Session> {
       DateRange(startDate: startDateTime, endDate: endDateTime);
 
   TimeOfDay get startTimeOfDay => TimeOfDay.fromDateTime(startDateTime);
-  TimeOfDay get endTimeOfDay => TimeOfDay.fromDateTime(endDateTime);
+  TimeOfDay get endTimeOfDay => endDateTime == null
+      ? null
+      : TimeOfDay.fromDateTime(endDateTime);
 
   bool get inProgress {
     return _endTimestamp == null;

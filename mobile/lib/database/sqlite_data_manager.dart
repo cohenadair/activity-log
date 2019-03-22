@@ -214,8 +214,8 @@ class SQLiteDataManager implements DataManageable {
         SELECT * FROM session
           WHERE activity_id = ?
           AND id != ?
-          AND start_timestamp < ?
-          AND end_timestamp > ?
+          AND (start_timestamp < ? AND end_timestamp > ?)
+          OR (end_timestamp IS NULL AND ? > start_timestamp)
           LIMIT 1
       """;
 
@@ -224,6 +224,7 @@ class SQLiteDataManager implements DataManageable {
         session.id,
         session.endTimestamp,
         session.startTimestamp,
+        session.endTimestamp,
       ];
     }
 
