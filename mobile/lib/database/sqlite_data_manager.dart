@@ -7,7 +7,6 @@ import 'package:mobile/model/model.dart';
 import 'package:mobile/model/session.dart';
 import 'package:mobile/model/summarized_activity.dart';
 import 'package:mobile/utils/date_time_utils.dart';
-import 'package:mobile/utils/tuple.dart';
 import 'package:sqflite/sqflite.dart';
 
 class SQLiteDataManager implements DataManageable {
@@ -90,10 +89,10 @@ class SQLiteDataManager implements DataManageable {
   }
 
   @override
-  void startSession(Activity activity) {
+  Future<String> startSession(Activity activity) async {
     if (activity.isRunning) {
       // Only one session per activity can be running at a given time.
-      return;
+      return null;
     }
 
     Session newSession = SessionBuilder(activity.id).build;
@@ -104,16 +103,18 @@ class SQLiteDataManager implements DataManageable {
       "UPDATE activity SET current_session_id = ? WHERE id = ?",
       [newSession.id, activity.id]
     );
-    batch.commit().then((value) {
-      _notifyActivitiesUpdated();
-    });
+
+    var _ = await batch.commit();
+    _notifyActivitiesUpdated();
+
+    return newSession.id;
   }
 
   @override
-  void endSession(Activity activity) {
+  Future<void> endSession(Activity activity) async {
     if (!activity.isRunning) {
       // Can't end a session for an activity that isn't running.
-      return;
+      return null;
     }
 
     Batch batch = _database.batch();
@@ -129,9 +130,10 @@ class SQLiteDataManager implements DataManageable {
       [activity.id]
     );
 
-    batch.commit().then((List value) {
-      _notifyActivitiesUpdated();
-    });
+    var _ = await batch.commit();
+    _notifyActivitiesUpdated();
+
+    return null;
   }
 
   @override
@@ -264,11 +266,15 @@ class SQLiteDataManager implements DataManageable {
   }
 
   @override
-  Future<Session> getCurrentSession(String activityId) async {
-    String query = "SELECT * FROM session WHERE id = ?";
+  Future<Session> getSession(String sessionId) async {
+    if (sessionId == null) {
+      return null;
+    }
 
+    String query = "SELECT * FROM session WHERE id = ?";
     Map<String, dynamic> map =
-        (await _database.rawQuery(query, [activityId])).first;
+        (await _database.rawQuery(query, [sessionId])).first;
+
     return Session.fromMap(map);
   }
 

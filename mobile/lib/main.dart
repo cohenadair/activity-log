@@ -10,8 +10,24 @@ import 'package:mobile/res/style.dart';
 
 void main() => runApp(ActivityLog());
 
-class ActivityLog extends StatelessWidget {
+class ActivityLog extends StatefulWidget {
+  @override
+  _ActivityLogState createState() => _ActivityLogState();
+}
+
+class _ActivityLogState extends State<ActivityLog> {
   final AppManager _app = AppManager();
+  Future<bool> _dbInitializedFuture;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _dbInitializedFuture = Future(() async {
+      _app.dataManager.initialize(await SQLiteOpenHelper.open());
+      return true;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +49,7 @@ class ActivityLog extends StatelessWidget {
         errorColor: Colors.red,
       ),
       home: FutureBuilder<bool>(
-        future: initializeDataManager(),
+        future: _dbInitializedFuture,
         builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
           if (snapshot.hasError || !snapshot.hasData) {
             return Scaffold(
@@ -57,10 +73,5 @@ class ActivityLog extends StatelessWidget {
         Locale('en', 'CA'),
       ],
     );
-  }
-
-  Future<bool> initializeDataManager() async {
-    _app.dataManager.initialize(await SQLiteOpenHelper.open());
-    return true;
   }
 }

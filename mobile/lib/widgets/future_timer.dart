@@ -1,37 +1,31 @@
-import 'dart:async';
+import 'dart:async' as Async;
 
 import 'package:flutter/material.dart';
 
-typedef FutureTimerBuilderCallback = FutureBuilder<dynamic> Function();
-typedef FutureTimerShouldUpdateCallback = bool Function();
+class Timer extends StatefulWidget {
+  final int durationMillis;
+  final Widget Function() childBuilder;
+  final bool Function() shouldUpdateCallback;
 
-class FutureTimer extends StatefulWidget {
-  final int _durationMillis;
-  final FutureTimerBuilderCallback _futureBuilder;
-  final FutureTimerShouldUpdateCallback _shouldUpdateCallback;
-
-  FutureTimer({
-    @required FutureTimerBuilderCallback futureBuilder,
-    int durationMillis = 1000,
-    FutureTimerShouldUpdateCallback shouldUpdateCallback,
-  }) : assert(futureBuilder != null),
-       _durationMillis = durationMillis,
-       _futureBuilder = futureBuilder,
-       _shouldUpdateCallback = shouldUpdateCallback;
+  Timer({
+    @required this.childBuilder,
+    this.durationMillis = 1000,
+    this.shouldUpdateCallback,
+  }) : assert(childBuilder != null);
 
   @override
-  State<StatefulWidget> createState() => _FutureTimerState();
+  State<StatefulWidget> createState() => _TimerState();
 }
 
-class _FutureTimerState extends State<FutureTimer> {
-  Timer _timer;
+class _TimerState extends State<Timer> {
+  Async.Timer _timer;
 
   @override
   void initState() {
-    _timer = Timer.periodic(
-      Duration(milliseconds: widget._durationMillis), (Timer timer) {
-        if (widget._shouldUpdateCallback == null ||
-            widget._shouldUpdateCallback())
+    _timer = Async.Timer.periodic(
+      Duration(milliseconds: widget.durationMillis), (Async.Timer timer) {
+        if (widget.shouldUpdateCallback == null ||
+            widget.shouldUpdateCallback())
         {
           setState(() {});
         }
@@ -49,6 +43,6 @@ class _FutureTimerState extends State<FutureTimer> {
 
   @override
   Widget build(BuildContext context) {
-    return widget._futureBuilder();
+    return widget.childBuilder();
   }
 }

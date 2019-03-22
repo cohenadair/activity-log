@@ -31,9 +31,16 @@ abstract class DataManageable {
   void updateActivity(Activity activity);
   void removeActivity(String activityId);
 
-  /// Creates and starts a new Session for the given Activity.
-  void startSession(Activity activity);
-  void endSession(Activity activity);
+  /// Creates and starts a new [Session] for the given [Activity]. If the given
+  /// [Activity] is already running, this method does nothing. Returns the ID
+  /// of the new [Session].
+  Future<String> startSession(Activity activity);
+
+  /// Ends the session for the given [Activity]. This method does nothing if
+  /// the given [Activity] isn't running. Always returns null, which can be
+  /// ignored.
+  Future<void> endSession(Activity activity);
+
   void addSession(Session session);
   void updateSession(Session session);
   void removeSession(Session session);
@@ -45,9 +52,8 @@ abstract class DataManageable {
   /// `null` otherwise.
   Future<Session> getOverlappingSession(Session session);
 
-  /// Returns the current session for the given Activity ID, or `null` if
-  /// the given Activity isn't running.
-  Future<Session> getCurrentSession(String activityId);
+  /// Returns the session with the given ID, or `null` if one isn't found.
+  Future<Session> getSession(String sessionId);
 
   /// Case-insensitive compare of a given name to all other activity names.
   Future<bool> activityNameExists(String name);

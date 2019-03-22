@@ -35,6 +35,8 @@ class _EditActivityPageState extends State<EditActivityPage> {
 
   TextEditingController _nameController;
   StreamSubscription<List<Session>> _sessionsUpdatedSubscription;
+  Future<List<Session>> _recentSessionsFuture;
+  Future<int> _sessionCountFuture;
   String _nameValidatorValue;
 
   @override
@@ -42,7 +44,9 @@ class _EditActivityPageState extends State<EditActivityPage> {
     if (_isEditing) {
       _app.dataManager.getSessionsUpdatedStream(_editingActivity.id, (stream) {
         _sessionsUpdatedSubscription = stream.listen((List<Session> sessions) {
-          setState(() {});
+          setState(() {
+            _updateFutures();
+          });
         });
         return false;
       });
@@ -51,6 +55,8 @@ class _EditActivityPageState extends State<EditActivityPage> {
     _nameController = TextEditingController(
       text: _isEditing ? _editingActivity.name : null
     );
+
+    _updateFutures();
 
     super.initState();
   }
@@ -96,17 +102,26 @@ class _EditActivityPageState extends State<EditActivityPage> {
                 validator: (String value) => _nameValidatorValue,
               ),
             ),
-            _isEditing ? _getRecentSessions() : Empty(),
+            _isEditing ? _buildRecentSessions() : Empty(),
           ],
         ),
       ),
     );
   }
 
-  FutureBuilder<List<Session>> _getRecentSessions() {
+  void _updateFutures() {
+    if (!_isEditing) {
+      return;
+    }
+    
+    _recentSessionsFuture = _app.dataManager
+        .getRecentSessions(_editingActivity.id, _recentSessionLimit);
+    _sessionCountFuture = _app.dataManager.getSessionCount(_editingActivity.id);
+  }
+
+  FutureBuilder<List<Session>> _buildRecentSessions() {
     return FutureBuilder<List<Session>>(
-      future: _app.dataManager
-          .getRecentSessions(_editingActivity.id, _recentSessionLimit),
+      future: _recentSessionsFuture,
       builder: (BuildContext context, AsyncSnapshot<List<Session>> snapshot) {
         if (snapshot.hasError || !snapshot.hasData) {
           return Empty();
@@ -115,7 +130,7 @@ class _EditActivityPageState extends State<EditActivityPage> {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _getRecentSessionsTitle(),
+            _buildRecentSessionsTitle(),
           ]
           ..addAll(snapshot.data.isNotEmpty ? snapshot.data.map((session) {
             return SessionListTile(
@@ -132,13 +147,13 @@ class _EditActivityPageState extends State<EditActivityPage> {
             );
           }) : [Empty()])
           ..add(snapshot.data.isNotEmpty
-              ? _getViewAllButton() : Empty())
+              ? _buildViewAllButton() : Empty())
         );
       }
     );
   }
 
-  Widget _getRecentSessionsTitle() {
+  Widget _buildRecentSessionsTitle() {
     return Padding(
       padding: insetsLeftDefault,
       child: Row(
@@ -164,9 +179,9 @@ class _EditActivityPageState extends State<EditActivityPage> {
     );
   }
 
-  Widget _getViewAllButton() {
+  Widget _buildViewAllButton() {
     return FutureBuilder<int>(
-      future: _app.dataManager.getSessionCount(_editingActivity.id),
+      future: _sessionCountFuture,
       builder: (BuildContext context, AsyncSnapshot<int> snapshot) {
         if (snapshot.hasError ||
             !snapshot.hasData ||

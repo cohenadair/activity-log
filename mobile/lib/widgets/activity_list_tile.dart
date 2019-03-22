@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:mobile/app_manager.dart';
 import 'package:mobile/model/activity.dart';
@@ -21,45 +23,62 @@ class ActivityListTile extends StatefulWidget {
   State<StatefulWidget> createState() => _ActivityListTileState();
 }
 
-// Used to keep track of start and end progress so multiple requests aren't
-// sent if the button is spam-pressed.
-enum _WaitingStatus {
-  forStart,
-  forEnd
-}
-
 class _ActivityListTileState extends State<ActivityListTile> {
-  RunningDurationText _currentDisplayDuration;
-  _WaitingStatus _waitingStatus;
+  // Ensures this tile is updated if sessions are manually added from
+  // elsewhere in the app.
+  StreamSubscription<List<Session>> _sessionsUpdatedSub;
+
+  Future<List<Session>> _sessionsFuture;
+  Future<Session> _currentSessionFuture;
+
+  // Used so back-to-back start/end sessions can't be created if there's a
+  // delay round tripping to the database.
+  bool _newSessionsLocked = false;
 
   AppManager get _app => widget._app;
   Activity get _activity => widget._activity;
   OnTapActivityListTile get _onTap => widget._onTap;
 
-  bool get _isWaiting => _waitingStatus != null;
+  @override
+  void initState() {
+    super.initState();
+
+    _app.dataManager.getSessionsUpdatedStream(_activity.id, (stream) {
+      _sessionsUpdatedSub = stream.listen((_) {
+        setState(() {
+          _updateSessionsFuture();
+          _updateCurrentSessionFuture(_activity.currentSessionId);
+        });
+      });
+
+      return true;
+    });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _sessionsUpdatedSub.cancel();
+  }
 
   @override
   Widget build(BuildContext context) {
-    _updateWaitingStatus();
-
     return ListItem(
       contentPadding: EdgeInsets.only(right: 0, left: paddingDefault),
       title: Text(_activity.name),
       subtitle: FutureBuilder<List<Session>>(
-        future: _app.dataManager.getSessions(_activity.id),
+        future: _sessionsFuture,
         builder: (BuildContext context, AsyncSnapshot<List<Session>> snapshot) {
-          if (snapshot.hasError) {
-            print('Error building total duration: '
-                + '${snapshot.error.toString()}');
-          }
-
           if (!snapshot.hasData) {
             return Empty();
           }
 
-          return TotalDurationText(snapshot.data.map((Session session) {
-            return session.duration;
-          }).toList());
+          List<Duration> durations = snapshot.data
+              .where((session) => !session.inProgress)
+              .map((session) => session.duration)
+              .toList();
+
+          return TotalDurationText(durations);
         },
       ),
       onTap: () {
@@ -70,64 +89,42 @@ class _ActivityListTileState extends State<ActivityListTile> {
       trailing: Row(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          FutureTimer(
-            shouldUpdateCallback: () => _activity.isRunning,
-            futureBuilder: () => FutureBuilder<Session>(
-              future: _app.dataManager
-                  .getCurrentSession(_activity.currentSessionId),
-              builder: (BuildContext context, AsyncSnapshot<Session> snapshot) {
-                switch (snapshot.connectionState) {
-                  case ConnectionState.waiting:
-                  case ConnectionState.none:
-                    break;
-                  default:
-                    if (snapshot.data == null) {
-                      // If the activity is already running.
-                      _currentDisplayDuration = null;
-                    } else {
-                      _currentDisplayDuration =
-                          RunningDurationText(snapshot.data.duration);
-                    }
-                    break;
-                }
-                return _currentDisplayDuration == null
-                    ? Empty() : _currentDisplayDuration;
-              },
-            ),
+          FutureBuilder<Session>(
+            future: _currentSessionFuture,
+            builder: (_, AsyncSnapshot<Session> snapshot) => snapshot.hasData
+                ? _buildRunningDuration(snapshot.data)
+                : Empty(),
           ),
-          _activity.isRunning ? _getStopButton() : _getStartButton(),
+          _activity.isRunning ? _buildStopButton() : _buildStartButton(),
         ],
       ),
     );
   }
 
-  void _updateWaitingStatus() {
-    if (_waitingStatus == null) {
-      return;
-    }
-
-    if ((_waitingStatus == _WaitingStatus.forEnd && !_activity.isRunning)
-        || (_waitingStatus == _WaitingStatus.forStart && _activity.isRunning))
-    {
-      _waitingStatus = null;
-    }
-  }
-
-  Widget _getStartButton() {
-    return _getButton(Icons.play_arrow, Colors.green, () {
-      _waitingStatus = _WaitingStatus.forStart;
-      _app.dataManager.startSession(_activity);
+  Widget _buildStartButton() {
+    return _buildButton(Icons.play_arrow, Colors.green, () {
+      _app.dataManager.startSession(_activity).then((newSessionId) {
+        setState(() {
+          _updateCurrentSessionFuture(newSessionId);
+          _newSessionsLocked = false;
+        });
+      });
     });
   }
 
-  Widget _getStopButton() {
-    return _getButton(Icons.stop, Colors.red, () {
-      _waitingStatus = _WaitingStatus.forEnd;
-      _app.dataManager.endSession(_activity);
+  Widget _buildStopButton() {
+    return _buildButton(Icons.stop, Colors.red, () {
+      _app.dataManager.endSession(_activity).then((_) {
+        setState(() {
+          _updateSessionsFuture();
+          _updateCurrentSessionFuture(null);
+          _newSessionsLocked = false;
+        });
+      });
     });
   }
 
-  Widget _getButton(IconData icon, Color color, Function onPressed) {
+  Widget _buildButton(IconData icon, Color color, Function onPressed) {
     assert(icon != null);
     assert(onPressed != null);
 
@@ -135,18 +132,27 @@ class _ActivityListTileState extends State<ActivityListTile> {
       icon: Icon(icon),
       color: color,
       onPressed: () {
-        if (_isWaiting) {
+        if (_newSessionsLocked) {
           return;
         }
-
         onPressed();
-        _update();
+        _newSessionsLocked = true;
       },
     );
   }
 
-  void _update() {
-    setState(() {
-    });
+  Widget _buildRunningDuration(Session session) {
+    return Timer(
+      shouldUpdateCallback: () => _activity.isRunning,
+      childBuilder: () => RunningDurationText(session.duration),
+    );
+  }
+
+  void _updateSessionsFuture() {
+    _sessionsFuture = _app.dataManager.getSessions(_activity.id);
+  }
+
+  void _updateCurrentSessionFuture(String currentSessionId) {
+    _currentSessionFuture = _app.dataManager.getSession(currentSessionId);
   }
 }

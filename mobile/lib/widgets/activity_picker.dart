@@ -5,7 +5,6 @@ import 'package:mobile/app_manager.dart';
 import 'package:mobile/i18n/strings.dart';
 import 'package:mobile/model/activity.dart';
 import 'package:mobile/widgets/list_picker.dart';
-import 'package:mobile/widgets/text.dart';
 
 typedef OnActivityDropdownItemSelected = void Function(Activity);
 
