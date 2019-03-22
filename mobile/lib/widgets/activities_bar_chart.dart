@@ -151,7 +151,7 @@ class _ActivitiesBarChart extends StatelessWidget {
             child: SafeArea(
               child: Charts.BarChart(
                 _getSeriesList(context),
-                animate: true,
+                animate: false,
                 vertical: false,
                 barRendererDecorator: Charts.BarLabelDecorator<String>(),
                 domainAxis: Charts.OrdinalAxisSpec(

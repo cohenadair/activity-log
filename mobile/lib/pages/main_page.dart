@@ -45,11 +45,18 @@ class _MainPageState extends State<MainPage> {
 
   @override
   Widget build(BuildContext context) {
+    final navItems = _navItems;
+
     return Scaffold(
-      body: _navItems[_currentItemIndex].page,
+      // An IndexedStack is an easy way to keep page states while navigating
+      // the app.
+      body: IndexedStack(
+        index: _currentItemIndex,
+        children: navItems.map((barItem) => barItem.page).toList(),
+      ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentItemIndex,
-        items: _navItems.map((_BarItemData data) {
+        items: navItems.map((_BarItemData data) {
           return data.item;
         }).toList(),
         onTap: (int index) {

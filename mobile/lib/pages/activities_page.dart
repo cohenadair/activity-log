@@ -30,6 +30,7 @@ class _ActivitiesPageState extends State<ActivitiesPage> {
 
     super.initState();
   }
+
   @override
   Widget build(BuildContext context) {
     return ListPage<Activity>(
