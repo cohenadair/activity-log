@@ -68,11 +68,8 @@ class _ActivityListTileState extends State<ActivityListTile> {
       title: Text(_activity.name),
       subtitle: FutureBuilder<Duration>(
         future: _totalDurationFuture,
-        builder: (_, AsyncSnapshot<Duration> snapshot) {
-          return snapshot.hasData
-              ? TotalDurationText([snapshot.data])
-              : Empty();
-        },
+        builder: (_, AsyncSnapshot<Duration> snapshot) =>
+            TotalDurationText(snapshot.hasData ? [snapshot.data] : []),
       ),
       onTap: () {
         if (_onTap != null) {
