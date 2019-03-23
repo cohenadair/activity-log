@@ -22,8 +22,6 @@ class ActivityListTile extends StatefulWidget {
 }
 
 class _ActivityListTileState extends State<ActivityListTile> {
-  // Ensures this tile is updated if sessions are manually added from
-  // elsewhere in the app.
   StreamSubscription<List<Session>> _sessionsUpdatedSub;
 
   Future<Duration> _totalDurationFuture;
@@ -41,12 +39,10 @@ class _ActivityListTileState extends State<ActivityListTile> {
   void initState() {
     super.initState();
 
+    // Update if sessions are updated from other parts of the app.
     _app.dataManager.getSessionsUpdatedStream(_activity.id, (stream) {
       _sessionsUpdatedSub = stream.listen((_) {
-        setState(() {
-          _updateTotalDurationFuture();
-          _updateCurrentSessionFuture(_activity.currentSessionId);
-        });
+        _updateState();
       });
 
       return true;
@@ -57,6 +53,18 @@ class _ActivityListTileState extends State<ActivityListTile> {
   void dispose() {
     super.dispose();
     _sessionsUpdatedSub.cancel();
+  }
+
+  @override
+  void didUpdateWidget(ActivityListTile oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    // If the underlying activity changes, such as when deleting an Activity,
+    // refresh.
+    bool activityChanged = oldWidget._activity.id != _activity.id;
+    if (activityChanged) {
+      _updateState();
+    }
   }
 
   @override
@@ -142,5 +150,12 @@ class _ActivityListTileState extends State<ActivityListTile> {
 
   void _updateCurrentSessionFuture(String currentSessionId) {
     _currentSessionFuture = _app.dataManager.getSession(currentSessionId);
+  }
+
+  void _updateState() {
+    setState(() {
+      _updateTotalDurationFuture();
+      _updateCurrentSessionFuture(_activity.currentSessionId);
+    });
   }
 }
