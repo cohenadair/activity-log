@@ -28,7 +28,7 @@ class _ActivityListTileState extends State<ActivityListTile> {
   // elsewhere in the app.
   StreamSubscription<List<Session>> _sessionsUpdatedSub;
 
-  Future<List<Session>> _sessionsFuture;
+  Future<Duration> _totalDurationFuture;
   Future<Session> _currentSessionFuture;
 
   // Used so back-to-back start/end sessions can't be created if there's a
@@ -46,7 +46,7 @@ class _ActivityListTileState extends State<ActivityListTile> {
     _app.dataManager.getSessionsUpdatedStream(_activity.id, (stream) {
       _sessionsUpdatedSub = stream.listen((_) {
         setState(() {
-          _updateSessionsFuture();
+          _updateTotalDurationFuture();
           _updateCurrentSessionFuture(_activity.currentSessionId);
         });
       });
@@ -66,19 +66,12 @@ class _ActivityListTileState extends State<ActivityListTile> {
     return ListItem(
       contentPadding: EdgeInsets.only(right: 0, left: paddingDefault),
       title: Text(_activity.name),
-      subtitle: FutureBuilder<List<Session>>(
-        future: _sessionsFuture,
-        builder: (BuildContext context, AsyncSnapshot<List<Session>> snapshot) {
-          if (!snapshot.hasData) {
-            return Empty();
-          }
-
-          List<Duration> durations = snapshot.data
-              .where((session) => !session.inProgress)
-              .map((session) => session.duration)
-              .toList();
-
-          return TotalDurationText(durations);
+      subtitle: FutureBuilder<Duration>(
+        future: _totalDurationFuture,
+        builder: (_, AsyncSnapshot<Duration> snapshot) {
+          return snapshot.hasData
+              ? TotalDurationText([snapshot.data])
+              : Empty();
         },
       ),
       onTap: () {
@@ -116,7 +109,7 @@ class _ActivityListTileState extends State<ActivityListTile> {
     return _buildButton(Icons.stop, Colors.red, () {
       _app.dataManager.endSession(_activity).then((_) {
         setState(() {
-          _updateSessionsFuture();
+          _updateTotalDurationFuture();
           _updateCurrentSessionFuture(null);
           _newSessionsLocked = false;
         });
@@ -148,8 +141,8 @@ class _ActivityListTileState extends State<ActivityListTile> {
     );
   }
 
-  void _updateSessionsFuture() {
-    _sessionsFuture = _app.dataManager.getSessions(_activity.id);
+  void _updateTotalDurationFuture() {
+    _totalDurationFuture = _app.dataManager.getTotalDuration(_activity.id);
   }
 
   void _updateCurrentSessionFuture(String currentSessionId) {

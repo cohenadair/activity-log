@@ -69,4 +69,13 @@ abstract class DataManageable {
   /// objects associated with each [Activity].
   Future<SummarizedActivityList> getSummarizedActivities(DateRange dateRange,
       [List<Activity> activities]);
+
+  /// Returns the total [Duration] for the given [Activity] ID. The result does
+  /// not include in-progress sessions.
+  Future<Duration> getTotalDuration(String activityId);
+
+  /// Returns an [Activity.id]-to-[Duration] mapping for the total [Duration]
+  /// of all [Activity] objects. The result does not include in-progress
+  /// sessions.
+  Future<Map<String, Duration>> getTotalDurations();
 }

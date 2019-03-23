@@ -352,6 +352,38 @@ class SQLiteDataManager implements DataManageable {
     return SummarizedActivityList(summarizedActivities);
   }
 
+  @override
+  Future<Duration> getTotalDuration(String activityId) async {
+    String query = """
+      SELECT SUM(end_timestamp - start_timestamp)
+      FROM session
+      WHERE end_timestamp NOT NULL
+      AND activity_id = ?
+    """;
+
+    int ms = Sqflite.firstIntValue(
+        await _database.rawQuery(query, [activityId]));
+    return Duration(milliseconds: ms);
+  }
+
+  @override
+  Future<Map<String, Duration>> getTotalDurations() async {
+    Map<String, Duration> result = Map();
+
+    String query = """
+      SELECT activity_id, SUM(end_timestamp - start_timestamp) as sum_value
+      FROM session
+      WHERE end_timestamp NOT NULL
+      GROUP BY activity_id
+    """;
+
+    (await _database.rawQuery(query)).forEach((map) {
+      result[map["activity_id"]] = Duration(milliseconds: map["sum_value"]);
+    });
+
+    return result;
+  }
+
   void _notifyActivitiesUpdated() {
     _getActivities().then((List<Activity> activities) {
       if (_activitiesUpdated.hasListener) {
