@@ -31,6 +31,9 @@ class _ActivityListTileState extends State<ActivityListTile> {
   // delay round tripping to the database.
   bool _newSessionsLocked = false;
 
+  // Used for animating the in-progress timer in and out of view.
+  Duration _currentInProgressDuration = Duration();
+
   AppManager get _app => widget._app;
   Activity get _activity => widget._activity;
   Function(Activity) get _onTap => widget._onTap;
@@ -72,9 +75,9 @@ class _ActivityListTileState extends State<ActivityListTile> {
     return ListItem(
       contentPadding: EdgeInsets.only(right: 0, left: paddingDefault),
       title: Text(_activity.name),
-      subtitle: FutureBuilder<Duration>(
+      subtitle: FadeInFutureBuilder<Duration>(
         future: _totalDurationFuture,
-        builder: (_, AsyncSnapshot<Duration> snapshot) =>
+        builder: (snapshot) =>
             TotalDurationText(snapshot.hasData ? [snapshot.data] : []),
       ),
       onTap: () {
@@ -85,11 +88,9 @@ class _ActivityListTileState extends State<ActivityListTile> {
       trailing: Row(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          FutureBuilder<Session>(
+          FadeInFutureBuilder(
             future: _currentSessionFuture,
-            builder: (_, AsyncSnapshot<Session> snapshot) => snapshot.hasData
-                ? _buildRunningDuration(snapshot.data)
-                : Empty(),
+            builder: (snapshot) => _buildRunningDuration(snapshot.data),
           ),
           _activity.isRunning ? _buildStopButton() : _buildStartButton(),
         ],
@@ -140,7 +141,12 @@ class _ActivityListTileState extends State<ActivityListTile> {
   Widget _buildRunningDuration(Session session) {
     return Timer(
       shouldUpdateCallback: () => _activity.isRunning,
-      childBuilder: () => RunningDurationText(session.duration),
+      childBuilder: () {
+        if (session != null) {
+          _currentInProgressDuration = session.duration;
+        }
+        return RunningDurationText(_currentInProgressDuration);
+      },
     );
   }
 
