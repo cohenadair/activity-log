@@ -10,12 +10,10 @@ import 'package:mobile/widgets/list_item.dart';
 import 'package:mobile/widgets/text.dart';
 import 'package:mobile/widgets/widget.dart';
 
-typedef OnTapActivityListTile = Function(Activity);
-
 class ActivityListTile extends StatefulWidget {
   final AppManager _app;
   final Activity _activity;
-  final OnTapActivityListTile _onTap;
+  final Function(Activity) _onTap;
 
   ActivityListTile(this._app, this._activity, this._onTap);
 
@@ -37,7 +35,7 @@ class _ActivityListTileState extends State<ActivityListTile> {
 
   AppManager get _app => widget._app;
   Activity get _activity => widget._activity;
-  OnTapActivityListTile get _onTap => widget._onTap;
+  Function(Activity) get _onTap => widget._onTap;
 
   @override
   void initState() {
