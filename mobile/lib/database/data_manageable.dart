@@ -4,6 +4,7 @@ import 'package:mobile/model/activity.dart';
 import 'package:mobile/model/session.dart';
 import 'package:mobile/model/summarized_activity.dart';
 import 'package:mobile/utils/date_time_utils.dart';
+import 'package:mobile/widgets/activity_list_tile.dart';
 import 'package:sqflite/sqflite.dart';
 
 /// Returns true if the stream should be notified immediately.
@@ -70,12 +71,11 @@ abstract class DataManageable {
   Future<SummarizedActivityList> getSummarizedActivities(DateRange dateRange,
       [List<Activity> activities]);
 
-  /// Returns the total [Duration] for the given [Activity] ID. The result does
-  /// not include in-progress sessions.
-  Future<Duration> getTotalDuration(String activityId);
-
-  /// Returns an [Activity.id]-to-[Duration] mapping for the total [Duration]
-  /// of all [Activity] objects. The result does not include in-progress
-  /// sessions.
-  Future<Map<String, Duration>> getTotalDurations();
+  /// Returns a list of [ActivityListTileModel] objects meant to be used in
+  /// a list of [ActivityListTile] widgets.
+  ///
+  /// The reason we have a separate model is because not all relative
+  /// information is attached to an [Activity] object. Some properties, such as
+  /// total duration, needs to be calculated from the session table.
+  Future<List<ActivityListTileModel>> getActivityListModel();
 }

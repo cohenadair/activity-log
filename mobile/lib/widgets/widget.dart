@@ -16,29 +16,24 @@ class MinDivider extends StatelessWidget {
   }
 }
 
-/// A wrapper around a [FutureBuilder] with an [AnimatedOpacity] child.
-class FadeInFutureBuilder<T> extends StatelessWidget {
-  final Future<T> future;
-  final Widget Function(AsyncSnapshot<T>) builder;
+/// A wrapper for an [AnimatedOpacity] widget.
+class FadeIn extends StatelessWidget {
+  final Widget child;
   final Duration duration;
+  final bool visible;
 
-  FadeInFutureBuilder({
-    @required this.future,
-    @required this.builder,
+  FadeIn({
+    @required this.child,
     this.duration = const Duration(milliseconds: 200),
-  }) : assert(builder != null);
+    this.visible = true,
+  }) : assert(child != null);
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<T>(
-      future: future,
-      builder: (_, AsyncSnapshot<T> snapshot) {
-        return AnimatedOpacity(
-          opacity: snapshot.hasData ? 1.0 : 0.0,
-          duration: duration,
-          child: builder(snapshot),
-        );
-      },
+    return AnimatedOpacity(
+      opacity: visible ? 1.0 : 0.0,
+      duration: duration,
+      child: child,
     );
   }
 }

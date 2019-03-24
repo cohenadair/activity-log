@@ -9,22 +9,27 @@ import 'package:mobile/widgets/list_page.dart';
 import 'package:mobile/widgets/activity_list_tile.dart';
 
 class ActivitiesPage extends StatefulWidget {
-  final AppManager _app;
+  final AppManager app;
 
-  ActivitiesPage(this._app);
+  ActivitiesPage(this.app);
 
   @override
   _ActivitiesPageState createState() => _ActivitiesPageState();
 }
 
 class _ActivitiesPageState extends State<ActivitiesPage> {
-  AppManager get _app => widget._app;
-  Stream<List<Activity>> _stream;
+  StreamSubscription<List<Activity>> _onActivitiesUpdated;
+  StreamController<List<ActivityListTileModel>> _modelUpdatedController;
 
   @override
   void initState() {
-    _app.dataManager.getActivitiesUpdateStream((stream) {
-      _stream = stream;
+    _modelUpdatedController = StreamController.broadcast();
+
+    widget.app.dataManager.getActivitiesUpdateStream((stream) {
+      _onActivitiesUpdated = stream.listen((_) async {
+        _updateModel();
+      });
+
       return true;
     });
 
@@ -32,17 +37,45 @@ class _ActivitiesPageState extends State<ActivitiesPage> {
   }
 
   @override
+  void dispose() {
+    super.dispose();
+    _onActivitiesUpdated.cancel();
+    _modelUpdatedController.close();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return ListPage<Activity>(
-      app: _app,
+    return ListPage<ActivityListTileModel>(
       title: Strings.of(context).activitiesPageTitle,
-      onGetEditPageCallback: (activity) {
-        return EditActivityPage(_app, activity);
+      onGetEditPageCallback: (ActivityListTileModel model) {
+        return EditActivityPage(widget.app, model.activity);
       },
-      onBuildTileCallback: (activity, onTapTile) {
-        return ActivityListTile(_app, activity, onTapTile);
+      onBuildTileCallback: (ActivityListTileModel model, onTapTile) {
+        return ActivityListTile(
+          model: model,
+          onTap: (Activity activity) {
+            onTapTile(model);
+          },
+          onTapStartSession: () {
+            widget.app.dataManager.startSession(model.activity).then((_) {
+              _updateModel();
+            });
+          },
+          onTapEndSession: () {
+            widget.app.dataManager.endSession(model.activity).then((_) {
+              _updateModel();
+            });
+          },
+        );
       },
-      stream: _stream,
+      stream: _modelUpdatedController.stream,
     );
+  }
+
+  void _updateModel() {
+    setState(() {
+      widget.app.dataManager.getActivityListModel()
+          .then((model) => _modelUpdatedController.add(model));
+    });
   }
 }

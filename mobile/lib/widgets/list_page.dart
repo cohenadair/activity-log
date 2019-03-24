@@ -1,37 +1,28 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:mobile/app_manager.dart';
 import 'package:mobile/utils/page_utils.dart';
 import 'package:mobile/widgets/loading.dart';
 import 'package:mobile/widgets/page.dart';
 import 'package:mobile/widgets/widget.dart';
 
-// TODO: Investigate why generic typedefs do not work here.
-typedef OnGetEditPageCallback = Widget Function(dynamic t);
-typedef OnBuildTileCallback = Widget Function(dynamic t, Function(dynamic t));
-
 /// A generic page for listing a given type, T, with the ability to navigate
 /// to an "edit" page.
 class ListPage<T> extends StatefulWidget {
-  final AppManager _app;
   final String _title;
-  final OnGetEditPageCallback _onGetEditPageCallback;
-  final OnBuildTileCallback _onBuildTileCallback;
+  final Widget Function(T) _onGetEditPageCallback;
+  final Widget Function(T, Function(T)) _onBuildTileCallback;
   final Stream<List<T>> _stream;
 
   ListPage({
-    @required AppManager app,
     @required String title,
-    @required OnGetEditPageCallback onGetEditPageCallback,
-    @required OnBuildTileCallback onBuildTileCallback,
+    @required Widget Function(T) onGetEditPageCallback,
+    @required Widget Function(T, Function(T)) onBuildTileCallback,
     @required Stream<List<T>> stream,
-  }) : assert(app != null),
-       assert(title != null),
+  }) : assert(title != null),
        assert(onGetEditPageCallback != null),
        assert(onBuildTileCallback != null),
        assert(stream != null),
-       _app = app,
        _title = title,
        _onGetEditPageCallback = onGetEditPageCallback,
        _onBuildTileCallback = onBuildTileCallback,
@@ -41,12 +32,11 @@ class ListPage<T> extends StatefulWidget {
   _ListPageState createState() => _ListPageState<T>();
 }
 
-class _ListPageState<T> extends State<ListPage> {
-  AppManager get _app => widget._app;
+class _ListPageState<T> extends State<ListPage<T>> {
   String get _title => widget._title;
-  OnGetEditPageCallback get _onGetEditPageCallback =>
+  Widget Function(T) get _onGetEditPageCallback =>
       widget._onGetEditPageCallback;
-  OnBuildTileCallback get _onBuildTileCallback => widget._onBuildTileCallback;
+  Widget Function(T, Function(T)) get _onBuildTileCallback => widget._onBuildTileCallback;
   Stream get _stream => widget._stream;
 
   @override
@@ -70,8 +60,7 @@ class _ListPageState<T> extends State<ListPage> {
 
           return ListView.separated(
             itemCount: snapshot.data.length,
-            separatorBuilder: (BuildContext context, int i) =>
-                MinDivider(),
+            separatorBuilder: (BuildContext context, int i) => MinDivider(),
             itemBuilder: (BuildContext context, int i) {
               return _onBuildTileCallback(snapshot.data[i], _openEditPage);
             },

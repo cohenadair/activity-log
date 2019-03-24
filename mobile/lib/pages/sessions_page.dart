@@ -36,7 +36,6 @@ class _SessionsPageState extends State<SessionsPage> {
   @override
   Widget build(BuildContext context) {
     return ListPage<Session>(
-      app: _app,
       title: _activity.name,
       onGetEditPageCallback: (session) {
         return EditSessionPage(

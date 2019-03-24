@@ -7,6 +7,7 @@ import 'package:mobile/model/model.dart';
 import 'package:mobile/model/session.dart';
 import 'package:mobile/model/summarized_activity.dart';
 import 'package:mobile/utils/date_time_utils.dart';
+import 'package:mobile/widgets/activity_list_tile.dart';
 import 'package:sqflite/sqflite.dart';
 
 class SQLiteDataManager implements DataManageable {
@@ -169,7 +170,6 @@ class SQLiteDataManager implements DataManageable {
     await batch.commit();
 
     _notifySessionsUpdated(session.activityId);
-    _notifyActivitiesUpdated();
   }
 
   @override
@@ -353,33 +353,49 @@ class SQLiteDataManager implements DataManageable {
   }
 
   @override
-  Future<Duration> getTotalDuration(String activityId) async {
-    String query = """
-      SELECT SUM(end_timestamp - start_timestamp)
-      FROM session
-      WHERE end_timestamp NOT NULL
-      AND activity_id = ?
+  Future<List<ActivityListTileModel>> getActivityListModel() async {
+    String allActivitiesQuery = "SELECT * FROM activity";
+
+    String inProgressSessionsQuery = """
+      SELECT * FROM session WHERE end_timestamp IS NULL
     """;
 
-    int ms = Sqflite.firstIntValue(
-        await _database.rawQuery(query, [activityId]));
-    return Duration(milliseconds: ms);
-  }
-
-  @override
-  Future<Map<String, Duration>> getTotalDurations() async {
-    Map<String, Duration> result = Map();
-
-    String query = """
+    String totalDurationsQuery = """
       SELECT activity_id, SUM(end_timestamp - start_timestamp) as sum_value
       FROM session
       WHERE end_timestamp NOT NULL
       GROUP BY activity_id
     """;
 
-    (await _database.rawQuery(query)).forEach((map) {
-      result[map["activity_id"]] = Duration(milliseconds: map["sum_value"]);
+    Batch batch = _database.batch();
+    batch.rawQuery(allActivitiesQuery);
+    batch.rawQuery(inProgressSessionsQuery);
+    batch.rawQuery(totalDurationsQuery);
+    List<dynamic> mapList = await batch.commit();
+
+    Map<String, ActivityListTileModel> modelMap = Map();
+
+    // Activities.
+    mapList[0].forEach((activityMap) {
+      Activity activity = Activity.fromMap(activityMap);
+      modelMap[activity.id] = ActivityListTileModel(activity);
     });
+
+    // In progress sessions.
+    mapList[1].forEach((sessionMap) {
+      Session session = Session.fromMap(sessionMap);
+      modelMap[session.activityId].currentSession = session;
+    });
+
+    // Total durations.
+    mapList[2].forEach((durationMap) {
+      modelMap[durationMap["activity_id"]].duration =
+          Duration(milliseconds: durationMap["sum_value"]);
+    });
+
+    // Sort alphabetically.
+    List<ActivityListTileModel> result = modelMap.values.toList();
+    result.sort((a, b) => a.activity.name.compareTo(b.activity.name));
 
     return result;
   }
@@ -393,6 +409,10 @@ class SQLiteDataManager implements DataManageable {
   }
 
   void _notifySessionsUpdated(String activityId) {
+    // Technically, when a session is added, the Activity is updated, although
+    // the Activity table in the DB isn't directly updated.
+    _notifyActivitiesUpdated();
+
     getSessions(activityId).then((List<Session> sessions) {
       if (_sessionsUpdatedMap.containsKey(activityId) &&
           _sessionsUpdatedMap[activityId].hasListener)
