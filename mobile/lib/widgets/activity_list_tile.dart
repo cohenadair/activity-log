@@ -35,7 +35,9 @@ class ActivityListTile extends StatelessWidget {
     return ListItem(
       contentPadding: EdgeInsets.only(right: 0, left: paddingDefault),
       title: Text(model.activity.name),
-      subtitle: TotalDurationText([model.duration]),
+      subtitle: TotalDurationText(model.duration == null
+          ? []
+          : [model.duration]),
       onTap: () {
         onTap?.call(model.activity);
       },

@@ -30,6 +30,8 @@ class StatsPage extends StatefulWidget {
 }
 
 class _StatsPageState extends State<StatsPage> {
+  StreamSubscription<List<Activity>> _onActivitiesUpdated;
+
   Set<Activity> _currentActivities;
   StatsDateRange _currentDateRange;
   Future<SummarizedActivityList> _summarizedActivityListFuture;
@@ -38,7 +40,21 @@ class _StatsPageState extends State<StatsPage> {
   void initState() {
     super.initState();
     _currentDateRange = StatsDateRange.allDates;
-    _updateSummarizedActivityListFuture();
+
+    widget.app.dataManager.getActivitiesUpdateStream((stream) {
+      _onActivitiesUpdated = stream.listen((_) {
+        setState(() {
+          _updateSummarizedActivityListFuture();
+        });
+      });
+      return true;
+    });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _onActivitiesUpdated.cancel();
   }
 
   @override

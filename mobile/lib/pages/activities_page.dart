@@ -48,7 +48,10 @@ class _ActivitiesPageState extends State<ActivitiesPage> {
     return ListPage<ActivityListTileModel>(
       title: Strings.of(context).activitiesPageTitle,
       onGetEditPageCallback: (ActivityListTileModel model) {
-        return EditActivityPage(widget.app, model.activity);
+        return EditActivityPage(
+          widget.app,
+          model == null ? null : model.activity,
+        );
       },
       onBuildTileCallback: (ActivityListTileModel model, onTapTile) {
         return ActivityListTile(
