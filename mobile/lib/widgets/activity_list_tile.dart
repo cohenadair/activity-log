@@ -79,9 +79,11 @@ class ActivityListTile extends StatelessWidget {
       shouldUpdateCallback: () => model.activity.isRunning,
       childBuilder: () {
         bool visible = session != null;
-        return FadeIn(
+        return FadeIn<Duration>(
           visible: visible,
-          child: RunningDurationText(visible ? session.duration : Duration()),
+          value: visible ? session.duration : null,
+          childBuilder: (Duration value) =>
+              RunningDurationText(value ?? Duration()),
         );
       },
     );

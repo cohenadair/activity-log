@@ -17,23 +17,36 @@ class MinDivider extends StatelessWidget {
 }
 
 /// A wrapper for an [AnimatedOpacity] widget.
-class FadeIn extends StatelessWidget {
-  final Widget child;
+class FadeIn<T> extends StatefulWidget {
+  final Widget Function(T) childBuilder;
   final Duration duration;
   final bool visible;
+  final T value;
 
   FadeIn({
-    @required this.child,
+    @required this.childBuilder,
     this.duration = const Duration(milliseconds: 200),
     this.visible = true,
-  }) : assert(child != null);
+    @required this.value,
+  }) : assert(childBuilder != null);
+
+  @override
+  _FadeInState createState() => _FadeInState<T>();
+}
+
+class _FadeInState<T> extends State<FadeIn<T>> {
+  T _lastValue;
 
   @override
   Widget build(BuildContext context) {
+    if (widget.value != null) {
+      _lastValue = widget.value;
+    }
+
     return AnimatedOpacity(
-      opacity: visible ? 1.0 : 0.0,
-      duration: duration,
-      child: child,
+      opacity: widget.visible ? 1.0 : 0.0,
+      duration: widget.duration,
+      child: widget.childBuilder(_lastValue),
     );
   }
 }
