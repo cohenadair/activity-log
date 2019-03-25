@@ -60,6 +60,7 @@ Map<String, Map<String, String>> englishStrings = {
 
     "activitySummary_sessionTitle" : "Sessions",
     "activitySummary_numberOfSessions" : "Number of sessions",
+    "activitySummary_totalDuration" : "Total duration",
     "activitySummary_averageOverall" : "Average overall duration",
     "activitySummary_averagePerDay" : "Average duration per day",
     "activitySummary_averagePerWeek" : "Average duration per week",

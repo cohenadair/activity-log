@@ -28,6 +28,10 @@ class ActivitySummary extends StatelessWidget {
               value: activity.numberOfSessions,
             ),
             SummaryItem(
+              title: Strings.of(context).activitySummaryTotalDuration,
+              value: _formatDuration(context, activity.totalDuration),
+            ),
+            SummaryItem(
               title: Strings.of(context).activitySummaryAverageOverall,
               value: _formatDuration(context, activity.averageDurationOverall),
             ),
