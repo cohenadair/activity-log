@@ -30,16 +30,17 @@ class StatsPage extends StatefulWidget {
 }
 
 class _StatsPageState extends State<StatsPage> {
+  final scrollController = ScrollController();
+
   StreamSubscription<List<Activity>> _onActivitiesUpdated;
 
   Set<Activity> _currentActivities;
-  StatsDateRange _currentDateRange;
+  StatsDateRange _currentDateRange = StatsDateRange.allDates;
   Future<SummarizedActivityList> _summarizedActivityListFuture;
 
   @override
   void initState() {
     super.initState();
-    _currentDateRange = StatsDateRange.allDates;
 
     widget.app.dataManager.getActivitiesUpdateStream((stream) {
       _onActivitiesUpdated = stream.listen((_) {
@@ -64,6 +65,7 @@ class _StatsPageState extends State<StatsPage> {
         title: Strings.of(context).statsPageTitle,
       ),
       child: SingleChildScrollView(
+        controller: scrollController,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -181,7 +183,10 @@ class _StatsPageState extends State<StatsPage> {
   }
 
   Widget _buildForSingleActivity(SummarizedActivity activity) {
-    return ActivitySummary(activity);
+    return ActivitySummary(
+      activity: activity,
+      scrollController: scrollController,
+    );
   }
 
   void _updateSummarizedActivityListFuture() {

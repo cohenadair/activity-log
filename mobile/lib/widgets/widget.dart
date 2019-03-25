@@ -1,6 +1,6 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
+
+const defaultAnimationDuration = Duration(milliseconds: 200);
 
 class Empty extends StatelessWidget {
   @override
@@ -25,7 +25,7 @@ class FadeIn<T> extends StatefulWidget {
 
   FadeIn({
     @required this.childBuilder,
-    this.duration = const Duration(milliseconds: 200),
+    this.duration = defaultAnimationDuration,
     this.visible = true,
     @required this.value,
   }) : assert(childBuilder != null);

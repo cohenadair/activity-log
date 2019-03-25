@@ -37,6 +37,9 @@ void main() {
       expect(activity.averageDurationPerWeek, equals(Duration()));
       expect(activity.averageDurationPerMonth, equals(Duration()));
       expect(activity.longestStreak, equals(0));
+      expect(activity.sessionsPerDay, equals(0));
+      expect(activity.sessionsPerWeek, equals(0));
+      expect(activity.sessionsPerMonth, equals(0));
     });
 
     test("Null sessions", () {
@@ -55,6 +58,9 @@ void main() {
       expect(activity.averageDurationPerWeek, equals(Duration()));
       expect(activity.averageDurationPerMonth, equals(Duration()));
       expect(activity.longestStreak, equals(0));
+      expect(activity.sessionsPerDay, equals(0));
+      expect(activity.sessionsPerWeek, equals(0));
+      expect(activity.sessionsPerMonth, equals(0));
     });
 
     test("Same month", () {
@@ -85,6 +91,9 @@ void main() {
       expect(activity.averageDurationPerWeek, equals(Duration(hours: 4)));
       expect(activity.averageDurationPerMonth, equals(Duration(hours: 12)));
       expect(activity.longestStreak, equals(1));
+      expect(activity.sessionsPerDay, equals(2 / 16));
+      expect(activity.sessionsPerWeek, equals(2 / 3));
+      expect(activity.sessionsPerMonth, equals(2));
     });
 
     test("Span multiple months in the same year", () {
@@ -119,6 +128,9 @@ void main() {
       expect(activity.averageDurationPerWeek.inMilliseconds, equals(3600000));
       expect(activity.averageDurationPerMonth.inMilliseconds, equals(12960000));
       expect(activity.longestStreak, equals(1));
+      expect(activity.sessionsPerDay, equals(3 / 119));
+      expect(activity.sessionsPerWeek, equals(3 / 18));
+      expect(activity.sessionsPerMonth, equals(3/ 5));
     });
 
     test("Span multiple months in different years", () {
@@ -153,6 +165,9 @@ void main() {
       expect(activity.averageDurationPerWeek.inMilliseconds, equals(3600000));
       expect(activity.averageDurationPerMonth.inMilliseconds, equals(12960000));
       expect(activity.longestStreak, equals(1));
+      expect(activity.sessionsPerDay, equals(3 / 119));
+      expect(activity.sessionsPerWeek, equals(3 / 18));
+      expect(activity.sessionsPerMonth, equals(3/ 5));
     });
   });
 

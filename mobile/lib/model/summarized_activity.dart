@@ -28,6 +28,10 @@ class SummarizedActivity {
 
   int _cachedLongestStreak;
 
+  double _cachedSessionsPerDay;
+  double _cachedSessionsPerWeek;
+  double _cachedSessionsPerMonth;
+
   SummarizedActivity({
     @required this.value,
     @required this.dateRange,
@@ -36,6 +40,27 @@ class SummarizedActivity {
   }) : assert(value != null);
 
   int get numberOfSessions => sessions == null ? 0 : sessions.length;
+
+  double get sessionsPerDay {
+    if (_cachedSessionsPerDay == null) {
+      _calculate();
+    }
+    return _cachedSessionsPerDay;
+  }
+
+  double get sessionsPerWeek {
+    if (_cachedSessionsPerWeek == null) {
+      _calculate();
+    }
+    return _cachedSessionsPerWeek;
+  }
+
+  double get sessionsPerMonth {
+    if (_cachedSessionsPerMonth == null) {
+      _calculate();
+    }
+    return _cachedSessionsPerMonth;
+  }
 
   Session get shortestSession {
     if (_cachedShortestSession == null) {
@@ -51,7 +76,7 @@ class SummarizedActivity {
     return _cachedLongestSession;
   }
 
-  Duration get averageDurationOverall => getAverage(numberOfSessions);
+  Duration get averageDurationOverall => getAverageDuration(numberOfSessions);
 
   Duration get totalDuration {
     if (_cachedTotalDuration == null) {
@@ -95,6 +120,9 @@ class SummarizedActivity {
       _cachedDurationPerWeek = Duration();
       _cachedDurationPerMonth = Duration();
       _cachedLongestStreak = 0;
+      _cachedSessionsPerDay = 0;
+      _cachedSessionsPerWeek = 0;
+      _cachedSessionsPerMonth = 0;
       return;
     }
 
@@ -134,10 +162,10 @@ class SummarizedActivity {
 
     Duration difference = range.endDate.difference(range.startDate);
     int numberOfDays = difference.inDays + 1;
+    int numberOfWeeks = (numberOfDays / DateTime.daysPerWeek).floor() + 1;
 
-    _cachedDurationPerDay = getAverage(numberOfDays);
-    _cachedDurationPerWeek =
-        getAverage((numberOfDays / DateTime.daysPerWeek).floor() + 1);
+    _cachedDurationPerDay = getAverageDuration(numberOfDays);
+    _cachedDurationPerWeek = getAverageDuration(numberOfWeeks);
 
     int numberOfMonths = 0;
     if (isSameYear(range.startDate, range.endDate)) {
@@ -147,7 +175,7 @@ class SummarizedActivity {
           (DateTime.monthsPerYear - range.startDate.month + 1);
     }
 
-    _cachedDurationPerMonth = getAverage(numberOfMonths);
+    _cachedDurationPerMonth = getAverageDuration(numberOfMonths);
 
     // Iterate all days, keeping track of the longest streak.
     int currentStreak = 1;
@@ -175,15 +203,27 @@ class SummarizedActivity {
 
       last = current;
     }
+
+    _cachedSessionsPerDay = getAverageSessions(numberOfDays);
+    _cachedSessionsPerWeek = getAverageSessions(numberOfWeeks);
+    _cachedSessionsPerMonth = getAverageSessions(numberOfMonths);
   }
 
-  Duration getAverage(int divisor) {
+  Duration getAverageDuration(int divisor) {
     if (divisor <= 0) {
       return Duration();
     }
 
     return Duration(milliseconds: (totalDuration.inMilliseconds / divisor)
         .round());
+  }
+
+  double getAverageSessions(int divisor) {
+    if (divisor <= 0) {
+      return 0;
+    }
+
+    return numberOfSessions / divisor;
   }
 
   @override

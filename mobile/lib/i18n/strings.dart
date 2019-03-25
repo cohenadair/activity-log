@@ -89,7 +89,9 @@ class Strings {
 
   String get activitySummarySessionTitle => _getString("activitySummary_sessionTitle");
   String get activitySummaryNumberOfSessions => _getString("activitySummary_numberOfSessions");
+  String get activitySummaryAverageSessions => _getString("activitySummary_averageSessions");
   String get activitySummaryTotalDuration => _getString("activitySummary_totalDuration");
+  String get activitySummaryAverageDurations => _getString("activitySummary_averageDurations");
   String get activitySummaryAverageOverall => _getString("activitySummary_averageOverall");
   String get activitySummaryAveragePerDay => _getString("activitySummary_averagePerDay");
   String get activitySummaryAveragePerWeek => _getString("activitySummary_averagePerWeek");

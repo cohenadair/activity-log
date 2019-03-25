@@ -33,7 +33,7 @@ class _AnimatedErrorTextState extends State<AnimatedErrorText>
 {
   // Animation settings are copied from InputDecorator in order to stay
   // consistent with Material form widgets.
-  final animationDuration = Duration(milliseconds: 200);
+  final animationDuration = defaultAnimationDuration;
   final yStartOffset = -0.25;
 
   AnimationController _controller;

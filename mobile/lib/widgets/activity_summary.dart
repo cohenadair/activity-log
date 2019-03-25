@@ -3,6 +3,7 @@ import 'package:mobile/i18n/strings.dart';
 import 'package:mobile/model/summarized_activity.dart';
 import 'package:mobile/res/dimen.dart';
 import 'package:mobile/utils/string_utils.dart';
+import 'package:mobile/widgets/list_item.dart';
 import 'package:mobile/widgets/sessions_line_chart.dart';
 import 'package:mobile/widgets/summary.dart';
 import 'package:mobile/widgets/widget.dart';
@@ -10,8 +11,12 @@ import 'package:mobile/widgets/widget.dart';
 /// A widget displays statistical information about a single [Activity].
 class ActivitySummary extends StatelessWidget {
   final SummarizedActivity activity;
+  final ScrollController scrollController;
 
-  ActivitySummary(this.activity);
+  ActivitySummary({
+    this.activity,
+    this.scrollController,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -21,40 +26,46 @@ class ActivitySummary extends StatelessWidget {
         MinDivider(),
         Summary(
           title: Strings.of(context).summaryDefaultTitle,
-          padding: insetsVerticalDefault,
-          items: [
+          padding: insetsTopDefault,
+          items: <SummaryItem>[
             SummaryItem(
               title: Strings.of(context).activitySummaryNumberOfSessions,
               value: activity.numberOfSessions,
             ),
-            SummaryItem(
-              title: Strings.of(context).activitySummaryTotalDuration,
-              value: _formatDuration(context, activity.totalDuration),
+          ]
+        ),
+        ExpansionListItem(
+          scrollController: scrollController,
+          title: Text(Strings.of(context).activitySummaryAverageSessions),
+          children: <Widget>[
+            Summary(
+              items: <SummaryItem>[
+                SummaryItem(
+                  title: Strings.of(context).activitySummaryAveragePerDay,
+                  value: activity.sessionsPerDay.toStringAsFixed(2),
+                ),
+                SummaryItem(
+                  title: Strings.of(context).activitySummaryAveragePerWeek,
+                  value: activity.sessionsPerWeek.toStringAsFixed(2),
+                ),
+                SummaryItem(
+                  title: Strings.of(context).activitySummaryAveragePerMonth,
+                  value: activity.sessionsPerMonth.toStringAsFixed(2),
+                ),
+              ],
             ),
-            SummaryItem(
-              title: Strings.of(context).activitySummaryAverageOverall,
-              value: _formatDuration(context, activity.averageDurationOverall),
-            ),
-            SummaryItem(
-              title: Strings.of(context).activitySummaryAveragePerDay,
-              value: _formatDuration(context, activity.averageDurationPerDay),
-            ),
-            SummaryItem(
-              title: Strings.of(context).activitySummaryAveragePerWeek,
-              value: _formatDuration(context, activity.averageDurationPerWeek),
-            ),
-            SummaryItem(
-              title: Strings.of(context).activitySummaryAveragePerMonth,
-              value: _formatDuration(context, activity.averageDurationPerMonth),
-            ),
+          ],
+        ),
+        Summary(
+          items: <SummaryItem>[
             SummaryItem(
               title: Strings.of(context).activitySummaryShortestSession,
               subtitle: activity.shortestSession == null
                   ? null
                   : formatDateTime(
-                    context: context,
-                    dateTime: activity.shortestSession.startDateTime,
-                  ),
+                context: context,
+                dateTime: activity.shortestSession.startDateTime,
+              ),
               value: activity.shortestSession == null
                   ? Strings.of(context).none
                   : _formatDuration(context, activity.shortestSession.duration),
@@ -64,9 +75,9 @@ class ActivitySummary extends StatelessWidget {
               subtitle: activity.longestSession == null
                   ? null
                   : formatDateTime(
-                    context: context,
-                    dateTime: activity.longestSession.startDateTime,
-                  ),
+                context: context,
+                dateTime: activity.longestSession.startDateTime,
+              ),
               value: activity.longestSession == null
                   ? Strings.of(context).none
                   : _formatDuration(context, activity.longestSession.duration),
@@ -76,9 +87,48 @@ class ActivitySummary extends StatelessWidget {
               subtitle: Strings.of(context).activitySummaryStreakDescription,
               value: activity.longestStreak,
             ),
-          ],
+          ]
         ),
-      ],
+        Summary(
+          items: <SummaryItem>[
+            SummaryItem(
+              title: Strings.of(context).activitySummaryTotalDuration,
+              value: _formatDuration(context, activity.totalDuration),
+            ),
+          ]
+        ),
+        ExpansionListItem(
+          scrollController: scrollController,
+          toBottomSafeArea: true,
+          title: Text(Strings.of(context).activitySummaryAverageDurations),
+          children: <Widget>[
+            Summary(
+              items: <SummaryItem>[
+                SummaryItem(
+                  title: Strings.of(context).activitySummaryAverageOverall,
+                  value: _formatDuration(context,
+                      activity.averageDurationOverall),
+                ),
+                SummaryItem(
+                  title: Strings.of(context).activitySummaryAveragePerDay,
+                  value: _formatDuration(context,
+                      activity.averageDurationPerDay),
+                ),
+                SummaryItem(
+                  title: Strings.of(context).activitySummaryAveragePerWeek,
+                  value: _formatDuration(context,
+                      activity.averageDurationPerWeek),
+                ),
+                SummaryItem(
+                  title: Strings.of(context).activitySummaryAveragePerMonth,
+                  value: _formatDuration(context,
+                      activity.averageDurationPerMonth),
+                ),
+              ],
+            ),
+          ],
+        )
+      ]
     );
   }
 

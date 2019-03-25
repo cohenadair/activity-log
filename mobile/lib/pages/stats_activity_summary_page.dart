@@ -5,6 +5,7 @@ import 'package:mobile/widgets/page.dart';
 
 class StatsActivitySummaryPage extends StatelessWidget {
   final SummarizedActivity activity;
+  final scrollController = ScrollController();
 
   StatsActivitySummaryPage(this.activity) : assert(activity != null);
 
@@ -15,7 +16,11 @@ class StatsActivitySummaryPage extends StatelessWidget {
         title: activity.value.name,
       ),
       child: SingleChildScrollView(
-        child: ActivitySummary(activity),
+        controller: scrollController,
+        child: ActivitySummary(
+          activity: activity,
+          scrollController: scrollController,
+        ),
       ),
     );
   }
