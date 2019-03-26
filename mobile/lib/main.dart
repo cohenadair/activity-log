@@ -52,11 +52,7 @@ class _ActivityLogState extends State<ActivityLog> {
         future: _dbInitializedFuture,
         builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
           if (snapshot.hasError || !snapshot.hasData) {
-            return Scaffold(
-              appBar: AppBar(
-                elevation: 0,
-              ),
-            );
+            return Scaffold();
           }
           return MainPage(_app);
         },
