@@ -33,8 +33,6 @@ class ListPage<T> extends StatefulWidget {
 }
 
 class _ListPageState<T> extends State<ListPage<T>> {
-  final fadeInDuration = Duration(milliseconds: 500);
-
   String get _title => widget._title;
   Widget Function(T) get _onGetEditPageCallback =>
       widget._onGetEditPageCallback;
@@ -56,17 +54,15 @@ class _ListPageState<T> extends State<ListPage<T>> {
       child: StreamBuilder<List<T>>(
         stream: _stream,
         builder: (BuildContext context, AsyncSnapshot<List<T>> snapshot) {
-          return FadeIn<void>(
-            duration: fadeInDuration,
-            visible: snapshot.hasData,
-            childBuilder: (_) {
-              return ListView.separated(
-                itemCount: snapshot.hasData ? snapshot.data.length : 0,
-                separatorBuilder: (BuildContext context, int i) => MinDivider(),
-                itemBuilder: (BuildContext context, int i) {
-                  return _onBuildTileCallback(snapshot.data[i], _openEditPage);
-                },
-              );
+          if (!snapshot.hasData) {
+            return Loading.centered();
+          }
+
+          return ListView.separated(
+            itemCount: snapshot.data.length,
+            separatorBuilder: (BuildContext context, int i) => MinDivider(),
+            itemBuilder: (BuildContext context, int i) {
+              return _onBuildTileCallback(snapshot.data[i], _openEditPage);
             },
           );
         },

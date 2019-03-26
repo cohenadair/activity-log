@@ -27,7 +27,7 @@ class FadeIn<T> extends StatefulWidget {
     @required this.childBuilder,
     this.duration = defaultAnimationDuration,
     this.visible = true,
-    this.value,
+    @required this.value,
   }) : assert(childBuilder != null);
 
   @override
