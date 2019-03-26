@@ -41,9 +41,7 @@ class SQLiteOpenHelper {
   }
 
   static void _onCreate(Database db, int version) {
-    _schema.forEach((List<String> schema) {
-      _executeSchema(db, schema);
-    });
+    _schema.forEach((List<String> schema) => _executeSchema(db, schema));
   }
 
   static void _onUpgrade(Database db, int oldVersion, int newVersion) {
@@ -56,8 +54,6 @@ class SQLiteOpenHelper {
   }
 
   static void _executeSchema(Database db, List<String> schema) {
-    schema.forEach((String query) {
-      db.execute(query);
-    });
+    schema.forEach((String query) => db.execute(query));
   }
 }
