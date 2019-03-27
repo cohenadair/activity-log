@@ -35,7 +35,7 @@ class _MainPageState extends State<MainPage> {
     ),
 
     _BarItemData(
-      page: SettingsPage(),
+      page: SettingsPage(widget._app),
       item: BottomNavigationBarItem(
         icon: Icon(Icons.settings),
         title: Text(Strings.of(context).navigationBarSettings),

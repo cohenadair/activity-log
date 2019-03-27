@@ -6,6 +6,8 @@ import 'package:mobile/utils/page_utils.dart';
 import 'package:mobile/widgets/button.dart';
 import 'package:mobile/widgets/list_item.dart';
 import 'package:mobile/widgets/page.dart';
+import 'package:mobile/widgets/text.dart';
+import 'package:mobile/widgets/widget.dart';
 
 typedef OnListPickerChanged<T> = void Function(T);
 
@@ -20,6 +22,9 @@ typedef OnListPickerChanged<T> = void Function(T);
 /// update. The [onChanged] method should set the state on the container
 /// widget.
 class ListPicker<T> extends StatelessWidget {
+  /// A title for the [AppBar].
+  final String pageTitle;
+
   /// A [Set] of initially selected options.
   final Set<T> initialValues;
 
@@ -37,18 +42,24 @@ class ListPicker<T> extends StatelessWidget {
 
   final bool allowsMultiSelect;
 
+  /// If `true`, the selected value will render on the right side of the
+  /// picker. This does not apply to multi-select pickers.
+  final bool showsValueOnTrailing;
+
   /// Implement this property to create a custom title widget for displaying
   /// which items are selected. Default behaviour is to display a [Column] of
-  /// all [ListPickerItem.child] properties.
+  /// all [ListPickerItem.title] properties.
   final Widget Function(Set<T>) titleBuilder;
 
   ListPicker({
+    this.pageTitle,
     @required this.initialValues,
     this.allItem,
     @required this.items,
     @required this.onChanged,
     this.allowsMultiSelect = false,
     this.titleBuilder,
+    this.showsValueOnTrailing = false,
   }) : assert(initialValues != null),
        assert(items != null),
        assert(onChanged != null)
@@ -69,9 +80,16 @@ class ListPicker<T> extends StatelessWidget {
     return ListItem(
       title: titleBuilder == null
           ? _buildTitle() : titleBuilder(initialValues),
-      trailing: Icon(Icons.chevron_right),
+      trailing: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          _buildSingleDetail(),
+          Icon(Icons.chevron_right),
+        ],
+      ),
       onTap: () {
         push(context, _ListPickerPage<T>(
+          pageTitle: pageTitle,
           allowsMultiSelect: allowsMultiSelect,
           selectedValues: initialValues,
           allItem: allItem,
@@ -93,9 +111,19 @@ class ListPicker<T> extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: initialValues.map((item) {
-        return _getListPickerItem(item).child;
+        return Text(_getListPickerItem(item).title);
       }).toList(),
     );
+  }
+
+  Widget _buildSingleDetail() {
+    if (initialValues.length == 1 && !allowsMultiSelect
+        && showsValueOnTrailing)
+    {
+      return SecondaryText(_getListPickerItem(initialValues.first).title)
+          ?? Empty();
+    }
+    return Empty();
   }
 
   void _popPickerPage(BuildContext context, Set<T> pickedItems) {
@@ -104,7 +132,7 @@ class ListPicker<T> extends StatelessWidget {
   }
 
   ListPickerItem<T> _getListPickerItem(T item) {
-    if (item == allItem.value) {
+    if (allItem != null && item == allItem.value) {
       return allItem;
     }
     return items.singleWhere((indexItem) => indexItem.value == item);
@@ -113,7 +141,8 @@ class ListPicker<T> extends StatelessWidget {
 
 /// A class to be used with [ListPicker].
 class ListPickerItem<T> {
-  final Widget child;
+  final String title;
+  final String subtitle;
   final T value;
 
   /// Allows custom behaviour of individual items. Returns a non-null object
@@ -133,23 +162,26 @@ class ListPickerItem<T> {
 
   ListPickerItem.divider()
     : value = null,
-      child = Divider(),
+      title = null,
+      subtitle = null,
       isDivider = true,
       popsListOnPicked = false,
       onTap = null;
 
   ListPickerItem({
-    @required this.child,
+    @required this.title,
+    this.subtitle,
     this.value,
     this.onTap,
     this.popsListOnPicked = true,
   }) : assert(value != null || (value == null && onTap != null)),
-       assert(child != null),
+       assert(title != null),
        isDivider = false;
 }
 
 /// A helper page for [ListPicker] that renders a list of options.
 class _ListPickerPage<T> extends StatefulWidget {
+  final String pageTitle;
   final Set<T> selectedValues;
 
   final ListPickerItem<T> allItem;
@@ -161,6 +193,7 @@ class _ListPickerPage<T> extends StatefulWidget {
   final bool allowsMultiSelect;
 
   _ListPickerPage({
+    this.pageTitle,
     this.allowsMultiSelect = false,
     @required this.selectedValues,
     this.allItem,
@@ -191,6 +224,7 @@ class _ListPickerPageState<T> extends State<_ListPickerPage<T>> {
 
     return Page(
       appBarStyle: PageAppBarStyle(
+        title: widget.pageTitle,
         actions: widget.allowsMultiSelect ? [
           ActionButton.done(onPressed: () {
             widget.onDonePressed(_selectedValues);
@@ -200,11 +234,12 @@ class _ListPickerPageState<T> extends State<_ListPickerPage<T>> {
       child: ListView(
         children: items.map((ListPickerItem<T> item) {
           if (item.isDivider) {
-            return item.child;
+            return Divider();
           }
 
           return ListItem(
-            title: item.child,
+            title: Text(item.title),
+            subtitle: item.subtitle == null ? null : Text(item.subtitle),
             trailing: _selectedValues.contains(item.value) ? Icon(
               Icons.check,
               color: Theme.of(context).primaryColor,

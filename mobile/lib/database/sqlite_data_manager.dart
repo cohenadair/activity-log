@@ -12,12 +12,10 @@ import 'package:sqflite/sqflite.dart';
 
 class SQLiteDataManager implements DataManageable {
   Database _database;
-  final StreamController<List<Activity>> _activitiesUpdated;
-  final Map<String, StreamController<List<Session>>> _sessionsUpdatedMap;
-
-  SQLiteDataManager()
-      : _activitiesUpdated = StreamController.broadcast(),
-        _sessionsUpdatedMap = Map();
+  final StreamController<List<Activity>> _activitiesUpdated =
+      StreamController.broadcast();
+  final Map<String, StreamController<List<Session>>> _sessionsUpdatedMap =
+      Map();
 
   @override
   void initialize(Database database) {

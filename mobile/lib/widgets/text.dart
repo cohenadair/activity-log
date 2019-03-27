@@ -160,6 +160,25 @@ class LargeHeadingText extends StatelessWidget {
   }
 }
 
+/// A [Text] widget meant to be used with secondary emphasis, normally on the
+/// right side of [ListItem].
+class SecondaryText extends StatelessWidget {
+  final String text;
+
+  SecondaryText(this.text);
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      text,
+      // Same style used in ListTile.title.
+      style: Theme.of(context).textTheme.subhead.copyWith(
+        color: Theme.of(context).disabledColor,
+      ),
+    );
+  }
+}
+
 /// A [Text] widget with an enabled state. If `enabled = false`, the [Text] is
 /// rendered with a `Theme.of(context).disabledColor` color.
 class EnabledText extends StatelessWidget {

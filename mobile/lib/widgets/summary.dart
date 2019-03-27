@@ -37,11 +37,8 @@ class Summary extends StatelessWidget {
       return ListItem(
         title: Text(item.title),
         subtitle: isEmpty(item.subtitle) ? null : Text(item.subtitle),
-        trailing: Text(
+        trailing: SecondaryText(
           item.value is String ? item.value : item.value.toString(),
-          style: Theme.of(context).textTheme.subhead.copyWith(
-            color: Theme.of(context).disabledColor,
-          ),
         ),
       );
     }).toList();

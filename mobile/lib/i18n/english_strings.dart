@@ -49,6 +49,11 @@ Map<String, Map<String, String>> englishStrings = {
     "settingsPage_title" : "Settings",
     "settingsPage_version" : "Version",
     "settingsPage_headingAbout" : "About",
+    "settingsPage_headingOther" : "Preferences",
+    "settingsPage_largestDurationLabel" : "Largest Duration Unit",
+    "settingsPage_largestDurationDays" : "Days",
+    "settingsPage_largestDurationHours" : "Hours",
+    "settingsPage_largestDurationMinutes" : "Minutes",
 
     "statsPage_title" : "Stats",
     "statsPage_noDataMessage" : "No data to show; try different filter options.",

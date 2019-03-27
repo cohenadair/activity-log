@@ -63,7 +63,7 @@ class _StatsDateRangePickerState extends State<StatsDateRangePicker> {
         ListPickerItem.divider(),
         ListPickerItem<StatsDateRange>(
           popsListOnPicked: false,
-          child: Text(_customDateRange.getTitle(context)),
+          title: _customDateRange.getTitle(context),
           onTap: () => _onTapCustom(context),
           value: _customDateRange,
         ),
@@ -75,7 +75,7 @@ class _StatsDateRangePickerState extends State<StatsDateRangePicker> {
       StatsDateRange duration)
   {
     return ListPickerItem<StatsDateRange>(
-      child: Text(duration.getTitle(context)),
+      title: duration.getTitle(context),
       value: duration,
     );
   }

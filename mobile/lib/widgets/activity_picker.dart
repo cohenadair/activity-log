@@ -87,7 +87,7 @@ class _ActivityPickerState extends State<ActivityPicker> {
   ListPickerItem<Activity> _buildItem(Activity activity) {
     return ListPickerItem<Activity>(
       value: activity,
-      child: Text(activity.name),
+      title: activity.name,
     );
   }
 }

@@ -78,6 +78,11 @@ class Strings {
   String get settingsPageTitle => _getString("settingsPage_title");
   String get settingsPageVersion => _getString("settingsPage_version");
   String get settingsPageHeadingAbout => _getString("settingsPage_headingAbout");
+  String get settingsPageHeadingOther => _getString("settingsPage_headingOther");
+  String get settingsPageLargestDurationLabel => _getString("settingsPage_largestDurationLabel");
+  String get settingsPageLargestDurationDays => _getString("settingsPage_largestDurationDays");
+  String get settingsPageLargestDurationHours => _getString("settingsPage_largestDurationHours");
+  String get settingsPageLargestDurationMinutes => _getString("settingsPage_largestDurationMinutes");
 
   String get statsPageTitle => _getString("statsPage_title");
   String get statsPageNoDataMessage => _getString("statsPage_noDataMessage");
