@@ -2,9 +2,9 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:mobile/app_manager.dart';
-import 'package:mobile/preferences_manager.dart';
 import 'package:mobile/i18n/strings.dart';
 import 'package:mobile/res/dimen.dart';
+import 'package:mobile/utils/date_time_utils.dart';
 import 'package:mobile/utils/string_utils.dart';
 import 'package:mobile/widgets/list_item.dart';
 import 'package:mobile/widgets/list_picker.dart';
@@ -24,9 +24,9 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
-  StreamSubscription<PreferencesDurationUnit> _onLargestDurationUnitChanged;
+  StreamSubscription<DurationUnit> _onLargestDurationUnitChanged;
 
-  Future<PreferencesDurationUnit> _largestDurationUnitFuture;
+  Future<DurationUnit> _largestDurationUnitFuture;
 
   @override
   void initState() {
@@ -92,14 +92,14 @@ class _SettingsPageState extends State<SettingsPage> {
   }
 
   Widget _buildLargestDurationPicker() {
-    return FutureBuilder<PreferencesDurationUnit>(
+    return FutureBuilder<DurationUnit>(
       future: _largestDurationUnitFuture,
-      builder: (_, AsyncSnapshot<PreferencesDurationUnit> snapshot) {
+      builder: (_, AsyncSnapshot<DurationUnit> snapshot) {
         if (!snapshot.hasData) {
           return Empty();
         }
 
-        return ListPicker<PreferencesDurationUnit>(
+        return ListPicker<DurationUnit>(
           pageTitle: Strings.of(context).settingsPageLargestDurationLabel,
           initialValues: Set.of([snapshot.data]),
           showsValueOnTrailing: true,
@@ -110,25 +110,20 @@ class _SettingsPageState extends State<SettingsPage> {
           titleBuilder: (_) =>
               Text(Strings.of(context).settingsPageLargestDurationLabel),
           items: [
-            ListPickerItem<PreferencesDurationUnit>(
+            ListPickerItem<DurationUnit>(
               title: Strings.of(context).settingsPageLargestDurationDays,
-              subtitle: _getLargestDurationUnitSubtitle(),
-              value: PreferencesDurationUnit.days,
+              subtitle: _getLargestDurationUnitSubtitle(DurationUnit.days),
+              value: DurationUnit.days,
             ),
-            ListPickerItem<PreferencesDurationUnit>(
+            ListPickerItem<DurationUnit>(
               title: Strings.of(context).settingsPageLargestDurationHours,
-              subtitle: _getLargestDurationUnitSubtitle(
-                includesDays: false,
-              ),
-              value: PreferencesDurationUnit.hours,
+              subtitle: _getLargestDurationUnitSubtitle(DurationUnit.hours),
+              value: DurationUnit.hours,
             ),
-            ListPickerItem<PreferencesDurationUnit>(
+            ListPickerItem<DurationUnit>(
               title: Strings.of(context).settingsPageLargestDurationMinutes,
-              subtitle: _getLargestDurationUnitSubtitle(
-                includesDays: false,
-                includesHours: false,
-              ),
-              value: PreferencesDurationUnit.minutes,
+              subtitle: _getLargestDurationUnitSubtitle(DurationUnit.minutes),
+              value: DurationUnit.minutes,
             ),
           ],
         );
@@ -136,15 +131,9 @@ class _SettingsPageState extends State<SettingsPage> {
     );
   }
 
-  String _getLargestDurationUnitSubtitle({
-    bool includesDays = true,
-    bool includesHours = true,
-    bool includesMinutes = true,
-  }) {
+  String _getLargestDurationUnitSubtitle(DurationUnit unit) {
     return formatTotalDuration(
-      includesDays: includesDays,
-      includesHours: includesHours,
-      includesMinutes: includesMinutes,
+      largestDurationUnit: unit,
       context: context, durations: [
         Duration(days: 3, hours: 15, minutes: 30, seconds: 55),
       ],

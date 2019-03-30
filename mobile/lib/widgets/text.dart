@@ -209,6 +209,7 @@ class TotalDurationText extends StatelessWidget {
   final bool includesSeconds;
   final bool condensed;
   final bool showHighestTwoOnly;
+  final DurationUnit largestDurationUnit;
 
   TotalDurationText(this.durations, {
     this.includesDays = true,
@@ -217,6 +218,7 @@ class TotalDurationText extends StatelessWidget {
     this.includesSeconds = true,
     this.condensed = false,
     this.showHighestTwoOnly = false,
+    this.largestDurationUnit = DurationUnit.days,
   });
 
   @override
@@ -230,6 +232,7 @@ class TotalDurationText extends StatelessWidget {
       includesSeconds: includesSeconds,
       condensed: condensed,
       showHighestTwoOnly: showHighestTwoOnly,
+      largestDurationUnit: largestDurationUnit,
     ));
   }
 }

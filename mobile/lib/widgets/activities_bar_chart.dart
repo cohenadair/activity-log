@@ -1,8 +1,11 @@
 import 'package:charts_flutter/flutter.dart' as Charts;
 import 'package:flutter/material.dart';
+import 'package:mobile/app_manager.dart';
 import 'package:mobile/i18n/strings.dart';
 import 'package:mobile/model/summarized_activity.dart';
+import 'package:mobile/preferences_manager.dart';
 import 'package:mobile/res/dimen.dart';
+import 'package:mobile/utils/date_time_utils.dart';
 import 'package:mobile/utils/string_utils.dart';
 import 'package:mobile/widgets/text.dart';
 import 'package:mobile/widgets/widget.dart';
@@ -11,42 +14,51 @@ import 'package:quiver/strings.dart';
 typedef ActivitiesBarChartOnSelectCallback = Function(SummarizedActivity);
 
 class ActivitiesDurationBarChart extends StatelessWidget {
+  final AppManager app;
   final EdgeInsets padding;
   final List<SummarizedActivity> activities;
   final ActivitiesBarChartOnSelectCallback onSelect;
 
-  ActivitiesDurationBarChart(this.activities, {
+  ActivitiesDurationBarChart({
+    @required this.app,
+    this.activities,
     this.padding,
     this.onSelect,
-  });
+  }) : assert(app != null);
 
   @override
   Widget build(BuildContext context) {
-    return _ActivitiesBarChart(
-      chartId: "ActivitiesDurationBarChart",
-      title: Strings.of(context).statsPageDurationTitle,
-      padding: padding,
-      activities: activities,
-      onBuildLabel: (SummarizedActivity activity) =>
-        "${activity.value.name} (${formatTotalDuration(
-          context: context,
-          durations: [activity.totalDuration],
-          includesSeconds: false,
-          condensed: true,
-          showHighestTwoOnly: true,
-        )})",
-      onMeasure: (activity) => activity.totalDuration.inSeconds,
-      primaryAxisSpec: Charts.NumericAxisSpec(
-        tickFormatterSpec: _DurationTickFormatter(
-          context: context,
-          formatCallback: _getFormatCallback(context),
+    return LargestDurationFutureBuilder(
+      app: app,
+      builder: (DurationUnit largestDurationUnit) => _ActivitiesBarChart(
+        chartId: "ActivitiesDurationBarChart",
+        title: Strings.of(context).statsPageDurationTitle,
+        padding: padding,
+        activities: activities,
+        onBuildLabel: (SummarizedActivity activity) =>
+          "${activity.value.name} (${formatTotalDuration(
+            context: context,
+            durations: [activity.totalDuration],
+            includesSeconds: false,
+            condensed: true,
+            showHighestTwoOnly: true,
+            largestDurationUnit: largestDurationUnit,
+          )})",
+        onMeasure: (activity) => activity.totalDuration.inSeconds,
+        primaryAxisSpec: Charts.NumericAxisSpec(
+          tickFormatterSpec: _DurationTickFormatter(
+            context: context,
+            formatCallback: _getFormatCallback(context, largestDurationUnit),
+          ),
         ),
+        onSelect: onSelect,
       ),
-      onSelect: onSelect,
     );
   }
 
-  _DurationTickFormatCallback _getFormatCallback(BuildContext context) {
+  _DurationTickFormatCallback _getFormatCallback(BuildContext context,
+      DurationUnit largestDurationUnit)
+  {
     Duration longestDuration = Duration();
 
     activities.forEach((SummarizedActivity activity) {
@@ -64,6 +76,7 @@ class ActivitiesDurationBarChart extends StatelessWidget {
         durations: [duration],
         includesSeconds: false,
         includesMinutes: false,
+        largestDurationUnit: largestDurationUnit,
       );
     } else if (longestDuration.inHours > 0) {
       // 0h 0m
@@ -72,6 +85,7 @@ class ActivitiesDurationBarChart extends StatelessWidget {
         durations: [duration],
         includesDays: false,
         includesSeconds: false,
+        largestDurationUnit: largestDurationUnit,
       );
     } else {
       // 0m
@@ -81,6 +95,7 @@ class ActivitiesDurationBarChart extends StatelessWidget {
         includesDays: false,
         includesHours: false,
         includesSeconds: false,
+        largestDurationUnit: largestDurationUnit,
       );
     }
   }

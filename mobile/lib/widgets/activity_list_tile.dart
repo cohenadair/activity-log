@@ -1,9 +1,12 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:mobile/app_manager.dart';
 import 'package:mobile/model/activity.dart';
 import 'package:mobile/model/session.dart';
+import 'package:mobile/preferences_manager.dart';
 import 'package:mobile/res/dimen.dart';
+import 'package:mobile/utils/date_time_utils.dart';
 import 'package:mobile/widgets/future_timer.dart';
 import 'package:mobile/widgets/list_item.dart';
 import 'package:mobile/widgets/text.dart';
@@ -18,35 +21,43 @@ class ActivityListTileModel {
 }
 
 class ActivityListTile extends StatelessWidget {
+  final AppManager app;
   final ActivityListTileModel model;
   final Function(Activity) onTap;
   final Function() onTapStartSession;
   final Function() onTapEndSession;
 
   ActivityListTile({
+    @required this.app,
     this.model,
     this.onTap,
     this.onTapStartSession,
     this.onTapEndSession,
-  }) : assert(model != null);
+  }) : assert(app != null),
+       assert(model != null);
 
   @override
   Widget build(BuildContext context) {
-    return ListItem(
-      contentPadding: EdgeInsets.only(right: 0, left: paddingDefault),
-      title: Text(model.activity.name),
-      subtitle: TotalDurationText(model.duration == null
-          ? []
-          : [model.duration]),
-      onTap: () {
-        onTap?.call(model.activity);
-      },
-      trailing: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          _buildRunningDuration(model.currentSession),
-          model.activity.isRunning ? _buildStopButton() : _buildStartButton(),
-        ],
+    return LargestDurationFutureBuilder(
+      app: app,
+      builder: (DurationUnit largestDurationUnit) => ListItem(
+        contentPadding: EdgeInsets.only(right: 0, left: paddingDefault),
+        title: Text(model.activity.name),
+        subtitle: TotalDurationText(model.duration == null
+            ? []
+            : [model.duration],
+          largestDurationUnit: largestDurationUnit,
+        ),
+        onTap: () {
+          onTap?.call(model.activity);
+        },
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            _buildRunningDuration(model.currentSession),
+            model.activity.isRunning ? _buildStopButton() : _buildStartButton(),
+          ],
+        ),
       ),
     );
   }

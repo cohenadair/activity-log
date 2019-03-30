@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mobile/utils/date_time_utils.dart';
 import 'package:mobile/widgets/text.dart';
 import 'package:quiver/time.dart';
 
@@ -207,6 +208,24 @@ void main() {
         showHighestTwoOnly: true,
       )));
       expect(find.text("30s"), findsOneWidget);
+    });
+
+    testWidgets("With duration unit", (WidgetTester tester) async {
+      List<Duration> durations = [
+        Duration(days: 2, hours: 5, minutes: 45, seconds: 30),
+      ];
+
+      await tester.pumpWidget(Testable(TotalDurationText(
+        durations,
+        largestDurationUnit: DurationUnit.hours,
+      )));
+      expect(find.text("53h 45m 30s"), findsOneWidget);
+
+      await tester.pumpWidget(Testable(TotalDurationText(
+        durations,
+        largestDurationUnit: DurationUnit.minutes,
+      )));
+      expect(find.text("3225m 30s"), findsOneWidget);
     });
   });
   

@@ -120,12 +120,24 @@ String formatTotalDuration({
   ///   - 12h 30m
   ///   - 30m 45s
   bool showHighestTwoOnly = false,
+
+  /// The largest [DurationUnit] to use. For example, if equal to
+  /// [DurationUnit.hours], 2 days and 3 hours will be formatted as `51h`
+  /// rather than `2d 3h`. The same effect can be done by setting `includesDays`
+  /// to `false`.
+  ///
+  /// This is primarily meant for use with a user-preference where the
+  /// [DurationUnit] is read from [SharedPreferences].
+  DurationUnit largestDurationUnit = DurationUnit.days,
 }) {
   int totalMillis = 0;
 
   durations.forEach((Duration duration) {
     totalMillis += duration.inMilliseconds;
   });
+
+  includesDays = includesDays && largestDurationUnit == DurationUnit.days;
+  includesHours = includesHours && largestDurationUnit != DurationUnit.minutes;
 
   DisplayDuration duration = DisplayDuration(
     Duration(milliseconds: totalMillis),

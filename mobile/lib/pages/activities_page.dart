@@ -55,6 +55,7 @@ class _ActivitiesPageState extends State<ActivitiesPage> {
       },
       onBuildTileCallback: (ActivityListTileModel model, onTapTile) {
         return ActivityListTile(
+          app: widget.app,
           model: model,
           onTap: (Activity activity) {
             onTapTile(model);

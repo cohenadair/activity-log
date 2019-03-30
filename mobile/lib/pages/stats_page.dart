@@ -6,6 +6,7 @@ import 'package:mobile/i18n/strings.dart';
 import 'package:mobile/model/activity.dart';
 import 'package:mobile/model/summarized_activity.dart';
 import 'package:mobile/pages/stats_activity_summary_page.dart';
+import 'package:mobile/preferences_manager.dart';
 import 'package:mobile/res/dimen.dart';
 import 'package:mobile/utils/date_time_utils.dart';
 import 'package:mobile/utils/page_utils.dart';
@@ -129,7 +130,8 @@ class _StatsPageState extends State<StatsPage> {
         _buildSummary(summary),
         MinDivider(),
         ActivitiesDurationBarChart(
-          summary.activities,
+          app: widget.app,
+          activities: summary.activities,
           padding: insetsVerticalDefaultHorizontalSmall,
           onSelect: _onSelectChartActivity,
         ),
@@ -144,46 +146,57 @@ class _StatsPageState extends State<StatsPage> {
   }
 
   void _onSelectChartActivity(SummarizedActivity activity) {
-    push(context, StatsActivitySummaryPage(activity));
+    push(context, StatsActivitySummaryPage(
+      app: widget.app,
+      activity: activity,
+    ));
   }
 
   Widget _buildSummary(SummarizedActivityList summary) {
-    return Summary(
-      title: Strings.of(context).summaryDefaultTitle,
-      padding: insetsVerticalDefault,
-      items: [
-        SummaryItem(
-          title: Strings.of(context).statsPageMostFrequentActivityLabel,
-          subtitle: summary.mostFrequentActivity == null
-              ? null
-              : summary.mostFrequentActivity.first.name,
-          value: summary.mostFrequentActivity == null
-              ? Strings.of(context).none
-              : format(Strings.of(context).statsPageMostFrequentActivityValue, [
-                  summary.mostFrequentActivity.second
-                ]),
-        ),
-        SummaryItem(
-          title: Strings.of(context).statsPageLongestSessionLabel,
-          subtitle: summary.longestSession == null
-              ? null
-              : summary.longestSession.first.name,
-          value: summary.longestSession == null
-              ? Strings.of(context).none
-              : formatTotalDuration(
-                context: context,
-                durations: [summary.longestSession.second.duration],
-                includesSeconds: false,
-                condensed: true,
-                showHighestTwoOnly: true,
-              ),
-        ),
-      ],
+    return LargestDurationFutureBuilder(
+      app: widget.app,
+      builder: (DurationUnit largestDurationUnit) {
+        return Summary(
+          title: Strings.of(context).summaryDefaultTitle,
+          padding: insetsVerticalDefault,
+          items: [
+            SummaryItem(
+              title: Strings.of(context).statsPageMostFrequentActivityLabel,
+              subtitle: summary.mostFrequentActivity == null
+                  ? null
+                  : summary.mostFrequentActivity.first.name,
+              value: summary.mostFrequentActivity == null
+                  ? Strings.of(context).none
+                  : format(
+                      Strings.of(context).statsPageMostFrequentActivityValue,
+                      [summary.mostFrequentActivity.second],
+                    ),
+            ),
+            SummaryItem(
+              title: Strings.of(context).statsPageLongestSessionLabel,
+              subtitle: summary.longestSession == null
+                  ? null
+                  : summary.longestSession.first.name,
+              value: summary.longestSession == null
+                  ? Strings.of(context).none
+                  : formatTotalDuration(
+                      context: context,
+                      durations: [summary.longestSession.second.duration],
+                      includesSeconds: false,
+                      condensed: true,
+                      showHighestTwoOnly: true,
+                      largestDurationUnit: largestDurationUnit,
+                    ),
+            ),
+          ],
+        );
+      },
     );
   }
 
   Widget _buildForSingleActivity(SummarizedActivity activity) {
     return ActivitySummary(
+      app: widget.app,
       activity: activity,
       scrollController: scrollController,
     );

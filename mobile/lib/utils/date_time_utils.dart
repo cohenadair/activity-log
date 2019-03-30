@@ -2,6 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:quiver/time.dart';
 
+enum DurationUnit {
+  days,
+  hours,
+  minutes
+}
+
 /// A representation of a [Duration] object meant to be shown to the user. Units
 /// are split by largest possible. For example, the hours property is the
 /// number of hours in the duration, minus the number of days.
