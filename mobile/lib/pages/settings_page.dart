@@ -1,8 +1,7 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:mobile/app_manager.dart';
 import 'package:mobile/i18n/strings.dart';
+import 'package:mobile/preferences_manager.dart';
 import 'package:mobile/res/dimen.dart';
 import 'package:mobile/utils/date_time_utils.dart';
 import 'package:mobile/utils/string_utils.dart';
@@ -24,30 +23,6 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
-  StreamSubscription<DurationUnit> _onLargestDurationUnitChanged;
-
-  Future<DurationUnit> _largestDurationUnitFuture;
-
-  @override
-  void initState() {
-    super.initState();
-
-    _onLargestDurationUnitChanged = widget.app.preferencesManager
-        .getLargestDurationUnitStream().listen((unit) {
-          setState(() {
-            _updateFutures();
-          });
-        });
-
-    _updateFutures();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    _onLargestDurationUnitChanged.cancel();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Page(
@@ -92,42 +67,36 @@ class _SettingsPageState extends State<SettingsPage> {
   }
 
   Widget _buildLargestDurationPicker() {
-    return FutureBuilder<DurationUnit>(
-      future: _largestDurationUnitFuture,
-      builder: (_, AsyncSnapshot<DurationUnit> snapshot) {
-        if (!snapshot.hasData) {
-          return Empty();
-        }
-
-        return ListPicker<DurationUnit>(
-          pageTitle: Strings.of(context).settingsPageLargestDurationLabel,
-          initialValues: Set.of([snapshot.data]),
-          showsValueOnTrailing: true,
-          onChanged: (selectedValues) {
-            widget.app.preferencesManager
-                .setLargestDurationUnit(selectedValues.first);
-          },
-          titleBuilder: (_) =>
-              Text(Strings.of(context).settingsPageLargestDurationLabel),
-          items: [
-            ListPickerItem<DurationUnit>(
-              title: Strings.of(context).settingsPageLargestDurationDays,
-              subtitle: _getLargestDurationUnitSubtitle(DurationUnit.days),
-              value: DurationUnit.days,
-            ),
-            ListPickerItem<DurationUnit>(
-              title: Strings.of(context).settingsPageLargestDurationHours,
-              subtitle: _getLargestDurationUnitSubtitle(DurationUnit.hours),
-              value: DurationUnit.hours,
-            ),
-            ListPickerItem<DurationUnit>(
-              title: Strings.of(context).settingsPageLargestDurationMinutes,
-              subtitle: _getLargestDurationUnitSubtitle(DurationUnit.minutes),
-              value: DurationUnit.minutes,
-            ),
-          ],
-        );
-      },
+    return LargestDurationFutureBuilder(
+      app: widget.app,
+      builder: (DurationUnit largestDurationUnit) => ListPicker<DurationUnit>(
+        pageTitle: Strings.of(context).settingsPageLargestDurationLabel,
+        initialValues: Set.of([largestDurationUnit]),
+        showsValueOnTrailing: true,
+        onChanged: (selectedValues) {
+          widget.app.preferencesManager
+              .setLargestDurationUnit(selectedValues.first);
+        },
+        titleBuilder: (_) =>
+            Text(Strings.of(context).settingsPageLargestDurationLabel),
+        items: [
+          ListPickerItem<DurationUnit>(
+            title: Strings.of(context).settingsPageLargestDurationDays,
+            subtitle: _getLargestDurationUnitSubtitle(DurationUnit.days),
+            value: DurationUnit.days,
+          ),
+          ListPickerItem<DurationUnit>(
+            title: Strings.of(context).settingsPageLargestDurationHours,
+            subtitle: _getLargestDurationUnitSubtitle(DurationUnit.hours),
+            value: DurationUnit.hours,
+          ),
+          ListPickerItem<DurationUnit>(
+            title: Strings.of(context).settingsPageLargestDurationMinutes,
+            subtitle: _getLargestDurationUnitSubtitle(DurationUnit.minutes),
+            value: DurationUnit.minutes,
+          ),
+        ],
+      ),
     );
   }
 
@@ -138,10 +107,5 @@ class _SettingsPageState extends State<SettingsPage> {
         Duration(days: 3, hours: 15, minutes: 30, seconds: 55),
       ],
     );
-  }
-
-  void _updateFutures() {
-    _largestDurationUnitFuture =
-        widget.app.preferencesManager.largestDurationUnit;
   }
 }
