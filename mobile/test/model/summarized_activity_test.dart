@@ -5,6 +5,8 @@ import 'package:mobile/model/summarized_activity.dart';
 import 'package:mobile/utils/date_time_utils.dart';
 import 'package:quiver/time.dart';
 
+import '../test_utils.dart';
+
 void main() {
   Session buildSession(String activityId, DateTime start, DateTime end, {
     Clock clock = const Clock(),
@@ -24,10 +26,10 @@ void main() {
     test("Empty sessions", () {
       SummarizedActivity activity = SummarizedActivity(
         value: ActivityBuilder("").build,
-        dateRange: DateRange(
+        displayDateRange: stubDateRange(DateRange(
           startDate: DateTime.now(),
           endDate: DateTime.now(),
-        ),
+        )),
         sessions: [],
       );
 
@@ -45,10 +47,10 @@ void main() {
     test("Null sessions", () {
       SummarizedActivity activity = SummarizedActivity(
         value: ActivityBuilder("").build,
-        dateRange: DateRange(
+          displayDateRange: stubDateRange(DateRange(
           startDate: DateTime.now(),
           endDate: DateTime.now(),
-        ),
+        )),
         sessions: null,
       );
 
@@ -77,11 +79,11 @@ void main() {
 
       SummarizedActivity activity = SummarizedActivity(
         value: ActivityBuilder("").build,
-        dateRange: DateRange(
+        displayDateRange: stubDateRange(DateRange(
           // 1 month, 3 weeks, 16 days
           startDate: DateTime(2018, 12, 12, 3),
           endDate: DateTime(2018, 12, 27, 12),
-        ),
+        )),
         sessions: sessions,
       );
 
@@ -114,11 +116,11 @@ void main() {
 
       SummarizedActivity activity = SummarizedActivity(
         value: ActivityBuilder("").build,
-        dateRange: DateRange(
+        displayDateRange: stubDateRange(DateRange(
           // 5 months, 18 weeks, 119 days
           startDate: DateTime(2019, 1, 20, 7),
           endDate: DateTime(2019, 5, 18, 10),
-        ),
+        )),
         sessions: sessions,
       );
 
@@ -151,11 +153,11 @@ void main() {
 
       SummarizedActivity activity = SummarizedActivity(
         value: ActivityBuilder("").build,
-        dateRange: DateRange(
+        displayDateRange: stubDateRange(DateRange(
           // 5 months, 18 weeks, 119 days
           startDate: DateTime(2018, 11, 20, 7),
           endDate: DateTime(2019, 3, 18, 10),
-        ),
+        )),
         sessions: sessions,
       );
 
@@ -193,10 +195,10 @@ void main() {
 
     SummarizedActivity activity = SummarizedActivity(
       value: ActivityBuilder("").build,
-      dateRange: DateRange(
+      displayDateRange: stubDateRange(DateRange(
         startDate: DateTime(2018, 11, 15, 7),
         endDate: DateTime(2019, 10, 25, 20),
-      ),
+      )),
       sessions: sessions,
     );
 
@@ -216,10 +218,10 @@ void main() {
       Activity activity = ActivityBuilder("Activity").build;
       SummarizedActivity summarizedActivity = SummarizedActivity(
         value: activity,
-        dateRange: DateRange(
+        displayDateRange: stubDateRange(DateRange(
           startDate: DateTime(2018, 1, 5, 12),
           endDate: DateTime(2018, 1, 25, 21),
-        ),
+        )),
         sessions: [
           buildSession(
             activity.id,
@@ -311,7 +313,7 @@ void main() {
 
       SummarizedActivity activity = SummarizedActivity(
         value: ActivityBuilder("").build,
-        dateRange: null,
+        displayDateRange: null,
         sessions: sessions,
       );
 
@@ -328,10 +330,10 @@ void main() {
 
       SummarizedActivity summarizedActivity1 = SummarizedActivity(
         value: activity1,
-        dateRange: DateRange(
+        displayDateRange: stubDateRange(DateRange(
           startDate: DateTime(2018, 1, 10, 5),
           endDate: DateTime(2018, 1, 20, 10),
-        ),
+        )),
         sessions: [
           buildSession(
             activity1.id,
@@ -348,10 +350,10 @@ void main() {
 
       SummarizedActivity summarizedActivity2 = SummarizedActivity(
         value: activity2,
-        dateRange: DateRange(
+        displayDateRange: stubDateRange(DateRange(
           startDate: DateTime(2018, 1, 5, 12),
           endDate: DateTime(2018, 1, 25, 21),
-        ),
+        )),
         sessions: [
           buildSession(
             activity2.id,
@@ -379,10 +381,10 @@ void main() {
 
       SummarizedActivity summarizedActivity3 = SummarizedActivity(
         value: activity3,
-        dateRange: DateRange(
+        displayDateRange: stubDateRange(DateRange(
           startDate: DateTime(2018, 1, 20, 1),
           endDate: DateTime(2018, 1, 29, 7),
-        ),
+        )),
         sessions: [longestSession],
       );
 
@@ -430,7 +432,7 @@ void main() {
 
       SummarizedActivity activity = SummarizedActivity(
         value: ActivityBuilder("").build,
-        dateRange: null,
+        displayDateRange: null,
         sessions: sessions,
         clock: clock,
       );
@@ -469,7 +471,7 @@ void main() {
 
       SummarizedActivity activity = SummarizedActivity(
         value: ActivityBuilder("").build,
-        dateRange: null,
+        displayDateRange: null,
         sessions: sessions,
         clock: clock,
       );

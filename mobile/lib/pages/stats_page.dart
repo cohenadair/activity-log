@@ -198,9 +198,7 @@ class _StatsPageState extends State<StatsPage> {
   }
 
   void _updateFutures() {
-    DateRange dateRange = _currentDateRange == DisplayDateRange.allDates
-        ? null
-        : _currentDateRange.value;
+    DisplayDateRange dateRange = _currentDateRange ?? DisplayDateRange.allDates;
 
     List<Activity> activities = _currentActivities == null
         ? []

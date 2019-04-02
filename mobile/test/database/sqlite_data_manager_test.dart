@@ -7,6 +7,8 @@ import 'package:mobile/utils/date_time_utils.dart';
 import 'package:mockito/mockito.dart';
 import 'package:sqflite/sqflite.dart';
 
+import '../test_utils.dart';
+
 class MockDatabase extends Mock implements Database {}
 
 void main() {
@@ -59,14 +61,15 @@ void main() {
       @required int expectedLength,
       @required Duration expectedDuration,
     }) async {
-      DateRange dateRange = DateRange(
+      DisplayDateRange dateRange = stubDateRange(DateRange(
         startDate: startDate,
         endDate: endDate,
-      );
+      ));
+
       Activity activity = ActivityBuilder("").build;
 
       stubActivities([activity.toMap()]);
-      stubOverlappingSessions(activity.id, dateRange,
+      stubOverlappingSessions(activity.id, dateRange.value,
           sessionRangeList.map((DateRange dateRange) {
             return buildSession(
               activity.id,
@@ -85,23 +88,26 @@ void main() {
 
     test("No activities", () async {
       stubActivities([]);
-      var result = await dataManager.getSummarizedActivities(
-          DateRange(startDate: DateTime.now(), endDate: DateTime.now()));
+      DisplayDateRange dateRange = stubDateRange(DateRange(
+        startDate: DateTime.now(),
+        endDate: DateTime.now(),
+      ));
+      var result = await dataManager.getSummarizedActivities(dateRange);
       expect(result.activities, isEmpty);
       expect(result.longestSession, isNull);
       expect(result.mostFrequentActivity, isNull);
     });
 
     test("Activities provided as parameter", () async {
-      DateRange dateRange = DateRange(
+      DisplayDateRange dateRange = stubDateRange(DateRange(
         startDate: DateTime(2018, 1, 1),
         endDate: DateTime(2018, 2, 1),
-      );
+      ));
 
       Activity activity = ActivityBuilder("").build;
 
       stubActivities([activity.toMap()]);
-      stubOverlappingSessions(activity.id, dateRange, [
+      stubOverlappingSessions(activity.id, dateRange.value, [
         buildSession(
           activity.id,
           DateTime(2018, 1, 15, 5),
@@ -217,10 +223,10 @@ void main() {
     });
 
     test("Combination of all with multiple activities", () async {
-      DateRange dateRange = DateRange(
+      DisplayDateRange dateRange = stubDateRange(DateRange(
         startDate: DateTime(2018, 1, 1),
         endDate: DateTime(2018, 2, 1),
-      );
+      ));
 
       List<Activity> activities = [
         ActivityBuilder("Activity 1").build,
@@ -233,7 +239,7 @@ void main() {
       stubActivities(activities.map((Activity activity) => activity.toMap())
           .toList());
 
-      stubOverlappingSessions(activities[0].id, dateRange, [
+      stubOverlappingSessions(activities[0].id, dateRange.value, [
         buildSession(
           activities[0].id,
           DateTime(2017, 12, 31, 22),
@@ -251,7 +257,7 @@ void main() {
         ), // Expected 9 hours
       ]);
 
-      stubOverlappingSessions(activities[1].id, dateRange, [
+      stubOverlappingSessions(activities[1].id, dateRange.value, [
         buildSession(
           activities[1].id,
           DateTime(2018, 1, 9, 9),
@@ -259,7 +265,7 @@ void main() {
         ), // Expected 8 hours
       ]);
 
-      stubOverlappingSessions(activities[2].id, dateRange, [
+      stubOverlappingSessions(activities[2].id, dateRange.value, [
         buildSession(
           activities[2].id,
           DateTime(2018, 1, 1),
@@ -277,7 +283,7 @@ void main() {
         ), // Expected 9 hours
       ]);
 
-      stubOverlappingSessions(activities[3].id, dateRange, [
+      stubOverlappingSessions(activities[3].id, dateRange.value, [
         buildSession(
           activities[3].id,
           DateTime(2018, 1, 1),

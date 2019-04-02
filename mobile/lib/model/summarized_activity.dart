@@ -12,8 +12,8 @@ import 'package:quiver/time.dart';
 class SummarizedActivity {
   final Activity value;
 
-  /// The [DateRange] for the summary. Set to `null` for "all dates".
-  final DateRange dateRange;
+  /// The [DisplayDateRange] for the summary. Set to `null` for "all dates".
+  final DisplayDateRange displayDateRange;
 
   final List<Session> sessions;
   final Clock clock;
@@ -34,7 +34,7 @@ class SummarizedActivity {
 
   SummarizedActivity({
     @required this.value,
-    @required this.dateRange,
+    @required this.displayDateRange,
     this.sessions,
     this.clock = const Clock(),
   }) : assert(value != null);
@@ -155,10 +155,10 @@ class SummarizedActivity {
 
     // If the date range is null, restrict the range to the earliest
     // and latest sessions.
-    DateRange range = dateRange ?? DateRange(
+    DateRange range = displayDateRange == null ? DateRange(
       startDate: earliestSession.startDateTime,
       endDate: latestSession.endDateTime ?? clock.now(),
-    );
+    ) : displayDateRange.value;
 
     Duration difference = range.endDate.difference(range.startDate);
     int numberOfDays = difference.inDays + 1;

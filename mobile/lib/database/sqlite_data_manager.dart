@@ -284,14 +284,16 @@ class SQLiteDataManager {
   ///
   /// Note that this will return a [SummarizedActivityList], even if there
   /// were no sessions for the associated [Activity] objects within the given
-  /// [DateRange].
+  /// [DisplayDateRange].
   ///
-  /// If the given [DateRange] is `null`, the result will include all [Session]
-  /// objects associated with each given [Activity].
-  Future<SummarizedActivityList> getSummarizedActivities(DateRange dateRange,
-      [List<Activity> activities]) async
+  /// If the given [DisplayDateRange] is `null`, the result will include all
+  /// [Session] objects associated with each given [Activity].
+  Future<SummarizedActivityList> getSummarizedActivities(
+      DisplayDateRange displayDateRange, [List<Activity> activities]) async
   {
     List<Activity> activityList = activities == null ? [] : List.of(activities);
+    DateRange dateRange = displayDateRange == null
+        ? null : displayDateRange.value;
 
     // Get all activities if none were provided.
     if (activities == null || activities.length == 0) {
@@ -344,7 +346,7 @@ class SQLiteDataManager {
 
       summarizedActivities.add(SummarizedActivity(
         value: activity,
-        dateRange: dateRange,
+        displayDateRange: displayDateRange,
         sessions: sessionList,
       ));
     }
