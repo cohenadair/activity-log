@@ -34,7 +34,7 @@ class _StatsPageState extends State<StatsPage> {
   final scrollController = ScrollController();
 
   Set<Activity> _currentActivities;
-  DisplayDateRange _currentDateRange = DisplayDateRange.allDates;
+  DisplayDateRange _currentDateRange;
 
   Future<SummarizedActivityList> _summarizedActivityListFuture;
   StreamSubscription<void> _onActivitiesUpdated;
@@ -43,12 +43,26 @@ class _StatsPageState extends State<StatsPage> {
   void initState() {
     super.initState();
 
+    _currentDateRange = widget.app.preferencesManager.statsDateRange;
+
     _onActivitiesUpdated = widget.app.dataManager.activitiesUpdatedStream
         .listen((_) {
           _updateFutures();
         });
 
-    _updateFutures();
+    // Retrieve initial activities if needed.
+    List<String> selectedIds =
+        widget.app.preferencesManager.statsSelectedActivityIds;
+    if (selectedIds != null) {
+      widget.app.dataManager.getActivities(selectedIds).then((activities) {
+        if (activities != null && activities.isNotEmpty) {
+          _currentActivities = Set.of(activities);
+        }
+        _updateFutures();
+      });
+    } else {
+      _updateFutures();
+    }
   }
 
   @override
@@ -198,6 +212,13 @@ class _StatsPageState extends State<StatsPage> {
   }
 
   void _updateFutures() {
+    // Update preferences.
+    widget.app.preferencesManager.setStatsDateRange(_currentDateRange);
+    widget.app.preferencesManager.setStatsSelectedActivityIds(
+        _currentActivities == null
+            ? null
+            : _currentActivities.map((activity) => activity.id).toList());
+
     DisplayDateRange dateRange = _currentDateRange ?? DisplayDateRange.allDates;
 
     List<Activity> activities = _currentActivities == null

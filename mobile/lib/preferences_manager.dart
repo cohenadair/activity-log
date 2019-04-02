@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile/app_manager.dart';
 import 'package:mobile/utils/date_time_utils.dart';
@@ -9,6 +10,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 class PreferencesManager {
   final _keyLargestDurationUnit = "preferences.largestDurationUnit";
   final _keyHomeDateRange = "preferences.homeDateRange";
+  final _keyStatsSelectedActivityIds = "preferences.statsSelectedActivityIds";
+  final _keyStatsDateRange = "preferences.statsDateRange";
 
   final VoidStreamController _largestDurationUnitUpdated =
       VoidStreamController();
@@ -19,8 +22,14 @@ class PreferencesManager {
   DurationUnit _largestDurationUnit;
   DisplayDateRange _homeDateRange;
 
+  List<String> _statsSelectedActivityIds;
+  DisplayDateRange _statsDateRange;
+
   DurationUnit get largestDurationUnit => _largestDurationUnit;
   DisplayDateRange get homeDateRange => _homeDateRange;
+
+  List<String> get statsSelectedActivityIds => _statsSelectedActivityIds;
+  DisplayDateRange get statsDateRange => _statsDateRange;
 
   /// Initializes preference properties. This method should be called on app
   /// start.
@@ -29,8 +38,19 @@ class PreferencesManager {
 
     _largestDurationUnit =
         DurationUnit.values[prefs.getInt(_keyLargestDurationUnit) ?? 0];
-    _homeDateRange = DisplayDateRange.of(
-        prefs.getString(_keyHomeDateRange) ?? DisplayDateRange.allDates.id);
+    _homeDateRange = _getDisplayDateRange(prefs, _keyHomeDateRange);
+
+    List<String> activityIds =
+        prefs.getStringList(_keyStatsSelectedActivityIds);
+    _statsSelectedActivityIds =
+        activityIds == null || activityIds.isEmpty ? null : activityIds;
+
+    _statsDateRange = _getDisplayDateRange(prefs, _keyStatsDateRange);
+  }
+
+  DisplayDateRange _getDisplayDateRange(SharedPreferences prefs, String key) {
+    return DisplayDateRange.of(
+        prefs.getString(key) ?? DisplayDateRange.allDates.id);
   }
 
   void setLargestDurationUnit(DurationUnit unit) async {
@@ -58,6 +78,31 @@ class PreferencesManager {
     await prefs.setString(_keyHomeDateRange, _homeDateRange.id);
 
     _homeDateRangeUpdated.notify();
+  }
+
+  void setStatsSelectedActivityIds(List<String> ids) async {
+    if (DeepCollectionEquality.unordered().equals(_statsSelectedActivityIds,
+        ids))
+    {
+      return;
+    }
+
+    _statsSelectedActivityIds = ids;
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setStringList(_keyStatsSelectedActivityIds,
+        _statsSelectedActivityIds);
+  }
+
+  void setStatsDateRange(DisplayDateRange range) async {
+    if (_statsDateRange == range) {
+      return;
+    }
+
+    _statsDateRange = range;
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_keyStatsDateRange, _statsDateRange.id);
   }
 }
 

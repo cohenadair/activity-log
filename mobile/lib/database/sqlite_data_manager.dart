@@ -58,6 +58,17 @@ class SQLiteDataManager {
     }).toList();
   }
 
+  Future<List<Activity>> getActivities(List<String> ids) async {
+    String query = '''
+      SELECT * FROM activity 
+      WHERE id IN ("${ids.join('","')}") 
+      ORDER BY name
+    ''';
+    return (await _database.rawQuery(query)).map((map) {
+      return Activity.fromMap(map);
+    }).toList();
+  }
+
   void addActivity(Activity activity) {
     _database.insert("activity", activity.toMap()).then((int value) {
       _activitiesUpdated.notify();
