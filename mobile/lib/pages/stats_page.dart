@@ -140,13 +140,13 @@ class _StatsPageState extends State<StatsPage> {
         MinDivider(),
         ActivitiesDurationBarChart(
           app: widget.app,
-          activities: summary.activities,
+          activities: summary.activitiesSortedByDuration,
           padding: insetsVerticalDefaultHorizontalSmall,
           onSelect: _onSelectChartActivity,
         ),
         MinDivider(),
         ActivitiesNumberOfSessionsBarChart(
-          summary.activities,
+          summary.activitiesSortedByNumberOfSessions,
           padding: insetsVerticalDefaultHorizontalSmall,
           onSelect: _onSelectChartActivity,
         ),

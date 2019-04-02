@@ -241,6 +241,11 @@ class SummarizedActivityList {
   Tuple<Activity, Session> _cachedLongestSession;
   Tuple<Activity, int> _cachedMostFrequentActivity;
 
+  List<SummarizedActivity> _cachedActivitiesSortedByDuration;
+  List<SummarizedActivity> _cachedActivitiesSortedByNumberOfSessions;
+
+  SummarizedActivityList(this.activities);
+
   /// A [Tuple] of [Activity] and its longest [Session].
   Tuple<Activity, Session> get longestSession {
     if (_cachedLongestSession == null) {
@@ -257,7 +262,27 @@ class SummarizedActivityList {
     return _cachedMostFrequentActivity;
   }
 
-  SummarizedActivityList(this.activities);
+  /// Returns a copy of `activities`, sorted descending by total duration.
+  List<SummarizedActivity> get activitiesSortedByDuration {
+    if (_cachedActivitiesSortedByDuration == null) {
+      List<SummarizedActivity> copy = List.of(activities);
+      copy.sort((SummarizedActivity a, SummarizedActivity b) =>
+          b.totalDuration.compareTo(a.totalDuration));
+      _cachedActivitiesSortedByDuration = copy;
+    }
+    return _cachedActivitiesSortedByDuration;
+  }
+
+  /// Returns a copy of `activities`, sorted descending by number of sessions.
+  List<SummarizedActivity> get activitiesSortedByNumberOfSessions {
+    if (_cachedActivitiesSortedByNumberOfSessions == null) {
+      List<SummarizedActivity> copy = List.of(activities);
+      copy.sort((SummarizedActivity a, SummarizedActivity b) =>
+          b.numberOfSessions.compareTo(a.numberOfSessions));
+      _cachedActivitiesSortedByNumberOfSessions = copy;
+    }
+    return _cachedActivitiesSortedByNumberOfSessions;
+  }
 
   void _calculate() {
     activities.forEach((SummarizedActivity activity) {
