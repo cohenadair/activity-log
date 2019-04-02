@@ -144,7 +144,7 @@ class _EditActivityPageState extends State<EditActivityPage> {
   }
 
   Widget _buildViewAllButton(int sessionCount) {
-    return Row(
+    return sessionCount <= _recentSessionLimit ? Empty() : Row(
       mainAxisAlignment: MainAxisAlignment.end,
       children: <Widget>[
         FlatButton(
