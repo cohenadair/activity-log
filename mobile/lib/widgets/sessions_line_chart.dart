@@ -45,11 +45,11 @@ class _SessionsLineChartState extends State<SessionsLineChart> {
           ),
           SafeArea(
             bottom: false,
-            child: LargestDurationFutureBuilder(
+            child: LargestDurationBuilder(
               app: widget.app,
-              builder: (DurationUnit longestDurationUnit) => Column(
+              builder: (BuildContext context, DurationUnit unit) => Column(
                 children: <Widget>[
-                  _buildLineChart(longestDurationUnit),
+                  _buildLineChart(unit),
                   _buildSessionSummary(context),
                 ],
               ),

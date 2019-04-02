@@ -25,153 +25,157 @@ class ActivitySummary extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return LargestDurationFutureBuilder(
+    return LargestDurationBuilder(
       app: app,
-      builder: (DurationUnit largestDurationUnit) => Column(
-        children: <Widget>[
-          _buildSessionsChart(),
-          MinDivider(),
-          Summary(
-            title: Strings.of(context).summaryDefaultTitle,
-            padding: insetsTopDefault,
-            items: <SummaryItem>[
-              SummaryItem(
-                title: Strings.of(context).activitySummaryNumberOfSessions,
-                value: activity.numberOfSessions,
-              ),
-            ]
-          ),
-          ExpansionListItem(
-            scrollController: scrollController,
-            title: Text(Strings.of(context).activitySummaryAverageSessions),
-            children: <Widget>[
-              Summary(
-                items: <SummaryItem>[
-                  SummaryItem(
-                    title: Strings.of(context).activitySummaryAveragePerDay,
-                    value: activity.sessionsPerDay.toStringAsFixed(2),
-                  ),
-                  SummaryItem(
-                    title: Strings.of(context).activitySummaryAveragePerWeek,
-                    value: activity.sessionsPerWeek.toStringAsFixed(2),
-                  ),
-                  SummaryItem(
-                    title: Strings.of(context).activitySummaryAveragePerMonth,
-                    value: activity.sessionsPerMonth.toStringAsFixed(2),
-                  ),
-                ],
-              ),
-            ],
-          ),
-          Summary(
-            items: <SummaryItem>[
-              SummaryItem(
-                title: Strings.of(context).activitySummaryShortestSession,
-                subtitle: activity.shortestSession == null
-                    ? null
-                    : formatDateTime(
-                  context: context,
-                  dateTime: activity.shortestSession.startDateTime,
+      builder: (BuildContext context, DurationUnit largestDurationUnit) {
+        return Column(
+          children: <Widget>[
+            _buildSessionsChart(),
+            MinDivider(),
+            Summary(
+              title: Strings.of(context).summaryDefaultTitle,
+              padding: insetsTopDefault,
+              items: <SummaryItem>[
+                SummaryItem(
+                  title: Strings.of(context).activitySummaryNumberOfSessions,
+                  value: activity.numberOfSessions,
                 ),
-                value: activity.shortestSession == null
-                    ? Strings.of(context).none
-                    : _formatDuration(
+              ],
+            ),
+            ExpansionListItem(
+              scrollController: scrollController,
+              title: Text(Strings.of(context).activitySummaryAverageSessions),
+              children: <Widget>[
+                Summary(
+                  items: <SummaryItem>[
+                    SummaryItem(
+                      title: Strings.of(context).activitySummaryAveragePerDay,
+                      value: activity.sessionsPerDay.toStringAsFixed(2),
+                    ),
+                    SummaryItem(
+                      title: Strings.of(context).activitySummaryAveragePerWeek,
+                      value: activity.sessionsPerWeek.toStringAsFixed(2),
+                    ),
+                    SummaryItem(
+                      title: Strings.of(context).activitySummaryAveragePerMonth,
+                      value: activity.sessionsPerMonth.toStringAsFixed(2),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            Summary(
+              items: <SummaryItem>[
+                SummaryItem(
+                  title: Strings.of(context).activitySummaryShortestSession,
+                  subtitle: activity.shortestSession == null
+                      ? null
+                      : formatDateTime(
+                    context: context,
+                    dateTime: activity.shortestSession.startDateTime,
+                  ),
+                  value: activity.shortestSession == null
+                      ? Strings.of(context).none
+                      : _formatDuration(
+                    context,
+                    activity.shortestSession.duration,
+                    largestDurationUnit,
+                  ),
+                ),
+                SummaryItem(
+                  title: Strings.of(context).activitySummaryLongestSession,
+                  subtitle: activity.longestSession == null
+                      ? null
+                      : formatDateTime(
+                    context: context,
+                    dateTime: activity.longestSession.startDateTime,
+                  ),
+                  value: activity.longestSession == null
+                      ? Strings.of(context).none
+                      : _formatDuration(
+                    context,
+                    activity.longestSession.duration,
+                    largestDurationUnit,
+                  ),
+                ),
+                SummaryItem(
+                  title: Strings.of(context).activitySummaryStreak,
+                  subtitle: Strings.of(context)
+                      .activitySummaryStreakDescription,
+                  value: activity.longestStreak,
+                ),
+              ],
+            ),
+            Summary(
+              items: <SummaryItem>[
+                SummaryItem(
+                  title: Strings.of(context).activitySummaryTotalDuration,
+                  value: _formatDuration(
+                    context,
+                    activity.totalDuration,
+                    largestDurationUnit,
+                  ),
+                ),
+              ],
+            ),
+            ExpansionListItem(
+              scrollController: scrollController,
+              toBottomSafeArea: true,
+              title: Text(Strings.of(context).activitySummaryAverageDurations),
+              children: <Widget>[
+                Summary(
+                  items: <SummaryItem>[
+                    SummaryItem(
+                      title: Strings.of(context).activitySummaryAverageOverall,
+                      value: _formatDuration(
                         context,
-                        activity.shortestSession.duration,
+                        activity.averageDurationOverall,
                         largestDurationUnit,
                       ),
-              ),
-              SummaryItem(
-                title: Strings.of(context).activitySummaryLongestSession,
-                subtitle: activity.longestSession == null
-                    ? null
-                    : formatDateTime(
-                  context: context,
-                  dateTime: activity.longestSession.startDateTime,
-                ),
-                value: activity.longestSession == null
-                    ? Strings.of(context).none
-                    : _formatDuration(
+                    ),
+                    SummaryItem(
+                      title: Strings.of(context).activitySummaryAveragePerDay,
+                      value: _formatDuration(
                         context,
-                        activity.longestSession.duration,
+                        activity.averageDurationPerDay,
                         largestDurationUnit,
                       ),
-              ),
-              SummaryItem(
-                title: Strings.of(context).activitySummaryStreak,
-                subtitle: Strings.of(context).activitySummaryStreakDescription,
-                value: activity.longestStreak,
-              ),
-            ]
-          ),
-          Summary(
-            items: <SummaryItem>[
-              SummaryItem(
-                title: Strings.of(context).activitySummaryTotalDuration,
-                value: _formatDuration(
-                  context,
-                  activity.totalDuration,
-                  largestDurationUnit,
+                    ),
+                    SummaryItem(
+                      title: Strings.of(context).activitySummaryAveragePerWeek,
+                      value: _formatDuration(
+                        context,
+                        activity.averageDurationPerWeek,
+                        largestDurationUnit,
+                      ),
+                    ),
+                    SummaryItem(
+                      title: Strings.of(context).activitySummaryAveragePerMonth,
+                      value: _formatDuration(
+                        context,
+                        activity.averageDurationPerMonth,
+                        largestDurationUnit,
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-            ]
-          ),
-          ExpansionListItem(
-            scrollController: scrollController,
-            toBottomSafeArea: true,
-            title: Text(Strings.of(context).activitySummaryAverageDurations),
-            children: <Widget>[
-              Summary(
-                items: <SummaryItem>[
-                  SummaryItem(
-                    title: Strings.of(context).activitySummaryAverageOverall,
-                    value: _formatDuration(
-                      context,
-                      activity.averageDurationOverall,
-                      largestDurationUnit,
-                    ),
-                  ),
-                  SummaryItem(
-                    title: Strings.of(context).activitySummaryAveragePerDay,
-                    value: _formatDuration(
-                      context,
-                      activity.averageDurationPerDay,
-                      largestDurationUnit,
-                    ),
-                  ),
-                  SummaryItem(
-                    title: Strings.of(context).activitySummaryAveragePerWeek,
-                    value: _formatDuration(
-                      context,
-                      activity.averageDurationPerWeek,
-                      largestDurationUnit,
-                    ),
-                  ),
-                  SummaryItem(
-                    title: Strings.of(context).activitySummaryAveragePerMonth,
-                    value: _formatDuration(
-                      context,
-                      activity.averageDurationPerMonth,
-                      largestDurationUnit,
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          )
-        ]
-      ),
+              ],
+            )
+          ],
+        );
+      },
     );
   }
 
   String _formatDuration(BuildContext context, Duration duration,
-      DurationUnit longestDurationUnit)
+      DurationUnit largestDurationUnit)
   {
     return formatTotalDuration(
       context: context,
       durations: [duration],
       condensed: true,
       showHighestTwoOnly: true,
+      largestDurationUnit: largestDurationUnit,
     );
   }
 

@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:mobile/app_manager.dart';
-import 'package:mobile/database/sqlite_open_helper.dart';
 import 'package:mobile/i18n/strings.dart';
 import 'package:mobile/pages/main_page.dart';
 import 'package:mobile/res/style.dart';
@@ -17,16 +16,17 @@ class ActivityLog extends StatefulWidget {
 
 class _ActivityLogState extends State<ActivityLog> {
   final AppManager _app = AppManager();
-  Future<bool> _dbInitializedFuture;
+  Future<bool> _appInitializedFuture;
 
   @override
   void initState() {
     super.initState();
 
-    _dbInitializedFuture = Future(() async {
-      _app.dataManager.initialize(await SQLiteOpenHelper.open());
-      return true;
-    });
+    // Wait for all app initializations before showing the app as "ready".
+    _appInitializedFuture = Future.wait([
+      _app.preferencesManager.initialize(),
+      _app.dataManager.initialize(),
+    ]).then((_) => true);
   }
 
   @override
@@ -49,7 +49,7 @@ class _ActivityLogState extends State<ActivityLog> {
         errorColor: Colors.red,
       ),
       home: FutureBuilder<bool>(
-        future: _dbInitializedFuture,
+        future: _appInitializedFuture,
         builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
           if (snapshot.hasError || !snapshot.hasData) {
             return Scaffold();

@@ -33,30 +33,28 @@ class StatsPage extends StatefulWidget {
 class _StatsPageState extends State<StatsPage> {
   final scrollController = ScrollController();
 
-  StreamSubscription<List<Activity>> _onActivitiesUpdated;
-
   Set<Activity> _currentActivities;
-  StatsDateRange _currentDateRange = StatsDateRange.allDates;
+  DisplayDateRange _currentDateRange = DisplayDateRange.allDates;
+
   Future<SummarizedActivityList> _summarizedActivityListFuture;
+  StreamSubscription<void> _onActivitiesUpdated;
 
   @override
   void initState() {
     super.initState();
 
-    widget.app.dataManager.getActivitiesUpdateStream((stream) {
-      _onActivitiesUpdated = stream.listen((_) {
-        setState(() {
-          _updateSummarizedActivityListFuture();
+    _onActivitiesUpdated = widget.app.dataManager.activitiesUpdatedStream
+        .listen((_) {
+          _updateFutures();
         });
-      });
-      return true;
-    });
+
+    _updateFutures();
   }
 
   @override
   void dispose() {
-    super.dispose();
     _onActivitiesUpdated.cancel();
+    super.dispose();
   }
 
   @override
@@ -76,16 +74,16 @@ class _StatsPageState extends State<StatsPage> {
               onPickedActivitiesChanged: (Set<Activity> pickedActivities) {
                 setState(() {
                   _currentActivities = pickedActivities;
-                  _updateSummarizedActivityListFuture();
+                  _updateFutures();
                 });
               },
             ),
             StatsDateRangePicker(
               initialValue: _currentDateRange,
-              onDurationPicked: (StatsDateRange pickedDateRange) {
+              onDurationPicked: (DisplayDateRange pickedDateRange) {
                 setState(() {
                   _currentDateRange = pickedDateRange;
-                  _updateSummarizedActivityListFuture();
+                  _updateFutures();
                 });
               },
             ),
@@ -95,9 +93,7 @@ class _StatsPageState extends State<StatsPage> {
               builder: (BuildContext context,
                   AsyncSnapshot<SummarizedActivityList> snapshot)
               {
-                if (!snapshot.hasData
-                    || snapshot.connectionState != ConnectionState.done)
-                {
+                if (!snapshot.hasData) {
                   return Loading.centered();
                 }
 
@@ -105,9 +101,8 @@ class _StatsPageState extends State<StatsPage> {
                 if (activities == null || activities.isEmpty) {
                   return Padding(
                     padding: insetsRowDefault,
-                    child: ErrorText(
-                        Strings.of(context).statsPageNoDataMessage
-                    ),
+                    child: ErrorText(Strings.of(context)
+                        .statsPageNoDataMessage),
                   );
                 }
 
@@ -153,9 +148,9 @@ class _StatsPageState extends State<StatsPage> {
   }
 
   Widget _buildSummary(SummarizedActivityList summary) {
-    return LargestDurationFutureBuilder(
+    return LargestDurationBuilder(
       app: widget.app,
-      builder: (DurationUnit largestDurationUnit) {
+      builder: (BuildContext context, DurationUnit largestDurationUnit) {
         return Summary(
           title: Strings.of(context).summaryDefaultTitle,
           padding: insetsVerticalDefault,
@@ -202,15 +197,16 @@ class _StatsPageState extends State<StatsPage> {
     );
   }
 
-  void _updateSummarizedActivityListFuture() {
-    DateRange dateRange = _currentDateRange == StatsDateRange.allDates
+  void _updateFutures() {
+    DateRange dateRange = _currentDateRange == DisplayDateRange.allDates
         ? null
         : _currentDateRange.value;
 
+    List<Activity> activities = _currentActivities == null
+        ? []
+        : List.of(_currentActivities);
+
     _summarizedActivityListFuture = widget.app.dataManager
-        .getSummarizedActivities(
-          dateRange,
-          _currentActivities == null ? [] : List.of(_currentActivities),
-        );
+        .getSummarizedActivities(dateRange, activities);
   }
 }

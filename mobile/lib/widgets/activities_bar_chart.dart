@@ -28,14 +28,15 @@ class ActivitiesDurationBarChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return LargestDurationFutureBuilder(
+    return LargestDurationBuilder(
       app: app,
-      builder: (DurationUnit largestDurationUnit) => _ActivitiesBarChart(
-        chartId: "ActivitiesDurationBarChart",
-        title: Strings.of(context).statsPageDurationTitle,
-        padding: padding,
-        activities: activities,
-        onBuildLabel: (SummarizedActivity activity) =>
+      builder: (BuildContext context, DurationUnit largestDurationUnit) {
+        return _ActivitiesBarChart(
+          chartId: "ActivitiesDurationBarChart",
+          title: Strings.of(context).statsPageDurationTitle,
+          padding: padding,
+          activities: activities,
+          onBuildLabel: (SummarizedActivity activity) =>
           "${activity.value.name} (${formatTotalDuration(
             context: context,
             durations: [activity.totalDuration],
@@ -44,15 +45,16 @@ class ActivitiesDurationBarChart extends StatelessWidget {
             showHighestTwoOnly: true,
             largestDurationUnit: largestDurationUnit,
           )})",
-        onMeasure: (activity) => activity.totalDuration.inSeconds,
-        primaryAxisSpec: Charts.NumericAxisSpec(
-          tickFormatterSpec: _DurationTickFormatter(
-            context: context,
-            formatCallback: _getFormatCallback(context, largestDurationUnit),
+          onMeasure: (activity) => activity.totalDuration.inSeconds,
+          primaryAxisSpec: Charts.NumericAxisSpec(
+            tickFormatterSpec: _DurationTickFormatter(
+              context: context,
+              formatCallback: _getFormatCallback(context, largestDurationUnit),
+            ),
           ),
-        ),
-        onSelect: onSelect,
-      ),
+          onSelect: onSelect,
+        );
+      },
     );
   }
 

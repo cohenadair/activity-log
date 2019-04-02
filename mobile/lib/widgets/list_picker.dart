@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:mobile/model/activity.dart';
+import 'package:mobile/res/dimen.dart';
 import 'package:mobile/utils/page_utils.dart';
 import 'package:mobile/widgets/button.dart';
 import 'package:mobile/widgets/list_item.dart';
@@ -51,6 +52,10 @@ class ListPicker<T> extends StatelessWidget {
   /// all [ListPickerItem.title] properties.
   final Widget Function(Set<T>) titleBuilder;
 
+  /// A [Widget] to show at the top of the underlying [ListView]. This [Widget]
+  /// will scroll with the [ListView].
+  final Widget listHeader;
+
   ListPicker({
     this.pageTitle,
     @required this.initialValues,
@@ -59,6 +64,7 @@ class ListPicker<T> extends StatelessWidget {
     @required this.onChanged,
     this.allowsMultiSelect = false,
     this.titleBuilder,
+    this.listHeader,
     this.showsValueOnTrailing = false,
   }) : assert(initialValues != null),
        assert(items != null),
@@ -90,6 +96,7 @@ class ListPicker<T> extends StatelessWidget {
       onTap: () {
         push(context, _ListPickerPage<T>(
           pageTitle: pageTitle,
+          listHeader: listHeader,
           allowsMultiSelect: allowsMultiSelect,
           selectedValues: initialValues,
           allItem: allItem,
@@ -182,6 +189,7 @@ class ListPickerItem<T> {
 /// A helper page for [ListPicker] that renders a list of options.
 class _ListPickerPage<T> extends StatefulWidget {
   final String pageTitle;
+  final Widget listHeader;
   final Set<T> selectedValues;
 
   final ListPickerItem<T> allItem;
@@ -194,6 +202,7 @@ class _ListPickerPage<T> extends StatefulWidget {
 
   _ListPickerPage({
     this.pageTitle,
+    this.listHeader,
     this.allowsMultiSelect = false,
     @required this.selectedValues,
     this.allItem,
@@ -232,7 +241,12 @@ class _ListPickerPageState<T> extends State<_ListPickerPage<T>> {
         ] : [],
       ),
       child: ListView(
-        children: items.map((ListPickerItem<T> item) {
+        children: [
+          widget.listHeader == null ? Empty() : Padding(
+            padding: insetsDefault,
+            child: widget.listHeader,
+          ),
+        ]..addAll(items.map((ListPickerItem<T> item) {
           if (item.isDivider) {
             return Divider();
           }
@@ -262,7 +276,7 @@ class _ListPickerPageState<T> extends State<_ListPickerPage<T>> {
               }
             },
           );
-        }).toList(),
+        }).toList()),
       ),
     );
   }

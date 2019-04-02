@@ -38,27 +38,29 @@ class ActivityListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return LargestDurationFutureBuilder(
+    return LargestDurationBuilder(
       app: app,
-      builder: (DurationUnit largestDurationUnit) => ListItem(
-        contentPadding: EdgeInsets.only(right: 0, left: paddingDefault),
-        title: Text(model.activity.name),
-        subtitle: TotalDurationText(model.duration == null
-            ? []
-            : [model.duration],
-          largestDurationUnit: largestDurationUnit,
-        ),
-        onTap: () {
-          onTap?.call(model.activity);
-        },
-        trailing: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            _buildRunningDuration(model.currentSession),
-            model.activity.isRunning ? _buildStopButton() : _buildStartButton(),
-          ],
-        ),
-      ),
+      builder: (BuildContext context, DurationUnit largestDurationUnit) {
+        return ListItem(
+          contentPadding: EdgeInsets.only(right: 0, left: paddingDefault),
+          title: Text(model.activity.name),
+          subtitle: TotalDurationText(model.duration == null
+              ? []
+              : [model.duration],
+            largestDurationUnit: largestDurationUnit,
+          ),
+          onTap: () => onTap?.call(model.activity),
+          trailing: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              _buildRunningDuration(model.currentSession),
+              model.activity.isRunning
+                  ? _buildStopButton()
+                  : _buildStartButton(),
+            ],
+          ),
+        );
+      },
     );
   }
 

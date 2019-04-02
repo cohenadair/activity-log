@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:mobile/i18n/strings.dart';
+import 'package:mobile/utils/string_utils.dart';
 import 'package:quiver/time.dart';
 
 enum DurationUnit {
@@ -62,6 +64,222 @@ class DateRange {
 
   int get startMs => startDate.millisecondsSinceEpoch;
   int get endMs => endDate.millisecondsSinceEpoch;
+}
+
+/// A pre-defined set of date ranges meant for user section. Includes ranges
+/// such as "This week", "This month", "Last year", etc.
+@immutable
+class DisplayDateRange {
+  static final allDates = DisplayDateRange._(
+    id: "allDates",
+    getValue: (DateTime now) => DateRange(
+      startDate: DateTime.fromMicrosecondsSinceEpoch(0),
+      endDate: now,
+    ),
+    getTitle: (context) => Strings.of(context).analysisDurationAllDates,
+  );
+
+  static final today = DisplayDateRange._(
+    id: "today",
+    getValue: (DateTime now) => DateRange(
+      startDate: dateTimeToDayAccuracy(now),
+      endDate: now,
+    ),
+    getTitle: (context) => Strings.of(context).analysisDurationToday,
+  );
+
+  static final yesterday = DisplayDateRange._(
+    id: "yesterday",
+    getValue: (DateTime now) => DateRange(
+      startDate: dateTimeToDayAccuracy(now).subtract(Duration(days: 1)),
+      endDate: dateTimeToDayAccuracy(now),
+    ),
+    getTitle: (context) => Strings.of(context).analysisDurationYesterday,
+  );
+
+  static final thisWeek = DisplayDateRange._(
+    id: "thisWeek",
+    getValue: (DateTime now) => DateRange(
+      startDate: getStartOfWeek(now),
+      endDate: now,
+    ),
+    getTitle: (context) => Strings.of(context).analysisDurationThisWeek,
+  );
+
+  static final thisMonth = DisplayDateRange._(
+    id: "thisMonth",
+    getValue: (DateTime now) => DateRange(
+      startDate: getStartOfMonth(now),
+      endDate: now,
+    ),
+    getTitle: (context) => Strings.of(context).analysisDurationThisMonth,
+  );
+
+  static final thisYear = DisplayDateRange._(
+    id: "thisYear",
+    getValue: (DateTime now) => DateRange(
+      startDate: getStartOfYear(now),
+      endDate: now,
+    ),
+    getTitle: (context) => Strings.of(context).analysisDurationThisYear,
+  );
+
+  static final lastWeek = DisplayDateRange._(
+    id: "lastWeek",
+    getValue: (DateTime now) {
+      DateTime endOfLastWeek = getStartOfWeek(now);
+      DateTime startOfLastWeek = endOfLastWeek.subtract(Duration(
+          days: DateTime.daysPerWeek),
+      );
+      return DateRange(startDate: startOfLastWeek, endDate: endOfLastWeek);
+    },
+    getTitle: (context) => Strings.of(context).analysisDurationLastWeek,
+  );
+
+  static final lastMonth = DisplayDateRange._(
+    id: "lastMonth",
+    getValue: (DateTime now) {
+      DateTime endOfLastMonth = getStartOfMonth(now);
+      int year = now.year;
+      int month = now.month - 1;
+      if (month < DateTime.january) {
+        month = DateTime.december;
+        year -= 1;
+      }
+      return DateRange(
+        startDate: DateTime(year, month),
+        endDate: endOfLastMonth,
+      );
+    },
+    getTitle: (context) => Strings.of(context).analysisDurationLastMonth,
+  );
+
+  static final lastYear = DisplayDateRange._(
+    id: "lastYear",
+    getValue: (DateTime now) => DateRange(
+      startDate: DateTime(now.year - 1),
+      endDate: getStartOfYear(now),
+    ),
+    getTitle: (context) => Strings.of(context).analysisDurationLastYear,
+  );
+
+  static final last7Days = DisplayDateRange._(
+    id: "last7Days",
+    getValue: (DateTime now) => DateRange(
+      startDate: now.subtract(Duration(days: 7)),
+      endDate: now,
+    ),
+    getTitle: (context) => Strings.of(context).analysisDurationLast7Days,
+  );
+
+  static final last14Days = DisplayDateRange._(
+    id: "last14Days",
+    getValue: (DateTime now) => DateRange(
+      startDate: now.subtract(Duration(days: 14)),
+      endDate: now,
+    ),
+    getTitle: (context) => Strings.of(context).analysisDurationLast14Days,
+  );
+
+  static final last30Days = DisplayDateRange._(
+    id: "last30Days",
+    getValue: (DateTime now) => DateRange(
+      startDate: now.subtract(Duration(days: 30)),
+      endDate: now,
+    ),
+    getTitle: (context) => Strings.of(context).analysisDurationLast30Days,
+  );
+
+  static final last60Days = DisplayDateRange._(
+    id: "last60Days",
+    getValue: (DateTime now) => DateRange(
+      startDate: now.subtract(Duration(days: 60)),
+      endDate: now,
+    ),
+    getTitle: (context) => Strings.of(context).analysisDurationLast60Days,
+  );
+
+  static final last12Months = DisplayDateRange._(
+    id: "last12Months",
+    getValue: (DateTime now) => DateRange(
+      startDate: now.subtract(Duration(days: 365)),
+      endDate: now,
+    ),
+    getTitle: (context) => Strings.of(context).analysisDurationLast12Months,
+  );
+
+  static final custom = DisplayDateRange._(
+    id: "custom",
+    getValue: (now) => DisplayDateRange.thisMonth.getValue(now),
+    getTitle: (context) => Strings.of(context).analysisDurationCustom,
+  );
+
+  static final all = [
+    allDates, today, yesterday, thisWeek, thisMonth, thisYear, lastWeek,
+    lastMonth, lastYear, last7Days, last14Days, last30Days, last60Days,
+    last12Months, custom,
+  ];
+
+  /// Returns the [DisplayDateRange] for the given ID, or `null` if none exists.
+  static DisplayDateRange of(String id) {
+    try {
+      return all.firstWhere((range) => range.id == id);
+    } on StateError {
+      return null;
+    }
+  }
+
+  final String id;
+  final DateRange Function(DateTime now) getValue;
+  final String Function(BuildContext context) getTitle;
+
+  DisplayDateRange._({
+    this.id, this.getValue, this.getTitle
+  });
+
+  /// Used to create a [DisplayDateRange] with custom start and end dates, but
+  /// with the same ID as [DisplayDateRange.custom].
+  DisplayDateRange.newCustom({
+    DateRange Function(DateTime now) getValue,
+    String Function(BuildContext context) getTitle,
+  }) : this._(
+    id: custom.id,
+    getValue: getValue,
+    getTitle: getTitle,
+  );
+
+  DateRange get value => getValue(DateTime.now());
+
+  /// Returns a formatted [Duration] with an appended label for the receiver.
+  /// For [custom] and [allDates], no label is added.
+  ///
+  /// Examples:
+  ///   - 0d 12h 45m 0s last week
+  ///   - 0d 0h 45m 0s today
+  String formatDuration({
+    @required BuildContext context,
+    Duration duration = const Duration(),
+    DurationUnit largestDurationUnit,
+  }) {
+    String formattedDuration = formatTotalDuration(
+      durations: [duration],
+      largestDurationUnit: largestDurationUnit,
+    );
+
+    if (this == allDates || this == custom) {
+      return formattedDuration;
+    }
+
+    return formattedDuration + " " + getTitle(context);
+  }
+
+  @override
+  bool operator ==(other) {
+    return other is DisplayDateRange && other.id == id;
+  }
+
+  @override
+  int get hashCode => id.hashCode;
 }
 
 bool isSameYear(DateTime a, DateTime b) {

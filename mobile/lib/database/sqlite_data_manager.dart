@@ -1,25 +1,34 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:mobile/database/data_manageable.dart';
+import 'package:mobile/app_manager.dart';
+import 'package:mobile/database/sqlite_open_helper.dart';
 import 'package:mobile/model/activity.dart';
 import 'package:mobile/model/model.dart';
 import 'package:mobile/model/session.dart';
 import 'package:mobile/model/summarized_activity.dart';
 import 'package:mobile/utils/date_time_utils.dart';
+import 'package:mobile/utils/void_stream_controller.dart';
 import 'package:mobile/widgets/activity_list_tile.dart';
+import 'package:mobile/widgets/future_listener.dart';
 import 'package:sqflite/sqflite.dart';
 
-class SQLiteDataManager implements DataManageable {
+class SQLiteDataManager {
   Database _database;
-  final StreamController<List<Activity>> _activitiesUpdated =
-      StreamController.broadcast();
-  final Map<String, StreamController<List<Session>>> _sessionsUpdatedMap =
-      Map();
 
-  @override
-  void initialize(Database database) {
-    _database = database;
+  final _activitiesUpdated = VoidStreamController();
+  final Map<String, VoidStreamController> _sessionsUpdatedMap = Map();
+
+  /// Events are added to this [Stream] when an [Activity] is added, removed,
+  /// or modified.
+  Stream<void> get activitiesUpdatedStream => _activitiesUpdated.stream;
+
+  Future<void> initialize([Database database]) async {
+    if (database == null) {
+      _database = await SQLiteOpenHelper.open();
+    } else {
+      _database = database;
+    }
   }
 
   void _update(String table, Model model, VoidCallback notify) {
@@ -33,46 +42,32 @@ class SQLiteDataManager implements DataManageable {
     });
   }
 
-  @override
-  void getActivitiesUpdateStream(StreamHandler<List<Activity>> notifyNow) {
-    if (notifyNow(_activitiesUpdated.stream)) {
-      _notifyActivitiesUpdated();
-    }
-  }
-
-  @override
-  void getSessionsUpdatedStream(String activityId,
-      StreamHandler<List<Session>> notifyNow)
-  {
+  /// Events are added to this [Stream] when sessions for the given activity ID
+  /// are updated.
+  Stream<void> getSessionsUpdatedStream(String activityId) {
     if (!_sessionsUpdatedMap.containsKey(activityId)) {
-      _sessionsUpdatedMap[activityId] = StreamController.broadcast();
+      _sessionsUpdatedMap[activityId] = VoidStreamController();
     }
-
-    if (notifyNow(_sessionsUpdatedMap[activityId].stream)) {
-      _notifySessionsUpdated(activityId);
-    }
+    return _sessionsUpdatedMap[activityId].stream;
   }
 
-  Future<List<Activity>> _getActivities() async {
+  Future<List<Activity>> get _activities async {
     String query = "SELECT * FROM activity ORDER BY name";
     return (await _database.rawQuery(query)).map((map) {
       return Activity.fromMap(map);
     }).toList();
   }
 
-  @override
   void addActivity(Activity activity) {
     _database.insert("activity", activity.toMap()).then((int value) {
-      _notifyActivitiesUpdated();
+      _activitiesUpdated.notify();
     });
   }
 
-  @override
   void updateActivity(Activity activity) {
-    _update("activity", activity, _notifyActivitiesUpdated);
+    _update("activity", activity, _activitiesUpdated.notify);
   }
 
-  @override
   void removeActivity(String activityId) {
     Batch batch = _database.batch();
 
@@ -83,11 +78,13 @@ class SQLiteDataManager implements DataManageable {
     batch.rawDelete("DELETE FROM session WHERE activity_id = ?", [activityId]);
 
     batch.commit().then((value) {
-      _notifyActivitiesUpdated();
+      _activitiesUpdated.notify();
     });
   }
 
-  @override
+  /// Creates and starts a new [Session] for the given [Activity]. If the given
+  /// [Activity] is already running, this method does nothing. Returns the ID
+  /// of the new [Session].
   Future<String> startSession(Activity activity) async {
     if (activity.isRunning) {
       // Only one session per activity can be running at a given time.
@@ -104,12 +101,14 @@ class SQLiteDataManager implements DataManageable {
     );
 
     var _ = await batch.commit();
-    _notifyActivitiesUpdated();
+    _activitiesUpdated.notify();
 
     return newSession.id;
   }
 
-  @override
+  /// Ends the session for the given [Activity]. This method does nothing if
+  /// the given [Activity] isn't running. Always returns `null`, which can and
+  /// should be ignored.
   Future<void> endSession(Activity activity) async {
     if (!activity.isRunning) {
       // Can't end a session for an activity that isn't running.
@@ -130,26 +129,23 @@ class SQLiteDataManager implements DataManageable {
     );
 
     var _ = await batch.commit();
-    _notifyActivitiesUpdated();
+    _activitiesUpdated.notify();
 
     return null;
   }
 
-  @override
   void addSession(Session session) {
     _database.insert("session", session.toMap()).then((int value) {
       _notifySessionsUpdated(session.activityId);
     });
   }
 
-  @override
   void updateSession(Session session) {
     _update("session", session, () {
       _notifySessionsUpdated(session.activityId);
     });
   }
 
-  @override
   void removeSession(Session session) async {
     Batch batch = _database.batch();
 
@@ -170,17 +166,14 @@ class SQLiteDataManager implements DataManageable {
     _notifySessionsUpdated(session.activityId);
   }
 
-  @override
   Future<List<Session>> getSessions(String activityId) async {
     return getLimitedSessions(activityId, null);
   }
 
-  @override
   Future<List<Session>> getRecentSessions(String activityId, int limit) async {
     return getLimitedSessions(activityId, limit);
   }
 
-  @override
   Future<int> getSessionCount(String activityId) async {
     String query = """
       SELECT COUNT(*) FROM session WHERE activity_id = ?
@@ -188,7 +181,8 @@ class SQLiteDataManager implements DataManageable {
     return Sqflite.firstIntValue(await _database.rawQuery(query, [activityId]));
   }
 
-  @override
+  /// Returns the [Session] the given [Session] overlaps with, if one exists;
+  /// `null` otherwise.
   Future<Session> getOverlappingSession(Session session) async {
     String query;
     List<dynamic> params;
@@ -263,7 +257,7 @@ class SQLiteDataManager implements DataManageable {
     }).toList();
   }
 
-  @override
+  /// Returns the session with the given ID, or `null` if one isn't found.
   Future<Session> getSession(String sessionId) async {
     if (sessionId == null) {
       return null;
@@ -276,7 +270,7 @@ class SQLiteDataManager implements DataManageable {
     return Session.fromMap(map);
   }
 
-  @override
+  /// Case-insensitive compare of a given name to all other activity names.
   Future<bool> activityNameExists(String name) async {
     String query = """
       SELECT COUNT(*) FROM activity WHERE name = ? COLLATE NOCASE
@@ -284,7 +278,16 @@ class SQLiteDataManager implements DataManageable {
     return Sqflite.firstIntValue(await _database.rawQuery(query, [name])) == 1;
   }
 
-  @override
+  /// Returns a [SummarizedActivityList] object within the given date
+  /// range. If the `activities` parameter is not `null`, the result is
+  /// restricted to only those activities.
+  ///
+  /// Note that this will return a [SummarizedActivityList], even if there
+  /// were no sessions for the associated [Activity] objects within the given
+  /// [DateRange].
+  ///
+  /// If the given [DateRange] is `null`, the result will include all [Session]
+  /// objects associated with each given [Activity].
   Future<SummarizedActivityList> getSummarizedActivities(DateRange dateRange,
       [List<Activity> activities]) async
   {
@@ -350,8 +353,20 @@ class SQLiteDataManager implements DataManageable {
     return SummarizedActivityList(summarizedActivities);
   }
 
-  @override
-  Future<List<ActivityListTileModel>> getActivityListModel() async {
+  /// Returns a list of [ActivityListTileModel] objects meant to be used in
+  /// a list of [ActivityListTile] widgets.
+  ///
+  /// The reason we have a separate model is because not all relative
+  /// information is attached to an [Activity] object. Some properties, such as
+  /// total duration, needs to be calculated from the session database table.
+  ///
+  /// The passed in [DateRange] object is used for calculating the total
+  /// duration to display.
+  Future<List<ActivityListTileModel>> getActivityListModel({
+    @required DateRange dateRange,
+  }) async {
+    assert(dateRange != null);
+
     String allActivitiesQuery = "SELECT * FROM activity";
 
     String inProgressSessionsQuery = """
@@ -361,14 +376,15 @@ class SQLiteDataManager implements DataManageable {
     String totalDurationsQuery = """
       SELECT activity_id, SUM(end_timestamp - start_timestamp) as sum_value
       FROM session
-      WHERE end_timestamp NOT NULL
+      WHERE start_timestamp < ?
+      AND (end_timestamp IS NULL OR end_timestamp > ?)
       GROUP BY activity_id
     """;
 
     Batch batch = _database.batch();
     batch.rawQuery(allActivitiesQuery);
     batch.rawQuery(inProgressSessionsQuery);
-    batch.rawQuery(totalDurationsQuery);
+    batch.rawQuery(totalDurationsQuery, [dateRange.endMs, dateRange.startMs]);
     List<dynamic> mapList = await batch.commit();
 
     Map<String, ActivityListTileModel> modelMap = Map();
@@ -398,25 +414,84 @@ class SQLiteDataManager implements DataManageable {
     return result;
   }
 
-  void _notifyActivitiesUpdated() {
-    _getActivities().then((List<Activity> activities) {
-      if (_activitiesUpdated.hasListener) {
-        _activitiesUpdated.add(activities);
-      }
-    });
-  }
-
   void _notifySessionsUpdated(String activityId) {
     // Technically, when a session is added, the Activity is updated, although
     // the Activity table in the DB isn't directly updated.
-    _notifyActivitiesUpdated();
+    _activitiesUpdated.notify();
 
-    getSessions(activityId).then((List<Session> sessions) {
-      if (_sessionsUpdatedMap.containsKey(activityId) &&
-          _sessionsUpdatedMap[activityId].hasListener)
-      {
-        _sessionsUpdatedMap[activityId].add(sessions);
-      }
-    });
+    if (_sessionsUpdatedMap.containsKey(activityId)) {
+      _sessionsUpdatedMap[activityId].notify();
+    }
+  }
+}
+
+/// A [FutureListener] wrapper for listening for [Activity] updates.
+class ActivitiesBuilder extends StatelessWidget {
+  final AppManager app;
+  final Widget Function(BuildContext, List<Activity>) builder;
+
+  ActivitiesBuilder({
+    @required this.app,
+    @required this.builder,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureListener.single(
+      getFutureCallback: () => app.dataManager._activities,
+      stream: app.dataManager._activitiesUpdated.stream,
+      builder: (context, value) => builder(context, value as List<Activity>),
+    );
+  }
+}
+
+/// A [FutureListener] wrapper for listening for [ActivityListTileModel]
+/// updates.
+class ActivityListModelBuilder extends StatelessWidget {
+  final AppManager app;
+  final Widget Function(BuildContext, List<ActivityListTileModel>) builder;
+
+  ActivityListModelBuilder({
+    @required this.app,
+    @required this.builder,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureListener(
+      getFutureCallbacks: [
+        () => app.dataManager.getActivityListModel(
+          dateRange: app.preferencesManager.homeDateRange.value,
+        ),
+      ],
+      streams: [
+        app.preferencesManager.homeDateRangeStream,
+        app.dataManager._activitiesUpdated.stream,
+      ],
+      builder: (context, result) => builder(context, result.first),
+    );
+  }
+}
+
+/// A [FutureListener] wrapper for listening for [Session] updates for a given
+/// [Activity].
+class SessionsBuilder extends StatelessWidget {
+  final AppManager app;
+  final String activityId;
+  final Widget Function(BuildContext, List<Session>) builder;
+
+  SessionsBuilder({
+    @required this.app,
+    @required this.activityId,
+    @required this.builder,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureListener.single(
+      getFutureCallback: () => app.dataManager.getSessions(activityId),
+      stream: app.dataManager.getSessionsUpdatedStream(activityId),
+      builder: (context, value) => builder(context, value as List<Session>),
+    );
   }
 }

@@ -54,6 +54,8 @@ Map<String, Map<String, String>> englishStrings = {
     "settingsPage_largestDurationDays" : "Days",
     "settingsPage_largestDurationHours" : "Hours",
     "settingsPage_largestDurationMinutes" : "Minutes",
+    "settingsPage_homeDateRangeDurationLabel" : "Home Date Range",
+    "settingsPage_homeDateRangeDescription" : "Select the date range for durations shown in the activity list on the Home screen.",
 
     "statsPage_title" : "Stats",
     "statsPage_noDataMessage" : "No data to show; try different filter options.",

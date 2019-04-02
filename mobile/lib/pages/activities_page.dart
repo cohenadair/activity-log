@@ -1,12 +1,11 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:mobile/app_manager.dart';
+import 'package:mobile/database/sqlite_data_manager.dart';
 import 'package:mobile/i18n/strings.dart';
 import 'package:mobile/model/activity.dart';
 import 'package:mobile/pages/edit_activity_page.dart';
-import 'package:mobile/widgets/list_page.dart';
 import 'package:mobile/widgets/activity_list_tile.dart';
+import 'package:mobile/widgets/list_page.dart';
 
 class ActivitiesPage extends StatefulWidget {
   final AppManager app;
@@ -18,68 +17,44 @@ class ActivitiesPage extends StatefulWidget {
 }
 
 class _ActivitiesPageState extends State<ActivitiesPage> {
-  StreamSubscription<List<Activity>> _onActivitiesUpdated;
-  StreamController<List<ActivityListTileModel>> _modelUpdatedController;
-
-  @override
-  void initState() {
-    _modelUpdatedController = StreamController.broadcast();
-
-    widget.app.dataManager.getActivitiesUpdateStream((stream) {
-      _onActivitiesUpdated = stream.listen((_) async {
-        _updateModel();
-      });
-
-      return true;
-    });
-
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    _onActivitiesUpdated.cancel();
-    _modelUpdatedController.close();
-  }
-
   @override
   Widget build(BuildContext context) {
-    return ListPage<ActivityListTileModel>(
-      title: Strings.of(context).activitiesPageTitle,
-      onGetEditPageCallback: (ActivityListTileModel model) {
-        return EditActivityPage(
-          widget.app,
-          model == null ? null : model.activity,
-        );
-      },
-      onBuildTileCallback: (ActivityListTileModel model, onTapTile) {
-        return ActivityListTile(
-          app: widget.app,
-          model: model,
-          onTap: (Activity activity) {
-            onTapTile(model);
+    return ActivityListModelBuilder(
+      app: widget.app,
+      builder: (BuildContext context, List<ActivityListTileModel> models) {
+        return ListPage<ActivityListTileModel>(
+          items: models,
+          title: Strings.of(context).activitiesPageTitle,
+          getEditPageCallback: (ActivityListTileModel model) {
+            return EditActivityPage(
+              widget.app,
+              model == null ? null : model.activity,
+            );
           },
-          onTapStartSession: () {
-            widget.app.dataManager.startSession(model.activity).then((_) {
-              _updateModel();
-            });
-          },
-          onTapEndSession: () {
-            widget.app.dataManager.endSession(model.activity).then((_) {
-              _updateModel();
-            });
+          buildTileCallback: (ActivityListTileModel model, onTapTile) {
+            return ActivityListTile(
+              app: widget.app,
+              model: model,
+              onTap: (_) => onTapTile(model),
+              onTapStartSession: () => _startSession(model.activity),
+              onTapEndSession: () => _endSession(model.activity),
+            );
           },
         );
-      },
-      stream: _modelUpdatedController.stream,
+      }
     );
   }
 
-  void _updateModel() {
+  void _startSession(Activity activity) {
+    widget.app.dataManager.startSession(activity).then((_) => _update());
+  }
+
+  void _endSession(Activity activity) {
+    widget.app.dataManager.endSession(activity).then((_) => _update());
+  }
+
+  void _update() {
     setState(() {
-      widget.app.dataManager.getActivityListModel()
-          .then((model) => _modelUpdatedController.add(model));
     });
   }
 }

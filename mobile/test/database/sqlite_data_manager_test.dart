@@ -13,10 +13,10 @@ void main() {
   MockDatabase database;
   SQLiteDataManager dataManager;
 
-  setUp(() {
+  setUp(() async {
     database = MockDatabase();
     dataManager = SQLiteDataManager();
-    dataManager.initialize(database);
+    await dataManager.initialize(database);
   });
 
   tearDown(() {

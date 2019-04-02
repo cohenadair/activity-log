@@ -1,12 +1,11 @@
 import 'package:mobile/preferences_manager.dart';
-import 'package:mobile/database/data_manageable.dart';
 import 'package:mobile/database/sqlite_data_manager.dart';
 
 class AppManager {
-  DataManageable _dataManager;
+  SQLiteDataManager _dataManager;
   PreferencesManager _preferencesManager;
 
-  DataManageable get dataManager {
+  SQLiteDataManager get dataManager {
     if (_dataManager == null) {
       _dataManager = SQLiteDataManager();
     }

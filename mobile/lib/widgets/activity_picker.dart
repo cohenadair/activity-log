@@ -1,7 +1,6 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:mobile/app_manager.dart';
+import 'package:mobile/database/sqlite_data_manager.dart';
 import 'package:mobile/i18n/strings.dart';
 import 'package:mobile/model/activity.dart';
 import 'package:mobile/widgets/list_picker.dart';
@@ -28,33 +27,17 @@ class ActivityPicker extends StatefulWidget {
 }
 
 class _ActivityPickerState extends State<ActivityPicker> {
-  Stream<List<Activity>> _stream;
   Activity _allActivitiesActivity;
 
   @override
-  void initState() {
-    super.initState();
-
-    widget.app.dataManager.getActivitiesUpdateStream((stream) {
-      _stream = stream;
-      return true;
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return StreamBuilder<List<Activity>>(
-      stream: _stream,
-      builder: (BuildContext context, AsyncSnapshot<List<Activity>> snapshot) {
+    return ActivitiesBuilder(
+      app: widget.app,
+      builder: (BuildContext context, List<Activity> activities) {
         if (_allActivitiesActivity == null) {
           _allActivitiesActivity = ActivityBuilder(
             Strings.of(context).activityDropdownAllActivities,
           ).build;
-        }
-
-        List<Activity> activities = [];
-        if (snapshot.hasData) {
-          activities.addAll(snapshot.data);
         }
 
         return ListPicker<Activity>(

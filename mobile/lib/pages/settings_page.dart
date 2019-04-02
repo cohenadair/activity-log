@@ -33,6 +33,7 @@ class _SettingsPageState extends State<SettingsPage> {
         children: <Widget>[
           _buildHeading(Strings.of(context).settingsPageHeadingOther),
           _buildLargestDurationPicker(),
+          _buildHomeDateRangePicker(),
           MinDivider(),
           _buildHeading(Strings.of(context).settingsPageHeadingAbout),
           ListItem(
@@ -67,36 +68,38 @@ class _SettingsPageState extends State<SettingsPage> {
   }
 
   Widget _buildLargestDurationPicker() {
-    return LargestDurationFutureBuilder(
+    return LargestDurationBuilder(
       app: widget.app,
-      builder: (DurationUnit largestDurationUnit) => ListPicker<DurationUnit>(
-        pageTitle: Strings.of(context).settingsPageLargestDurationLabel,
-        initialValues: Set.of([largestDurationUnit]),
-        showsValueOnTrailing: true,
-        onChanged: (selectedValues) {
-          widget.app.preferencesManager
-              .setLargestDurationUnit(selectedValues.first);
-        },
-        titleBuilder: (_) =>
-            Text(Strings.of(context).settingsPageLargestDurationLabel),
-        items: [
-          ListPickerItem<DurationUnit>(
-            title: Strings.of(context).settingsPageLargestDurationDays,
-            subtitle: _getLargestDurationUnitSubtitle(DurationUnit.days),
-            value: DurationUnit.days,
-          ),
-          ListPickerItem<DurationUnit>(
-            title: Strings.of(context).settingsPageLargestDurationHours,
-            subtitle: _getLargestDurationUnitSubtitle(DurationUnit.hours),
-            value: DurationUnit.hours,
-          ),
-          ListPickerItem<DurationUnit>(
-            title: Strings.of(context).settingsPageLargestDurationMinutes,
-            subtitle: _getLargestDurationUnitSubtitle(DurationUnit.minutes),
-            value: DurationUnit.minutes,
-          ),
-        ],
-      ),
+      builder: (BuildContext context, DurationUnit durationUnit) {
+        return ListPicker<DurationUnit>(
+          pageTitle: Strings.of(context).settingsPageLargestDurationLabel,
+          initialValues: Set.of([durationUnit]),
+          showsValueOnTrailing: true,
+          onChanged: (selectedValues) {
+            widget.app.preferencesManager
+                .setLargestDurationUnit(selectedValues.first);
+          },
+          titleBuilder: (_) =>
+              Text(Strings.of(context).settingsPageLargestDurationLabel),
+          items: [
+            ListPickerItem<DurationUnit>(
+              title: Strings.of(context).settingsPageLargestDurationDays,
+              subtitle: _getLargestDurationUnitSubtitle(DurationUnit.days),
+              value: DurationUnit.days,
+            ),
+            ListPickerItem<DurationUnit>(
+              title: Strings.of(context).settingsPageLargestDurationHours,
+              subtitle: _getLargestDurationUnitSubtitle(DurationUnit.hours),
+              value: DurationUnit.hours,
+            ),
+            ListPickerItem<DurationUnit>(
+              title: Strings.of(context).settingsPageLargestDurationMinutes,
+              subtitle: _getLargestDurationUnitSubtitle(DurationUnit.minutes),
+              value: DurationUnit.minutes,
+            ),
+          ],
+        );
+      }
     );
   }
 
@@ -106,6 +109,49 @@ class _SettingsPageState extends State<SettingsPage> {
       context: context, durations: [
         Duration(days: 3, hours: 15, minutes: 30, seconds: 55),
       ],
+    );
+  }
+
+  Widget _buildHomeDateRangePicker() {
+    return HomeDateRangeBuilder(
+      app: widget.app,
+      builder: (BuildContext context, DisplayDateRange dateRange) {
+        return ListPicker<DisplayDateRange>(
+          pageTitle: Strings.of(context).settingsPageHomeDateRangeLabel,
+          initialValues: Set.of([dateRange]),
+          showsValueOnTrailing: true,
+          onChanged: (selectedValues) {
+            widget.app.preferencesManager
+                .setHomeDateRange(selectedValues.first);
+          },
+          titleBuilder: (_) => Text(Strings.of(context)
+              .settingsPageHomeDateRangeLabel),
+          listHeader: Text(Strings.of(context)
+              .settingsPageHomeDateRangeDescription),
+          items: [
+            _buildDisplayDateRangeItem(DisplayDateRange.allDates),
+            ListPickerItem.divider(),
+            _buildDisplayDateRangeItem(DisplayDateRange.today),
+            ListPickerItem.divider(),
+            _buildDisplayDateRangeItem(DisplayDateRange.thisWeek),
+            _buildDisplayDateRangeItem(DisplayDateRange.thisMonth),
+            _buildDisplayDateRangeItem(DisplayDateRange.thisYear),
+            ListPickerItem.divider(),
+            _buildDisplayDateRangeItem(DisplayDateRange.last7Days),
+            _buildDisplayDateRangeItem(DisplayDateRange.last30Days),
+            _buildDisplayDateRangeItem(DisplayDateRange.last12Months),
+          ],
+        );
+      }
+    );
+  }
+
+  ListPickerItem<DisplayDateRange> _buildDisplayDateRangeItem(
+      DisplayDateRange dateRange)
+  {
+    return ListPickerItem<DisplayDateRange>(
+      title: dateRange.getTitle(context),
+      value: dateRange,
     );
   }
 }

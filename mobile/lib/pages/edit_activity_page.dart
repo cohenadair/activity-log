@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:mobile/app_manager.dart';
 import 'package:mobile/i18n/strings.dart';
@@ -11,15 +9,16 @@ import 'package:mobile/pages/sessions_page.dart';
 import 'package:mobile/res/dimen.dart';
 import 'package:mobile/utils/page_utils.dart';
 import 'package:mobile/utils/string_utils.dart';
+import 'package:mobile/widgets/future_listener.dart';
 import 'package:mobile/widgets/session_list_tile.dart';
 import 'package:mobile/widgets/text.dart';
 import 'package:mobile/widgets/widget.dart';
 
 class EditActivityPage extends StatefulWidget {
-  final AppManager _app;
-  final Activity _editingActivity;
+  final AppManager app;
+  final Activity editingActivity;
 
-  EditActivityPage(this._app, [this._editingActivity]);
+  EditActivityPage(this.app, [this.editingActivity]);
 
   @override
   _EditActivityPageState createState() => _EditActivityPageState();
@@ -29,44 +28,18 @@ class _EditActivityPageState extends State<EditActivityPage> {
   final _formKey = GlobalKey<FormState>();
   final _recentSessionLimit = 3;
 
-  AppManager get _app => widget._app;
-  Activity get _editingActivity => widget._editingActivity;
-  bool get _isEditing => _editingActivity != null;
+  bool get _isEditing => widget.editingActivity != null;
 
   TextEditingController _nameController;
-  StreamSubscription<List<Session>> _sessionsUpdatedSubscription;
-  Future<List<Session>> _recentSessionsFuture;
-  Future<int> _sessionCountFuture;
   String _nameValidatorValue;
 
   @override
   void initState() {
-    if (_isEditing) {
-      _app.dataManager.getSessionsUpdatedStream(_editingActivity.id, (stream) {
-        _sessionsUpdatedSubscription = stream.listen((List<Session> sessions) {
-          setState(() {
-            _updateFutures();
-          });
-        });
-        return false;
-      });
-    }
-
     _nameController = TextEditingController(
-      text: _isEditing ? _editingActivity.name : null
+      text: _isEditing ? widget.editingActivity.name : null
     );
 
-    _updateFutures();
-
     super.initState();
-  }
-
-  @override
-  void dispose() {
-    if (_sessionsUpdatedSubscription != null) {
-      _sessionsUpdatedSubscription.cancel();
-    }
-    super.dispose();
   }
 
   @override
@@ -77,10 +50,11 @@ class _EditActivityPageState extends State<EditActivityPage> {
           : Strings.of(context).editActivityPageNewTitle,
       padding: insetsVerticalSmall,
       onSave: () => _onPressedSaveButton(),
-      onDelete: () => _app.dataManager.removeActivity(_editingActivity.id),
+      onDelete: () => widget.app.dataManager
+          .removeActivity(widget.editingActivity.id),
       deleteDescription: _isEditing ? format(
           Strings.of(context).editActivityPageDeleteMessage,
-          [_editingActivity.name]) : null,
+          [widget.editingActivity.name]) : null,
       isEditingCallback: () => _isEditing,
       form: Form(
         key: _formKey,
@@ -109,45 +83,35 @@ class _EditActivityPageState extends State<EditActivityPage> {
     );
   }
 
-  void _updateFutures() {
-    if (!_isEditing) {
-      return;
-    }
-    
-    _recentSessionsFuture = _app.dataManager
-        .getRecentSessions(_editingActivity.id, _recentSessionLimit);
-    _sessionCountFuture = _app.dataManager.getSessionCount(_editingActivity.id);
-  }
-
-  FutureBuilder<List<Session>> _buildRecentSessions() {
-    return FutureBuilder<List<Session>>(
-      future: _recentSessionsFuture,
-      builder: (BuildContext context, AsyncSnapshot<List<Session>> snapshot) {
-        if (snapshot.hasError || !snapshot.hasData) {
-          return Empty();
-        }
-
+  Widget _buildRecentSessions() {
+    return RecentSessionsBuilder(
+      app: widget.app,
+      activityId: widget.editingActivity.id,
+      limit: _recentSessionLimit,
+      builder: (BuildContext context, List<Session> sessions, int sessionCount)
+      {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _buildRecentSessionsTitle(),
           ]
-          ..addAll(snapshot.data.isNotEmpty ? snapshot.data.map((session) {
+          ..addAll(sessions.isNotEmpty ? sessions.map((session) {
             return SessionListTile(
-              app: _app,
+              app: widget.app,
               session: session,
-              hasDivider: session != snapshot.data.last,
+              hasDivider: session != sessions.last,
               onTap: (Session session) {
                 push(context, EditSessionPage(
-                  app: _app,
-                  activity: _editingActivity,
+                  app: widget.app,
+                  activity: widget.editingActivity,
                   editingSession: session,
                 ));
               },
             );
           }) : [Empty()])
-          ..add(snapshot.data.isNotEmpty
-              ? _buildViewAllButton() : Empty())
+          ..add(
+            sessions.isNotEmpty ? _buildViewAllButton(sessionCount) : Empty(),
+          )
         );
       }
     );
@@ -167,8 +131,8 @@ class _EditActivityPageState extends State<EditActivityPage> {
               push(
                 context,
                 EditSessionPage(
-                  app: _app,
-                  activity: _editingActivity
+                  app: widget.app,
+                  activity: widget.editingActivity
                 ),
                 fullscreenDialog: true
               );
@@ -179,32 +143,18 @@ class _EditActivityPageState extends State<EditActivityPage> {
     );
   }
 
-  Widget _buildViewAllButton() {
-    return FutureBuilder<int>(
-      future: _sessionCountFuture,
-      builder: (BuildContext context, AsyncSnapshot<int> snapshot) {
-        if (snapshot.hasError ||
-            !snapshot.hasData ||
-            snapshot.data <= _recentSessionLimit)
-        {
-          return Empty();
-        }
-
-        return Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: <Widget>[
-            FlatButton(
-              padding: insetsHorizontalDefault,
-              onPressed: () {
-                push(context, SessionsPage(_app, _editingActivity));
-              },
-              child: Text(
-                Strings.of(context).editActivityPageMoreSessions.toUpperCase()
-              ),
-            ),
-          ],
-        );
-      }
+  Widget _buildViewAllButton(int sessionCount) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: <Widget>[
+        FlatButton(
+          padding: insetsHorizontalDefault,
+          onPressed: () =>
+              push(context, SessionsPage(widget.app, widget.editingActivity)),
+          child: Text(Strings.of(context).editActivityPageMoreSessions
+              .toUpperCase()),
+        ),
+      ],
     );
   }
 
@@ -220,11 +170,12 @@ class _EditActivityPageState extends State<EditActivityPage> {
       }
 
       if (_isEditing) {
-        var builder = ActivityBuilder.fromActivity(_editingActivity)
+        var builder = ActivityBuilder.fromActivity(widget.editingActivity)
             ..name = nameCandidate;
-        _app.dataManager.updateActivity(builder.build);
+        widget.app.dataManager.updateActivity(builder.build);
       } else {
-        _app.dataManager.addActivity(ActivityBuilder(nameCandidate).build);
+        widget.app.dataManager
+            .addActivity(ActivityBuilder(nameCandidate).build);
       }
 
       Navigator.pop(context);
@@ -234,7 +185,7 @@ class _EditActivityPageState extends State<EditActivityPage> {
   void _validateNameField(String name, Function(String) onFinish) {
     // The name hasn't changed, and therefore is still valid.
     if (_isEditing &&
-        isEqualTrimmedLowercase(_editingActivity.name, name))
+        isEqualTrimmedLowercase(widget.editingActivity.name, name))
     {
       onFinish(null);
       return;
@@ -245,8 +196,37 @@ class _EditActivityPageState extends State<EditActivityPage> {
       return;
     }
 
-    _app.dataManager.activityNameExists(name).then((bool exists) {
+    widget.app.dataManager.activityNameExists(name).then((bool exists) {
       onFinish(exists ? Strings.of(context).editActivityPageNameExists : null);
     });
+  }
+}
+
+/// A [FutureListener] wrapper for listening for the necessary [Session]
+/// updates for a the [EditActivityPage].
+class RecentSessionsBuilder extends StatelessWidget {
+  final AppManager app;
+  final String activityId;
+  final int limit;
+  final Widget Function(BuildContext, List<Session>, int) builder;
+
+  RecentSessionsBuilder({
+    @required this.app,
+    @required this.activityId,
+    this.limit,
+    @required this.builder,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureListener(
+      getFutureCallbacks: [
+        () => app.dataManager.getRecentSessions(activityId, limit),
+        () => app.dataManager.getSessionCount(activityId),
+      ],
+      streams: [app.dataManager.getSessionsUpdatedStream(activityId)],
+      builder: (context, values) =>
+          builder(context, values[0] as List<Session>, values[1] as int),
+    );
   }
 }
