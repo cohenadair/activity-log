@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/res/dimen.dart';
 
 class PageAppBarStyle {
   final String title;
@@ -41,15 +42,18 @@ class Page extends StatelessWidget {
   }
 
   Widget _buildTitleWithSubtitle(BuildContext context) {
-    return Column(
-      children: <Widget>[
-        Text(_appBarStyle.title),
-        Text(_appBarStyle.subtitle,
-          style: Theme.of(context).textTheme.subtitle.copyWith(
-            color: Colors.white,
+    return Padding(
+      padding: insetsTopSmall,
+      child: Column(
+        children: <Widget>[
+          Text(_appBarStyle.title),
+          Text(_appBarStyle.subtitle,
+            style: Theme.of(context).textTheme.subtitle.copyWith(
+              color: Colors.white,
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
