@@ -90,6 +90,9 @@ class Strings {
   String get settingsPageHomeDateRangeDescription => _getString("settingsPage_homeDateRangeDescription");
   String get settingsPageContactLabel => _getString("settingsPage_contactLabel");
   String get settingsPageFailedEmailMessage => _getString("settingsPage_failedEmailMessage");
+  String get settingsPageRateLabel => _getString("settingsPage_rateLabel");
+  String get settingsPageIosErrorRateMessage => _getString("settingsPage_iOS_errorRateMessage");
+  String get settingsPageAndroidErrorRateMessage => _getString("settingsPage_android_errorRateMessage");
 
   String get statsPageTitle => _getString("statsPage_title");
   String get statsPageNoDataMessage => _getString("statsPage_noDataMessage");

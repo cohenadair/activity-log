@@ -61,6 +61,9 @@ Map<String, Map<String, String>> englishStrings = {
     "settingsPage_homeDateRangeDescription" : "Select the date range for durations shown in the activity list on the Home screen.",
     "settingsPage_contactLabel" : "Email Support",
     "settingsPage_failedEmailMessage" : "Unable to send email. Please ensure this device has email functionality enabled.",
+    "settingsPage_rateLabel" : "Rate Activity Log",
+    "settingsPage_iOS_errorRateMessage" : "Unable to open App Store. Please make sure it is installed and enabled.",
+    "settingsPage_Android_errorRateMessage" : "Unable to open Google Play. Please make sure it is installed and enabled",
 
     "statsPage_title" : "Stats",
     "statsPage_noDataMessage" : "No data to show; try different filter options.",

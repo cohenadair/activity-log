@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:mobile/app_manager.dart';
 import 'package:mobile/i18n/strings.dart';
 import 'package:mobile/preferences_manager.dart';
@@ -29,6 +30,9 @@ class SettingsPage extends StatefulWidget {
 
 class _SettingsPageState extends State<SettingsPage> {
   final _supportEmail = "cohenadair@gmail.com";
+  final _rateAppStoreUrl =
+      "itms-apps://itunes.apple.com/app/id1458926666?action=write-review";
+  final _playStoreUrl = "market://details?id=";
 
   @override
   Widget build(BuildContext context) {
@@ -44,6 +48,7 @@ class _SettingsPageState extends State<SettingsPage> {
           MinDivider(),
           _buildHeading(Strings.of(context).settingsPageHeadingHelpAndFeedback),
           _buildContact(),
+          _buildRate(),
           MinDivider(),
           _buildHeading(Strings.of(context).settingsPageHeadingAbout),
           _buildAbout(),
@@ -56,6 +61,7 @@ class _SettingsPageState extends State<SettingsPage> {
     return Padding(
       padding: EdgeInsets.only(
         top: paddingDefault,
+        bottom: paddingDefault,
         left: paddingDefault,
         right: paddingDefault,
       ),
@@ -169,6 +175,28 @@ class _SettingsPageState extends State<SettingsPage> {
           context: context,
           description: Strings.of(context).settingsPageFailedEmailMessage,
         );
+      }
+    },
+  );
+
+  Widget _buildRate() => ListItem(
+    title: Text(Strings.of(context).settingsPageRateLabel),
+    onTap: () async {
+      String url;
+      String errorMessage;
+
+      if (Platform.isAndroid) {
+        url = _playStoreUrl + (await PackageInfo.fromPlatform()).packageName;
+        errorMessage = Strings.of(context).settingsPageAndroidErrorRateMessage;
+      } else {
+        url = _rateAppStoreUrl;
+        errorMessage = Strings.of(context).settingsPageIosErrorRateMessage;
+      }
+
+      if (await canLaunch(url)) {
+        await launch(url);
+      } else {
+        showError(context: context, description: errorMessage);
       }
     },
   );
