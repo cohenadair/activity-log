@@ -154,7 +154,7 @@ class LargeHeadingText extends StatelessWidget {
     return Text(
       _text,
       style: TextStyle(
-        fontSize: 18
+        fontSize: 18,
       ),
     );
   }

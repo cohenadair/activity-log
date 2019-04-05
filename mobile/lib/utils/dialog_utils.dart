@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mobile/i18n/strings.dart';
+import 'package:mobile/res/style.dart';
 
 showDeleteDialog({
   @required BuildContext context,
@@ -11,6 +12,7 @@ showDeleteDialog({
     context: context,
     builder: (BuildContext context) => AlertDialog(
       title: title == null ? null : Text(title),
+      titleTextStyle: styleTitleAlert,
       content: description == null ? null : Text(description),
       actions: <Widget>[
         FlatButton(
@@ -31,5 +33,27 @@ showDeleteDialog({
         )
       ],
     )
+  );
+}
+
+showError({
+  @required BuildContext context,
+  String description,
+}) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) => AlertDialog(
+      title: Text(Strings.of(context).error),
+      titleTextStyle: styleTitleAlert,
+      content: description == null ? null : Text(description),
+      actions: <Widget>[
+        FlatButton(
+          child: Text(Strings.of(context).ok.toUpperCase()),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+      ],
+    ),
   );
 }

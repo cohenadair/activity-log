@@ -20,6 +20,7 @@ dependencies:
 
   charts_flutter: 0.6.0
   date_range_picker: ^1.0.3
+  flutter_email_sender: 2.0.0
   intl: ^0.15.7
   package_info: any
   quiver: '>=2.0.0 <3.0.0'

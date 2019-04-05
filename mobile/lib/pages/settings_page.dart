@@ -1,9 +1,14 @@
+import 'dart:io';
+
+import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:mobile/app_manager.dart';
 import 'package:mobile/i18n/strings.dart';
 import 'package:mobile/preferences_manager.dart';
 import 'package:mobile/res/dimen.dart';
 import 'package:mobile/utils/date_time_utils.dart';
+import 'package:mobile/utils/dialog_utils.dart';
 import 'package:mobile/utils/string_utils.dart';
 import 'package:mobile/widgets/list_item.dart';
 import 'package:mobile/widgets/list_picker.dart';
@@ -23,6 +28,8 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
+  final _supportEmail = "cohenadair@gmail.com";
+
   @override
   Widget build(BuildContext context) {
     return Page(
@@ -35,20 +42,11 @@ class _SettingsPageState extends State<SettingsPage> {
           _buildLargestDurationPicker(),
           _buildHomeDateRangePicker(),
           MinDivider(),
+          _buildHeading(Strings.of(context).settingsPageHeadingHelpAndFeedback),
+          _buildContact(),
+          MinDivider(),
           _buildHeading(Strings.of(context).settingsPageHeadingAbout),
-          ListItem(
-            title: Text(Strings.of(context).settingsPageVersion),
-            trailing: FutureBuilder<PackageInfo>(
-              future: PackageInfo.fromPlatform(),
-              builder: (_, AsyncSnapshot<PackageInfo> snapshot) {
-                if (snapshot.hasData) {
-                  return SecondaryText(snapshot.data.version);
-                } else {
-                  return Loading();
-                }
-              },
-            ),
-          ),
+          _buildAbout(),
         ],
       ),
     );
@@ -154,4 +152,38 @@ class _SettingsPageState extends State<SettingsPage> {
       value: dateRange,
     );
   }
+
+  Widget _buildContact() => ListItem(
+    title: Text(Strings.of(context).settingsPageContactLabel),
+    onTap: () async {
+      try {
+        // Strings here are intentionally in English because that's the
+        // language I speak.
+        String osName = Platform.isAndroid ? "Android" : "iOS";
+        await FlutterEmailSender.send(Email(
+          subject: "Support Message From Activity Log ($osName)",
+          recipients: [_supportEmail],
+        ));
+      } on PlatformException {
+        showError(
+          context: context,
+          description: Strings.of(context).settingsPageFailedEmailMessage,
+        );
+      }
+    },
+  );
+
+  Widget _buildAbout() => ListItem(
+    title: Text(Strings.of(context).settingsPageVersion),
+    trailing: FutureBuilder<PackageInfo>(
+      future: PackageInfo.fromPlatform(),
+      builder: (_, AsyncSnapshot<PackageInfo> snapshot) {
+        if (snapshot.hasData) {
+          return SecondaryText(snapshot.data.version);
+        } else {
+          return Loading();
+        }
+      },
+    ),
+  );
 }

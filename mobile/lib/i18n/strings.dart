@@ -41,6 +41,8 @@ class Strings {
   String get today => _getString("today");
   String get yesterday => _getString("yesterday");
   String get none => _getString("none");
+  String get ok => _getString("ok");
+  String get error => _getString("error");
 
   String get navigationBarHome => _getString("navigationBar_home");
   String get navigationBarStats => _getString("navigationBar_stats");
@@ -79,12 +81,15 @@ class Strings {
   String get settingsPageVersion => _getString("settingsPage_version");
   String get settingsPageHeadingAbout => _getString("settingsPage_headingAbout");
   String get settingsPageHeadingOther => _getString("settingsPage_headingOther");
+  String get settingsPageHeadingHelpAndFeedback => _getString("settingsPage_headingHelpAndFeedback");
   String get settingsPageLargestDurationLabel => _getString("settingsPage_largestDurationLabel");
   String get settingsPageLargestDurationDays => _getString("settingsPage_largestDurationDays");
   String get settingsPageLargestDurationHours => _getString("settingsPage_largestDurationHours");
   String get settingsPageLargestDurationMinutes => _getString("settingsPage_largestDurationMinutes");
   String get settingsPageHomeDateRangeLabel => _getString("settingsPage_homeDateRangeDurationLabel");
   String get settingsPageHomeDateRangeDescription => _getString("settingsPage_homeDateRangeDescription");
+  String get settingsPageContactLabel => _getString("settingsPage_contactLabel");
+  String get settingsPageFailedEmailMessage => _getString("settingsPage_failedEmailMessage");
 
   String get statsPageTitle => _getString("statsPage_title");
   String get statsPageNoDataMessage => _getString("statsPage_noDataMessage");
