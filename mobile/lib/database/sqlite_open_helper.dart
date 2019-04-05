@@ -12,7 +12,7 @@ class SQLiteOpenHelper {
     CREATE TABLE activity (
       id TEXT PRIMARY KEY,
       name TEXT UNIQUE NOT NULL,
-      current_session_id INTEGER REFERENCES session(id)
+      current_session_id TEXT REFERENCES session(id)
     );
     """,
     """  
