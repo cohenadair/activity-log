@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:mobile/res/dimen.dart';
 
@@ -45,6 +47,9 @@ class Page extends StatelessWidget {
     return Padding(
       padding: insetsTopSmall,
       child: Column(
+        crossAxisAlignment: Platform.isAndroid
+            ? CrossAxisAlignment.start
+            : CrossAxisAlignment.center,
         children: <Widget>[
           Text(_appBarStyle.title),
           Text(_appBarStyle.subtitle,
