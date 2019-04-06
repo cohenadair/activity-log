@@ -417,7 +417,7 @@ class SQLiteDataManager {
     // Total durations.
     mapList[2].forEach((durationMap) {
       modelMap[durationMap["activity_id"]].duration =
-          Duration(milliseconds: durationMap["sum_value"]);
+          Duration(milliseconds: durationMap["sum_value"] ?? 0);
     });
 
     // Sort alphabetically.
