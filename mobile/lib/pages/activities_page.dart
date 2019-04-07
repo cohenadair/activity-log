@@ -6,6 +6,7 @@ import 'package:mobile/model/activity.dart';
 import 'package:mobile/pages/edit_activity_page.dart';
 import 'package:mobile/widgets/activity_list_tile.dart';
 import 'package:mobile/widgets/list_page.dart';
+import 'package:mobile/widgets/widget.dart';
 
 class ActivitiesPage extends StatefulWidget {
   final AppManager app;
@@ -24,6 +25,10 @@ class _ActivitiesPageState extends State<ActivitiesPage> {
       builder: (BuildContext context, List<ActivityListTileModel> models) {
         return ListPage<ActivityListTileModel>(
           items: models,
+          empty: EmptyPageHelp(
+            icon: Icons.home,
+            message: Strings.of(context).activitiesPageNoActivitiesMessage,
+          ),
           title: Strings.of(context).activitiesPageTitle,
           getEditPageCallback: (ActivityListTileModel model) {
             return EditActivityPage(

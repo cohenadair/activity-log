@@ -69,6 +69,11 @@ class SQLiteDataManager {
     }).toList();
   }
 
+  Future<int> get activityCount async {
+    String query = "SELECT COUNT(*) FROM activity";
+    return Sqflite.firstIntValue(await _database.rawQuery(query));
+  }
+
   void addActivity(Activity activity) {
     _database.insert("activity", activity.toMap()).then((int value) {
       _activitiesUpdated.notify();

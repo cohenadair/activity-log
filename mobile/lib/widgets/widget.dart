@@ -1,4 +1,7 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
+import 'package:mobile/res/dimen.dart';
 
 const defaultAnimationDuration = Duration(milliseconds: 200);
 
@@ -47,6 +50,56 @@ class _FadeInState<T> extends State<FadeIn<T>> {
       opacity: widget.visible ? 1.0 : 0.0,
       duration: widget.duration,
       child: widget.childBuilder(_lastValue),
+    );
+  }
+}
+
+/// A [Widget] meant to be displays when a page is "empty", such as a [ListView]
+/// with no elements.
+class EmptyPageHelp extends StatelessWidget {
+  final double _opacity = 0.4;
+  final double _containerSizeMultiplier = 0.5;
+  final double _verticalCenterOffset = 40;
+
+  final IconData icon;
+  final String message;
+
+  EmptyPageHelp({this.icon, this.message});
+
+  @override
+  Widget build(BuildContext context) {
+    return Opacity(
+      opacity: _opacity,
+      child: Center(
+        child: LayoutBuilder(
+          builder: (BuildContext context, BoxConstraints constraints) {
+            double iconSize = min(constraints.maxWidth, constraints.maxHeight);
+
+            return Container(
+              padding: insetsHorizontalDefault,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Icon(
+                    icon,
+                    size: iconSize * _containerSizeMultiplier,
+                    color: Theme.of(context).disabledColor,
+                  ),
+                  Text(
+                    message,
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.subhead,
+                  ),
+                  // Offset centering to account for icon padding.
+                  SizedBox.fromSize(
+                    size: Size.square(_verticalCenterOffset),
+                  ),
+                ],
+              ),
+            );
+          }
+        ),
+      ),
     );
   }
 }

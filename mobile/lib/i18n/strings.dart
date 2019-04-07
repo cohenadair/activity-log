@@ -49,6 +49,7 @@ class Strings {
   String get navigationBarSettings => _getString("navigationBar_settings");
 
   String get activitiesPageTitle => _getString("activitiesPage_title");
+  String get activitiesPageNoActivitiesMessage => _getString("activitiesPage_noActivitiesMessage");
 
   String get editActivityPageNewTitle => _getString("editActivityPage_newTitle");
   String get editActivityPageEditTitle => _getString("editActivityPage_editTitle");
@@ -95,6 +96,7 @@ class Strings {
   String get settingsPageAndroidErrorRateMessage => _getString("settingsPage_android_errorRateMessage");
 
   String get statsPageTitle => _getString("statsPage_title");
+  String get statsPageNoActivitiesMessage => _getString("statsPage_noActivitiesMessage");
   String get statsPageNoDataMessage => _getString("statsPage_noDataMessage");
   String get statsPageDurationTitle => _getString("statsPage_durationTitle");
   String get statsPageNumberOfSessionsTitle => _getString("statsPage_numberOfSessionsTitle");

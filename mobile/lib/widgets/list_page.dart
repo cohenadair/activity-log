@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/i18n/strings.dart';
 import 'package:mobile/utils/page_utils.dart';
 import 'package:mobile/widgets/page.dart';
 import 'package:mobile/widgets/widget.dart';
@@ -7,12 +8,16 @@ import 'package:mobile/widgets/widget.dart';
 /// to an "edit" page.
 class ListPage<T> extends StatefulWidget {
   final String title;
+
+  /// A [Widget] to show when the list is empty.
+  final Widget empty;
   final Widget Function(T) getEditPageCallback;
   final Widget Function(T, Function(T)) buildTileCallback;
   final List<T> items;
 
   ListPage({
     @required this.title,
+    this.empty,
     @required this.getEditPageCallback,
     @required this.buildTileCallback,
     @required this.items,
@@ -38,12 +43,20 @@ class _ListPageState<T> extends State<ListPage<T>> {
           ),
         ],
       ),
-      child: ListView.separated(
-        itemCount: widget.items.length,
-        separatorBuilder: (BuildContext context, int i) => MinDivider(),
-        itemBuilder: (BuildContext context, int i) =>
-            widget.buildTileCallback(widget.items[i], _openEditPage),
-      ),
+      child: _buildList(),
+    );
+  }
+
+  Widget _buildList() {
+    if (widget.items.isEmpty && widget.empty != null) {
+      return widget.empty;
+    }
+
+    return ListView.separated(
+      itemCount: widget.items.length,
+      separatorBuilder: (BuildContext context, int i) => MinDivider(),
+      itemBuilder: (BuildContext context, int i) =>
+          widget.buildTileCallback(widget.items[i], _openEditPage),
     );
   }
 

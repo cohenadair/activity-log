@@ -37,6 +37,7 @@ class _StatsPageState extends State<StatsPage> {
   DisplayDateRange _currentDateRange;
 
   Future<SummarizedActivityList> _summarizedActivityListFuture;
+  Future<int> _activityCountFuture;
   StreamSubscription<void> _onActivitiesUpdated;
 
   @override
@@ -77,58 +78,80 @@ class _StatsPageState extends State<StatsPage> {
       appBarStyle: PageAppBarStyle(
         title: Strings.of(context).statsPageTitle,
       ),
-      child: SingleChildScrollView(
-        controller: scrollController,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            ActivityPicker(
-              app: widget.app,
-              initialActivities: _currentActivities,
-              onPickedActivitiesChanged: (Set<Activity> pickedActivities) {
-                setState(() {
-                  _currentActivities = pickedActivities;
-                  _updateFutures();
-                });
-              },
-            ),
-            StatsDateRangePicker(
-              initialValue: _currentDateRange,
-              onDurationPicked: (DisplayDateRange pickedDateRange) {
-                setState(() {
-                  _currentDateRange = pickedDateRange;
-                  _updateFutures();
-                });
-              },
-            ),
-            MinDivider(),
-            FutureBuilder<SummarizedActivityList>(
-              future: _summarizedActivityListFuture,
-              builder: (BuildContext context,
-                  AsyncSnapshot<SummarizedActivityList> snapshot)
-              {
-                if (!snapshot.hasData) {
-                  return Loading.centered();
-                }
+      child: FutureBuilder<int>(
+        future: _activityCountFuture,
+        builder: (BuildContext context, AsyncSnapshot<int> snapshot) {
+          if (!snapshot.hasData) {
+            return Empty();
+          }
 
-                List<SummarizedActivity> activities = snapshot.data.activities;
-                if (activities == null || activities.isEmpty) {
-                  return Padding(
-                    padding: insetsRowDefault,
-                    child: ErrorText(Strings.of(context)
-                        .statsPageNoDataMessage),
-                  );
-                }
+          int activityCount = snapshot.data;
+          if (activityCount <= 0) {
+            return EmptyPageHelp(
+              icon: Icons.show_chart,
+              message: Strings.of(context).statsPageNoActivitiesMessage,
+            );
+          }
 
-                if (activities.length == 1) {
-                  return _buildForSingleActivity(activities.first);
-                } else {
-                  return _buildForMultipleActivities(snapshot.data);
-                }
-              },
+          return SingleChildScrollView(
+            controller: scrollController,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                ActivityPicker(
+                  app: widget.app,
+                  initialActivities: _currentActivities,
+                  onPickedActivitiesChanged: (
+                      Set<Activity> pickedActivities) {
+                    setState(() {
+                      _currentActivities = pickedActivities;
+                      _updateFutures();
+                    });
+                  },
+                ),
+                StatsDateRangePicker(
+                  initialValue: _currentDateRange,
+                  onDurationPicked: (DisplayDateRange pickedDateRange) {
+                    setState(() {
+                      _currentDateRange = pickedDateRange;
+                      _updateFutures();
+                    });
+                  },
+                ),
+                MinDivider(),
+                FutureBuilder<SummarizedActivityList>(
+                  future: _summarizedActivityListFuture,
+                  builder: (BuildContext context,
+                      AsyncSnapshot<SummarizedActivityList> snapshot)
+                  {
+                    if (!snapshot.hasData) {
+                      return Loading.centered();
+                    }
+
+                    List<SummarizedActivity> activities = snapshot.data
+                        .activities;
+                    if (activities == null || activities.isEmpty) {
+                      return Padding(
+                        padding: insetsDefault,
+                        child: ErrorText(Strings.of(context)
+                            .statsPageNoDataMessage),
+                      );
+                    }
+
+                    if (activities.length == 1
+                        && activities.first.displayDateRange
+                            != DisplayDateRange.allDates)
+                    {
+                      return _buildForSingleActivity(activities.first);
+                    } else {
+                      return _buildForMultipleActivities(snapshot.data);
+                    }
+                  },
+                ),
+              ],
             ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }
@@ -227,5 +250,7 @@ class _StatsPageState extends State<StatsPage> {
 
     _summarizedActivityListFuture = widget.app.dataManager
         .getSummarizedActivities(dateRange, activities);
+    
+    _activityCountFuture = widget.app.dataManager.activityCount;
   }
 }

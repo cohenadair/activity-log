@@ -21,6 +21,7 @@ Map<String, Map<String, String>> englishStrings = {
     "navigationBar_settings" : "Settings",
 
     "activitiesPage_title" : "Activities",
+    "activitiesPage_noActivitiesMessage" : "No activities to display. Click the \"+\" button to begin.",
 
     "editActivityPage_newTitle" : "New Activity",
     "editActivityPage_editTitle" : "Edit Activity",
@@ -66,6 +67,7 @@ Map<String, Map<String, String>> englishStrings = {
     "settingsPage_android_errorRateMessage" : "Unable to open Google Play. Please make sure it is installed and enabled",
 
     "statsPage_title" : "Stats",
+    "statsPage_noActivitiesMessage" : "No activities to display. Visit the \"Home\" page to begin.",
     "statsPage_noDataMessage" : "No data to show; try different filter options.",
     "statsPage_durationTitle" : "Session Duration",
     "statsPage_numberOfSessionsTitle" : "Number of Sessions",
