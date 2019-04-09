@@ -19,16 +19,27 @@ class SQLiteDataManager {
   final _activitiesUpdated = VoidStreamController();
   final Map<String, VoidStreamController> _sessionsUpdatedMap = Map();
 
+  /// Used for a more seamless transition between the launch screen and
+  /// [Activity] list. This value will be `null` after the app has loaded.
+  ///
+  /// This value is loaded during [SQLiteDataManager] initialization, and used
+  /// as an initial value for a [ActivityListModelBuilder].
+  List<ActivityListTileModel> _initialActivityListTileModels;
+
   /// Events are added to this [Stream] when an [Activity] is added, removed,
   /// or modified.
   Stream<void> get activitiesUpdatedStream => _activitiesUpdated.stream;
 
-  Future<void> initialize([Database database]) async {
+  Future<void> initialize(AppManager app, [Database database]) async {
     if (database == null) {
       _database = await SQLiteOpenHelper.open();
     } else {
       _database = database;
     }
+
+    _initialActivityListTileModels = await app.dataManager.getActivityListModel(
+      dateRange: app.preferencesManager.homeDateRange.value,
+    );
   }
 
   void _update(String table, Model model, VoidCallback notify) {
@@ -477,6 +488,10 @@ class ActivityListModelBuilder extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FutureListener(
+      initialValues: [app.dataManager._initialActivityListTileModels],
+      futuresHaveDataCallback: () =>
+          // Cleanup now unused data.
+          app.dataManager._initialActivityListTileModels = null,
       getFutureCallbacks: [
         () => app.dataManager.getActivityListModel(
           dateRange: app.preferencesManager.homeDateRange.value,

@@ -11,10 +11,10 @@ import 'package:mobile/widgets/widget.dart';
 class FutureListener extends StatefulWidget {
   /// The [Future]s that are updated when their corresponding [Stream]
   /// receives an event.
-  final List<Future Function()> getFutureCallbacks;
+  final List<Future<dynamic> Function()> getFutureCallbacks;
 
   /// The [Stream]s to listen to.
-  final List<Stream> streams;
+  final List<Stream<dynamic>> streams;
 
   /// Invoked when the default constructor is used to instantiate a
   /// [FutureListener] object. The passed in [List] include the values returned
@@ -26,10 +26,20 @@ class FutureListener extends StatefulWidget {
   /// equal to the value returned by [getFutureCallback].
   final Widget Function(BuildContext, dynamic) singleBuilder;
 
+  /// Values to show while the given [Future] objects are being executed.
+  /// The types of values in this [List] should be the same as the return
+  /// type of each given [Future].
+  final List<dynamic> initialValues;
+
+  /// Called when the given [Future] objects are finished retrieving data.
+  final VoidCallback futuresHaveDataCallback;
+
   FutureListener({
     @required this.getFutureCallbacks,
     @required this.streams,
     @required this.builder,
+    this.initialValues,
+    this.futuresHaveDataCallback,
   }) : assert(getFutureCallbacks != null),
        assert(getFutureCallbacks.isNotEmpty),
        assert(streams != null),
@@ -41,6 +51,8 @@ class FutureListener extends StatefulWidget {
     @required Future Function() getFutureCallback,
     @required Stream stream,
     @required Widget Function(BuildContext, dynamic) builder,
+    this.initialValues,
+    this.futuresHaveDataCallback,
   }) : getFutureCallbacks = [ getFutureCallback ],
        streams = [ stream ],
        singleBuilder = builder,
@@ -80,16 +92,32 @@ class _FutureListenerState extends State<FutureListener> {
       future: Future.wait(_futures),
       builder: (BuildContext context, AsyncSnapshot snapshot) {
         if (!snapshot.hasData) {
-          return Empty();
+          if (widget.initialValues == null) {
+            return Empty();
+          }
+
+          return _build(
+            singleValue: widget.initialValues.first,
+            multiValue: widget.initialValues,
+          );
         }
 
-        if (widget.builder == null) {
-          return widget.singleBuilder(context, snapshot.data.first);
-        } else {
-          return widget.builder(context, snapshot.data);
-        }
+        widget.futuresHaveDataCallback?.call();
+
+        return _build(
+          singleValue: snapshot.data.first,
+          multiValue: snapshot.data,
+        );
       },
     );
+  }
+
+  Widget _build({dynamic singleValue, List<dynamic> multiValue}) {
+    if (widget.builder == null) {
+      return widget.singleBuilder(context, singleValue);
+    } else {
+      return widget.builder(context, multiValue);
+    }
   }
 
   void _updateFutures() {

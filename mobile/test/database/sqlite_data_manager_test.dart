@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mobile/app_manager.dart';
 import 'package:mobile/database/sqlite_data_manager.dart';
 import 'package:mobile/model/activity.dart';
 import 'package:mobile/model/session.dart';
@@ -9,6 +10,7 @@ import 'package:sqflite/sqflite.dart';
 
 import '../test_utils.dart';
 
+class MockAppManager extends Mock implements AppManager {}
 class MockDatabase extends Mock implements Database {}
 
 void main() {
@@ -18,7 +20,7 @@ void main() {
   setUp(() async {
     database = MockDatabase();
     dataManager = SQLiteDataManager();
-    await dataManager.initialize(database);
+    await dataManager.initialize(MockAppManager(), database);
   });
 
   tearDown(() {
