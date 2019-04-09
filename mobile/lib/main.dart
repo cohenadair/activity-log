@@ -52,7 +52,9 @@ class _ActivityLogState extends State<ActivityLog> {
         future: _appInitializedFuture,
         builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
           if (snapshot.hasError || !snapshot.hasData) {
-            return Scaffold();
+            return Scaffold(
+              backgroundColor: Theme.of(context).primaryColor,
+            );
           }
           return MainPage(_app);
         },

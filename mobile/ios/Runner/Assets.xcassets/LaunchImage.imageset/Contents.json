@@ -2,22 +2,22 @@
   "images" : [
     {
       "idiom" : "universal",
-      "filename" : "LaunchImage.png",
+      "filename" : "launcher_1x.png",
       "scale" : "1x"
     },
     {
       "idiom" : "universal",
-      "filename" : "LaunchImage@2x.png",
+      "filename" : "launcher_2x.png",
       "scale" : "2x"
     },
     {
       "idiom" : "universal",
-      "filename" : "LaunchImage@3x.png",
+      "filename" : "launcher_3x.png",
       "scale" : "3x"
     }
   ],
   "info" : {
     "version" : 1,
-    "author" : "xcode"
+    "author" : "ios_icon_set"
   }
-}
+} 
