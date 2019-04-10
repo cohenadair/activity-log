@@ -4,6 +4,7 @@ import 'package:mobile/app_manager.dart';
 import 'package:mobile/database/sqlite_data_manager.dart';
 import 'package:mobile/model/activity.dart';
 import 'package:mobile/model/session.dart';
+import 'package:mobile/preferences_manager.dart';
 import 'package:mobile/utils/date_time_utils.dart';
 import 'package:mockito/mockito.dart';
 import 'package:sqflite/sqflite.dart';
@@ -11,21 +12,31 @@ import 'package:sqflite/sqflite.dart';
 import '../test_utils.dart';
 
 class MockAppManager extends Mock implements AppManager {}
+class MockBatch extends Mock implements Batch {}
 class MockDatabase extends Mock implements Database {}
+class MockPreferencesManager extends Mock implements PreferencesManager {}
 
 void main() {
+  MockAppManager appManager;
   MockDatabase database;
+  MockPreferencesManager preferencesManager;
   SQLiteDataManager dataManager;
 
   setUp(() async {
-    database = MockDatabase();
-    dataManager = SQLiteDataManager();
-    await dataManager.initialize(MockAppManager(), database);
-  });
+    appManager = MockAppManager();
 
-  tearDown(() {
-    database = null;
-    dataManager = null;
+    database = MockDatabase();
+    when(database.batch()).thenReturn(MockBatch());
+
+    dataManager = SQLiteDataManager();
+
+    preferencesManager = MockPreferencesManager();
+    when(appManager.preferencesManager).thenReturn(preferencesManager);
+    when(preferencesManager.largestDurationUnit).thenReturn(DurationUnit.days);
+    when(preferencesManager.homeDateRange)
+        .thenReturn(DisplayDateRange.allDates);
+
+    await dataManager.initialize(appManager, database);
   });
 
   stubActivities(List<Map<String, dynamic>> result) {

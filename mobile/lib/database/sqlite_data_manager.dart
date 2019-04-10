@@ -37,7 +37,7 @@ class SQLiteDataManager {
       _database = database;
     }
 
-    _initialActivityListTileModels = await app.dataManager.getActivityListModel(
+    _initialActivityListTileModels = await getActivityListModel(
       dateRange: app.preferencesManager.homeDateRange.value,
     );
   }
@@ -62,7 +62,7 @@ class SQLiteDataManager {
     return _sessionsUpdatedMap[activityId].stream;
   }
 
-  Future<List<Activity>> get _activities async {
+  Future<List<Activity>> get activities async {
     String query = "SELECT * FROM activity ORDER BY name";
     return (await _database.rawQuery(query)).map((map) {
       return Activity.fromMap(map);
@@ -107,6 +107,13 @@ class SQLiteDataManager {
     batch.commit().then((value) {
       _activitiesUpdated.notify();
     });
+  }
+
+  Future<List<Session>> get sessions async {
+    String query = "SELECT * FROM session";
+    return (await _database.rawQuery(query)).map((map) {
+      return Session.fromMap(map);
+    }).toList();
   }
 
   /// Creates and starts a new [Session] for the given [Activity]. If the given
@@ -416,6 +423,10 @@ class SQLiteDataManager {
     batch.rawQuery(totalDurationsQuery, [dateRange.endMs, dateRange.startMs]);
     List<dynamic> mapList = await batch.commit();
 
+    if (mapList == null || mapList.isEmpty) {
+      return [];
+    }
+
     Map<String, ActivityListTileModel> modelMap = Map();
 
     // Activities.
@@ -467,7 +478,7 @@ class ActivitiesBuilder extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FutureListener.single(
-      getFutureCallback: () => app.dataManager._activities,
+      getFutureCallback: () => app.dataManager.activities,
       stream: app.dataManager._activitiesUpdated.stream,
       builder: (context, value) => builder(context, value as List<Activity>),
     );

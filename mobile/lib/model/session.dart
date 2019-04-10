@@ -116,7 +116,11 @@ class SessionBuilder extends ModelBuilder {
         super.fromModel(session);
 
   SessionBuilder endNow() {
-    endTimestamp = DateTime.now().millisecondsSinceEpoch;
+    if (clock == null) {
+      endTimestamp = DateTime.now().millisecondsSinceEpoch;
+    } else {
+      endTimestamp = clock.now().millisecondsSinceEpoch;
+    }
     return this;
   }
 

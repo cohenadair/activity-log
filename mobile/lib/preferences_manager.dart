@@ -25,7 +25,13 @@ class PreferencesManager {
   List<String> _statsSelectedActivityIds;
   DisplayDateRange _statsDateRange;
 
+  /// The largest unit used to display [Duration] objects. This value will never
+  /// be `null`. Defaults to [DurationUnit.days].
   DurationUnit get largestDurationUnit => _largestDurationUnit;
+
+  /// The date range used to display the total [Duration] of an [Activity] on
+  /// the home page. This value will never be `null`. Defaults to
+  /// [DisplayDateRange.allDates].
   DisplayDateRange get homeDateRange => _homeDateRange;
 
   List<String> get statsSelectedActivityIds => _statsSelectedActivityIds;

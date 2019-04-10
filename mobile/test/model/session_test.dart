@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mobile/model/session.dart';
 import 'package:mobile/utils/date_time_utils.dart';
+import 'package:quiver/time.dart';
 
 void main() {
   group("Session builder", () {
@@ -20,6 +21,13 @@ void main() {
       session = builder.pinToDateRange(dateRange).build;
       expect(session.startDateTime, equals(dateRange.startDate));
       expect(session.endDateTime, equals(dateRange.endDate));
+
+      var clock = Clock.fixed(DateTime(2019, 1, 1));
+      builder
+        ..endTimestamp = null
+        ..clock = clock
+        ..endNow();
+      expect(builder.build.endDateTime, equals(clock.now()));
     });
   });
 
