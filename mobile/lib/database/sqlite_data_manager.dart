@@ -42,6 +42,18 @@ class SQLiteDataManager {
     );
   }
 
+  Future<bool> clearDatabase() async {
+    Batch batch = _database.batch();
+
+    batch.rawQuery("DELETE FROM activity");
+    batch.rawQuery("DELETE FROM session");
+
+    await batch.commit(noResult: true);
+
+    // Confirm data has been deleted.
+    return (await activityCount) <= 0 && (await sessionCount) <= 0;
+  }
+
   void _update(String table, Model model, VoidCallback notify) {
     _database.update(
       table,
@@ -51,6 +63,11 @@ class SQLiteDataManager {
     ).then((int value) {
       notify();
     });
+  }
+
+  Future<int> _getRowCount(String tableName) async {
+    String query = "SELECT COUNT(*) FROM $tableName";
+    return Sqflite.firstIntValue(await _database.rawQuery(query));
   }
 
   /// Events are added to this [Stream] when sessions for the given activity ID
@@ -80,15 +97,28 @@ class SQLiteDataManager {
     }).toList();
   }
 
-  Future<int> get activityCount async {
-    String query = "SELECT COUNT(*) FROM activity";
-    return Sqflite.firstIntValue(await _database.rawQuery(query));
-  }
+  Future<int> get activityCount async => _getRowCount("activity");
 
   void addActivity(Activity activity) {
     _database.insert("activity", activity.toMap()).then((int value) {
       _activitiesUpdated.notify();
     });
+  }
+
+  /// Batch inserts the list of [Activity] objects into the database. To
+  /// increase performance, a single insert may silently fail.
+  Future<void> addActivities(List<Activity> activityList, {
+    bool notify = false
+  }) async {
+    Batch batch = _database.batch();
+    activityList.forEach((Activity activity) {
+      batch.insert("activity", activity.toMap());
+    });
+    await batch.commit();
+
+    if (notify) {
+      _activitiesUpdated.notify();
+    }
   }
 
   void updateActivity(Activity activity) {
@@ -114,6 +144,29 @@ class SQLiteDataManager {
     return (await _database.rawQuery(query)).map((map) {
       return Session.fromMap(map);
     }).toList();
+  }
+
+  Future<int> get sessionCount async => _getRowCount("session");
+
+  /// Batch inserts the list of [Session] objects into the database. To
+  /// increase performance, a single insert may silently fail.
+  Future<void> addSessions(List<Session> sessionList, {
+    bool notify = false
+  }) async {
+    Batch batch = _database.batch();
+    sessionList.forEach((Session session) {
+      batch.insert("session", session.toMap());
+    });
+    await batch.commit();
+
+    if (notify) {
+      _activitiesUpdated.notify();
+      sessionList.forEach((Session session) {
+        if (_sessionsUpdatedMap.containsKey(session.activityId)) {
+          _sessionsUpdatedMap[session.activityId].notify();
+        }
+      });
+    }
   }
 
   /// Creates and starts a new [Session] for the given [Activity]. If the given
