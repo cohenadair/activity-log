@@ -82,6 +82,7 @@ class Strings {
 
   String get settingsPageTitle => _getString("settingsPage_title");
   String get settingsPageVersion => _getString("settingsPage_version");
+  String get settingsPagePrivacyPolicy => _getString("settingsPage_privacyPolicy");
   String get settingsPageHeadingAbout => _getString("settingsPage_headingAbout");
   String get settingsPageHeadingOther => _getString("settingsPage_headingOther");
   String get settingsPageHeadingHelpAndFeedback => _getString("settingsPage_headingHelpAndFeedback");

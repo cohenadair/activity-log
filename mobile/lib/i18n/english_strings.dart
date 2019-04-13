@@ -53,6 +53,7 @@ Map<String, Map<String, String>> englishStrings = {
 
     "settingsPage_title" : "Settings",
     "settingsPage_version" : "Version",
+    "settingsPage_privacyPolicy" : "Privacy Policy",
     "settingsPage_headingAbout" : "About",
     "settingsPage_headingOther" : "Preferences",
     "settingsPage_headingHelpAndFeedback" : "Help & Feedback",

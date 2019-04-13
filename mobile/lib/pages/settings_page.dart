@@ -39,6 +39,7 @@ class _SettingsPageState extends State<SettingsPage> {
   static final _rateAppStoreUrl =
       "itms-apps://itunes.apple.com/app/id1458926666?action=write-review";
   static final _playStoreUrl = "market://details?id=";
+  static final _privacyUrl = "https://cohenadair.github.io/activity-log/privacy_policy.html";
   static final _backupFileExtension = "dat";
   static final _backupFileName = "ActivityLogBackup.$_backupFileExtension";
 
@@ -67,6 +68,7 @@ class _SettingsPageState extends State<SettingsPage> {
           MinDivider(),
           _buildHeading(Strings.of(context).settingsPageHeadingAbout),
           _buildAbout(),
+          _buildPrivacy(),
         ],
       ),
     );
@@ -217,6 +219,13 @@ class _SettingsPageState extends State<SettingsPage> {
         }
       },
     ),
+  );
+
+  Widget _buildPrivacy() => ListItem(
+    title: Text(Strings.of(context).settingsPagePrivacyPolicy),
+    onTap: () async {
+      await launch(_privacyUrl);
+    },
   );
 
   Widget _buildExport() => ListItem(
