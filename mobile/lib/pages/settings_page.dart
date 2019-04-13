@@ -1,8 +1,14 @@
+import 'dart:async';
 import 'dart:io';
 
+import 'package:esys_flutter_share/esys_flutter_share.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:mobile/database/backup.dart';
+import 'package:mobile/res/style.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:mobile/app_manager.dart';
 import 'package:mobile/i18n/strings.dart';
@@ -29,10 +35,15 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
-  final _supportEmail = "cohenadair@gmail.com";
-  final _rateAppStoreUrl =
+  static final _supportEmail = "cohenadair@gmail.com";
+  static final _rateAppStoreUrl =
       "itms-apps://itunes.apple.com/app/id1458926666?action=write-review";
-  final _playStoreUrl = "market://details?id=";
+  static final _playStoreUrl = "market://details?id=";
+  static final _backupFileExtension = "dat";
+  static final _backupFileName = "ActivityLogBackup.$_backupFileExtension";
+
+  bool _isCreatingBackup = false;
+  bool _isImporting = false;
 
   @override
   Widget build(BuildContext context) {
@@ -45,6 +56,10 @@ class _SettingsPageState extends State<SettingsPage> {
           _buildHeading(Strings.of(context).settingsPageHeadingOther),
           _buildLargestDurationPicker(),
           _buildHomeDateRangePicker(),
+          MinDivider(),
+          _buildHeading(Strings.of(context).settingsPageHeadingBackup),
+          _buildExport(),
+          _buildImport(),
           MinDivider(),
           _buildHeading(Strings.of(context).settingsPageHeadingHelpAndFeedback),
           _buildContact(),
@@ -61,7 +76,7 @@ class _SettingsPageState extends State<SettingsPage> {
     return Padding(
       padding: EdgeInsets.only(
         top: paddingDefault,
-        bottom: paddingDefault,
+        bottom: paddingSmall,
         left: paddingDefault,
         right: paddingDefault,
       ),
@@ -162,20 +177,9 @@ class _SettingsPageState extends State<SettingsPage> {
   Widget _buildContact() => ListItem(
     title: Text(Strings.of(context).settingsPageContactLabel),
     onTap: () async {
-      try {
-        // Strings here are intentionally in English because that's the
-        // language I speak.
-        String osName = Platform.isAndroid ? "Android" : "iOS";
-        await FlutterEmailSender.send(Email(
-          subject: "Support Message From Activity Log ($osName)",
-          recipients: [_supportEmail],
-        ));
-      } on PlatformException {
-        showError(
-          context: context,
-          description: Strings.of(context).settingsPageFailedEmailMessage,
-        );
-      }
+      await _sendEmail(
+        subject: "Support Message From Activity Log"
+      );
     },
   );
 
@@ -214,4 +218,139 @@ class _SettingsPageState extends State<SettingsPage> {
       },
     ),
   );
+
+  Widget _buildExport() => ListItem(
+    title: Text(Strings.of(context).settingsPageExportLabel),
+    subtitle: Text(Strings.of(context).settingsPageExportDescription),
+    trailing: _isCreatingBackup ? Loading() : null,
+    onTap: () {
+      setState(() {
+        _isCreatingBackup = true;
+      });
+
+      _startExport();
+    },
+  );
+
+  Widget _buildImport() => ListItem(
+    title: Text(Strings.of(context).settingsPageImportLabel),
+    subtitle: Text(Strings.of(context).settingsPageImportDescription),
+    trailing: _isImporting ? Loading() : null,
+    onTap: _startImport,
+  );
+
+  void _startExport() async {
+    // Save backup file to sandbox cache. It'll be small and it'll be overridden
+    // by subsequent backups, so let the system handle deletion.
+    Directory tempDir = await getTemporaryDirectory();
+    File backupFile = File("${tempDir.path}/backup.activitylog");
+    backupFile.writeAsStringSync(await export(widget.app));
+    List<int> bytes = backupFile.readAsBytesSync();
+    
+    await Share.file(null, _backupFileName, bytes, "text/plain");
+    
+    setState(() {
+      _isCreatingBackup = false;
+    });
+  }
+
+  void _startImport() async {
+    File importFile = await FilePicker.getFile(type: FileType.ANY);
+    if (importFile == null) {
+      return;
+    }
+
+    showWarning(
+      context: context,
+      description: Strings.of(context).settingsPageImportWarning,
+      onContinue: () {
+        setState(() {
+          _isImporting = true;
+        });
+
+        _import(importFile);
+      },
+    );
+  }
+
+  void _import(File file) async {
+    String jsonString;
+
+    try {
+      // This method will throw an exception for non-text files, such as
+      // an image or archive.
+      jsonString = file.readAsStringSync();
+    } on Exception {
+      showError(
+        context: context,
+        description: Strings.of(context).settingsPageImportBadFile,
+      );
+    }
+
+    if (jsonString != null) {
+      ImportResult result = await import(widget.app, json: jsonString);
+
+      if (result == ImportResult.success) {
+        showOk(
+          context: context,
+          description: Strings.of(context).settingsPageImportSuccess,
+        );
+      } else {
+        _showImportError(result, file);
+      }
+    }
+
+    setState(() {
+      _isImporting = false;
+    });
+  }
+
+  void _showImportError(ImportResult result, File importFile) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        title: Text(Strings.of(context).error),
+        titleTextStyle: styleTitleAlert,
+        content: Text(Strings.of(context).settingsPageImportFailed),
+        actions: <Widget>[
+          buildDialogButton(
+            context: context,
+            name: Strings.of(context).settingsPageImportSendLogs,
+            onTap: () async {
+              await _sendEmail(
+                subject: "Activity Log Import Error",
+                body: "${result.toString()}",
+                attachmentPath: importFile.path,
+              );
+            }
+          ),
+          buildDialogButton(
+            context: context,
+            name: Strings.of(context).done,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _sendEmail({
+    String subject,
+    String body,
+    String attachmentPath,
+  }) async {
+    try {
+      String osName = Platform.isAndroid ? "Android" : "iOS";
+      await FlutterEmailSender.send(Email(
+        subject: subject + " ($osName)",
+        body: body,
+        recipients: [_supportEmail],
+        attachmentPath: attachmentPath,
+      ));
+    } on PlatformException {
+      showError(
+        context: context,
+        description: Strings.of(context).settingsPageFailedEmailMessage,
+      );
+    }
+  }
 }

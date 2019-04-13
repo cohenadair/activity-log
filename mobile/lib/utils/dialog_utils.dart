@@ -15,24 +15,45 @@ showDeleteDialog({
       titleTextStyle: styleTitleAlert,
       content: description == null ? null : Text(description),
       actions: <Widget>[
-        FlatButton(
-          child: Text(Strings.of(context).cancel.toUpperCase()),
-          onPressed: () {
-            Navigator.pop(context);
-          },
+        buildDialogButton(
+          context: context,
+          name: Strings.of(context).cancel,
         ),
-        FlatButton(
-          child: Text(Strings.of(context).delete.toUpperCase()),
+        buildDialogButton(
+          context: context,
+          name: Strings.of(context).delete,
           textColor: Colors.red,
-          onPressed: () {
-            if (onDelete != null) {
-              onDelete();
-            }
-            Navigator.pop(context);
-          },
-        )
+          onTap: onDelete,
+        ),
       ],
     )
+  );
+}
+
+showWarning({
+  @required BuildContext context,
+  VoidCallback onContinue,
+  String description,
+}) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) => AlertDialog(
+      title: Text(Strings.of(context).warning),
+      titleTextStyle: styleTitleAlert,
+      content: description == null ? null : Text(description),
+      actions: <Widget>[
+        buildDialogButton(
+          context: context,
+          name: Strings.of(context).cancel,
+        ),
+        buildDialogButton(
+          context: context,
+          name: Strings.of(context).continueString,
+          textColor: Colors.red,
+          onTap: onContinue,
+        ),
+      ],
+    ),
   );
 }
 
@@ -40,20 +61,43 @@ showError({
   @required BuildContext context,
   String description,
 }) {
+  showOk(
+    context: context,
+    title: Strings.of(context).error,
+    description: description,
+  );
+}
+
+showOk({
+  @required BuildContext context,
+  String title,
+  String description,
+}) {
   showDialog(
     context: context,
     builder: (BuildContext context) => AlertDialog(
-      title: Text(Strings.of(context).error),
+      title: title == null ? null : Text(title),
       titleTextStyle: styleTitleAlert,
       content: description == null ? null : Text(description),
       actions: <Widget>[
-        FlatButton(
-          child: Text(Strings.of(context).ok.toUpperCase()),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
+        buildDialogButton(context: context, name: Strings.of(context).ok),
       ],
     ),
+  );
+}
+
+Widget buildDialogButton({
+  @required BuildContext context,
+  @required String name,
+  Color textColor,
+  VoidCallback onTap,
+}) {
+  return FlatButton(
+    child: Text(name.toUpperCase()),
+    textColor: textColor,
+    onPressed: () {
+      onTap?.call();
+      Navigator.pop(context);
+    },
   );
 }

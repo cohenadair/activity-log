@@ -43,6 +43,8 @@ class Strings {
   String get none => _getString("none");
   String get ok => _getString("ok");
   String get error => _getString("error");
+  String get warning => _getString("warning");
+  String get continueString => _getString("continue");
 
   String get navigationBarHome => _getString("navigationBar_home");
   String get navigationBarStats => _getString("navigationBar_stats");
@@ -83,6 +85,7 @@ class Strings {
   String get settingsPageHeadingAbout => _getString("settingsPage_headingAbout");
   String get settingsPageHeadingOther => _getString("settingsPage_headingOther");
   String get settingsPageHeadingHelpAndFeedback => _getString("settingsPage_headingHelpAndFeedback");
+  String get settingsPageHeadingBackup => _getString("settingsPage_headingBackup");
   String get settingsPageLargestDurationLabel => _getString("settingsPage_largestDurationLabel");
   String get settingsPageLargestDurationDays => _getString("settingsPage_largestDurationDays");
   String get settingsPageLargestDurationHours => _getString("settingsPage_largestDurationHours");
@@ -94,6 +97,15 @@ class Strings {
   String get settingsPageRateLabel => _getString("settingsPage_rateLabel");
   String get settingsPageIosErrorRateMessage => _getString("settingsPage_iOS_errorRateMessage");
   String get settingsPageAndroidErrorRateMessage => _getString("settingsPage_android_errorRateMessage");
+  String get settingsPageExportLabel => _getString("settingsPage_exportLabel");
+  String get settingsPageExportDescription => _getString("settingsPage_exportDescription");
+  String get settingsPageImportLabel => _getString("settingsPage_importLabel");
+  String get settingsPageImportDescription => _getString("settingsPage_importDescription");
+  String get settingsPageImportWarning => _getString("settingsPage_importWarning");
+  String get settingsPageImportSuccess => _getString("settingsPage_importSuccess");
+  String get settingsPageImportBadFile => _getString("settingsPage_importBadFile");
+  String get settingsPageImportFailed => _getString("settingsPage_importFailed");
+  String get settingsPageImportSendLogs => _getString("settingsPage_importSendLogs");
 
   String get statsPageTitle => _getString("statsPage_title");
   String get statsPageNoActivitiesMessage => _getString("statsPage_noActivitiesMessage");
