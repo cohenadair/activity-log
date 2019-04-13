@@ -9,7 +9,7 @@ import 'package:mobile/pages/main_page.dart';
 import 'package:mobile/res/style.dart';
 
 void main() {
-  Crashlytics.instance.enableInDevMode = true;
+  Crashlytics.instance.enableInDevMode = false;
   FlutterError.onError = (FlutterErrorDetails details) {
     Crashlytics.instance.onError(details);
   };
