@@ -1,3 +1,7 @@
+# Android Signing
+android/app/key.properties
+android/app/key.jks
+
 # Firebase
 android/app/google-services.json
 ios/Runner/GoogleService-Info.plist
