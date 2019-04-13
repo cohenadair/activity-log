@@ -22,6 +22,8 @@ dependencies:
   date_range_picker: ^1.0.3
   esys_flutter_share: 1.0.1
   file_picker: ^1.3.3
+  firebase_core: ^0.3.4
+  firebase_crashlytics: 0.0.4
   flutter_email_sender: 2.0.0
   intl: ^0.15.7
   package_info: 0.4.0+2
