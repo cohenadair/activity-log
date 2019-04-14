@@ -65,111 +65,40 @@ void main() {
       expect(activity.sessionsPerMonth, equals(0));
     });
 
-    test("Same month", () {
+    test("Normal use case", () {
       List<Session> sessions = [
         buildSession("",
-          DateTime(2018, 12, 15, 3),
-          DateTime(2018, 12, 15, 10),
+          DateTime.fromMillisecondsSinceEpoch(0),
+          DateTime.fromMillisecondsSinceEpoch(Duration.millisecondsPerHour * 7),
         ), // 7 hours
         buildSession("",
-          DateTime(2018, 12, 24, 7),
-          DateTime(2018, 12, 24, 12),
+          DateTime.fromMillisecondsSinceEpoch(Duration.millisecondsPerDay * 1),
+          DateTime.fromMillisecondsSinceEpoch(Duration.millisecondsPerDay * 1
+              + Duration.millisecondsPerHour * 5),
         ), // 5 hours
       ];
 
       SummarizedActivity activity = SummarizedActivity(
         value: ActivityBuilder("").build,
         displayDateRange: stubDateRange(DateRange(
-          // 1 month, 3 weeks, 16 days
-          startDate: DateTime(2018, 12, 12, 3),
-          endDate: DateTime(2018, 12, 27, 12),
+          startDate: DateTime.fromMillisecondsSinceEpoch(0),
+          endDate: DateTime.fromMillisecondsSinceEpoch(
+            Duration.millisecondsPerDay * 5,
+          ),
         )),
         sessions: sessions,
       );
 
       expect(activity.totalDuration, equals(Duration(hours: 12)));
       expect(activity.averageDurationOverall, equals(Duration(hours: 6)));
-      expect(activity.averageDurationPerDay.inMilliseconds, equals(2700000));
-      expect(activity.averageDurationPerWeek, equals(Duration(hours: 4)));
-      expect(activity.averageDurationPerMonth, equals(Duration(hours: 12)));
-      expect(activity.longestStreak, equals(1));
-      expect(activity.sessionsPerDay, equals(2 / 16));
-      expect(activity.sessionsPerWeek, equals(2 / 3));
-      expect(activity.sessionsPerMonth, equals(2));
-    });
-
-    test("Span multiple months in the same year", () {
-      List<Session> sessions = [
-        buildSession("",
-          DateTime(2019, 5, 15, 3),
-          DateTime(2019, 5, 15, 10),
-        ), // 7 hours
-        buildSession("",
-          DateTime(2019, 1, 24, 7),
-          DateTime(2019, 1, 24, 12),
-        ), // 5 hours
-        buildSession("",
-          DateTime(2019, 3, 10, 15),
-          DateTime(2019, 3, 10, 21),
-        ), // 6 hours
-      ];
-
-      SummarizedActivity activity = SummarizedActivity(
-        value: ActivityBuilder("").build,
-        displayDateRange: stubDateRange(DateRange(
-          // 5 months, 18 weeks, 119 days
-          startDate: DateTime(2019, 1, 20, 7),
-          endDate: DateTime(2019, 5, 18, 10),
-        )),
-        sessions: sessions,
-      );
-
-      expect(activity.totalDuration, equals(Duration(hours: 18)));
-      expect(activity.averageDurationOverall, equals(Duration(hours: 6)));
-      expect(activity.averageDurationPerDay.inMilliseconds, equals(544538));
-      expect(activity.averageDurationPerWeek.inMilliseconds, equals(3600000));
-      expect(activity.averageDurationPerMonth.inMilliseconds, equals(12960000));
-      expect(activity.longestStreak, equals(1));
-      expect(activity.sessionsPerDay, equals(3 / 119));
-      expect(activity.sessionsPerWeek, equals(3 / 18));
-      expect(activity.sessionsPerMonth, equals(3/ 5));
-    });
-
-    test("Span multiple months in different years", () {
-      List<Session> sessions = [
-        buildSession("",
-          DateTime(2019, 3, 15, 3),
-          DateTime(2019, 3, 15, 10),
-        ), // 7 hours
-        buildSession("",
-          DateTime(2018, 11, 24, 7),
-          DateTime(2018, 11, 24, 12),
-        ), // 5 hours
-        buildSession("",
-          DateTime(2019, 1, 10, 15),
-          DateTime(2019, 1, 10, 21),
-        ), // 6 hours
-      ];
-
-      SummarizedActivity activity = SummarizedActivity(
-        value: ActivityBuilder("").build,
-        displayDateRange: stubDateRange(DateRange(
-          // 5 months, 18 weeks, 119 days
-          startDate: DateTime(2018, 11, 20, 7),
-          endDate: DateTime(2019, 3, 18, 10),
-        )),
-        sessions: sessions,
-      );
-
-      expect(activity.totalDuration, equals(Duration(hours: 18)));
-      expect(activity.averageDurationOverall, equals(Duration(hours: 6)));
-      expect(activity.averageDurationPerDay.inMilliseconds, equals(544538));
-      expect(activity.averageDurationPerWeek.inMilliseconds, equals(3600000));
-      expect(activity.averageDurationPerMonth.inMilliseconds, equals(12960000));
-      expect(activity.longestStreak, equals(1));
-      expect(activity.sessionsPerDay, equals(3 / 119));
-      expect(activity.sessionsPerWeek, equals(3 / 18));
-      expect(activity.sessionsPerMonth, equals(3/ 5));
+      expect(activity.averageDurationPerDay.inMilliseconds, equals(8640000));
+      expect(activity.averageDurationPerWeek.inMilliseconds, equals(60480000));
+      expect(activity.averageDurationPerMonth.inMilliseconds,
+          equals(259200000));
+      expect(activity.longestStreak, equals(2));
+      expect(activity.sessionsPerDay, equals(2 / 5));
+      expect(activity.sessionsPerWeek, equals(2.8));
+      expect(activity.sessionsPerMonth, equals(12));
     });
   });
 
@@ -318,7 +247,7 @@ void main() {
       );
 
       // Average is only over 12 months.
-      expect(activity.averageDurationPerMonth.inMilliseconds, equals(11100000));
+      expect(activity.averageDurationPerMonth.inMilliseconds, equals(12468019));
     });
   });
 
@@ -438,7 +367,7 @@ void main() {
       );
 
       // Average is over 13 months.
-      expect(activity.averageDurationPerMonth.inMilliseconds, equals(8861538));
+      expect(activity.averageDurationPerMonth.inMilliseconds, equals(10115122));
     });
 
     test("Multiple in-progress session", () {
@@ -477,7 +406,7 @@ void main() {
       );
 
       // Average is over 13 months.
-      expect(activity.averageDurationPerMonth.inMilliseconds, equals(9415385));
+      expect(activity.averageDurationPerMonth.inMilliseconds, equals(10747317));
     });
   });
 }

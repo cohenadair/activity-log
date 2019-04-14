@@ -55,6 +55,8 @@ class DisplayDuration {
 }
 
 class DateRange {
+  final int _daysInMonth = 30;
+
   final DateTime startDate;
   final DateTime endDate;
 
@@ -64,6 +66,25 @@ class DateRange {
 
   int get startMs => startDate.millisecondsSinceEpoch;
   int get endMs => endDate.millisecondsSinceEpoch;
+  int get durationMs => endMs - startMs;
+
+  /// The number of days spanned by the [DateRange]. This is calculated by
+  /// taking the total [Duration] of the [DateRange] and dividing it by
+  /// [Duration.millisecondsPerDay].
+  num get days => durationMs / Duration.millisecondsPerDay;
+
+  /// The number of weeks spanned by the [DateRange]. This is calculated by
+  /// taking the total [Duration] of the [DateRange] and dividing it by
+  /// the number of milliseconds in a week. A week length is defined by
+  /// [DateTime.daysPerWeek].
+  num get weeks =>
+      durationMs / (Duration.millisecondsPerDay * DateTime.daysPerWeek);
+
+  /// The number of months spanned by the [DateRange]. This is calculated by
+  /// taking the total [Duration] of the [DateRange] and dividing it by
+  /// the number of milliseconds in a month. A month length is defined as 30
+  /// days.
+  num get months => durationMs / (Duration.millisecondsPerDay * _daysInMonth);
 }
 
 /// A pre-defined set of date ranges meant for user section. Includes ranges

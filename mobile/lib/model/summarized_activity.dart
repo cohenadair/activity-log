@@ -160,22 +160,9 @@ class SummarizedActivity {
       endDate: latestSession.endDateTime ?? clock.now(),
     ) : displayDateRange.value;
 
-    Duration difference = range.endDate.difference(range.startDate);
-    int numberOfDays = difference.inDays + 1;
-    int numberOfWeeks = (numberOfDays / DateTime.daysPerWeek).floor() + 1;
-
-    _cachedDurationPerDay = getAverageDuration(numberOfDays);
-    _cachedDurationPerWeek = getAverageDuration(numberOfWeeks);
-
-    int numberOfMonths = 0;
-    if (isSameYear(range.startDate, range.endDate)) {
-      numberOfMonths = range.endDate.month - range.startDate.month + 1;
-    } else {
-      numberOfMonths = range.endDate.month +
-          (DateTime.monthsPerYear - range.startDate.month + 1);
-    }
-
-    _cachedDurationPerMonth = getAverageDuration(numberOfMonths);
+    _cachedDurationPerDay = getAverageDuration(range.days);
+    _cachedDurationPerWeek = getAverageDuration(range.weeks);
+    _cachedDurationPerMonth = getAverageDuration(range.months);
 
     // Iterate all days, keeping track of the longest streak.
     int currentStreak = 1;
@@ -204,12 +191,12 @@ class SummarizedActivity {
       last = current;
     }
 
-    _cachedSessionsPerDay = getAverageSessions(numberOfDays);
-    _cachedSessionsPerWeek = getAverageSessions(numberOfWeeks);
-    _cachedSessionsPerMonth = getAverageSessions(numberOfMonths);
+    _cachedSessionsPerDay = getAverageSessions(range.days);
+    _cachedSessionsPerWeek = getAverageSessions(range.weeks);
+    _cachedSessionsPerMonth = getAverageSessions(range.months);
   }
 
-  Duration getAverageDuration(int divisor) {
+  Duration getAverageDuration(num divisor) {
     if (divisor <= 0) {
       return Duration();
     }
@@ -218,7 +205,7 @@ class SummarizedActivity {
         .round());
   }
 
-  double getAverageSessions(int divisor) {
+  double getAverageSessions(num divisor) {
     if (divisor <= 0) {
       return 0;
     }
