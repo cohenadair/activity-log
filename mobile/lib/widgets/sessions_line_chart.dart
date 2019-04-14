@@ -87,7 +87,7 @@ class _SessionsLineChartState extends State<SessionsLineChart> {
       padding: insetsLeftDefault,
       child: Charts.LineChart(
         _getSeriesList(context),
-        animate: false,
+        animate: true,
         domainAxis: Charts.NumericAxisSpec(
           renderSpec: Charts.NoneRenderSpec(),
         ),
