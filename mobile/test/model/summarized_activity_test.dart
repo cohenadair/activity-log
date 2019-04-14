@@ -100,6 +100,41 @@ void main() {
       expect(activity.sessionsPerWeek, equals(2.8));
       expect(activity.sessionsPerMonth, equals(12));
     });
+
+    test("All time averages", () {
+      List<Session> sessions = [
+        buildSession("",
+          DateTime.fromMillisecondsSinceEpoch(35000),
+          DateTime.fromMillisecondsSinceEpoch(40000),
+        ),
+        buildSession("",
+          DateTime.fromMillisecondsSinceEpoch(5000),
+          DateTime.fromMillisecondsSinceEpoch(10000),
+        ),
+        buildSession("",
+          DateTime.fromMillisecondsSinceEpoch(15000),
+          DateTime.fromMillisecondsSinceEpoch(20000),
+        ),
+        buildSession("",
+          DateTime.fromMillisecondsSinceEpoch(45000),
+          DateTime.fromMillisecondsSinceEpoch(50000),
+        ),
+        buildSession("",
+          DateTime.fromMillisecondsSinceEpoch(25000),
+          DateTime.fromMillisecondsSinceEpoch(30000),
+        ),
+      ];
+
+      SummarizedActivity activity = SummarizedActivity(
+        value: ActivityBuilder("").build,
+        displayDateRange: null,
+        sessions: sessions,
+      );
+
+      expect(activity.sessionsPerDay, equals(9600));
+      expect(activity.sessionsPerWeek, equals(67200));
+      expect(activity.sessionsPerMonth, equals(288000));
+    });
   });
 
   group("Boundary sessions are calculated correctly", () {

@@ -126,23 +126,11 @@ class SummarizedActivity {
       return;
     }
 
+    sessions.sort((a, b) => a.startTimestamp.compareTo(b.startTimestamp));
     Set<DateTime> allDateTimes = SplayTreeSet();
-    Session earliestSession = sessions.first;
-    Session latestSession = sessions.first;
 
     int totalMs = 0;
     sessions.forEach((Session session) {
-      if (session.startTimestamp < earliestSession.startTimestamp) {
-        earliestSession = session;
-      }
-
-      if (session.endTimestamp == null
-          || (latestSession.endTimestamp != null
-              && session.endTimestamp > latestSession.endTimestamp))
-      {
-        latestSession = session;
-      }
-
       totalMs += session.millisecondsDuration;
       allDateTimes.add(dateTimeToDayAccuracy(session.startDateTime));
 
@@ -156,9 +144,9 @@ class SummarizedActivity {
     // If the date range is null, restrict the range to the earliest
     // and latest sessions.
     DateRange range = displayDateRange == null ? DateRange(
-      startDate: earliestSession.startDateTime,
-      endDate: latestSession.endDateTime ?? clock.now(),
-    ) : displayDateRange.value;
+      startDate: sessions.first.startDateTime,
+      endDate: sessions.last.endDateTime ?? clock.now(),
+    ) : displayDateRange.getValue(clock.now());
 
     _cachedDurationPerDay = getAverageDuration(range.days);
     _cachedDurationPerWeek = getAverageDuration(range.weeks);

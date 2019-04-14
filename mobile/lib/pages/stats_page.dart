@@ -242,12 +242,14 @@ class _StatsPageState extends State<StatsPage> {
             ? null
             : _currentActivities.map((activity) => activity.id).toList());
 
-    DisplayDateRange dateRange = _currentDateRange ?? DisplayDateRange.allDates;
-
     List<Activity> activities = _currentActivities == null
         ? []
         : List.of(_currentActivities);
 
+    // Pass null for "All dates" so the stats are restricted to the existing
+    // sessions, rather than whatever the "All dates" start date is.
+    DisplayDateRange dateRange = _currentDateRange == DisplayDateRange.allDates
+        ? null : _currentDateRange;
     _summarizedActivityListFuture = widget.app.dataManager
         .getSummarizedActivities(dateRange, activities);
     

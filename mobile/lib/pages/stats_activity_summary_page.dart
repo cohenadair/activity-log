@@ -22,7 +22,7 @@ class StatsActivitySummaryPage extends StatelessWidget {
       appBarStyle: PageAppBarStyle(
         title: activity.value.name,
         subtitle: activity.displayDateRange == null
-            ? DisplayDateRange.allDates
+            ? DisplayDateRange.allDates.getTitle(context)
             : activity.displayDateRange.getTitle(context),
       ),
       child: SingleChildScrollView(
