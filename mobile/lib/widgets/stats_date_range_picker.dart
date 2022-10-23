@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:date_range_picker/date_range_picker.dart' as DateRangePicker;
 import 'package:flutter/material.dart';
 import 'package:mobile/utils/date_time_utils.dart';
 import 'package:mobile/utils/string_utils.dart';
@@ -83,24 +82,26 @@ class _StatsDateRangePickerState extends State<StatsDateRangePicker> {
     DateTime now = DateTime.now();
     DateRange customValue = _customDateRange.getValue(now);
 
-    List<DateTime> pickedRange = await DateRangePicker.showDatePicker(
+    var pickedRange = await showDateRangePicker(
       context: context,
-      initialFirstDate: customValue.startDate,
-      initialLastDate: customValue.endDate,
+      initialDateRange: DateTimeRange(
+        start: customValue.startDate,
+        end: customValue.endDate,
+      ),
       firstDate: DateTime.fromMillisecondsSinceEpoch(0),
       lastDate: now,
     );
 
     DateTime endDate;
-    if (pickedRange.first == pickedRange.last) {
+    if (pickedRange.start == pickedRange.end) {
       // If only the start date was picked, or the start and end time are equal,
       // set the end date to a range of 1 day.
-      endDate = pickedRange.first.add(Duration(days: 1));
+      endDate = pickedRange.start.add(Duration(days: 1));
     }
 
     DateRange dateRange = DateRange(
-      startDate: pickedRange.first,
-      endDate: endDate ?? pickedRange.last,
+      startDate: pickedRange.start,
+      endDate: endDate ?? pickedRange.end,
     );
 
     // Reset StatsDateRange.custom properties to return the picked DateRange.

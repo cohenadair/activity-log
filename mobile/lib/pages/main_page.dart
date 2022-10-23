@@ -22,7 +22,7 @@ class _MainPageState extends State<MainPage> {
       page: ActivitiesPage(widget._app),
       item: BottomNavigationBarItem(
         icon: Icon(Icons.home),
-        title: Text(Strings.of(context).navigationBarHome),
+        label: Strings.of(context).navigationBarHome,
       ),
     ),
 
@@ -30,7 +30,7 @@ class _MainPageState extends State<MainPage> {
       page: StatsPage(widget._app),
       item: BottomNavigationBarItem(
         icon: Icon(Icons.show_chart),
-        title: Text(Strings.of(context).navigationBarStats),
+        label: Strings.of(context).navigationBarStats,
       ),
     ),
 
@@ -38,7 +38,7 @@ class _MainPageState extends State<MainPage> {
       page: SettingsPage(widget._app),
       item: BottomNavigationBarItem(
         icon: Icon(Icons.settings),
-        title: Text(Strings.of(context).navigationBarSettings),
+        label: Strings.of(context).navigationBarSettings,
       ),
     ),
   ];

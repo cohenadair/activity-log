@@ -72,8 +72,8 @@ void main() {
           DateTime.fromMillisecondsSinceEpoch(Duration.millisecondsPerHour * 7),
         ), // 7 hours
         buildSession("",
-          DateTime.fromMillisecondsSinceEpoch(Duration.millisecondsPerDay * 1),
-          DateTime.fromMillisecondsSinceEpoch(Duration.millisecondsPerDay * 1
+          DateTime.fromMillisecondsSinceEpoch(Duration.millisecondsPerDay * 2),
+          DateTime.fromMillisecondsSinceEpoch(Duration.millisecondsPerDay * 2
               + Duration.millisecondsPerHour * 5),
         ), // 5 hours
       ];

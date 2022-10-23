@@ -70,7 +70,7 @@ class _SessionsLineChartState extends State<SessionsLineChart> {
         DateDurationText(
           _selectedSession.startDateTime,
           _selectedSession.duration,
-          style: Theme.of(context).textTheme.subhead,
+          style: Theme.of(context).textTheme.subtitle1,
         ),
         TimeRangeText(
           startTime: _selectedSession.startTimeOfDay,
@@ -122,8 +122,8 @@ class _SessionsLineChartState extends State<SessionsLineChart> {
     ];
   }
 
-  List<Charts.ChartBehavior> get _behaviors {
-    List<Charts.ChartBehavior> result = [
+  List<Charts.ChartBehavior<num>> get _behaviors {
+    List<Charts.ChartBehavior<num>> result = [
       Charts.PanAndZoomBehavior(),
     ];
 

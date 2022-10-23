@@ -3,7 +3,7 @@ import 'package:mobile/app_manager.dart';
 import 'package:mobile/model/summarized_activity.dart';
 import 'package:mobile/utils/date_time_utils.dart';
 import 'package:mobile/widgets/activity_summary.dart';
-import 'package:mobile/widgets/page.dart';
+import 'package:mobile/widgets/page.dart' as p;
 
 class StatsActivitySummaryPage extends StatelessWidget {
   final AppManager app;
@@ -18,8 +18,8 @@ class StatsActivitySummaryPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Page(
-      appBarStyle: PageAppBarStyle(
+    return p.Page(
+      appBarStyle: p.PageAppBarStyle(
         title: activity.value.name,
         subtitle: activity.displayDateRange == null
             ? DisplayDateRange.allDates.getTitle(context)

@@ -1,14 +1,16 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 
-import 'package:esys_flutter_share/esys_flutter_share.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:mobile/database/backup.dart';
 import 'package:mobile/res/style.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:mobile/app_manager.dart';
 import 'package:mobile/i18n/strings.dart';
@@ -20,10 +22,9 @@ import 'package:mobile/utils/string_utils.dart';
 import 'package:mobile/widgets/list_item.dart';
 import 'package:mobile/widgets/list_picker.dart';
 import 'package:mobile/widgets/loading.dart';
-import 'package:mobile/widgets/page.dart';
+import 'package:mobile/widgets/page.dart' as p;
 import 'package:mobile/widgets/text.dart';
 import 'package:mobile/widgets/widget.dart';
-import 'package:package_info/package_info.dart';
 
 class SettingsPage extends StatefulWidget {
   final AppManager app;
@@ -48,8 +49,8 @@ class _SettingsPageState extends State<SettingsPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Page(
-      appBarStyle: PageAppBarStyle(
+    return p.Page(
+      appBarStyle: p.PageAppBarStyle(
         title: Strings.of(context).settingsPageTitle,
       ),
       child: ListView(
@@ -251,12 +252,18 @@ class _SettingsPageState extends State<SettingsPage> {
   void _startExport() async {
     // Save backup file to sandbox cache. It'll be small and it'll be overridden
     // by subsequent backups, so let the system handle deletion.
-    Directory tempDir = await getTemporaryDirectory();
-    File backupFile = File("${tempDir.path}/backup.activitylog");
+    var tempDir = await getTemporaryDirectory();
+    var path = "${tempDir.path}/backup.activitylog";
+    var backupFile = File(path);
     backupFile.writeAsStringSync(await export(widget.app));
-    List<int> bytes = backupFile.readAsBytesSync();
-    
-    await Share.file(null, _backupFileName, bytes, "text/plain");
+
+    final box = context.findRenderObject() as RenderBox;
+
+    await Share.shareFiles(
+      [path],
+      mimeTypes: ["text/plain"],
+      sharePositionOrigin: box.localToGlobal(Offset.zero) & box.size,
+    );
     
     setState(() {
       _isCreatingBackup = false;
@@ -264,8 +271,8 @@ class _SettingsPageState extends State<SettingsPage> {
   }
 
   void _startImport() async {
-    File importFile = await FilePicker.getFile(type: FileType.ANY);
-    if (importFile == null) {
+    var result = await FilePicker.platform.pickFiles(allowMultiple: false);
+    if (result == null || result.files.isEmpty) {
       return;
     }
 
@@ -277,7 +284,7 @@ class _SettingsPageState extends State<SettingsPage> {
           _isImporting = true;
         });
 
-        _import(importFile);
+        _import(File(result.files.first.path));
       },
     );
   }
@@ -353,7 +360,7 @@ class _SettingsPageState extends State<SettingsPage> {
         subject: subject + " ($osName)",
         body: body,
         recipients: [_supportEmail],
-        attachmentPath: attachmentPath,
+        attachmentPaths: [attachmentPath],
       ));
     } on PlatformException {
       showError(

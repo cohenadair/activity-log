@@ -53,7 +53,7 @@ class Page extends StatelessWidget {
         children: <Widget>[
           Text(_appBarStyle.title),
           Text(_appBarStyle.subtitle,
-            style: Theme.of(context).textTheme.subtitle.copyWith(
+            style: Theme.of(context).textTheme.subtitle2.copyWith(
               color: Colors.white,
             ),
           ),

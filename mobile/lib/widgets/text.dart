@@ -137,7 +137,7 @@ class HeadingText extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       _text,
-      style: Theme.of(context).textTheme.body2.copyWith(
+      style: Theme.of(context).textTheme.bodyText1.copyWith(
         color: Theme.of(context).primaryColor,
       ),
     );
@@ -172,7 +172,7 @@ class SecondaryText extends StatelessWidget {
     return Text(
       text,
       // Same style used in ListTile.title.
-      style: Theme.of(context).textTheme.subhead.copyWith(
+      style: Theme.of(context).textTheme.subtitle1.copyWith(
         color: Theme.of(context).disabledColor,
       ),
     );

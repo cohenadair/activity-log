@@ -6,7 +6,7 @@ import 'package:mobile/res/dimen.dart';
 import 'package:mobile/utils/page_utils.dart';
 import 'package:mobile/widgets/button.dart';
 import 'package:mobile/widgets/list_item.dart';
-import 'package:mobile/widgets/page.dart';
+import 'package:mobile/widgets/page.dart' as p;
 import 'package:mobile/widgets/text.dart';
 import 'package:mobile/widgets/widget.dart';
 
@@ -231,8 +231,8 @@ class _ListPickerPageState<T> extends State<_ListPickerPage<T>> {
     List<ListPickerItem<T>> items =
         (widget.allItem == null ? [] : [widget.allItem])..addAll(widget.items);
 
-    return Page(
-      appBarStyle: PageAppBarStyle(
+    return p.Page(
+      appBarStyle: p.PageAppBarStyle(
         title: widget.pageTitle,
         actions: widget.allowsMultiSelect ? [
           ActionButton.done(onPressed: () {

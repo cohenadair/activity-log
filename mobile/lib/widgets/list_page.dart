@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mobile/i18n/strings.dart';
 import 'package:mobile/utils/page_utils.dart';
-import 'package:mobile/widgets/page.dart';
+import 'package:mobile/widgets/page.dart' as p;
 import 'package:mobile/widgets/widget.dart';
 
 /// A generic page for listing a given type, T, with the ability to navigate
@@ -33,8 +33,8 @@ class ListPage<T> extends StatefulWidget {
 class _ListPageState<T> extends State<ListPage<T>> {
   @override
   Widget build(BuildContext context) {
-    return Page(
-      appBarStyle: PageAppBarStyle(
+    return p.Page(
+      appBarStyle: p.PageAppBarStyle(
         title: widget.title,
         actions: <Widget>[
           IconButton(

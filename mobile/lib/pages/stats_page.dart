@@ -16,7 +16,7 @@ import 'package:mobile/widgets/activity_picker.dart';
 import 'package:mobile/widgets/activity_summary.dart';
 import 'package:mobile/widgets/loading.dart';
 import 'package:mobile/widgets/stats_date_range_picker.dart';
-import 'package:mobile/widgets/page.dart';
+import 'package:mobile/widgets/page.dart' as p;
 import 'package:mobile/widgets/summary.dart';
 import 'package:mobile/widgets/text.dart';
 import 'package:mobile/widgets/widget.dart';
@@ -74,8 +74,8 @@ class _StatsPageState extends State<StatsPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Page(
-      appBarStyle: PageAppBarStyle(
+    return p.Page(
+      appBarStyle: p.PageAppBarStyle(
         title: Strings.of(context).statsPageTitle,
       ),
       child: FutureBuilder<int>(
