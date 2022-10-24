@@ -271,7 +271,15 @@ class _SettingsPageState extends State<SettingsPage> {
   }
 
   void _startImport() async {
-    var result = await FilePicker.platform.pickFiles(allowMultiple: false);
+    FilePickerResult result;
+    try {
+      // TODO: Crashes on old Android devices when picking from downloads folder.
+      result = await FilePicker.platform.pickFiles(allowMultiple: false);
+    } catch (e) {
+      print(e);
+      // Nothing to do
+    }
+
     if (result == null || result.files.isEmpty) {
       return;
     }
