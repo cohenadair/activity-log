@@ -252,10 +252,52 @@ void main() {
 
       expect(summarizedActivity.longestStreak, equals(5));
     });
+
+    test("Longest streak across months", () {
+      Activity activity = ActivityBuilder("Activity").build;
+
+      SummarizedActivity summarizedActivity = SummarizedActivity(
+        value: activity,
+        displayDateRange: stubDateRange(DateRange(
+          startDate: DateTime(2018, 1, 1),
+          endDate: DateTime(2023, 1, 1),
+        )),
+        sessions: [
+          buildSession(
+            activity.id,
+            DateTime(2019, 11, 30, 22),
+            DateTime(2019, 12, 1, 3),
+          ),
+        ],
+      );
+
+      expect(summarizedActivity.longestStreak, equals(2));
+    });
+
+    test("Longest streak across years", () {
+      Activity activity = ActivityBuilder("Activity").build;
+
+      SummarizedActivity summarizedActivity = SummarizedActivity(
+        value: activity,
+        displayDateRange: stubDateRange(DateRange(
+          startDate: DateTime(2018, 1, 1),
+          endDate: DateTime(2023, 1, 1),
+        )),
+        sessions: [
+          buildSession(
+            activity.id,
+            DateTime(2019, 12, 31, 22),
+            DateTime(2020, 1, 1, 3),
+          ),
+        ],
+      );
+
+      expect(summarizedActivity.longestStreak, equals(2));
+    });
   });
 
   group("Date range pinning", () {
-    test("Infinte date range is pinned to earliest/latest sessions", () {
+    test("Infinite date range is pinned to earliest/latest sessions", () {
       List<Session> sessions = [
         buildSession("",
           DateTime(2019, 3, 15, 3),

@@ -161,10 +161,12 @@ class SummarizedActivity {
 
     for (int i = 1; i < dateTimeList.length; i++) {
       DateTime current = dateTimeList[i];
-      if (isSameYear(current, last)
-          && isSameMonth(current, last)
-          && current.day == last.day + 1)
-      {
+      DateTime lastsTomorrow = DateTime.fromMillisecondsSinceEpoch(
+          last.millisecondsSinceEpoch + Duration.millisecondsPerDay);
+
+      if (isSameYear(current, lastsTomorrow) &&
+          isSameMonth(current, lastsTomorrow) &&
+          current.day == lastsTomorrow.day) {
         currentStreak++;
       } else {
         currentStreak = 1;
