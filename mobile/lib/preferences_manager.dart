@@ -93,7 +93,7 @@ class PreferencesManager {
       return;
     }
 
-    _statsSelectedActivityIds = ids;
+    _statsSelectedActivityIds = ids ?? [];
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setStringList(_keyStatsSelectedActivityIds,

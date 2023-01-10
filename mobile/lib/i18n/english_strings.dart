@@ -100,6 +100,7 @@ Map<String, Map<String, String>> englishStrings = {
     "activitySummary_shortestSession" : "Shortest session",
     "activitySummary_longestSession" : "Longest session",
     "activitySummary_streak" : "Longest streak",
+    "activitySummary_currentStreak" : "Current streak",
     "activitySummary_streakDescription" : "Days in a row",
 
     "summary_defaultTitle" : "Summary",

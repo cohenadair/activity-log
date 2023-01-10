@@ -68,13 +68,12 @@ void main() {
     test("Normal use case", () {
       List<Session> sessions = [
         buildSession("",
-          DateTime.fromMillisecondsSinceEpoch(0),
-          DateTime.fromMillisecondsSinceEpoch(Duration.millisecondsPerHour * 7),
+          DateTime(2020, 5, 5, 13),
+          DateTime(2020, 5, 5, 20),
         ), // 7 hours
         buildSession("",
-          DateTime.fromMillisecondsSinceEpoch(Duration.millisecondsPerDay * 2),
-          DateTime.fromMillisecondsSinceEpoch(Duration.millisecondsPerDay * 2
-              + Duration.millisecondsPerHour * 5),
+          DateTime(2020, 5, 6, 13),
+          DateTime(2020, 5, 6, 18),
         ), // 5 hours
       ];
 
@@ -178,7 +177,7 @@ void main() {
   });
 
   group("Longest streak is calculated correctly", () {
-    test("Longest streak", () {
+    test("Longest and current streak", () {
       Activity activity = ActivityBuilder("Activity").build;
       SummarizedActivity summarizedActivity = SummarizedActivity(
         value: activity,
@@ -251,9 +250,10 @@ void main() {
       );
 
       expect(summarizedActivity.longestStreak, equals(5));
+      expect(summarizedActivity.currentStreak, equals(1));
     });
 
-    test("Longest streak across months", () {
+    test("Longest single session streak across months", () {
       Activity activity = ActivityBuilder("Activity").build;
 
       SummarizedActivity summarizedActivity = SummarizedActivity(
@@ -274,7 +274,7 @@ void main() {
       expect(summarizedActivity.longestStreak, equals(2));
     });
 
-    test("Longest streak across years", () {
+    test("Longest streak single session across years", () {
       Activity activity = ActivityBuilder("Activity").build;
 
       SummarizedActivity summarizedActivity = SummarizedActivity(
@@ -293,6 +293,85 @@ void main() {
       );
 
       expect(summarizedActivity.longestStreak, equals(2));
+    });
+
+    test("Longest streak across years", () {
+      Activity activity = ActivityBuilder("Activity").build;
+
+      SummarizedActivity summarizedActivity = SummarizedActivity(
+        value: activity,
+        displayDateRange: stubDateRange(DateRange(
+          startDate: DateTime(2018, 1, 1),
+          endDate: DateTime(2023, 1, 1),
+        )),
+        sessions: [
+          buildSession(
+            activity.id,
+            DateTime(2019, 12, 31, 22),
+            DateTime(2019, 12, 31, 23),
+          ),
+          buildSession(
+            activity.id,
+            DateTime(2020, 1, 1, 15),
+            DateTime(2020, 1, 1, 18),
+          ),
+        ],
+      );
+
+      expect(summarizedActivity.longestStreak, equals(2));
+    });
+
+    test("Current streak", () {
+      var now = DateTime.now();
+
+      Activity activity = ActivityBuilder("Activity").build;
+
+      SummarizedActivity summarizedActivity = SummarizedActivity(
+        value: activity,
+        displayDateRange: stubDateRange(DateRange(
+          startDate: DateTime(2018, 1, 1),
+          endDate: DateTime(2023, 1, 1),
+        )),
+        sessions: [
+          buildSession(
+            activity.id,
+            DateTime.fromMillisecondsSinceEpoch(
+                now.millisecondsSinceEpoch - Duration.millisecondsPerDay * 8),
+            DateTime.fromMillisecondsSinceEpoch(
+                now.millisecondsSinceEpoch - Duration.millisecondsPerDay * 8),
+          ),
+          buildSession(
+            activity.id,
+            DateTime.fromMillisecondsSinceEpoch(
+                now.millisecondsSinceEpoch - Duration.millisecondsPerDay * 5),
+            DateTime.fromMillisecondsSinceEpoch(
+                now.millisecondsSinceEpoch - Duration.millisecondsPerDay * 5),
+          ),
+          buildSession(
+            activity.id,
+            DateTime.fromMillisecondsSinceEpoch(
+                now.millisecondsSinceEpoch - Duration.millisecondsPerDay * 3),
+            DateTime.fromMillisecondsSinceEpoch(
+                now.millisecondsSinceEpoch - Duration.millisecondsPerDay * 3),
+          ),
+          buildSession(
+            activity.id,
+            DateTime.fromMillisecondsSinceEpoch(
+                now.millisecondsSinceEpoch - Duration.millisecondsPerDay * 2),
+            DateTime.fromMillisecondsSinceEpoch(
+                now.millisecondsSinceEpoch - Duration.millisecondsPerDay * 2),
+          ),
+          buildSession(
+            activity.id,
+            DateTime.fromMillisecondsSinceEpoch(
+                now.millisecondsSinceEpoch - Duration.millisecondsPerDay),
+            DateTime.fromMillisecondsSinceEpoch(
+                now.millisecondsSinceEpoch - Duration.millisecondsPerDay),
+          ),
+        ],
+      );
+
+      expect(summarizedActivity.longestStreak, equals(3));
     });
   });
 

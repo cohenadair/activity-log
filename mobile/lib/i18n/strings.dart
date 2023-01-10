@@ -129,6 +129,7 @@ class Strings {
   String get activitySummaryShortestSession => _getString("activitySummary_shortestSession");
   String get activitySummaryLongestSession => _getString("activitySummary_longestSession");
   String get activitySummaryStreak => _getString("activitySummary_streak");
+  String get activitySummaryCurrentStreak => _getString("activitySummary_currentStreak");
   String get activitySummaryStreakDescription => _getString("activitySummary_streakDescription");
 
   String get summaryDefaultTitle => _getString("summary_defaultTitle");

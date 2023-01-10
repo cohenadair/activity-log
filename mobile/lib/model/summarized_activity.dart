@@ -27,6 +27,7 @@ class SummarizedActivity {
   Duration _cachedDurationPerMonth;
 
   int _cachedLongestStreak;
+  int _cachedCurrentStreak;
 
   double _cachedSessionsPerDay;
   double _cachedSessionsPerWeek;
@@ -113,6 +114,13 @@ class SummarizedActivity {
     return _cachedLongestStreak;
   }
 
+  int get currentStreak {
+    if (_cachedCurrentStreak == null) {
+      _calculate();
+    }
+    return _cachedCurrentStreak;
+  }
+
   void _calculate() {
     if (sessions == null || sessions.isEmpty) {
       _cachedTotalDuration = Duration();
@@ -120,6 +128,7 @@ class SummarizedActivity {
       _cachedDurationPerWeek = Duration();
       _cachedDurationPerMonth = Duration();
       _cachedLongestStreak = 0;
+      _cachedCurrentStreak = 0;
       _cachedSessionsPerDay = 0;
       _cachedSessionsPerWeek = 0;
       _cachedSessionsPerMonth = 0;
@@ -154,21 +163,28 @@ class SummarizedActivity {
 
     // Iterate all days, keeping track of the longest streak.
     int currentStreak = 1;
+    bool didResetStreak = false;
     _cachedLongestStreak = currentStreak;
 
     List<DateTime> dateTimeList = List.from(allDateTimes);
+    dateTimeList.sort((lhs, rhs) => rhs.compareTo(lhs));
     DateTime last = dateTimeList.first;
+    _cachedCurrentStreak = isSameDate(DateTime.now(), last) ? 1 : 0;
 
     for (int i = 1; i < dateTimeList.length; i++) {
       DateTime current = dateTimeList[i];
       DateTime lastsTomorrow = DateTime.fromMillisecondsSinceEpoch(
-          last.millisecondsSinceEpoch + Duration.millisecondsPerDay);
+          last.millisecondsSinceEpoch - Duration.millisecondsPerDay);
 
       if (isSameYear(current, lastsTomorrow) &&
           isSameMonth(current, lastsTomorrow) &&
           current.day == lastsTomorrow.day) {
+        if (!didResetStreak) {
+          _cachedCurrentStreak++;
+        }
         currentStreak++;
       } else {
+        didResetStreak = true;
         currentStreak = 1;
       }
 
