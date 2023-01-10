@@ -129,5 +129,6 @@ Map<String, Map<String, String>> englishStrings = {
     "secondsFormat" : "%ss",
     "dateTimeFormat" : "%s at %s",
     "dateDurationFormat" : "%s (%s)",
+    "now" : "Now",
   },
 };

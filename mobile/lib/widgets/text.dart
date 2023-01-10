@@ -361,7 +361,7 @@ class TimeRangeText extends StatelessWidget {
     @required this.startTime,
     @required this.endTime,
     this.enabled = false,
-  }) : assert(startTime != null && endTime != null);
+  }) : assert(startTime != null);
 
   @override
   Widget build(BuildContext context) {
@@ -370,7 +370,9 @@ class TimeRangeText extends StatelessWidget {
       children: <Widget>[
         TimeText(startTime, enabled: enabled),
         EnabledText(" - ", enabled: enabled),
-        TimeText(endTime, enabled: enabled),
+        endTime == null
+            ? EnabledText(Strings.of(context).now, enabled: enabled)
+            : TimeText(endTime, enabled: enabled),
       ],
     );
   }

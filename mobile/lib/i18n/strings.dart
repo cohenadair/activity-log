@@ -158,6 +158,7 @@ class Strings {
   String get secondsFormat => _getString("secondsFormat");
   String get dateTimeFormat => _getString("dateTimeFormat");
   String get dateDurationFormat => _getString("dateDurationFormat");
+  String get now => _getString("now");
 }
 
 class StringsDelegate extends LocalizationsDelegate<Strings> {
