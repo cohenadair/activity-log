@@ -283,9 +283,12 @@ class DateDurationText extends StatelessWidget {
       formattedDuration += " ";
     }
 
-    if (displayDuration.minutes >= 0) {
+    if (displayDuration.minutes > 0) {
       formattedDuration +=
           format(Strings.of(context).minutesFormat, [displayDuration.minutes]);
+    } else {
+      formattedDuration +=
+          format(Strings.of(context).secondsFormat, [displayDuration.seconds]);
     }
 
     return format(Strings.of(context).dateDurationFormat,
