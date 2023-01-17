@@ -193,6 +193,17 @@ class _StatsPageState extends State<StatsPage> {
           padding: insetsVerticalDefault,
           items: [
             SummaryItem(
+              title: Strings.of(context).statsPageTotalDuration,
+              value: formatTotalDuration(
+                context: context,
+                durations: [Duration(milliseconds: summary.totalDuration)],
+                includesSeconds: false,
+                condensed: true,
+                showHighestTwoOnly: true,
+                largestDurationUnit: largestDurationUnit,
+              ),
+            ),
+            SummaryItem(
               title: Strings.of(context).statsPageMostFrequentActivityLabel,
               subtitle: summary.mostFrequentActivity == null
                   ? null

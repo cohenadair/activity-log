@@ -87,6 +87,7 @@ Map<String, Map<String, String>> englishStrings = {
     "statsPage_longestSessionLabel" : "Longest session",
     "statsPage_mostFrequentActivityLabel" : "Most frequent activity",
     "statsPage_mostFrequentActivityValue" : "%s sessions",
+    "statsPage_totalDuration": "Total Duration",
 
     "activitySummary_sessionTitle" : "Sessions",
     "activitySummary_numberOfSessions" : "Number of sessions",

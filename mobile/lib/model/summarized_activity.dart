@@ -236,6 +236,7 @@ class SummarizedActivityList {
 
   List<SummarizedActivity> _cachedActivitiesSortedByDuration;
   List<SummarizedActivity> _cachedActivitiesSortedByNumberOfSessions;
+  int _cachedTotalDuration;
 
   SummarizedActivityList(this.activities);
 
@@ -253,6 +254,13 @@ class SummarizedActivityList {
       _calculate();
     }
     return _cachedMostFrequentActivity;
+  }
+
+  int get totalDuration {
+    if (_cachedTotalDuration == null) {
+      _calculate();
+    }
+    return _cachedTotalDuration;
   }
 
   /// Returns a copy of `activities`, sorted descending by total duration.
@@ -278,6 +286,8 @@ class SummarizedActivityList {
   }
 
   void _calculate() {
+    _cachedTotalDuration = 0;
+
     activities.forEach((SummarizedActivity activity) {
       if (_cachedMostFrequentActivity == null
           || activity.sessions.length > _cachedMostFrequentActivity.second)
@@ -293,6 +303,8 @@ class SummarizedActivityList {
           _cachedLongestSession = Tuple(activity.value, session);
         }
       });
+
+      _cachedTotalDuration += activity.totalDuration.inMilliseconds;
     });
   }
 }

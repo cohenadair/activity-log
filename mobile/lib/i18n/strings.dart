@@ -116,6 +116,7 @@ class Strings {
   String get statsPageLongestSessionLabel => _getString("statsPage_longestSessionLabel");
   String get statsPageMostFrequentActivityLabel => _getString("statsPage_mostFrequentActivityLabel");
   String get statsPageMostFrequentActivityValue => _getString("statsPage_mostFrequentActivityValue");
+  String get statsPageTotalDuration => _getString("statsPage_totalDuration");
 
   String get activitySummarySessionTitle => _getString("activitySummary_sessionTitle");
   String get activitySummaryNumberOfSessions => _getString("activitySummary_numberOfSessions");

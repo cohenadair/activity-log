@@ -488,6 +488,7 @@ void main() {
       expect(result.longestSession.first, equals(activity3));
       expect(result.longestSession.second.millisecondsDuration,
           equals(longestSession.millisecondsDuration));
+      expect(result.totalDuration, Duration(hours: 18).inMilliseconds);
     });
   });
 
