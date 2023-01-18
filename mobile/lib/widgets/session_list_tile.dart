@@ -39,7 +39,13 @@ class SessionListTile extends StatelessWidget {
               _onTap(_session);
             }
           },
-          title: DateDurationText(_session.startDateTime, _session.duration),
+          title: DateDurationText(
+            _session.startDateTime,
+            _session.duration,
+            suffix: _session.isBanked
+                ? Strings.of(context).sessionListItemBankedAddition
+                : "",
+          ),
           subtitle: _getSubtitle(context),
           trailing: IconButton(
             color: Colors.red,

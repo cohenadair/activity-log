@@ -53,6 +53,7 @@ void main() {
             WHERE activity_id = ?
             AND start_timestamp < ?
             AND (end_timestamp IS NULL OR end_timestamp > ?)
+            AND is_banked = 0
             ORDER BY start_timestamp
           """, [activityId, dateRange.endMs, dateRange.startMs]
       )).thenAnswer((_) async => result);

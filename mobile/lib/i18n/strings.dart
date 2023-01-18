@@ -74,11 +74,14 @@ class Strings {
   String get editSessionPageFutureStartTime => _getString("editSessionPage_futureStartTime");
   String get editSessionPageFutureEndTime => _getString("editSessionPage_futureEndTime");
   String get editSessionPageInProgress => _getString("editSessionPage_inProgress");
+  String get editSessionPageBankedSession => _getString("editSessionPage_bankedSession");
+  String get editSessionPageBankedSessionDescription => _getString("editSessionPage_bankedSessionDescription");
 
   String get editSessionPageOverlap => _getString("editSessionPage_overlap");
 
   String get sessionListDeleteMessage => _getString("sessionList_deleteMessage");
   String get sessionListInProgress => _getString("sessionList_inProgress");
+  String get sessionListItemBankedAddition => _getString("sessionList_itemBankedAddition");
 
   String get settingsPageTitle => _getString("settingsPage_title");
   String get settingsPageVersion => _getString("settingsPage_version");

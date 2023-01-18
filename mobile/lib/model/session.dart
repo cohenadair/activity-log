@@ -7,20 +7,24 @@ class Session extends Model implements Comparable<Session> {
   static final keyActivityId = "activity_id";
   static final keyStartTimestamp = "start_timestamp";
   static final keyEndTimestamp = "end_timestamp";
+  static final keyIsBanked = "is_banked";
 
   final String _activityId;
   final int _startTimestamp;
   final int _endTimestamp;
+  final bool _isBanked;
   final Clock _clock;
 
   String get activityId => _activityId;
   int get startTimestamp => _startTimestamp;
   int get endTimestamp => _endTimestamp;
+  bool get isBanked => _isBanked != null && _isBanked;
 
   Session.fromMap(Map<String, dynamic> map)
     : _activityId = map[keyActivityId],
       _startTimestamp = map[keyStartTimestamp],
       _endTimestamp = map[keyEndTimestamp],
+      _isBanked = map[keyIsBanked] == 1,
       _clock = Clock(),
       super.fromMap(map);
 
@@ -28,6 +32,7 @@ class Session extends Model implements Comparable<Session> {
     : _activityId = builder.activityId,
       _startTimestamp = builder.startTimestamp,
       _endTimestamp = builder.endTimestamp,
+      _isBanked = builder.isBanked,
       _clock = builder.clock,
       super.fromBuilder(builder);
 
@@ -66,6 +71,7 @@ class Session extends Model implements Comparable<Session> {
       keyActivityId : _activityId,
       keyStartTimestamp : _startTimestamp,
       keyEndTimestamp : _endTimestamp,
+      keyIsBanked : _isBanked != null && _isBanked ? 1 : 0,
     }..addAll(super.toMap());
   }
 
@@ -105,6 +111,7 @@ class SessionBuilder extends ModelBuilder {
   String activityId;
   int startTimestamp;
   int endTimestamp;
+  bool isBanked;
   Clock clock;
 
   SessionBuilder(this.activityId);
@@ -113,6 +120,7 @@ class SessionBuilder extends ModelBuilder {
       : activityId = session._activityId,
         startTimestamp = session._startTimestamp,
         endTimestamp = session._endTimestamp,
+        isBanked = session._isBanked,
         super.fromModel(session);
 
   SessionBuilder endNow() {

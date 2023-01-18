@@ -5,7 +5,7 @@ import 'package:sqflite/sqflite.dart';
 
 class SQLiteOpenHelper {
   static final String _name = "activitylog.db";
-  static final int _version = 1;
+  static final int _version = 2;
 
   static final List<String> _schema0 = [
     """
@@ -25,8 +25,15 @@ class SQLiteOpenHelper {
     """
   ];
 
+  static final List<String> _schema1 = [
+    """
+    ALTER TABLE session ADD COLUMN is_banked BOOLEAN DEFAULT false
+    """,
+  ];
+
   static final List<List<String>> _schema = [
     _schema0,
+    _schema1,
   ];
 
   static Future<Database> open() async {

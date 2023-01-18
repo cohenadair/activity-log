@@ -303,6 +303,13 @@ void main() {
       expect(find.text("Today (30m)"), findsOneWidget);
     });
 
+    testWidgets("Only seconds", (WidgetTester tester) async {
+      await tester.pumpWidget(Testable(
+          DateDurationText(today, Duration(seconds: 30), clock: clock)
+      ));
+      expect(find.text("Today (30s)"), findsOneWidget);
+    });
+
     testWidgets("Hours and minutes", (WidgetTester tester) async {
       await tester.pumpWidget(Testable(
         DateDurationText(today, Duration(hours: 1, minutes: 3), clock: clock)

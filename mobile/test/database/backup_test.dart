@@ -87,7 +87,7 @@ void main() {
       var clock = Clock.fixed(DateTime(2019, 1, 1));
       String json = await export(app, clock: clock);
 
-      expect(json, equals('{"activities":[{"name":"Test1","current_session_id":null,"id":"AID1"},{"name":"Test2","current_session_id":null,"id":"AID2"},{"name":"Test3","current_session_id":null,"id":"AID3"},{"name":"Test4","current_session_id":null,"id":"AID4"}],"sessions":[{"activity_id":"ID0","start_timestamp":5000,"end_timestamp":10000,"id":"SID5000"},{"activity_id":"ID1","start_timestamp":15000,"end_timestamp":20000,"id":"SID15000"},{"activity_id":"ID2","start_timestamp":25000,"end_timestamp":30000,"id":"SID25000"},{"activity_id":"ID3","start_timestamp":35000,"end_timestamp":40000,"id":"SID35000"},{"activity_id":"ID4","start_timestamp":45000,"end_timestamp":1546322400000,"id":"SID45000"}],"preferences":{"largest_duration_unit":0,"home_date_range":"last7Days"}}'));
+      expect(json, equals('{"activities":[{"name":"Test1","current_session_id":null,"id":"AID1"},{"name":"Test2","current_session_id":null,"id":"AID2"},{"name":"Test3","current_session_id":null,"id":"AID3"},{"name":"Test4","current_session_id":null,"id":"AID4"}],"sessions":[{"activity_id":"ID0","start_timestamp":5000,"end_timestamp":10000,"is_banked":0,"id":"SID5000"},{"activity_id":"ID1","start_timestamp":15000,"end_timestamp":20000,"is_banked":0,"id":"SID15000"},{"activity_id":"ID2","start_timestamp":25000,"end_timestamp":30000,"is_banked":0,"id":"SID25000"},{"activity_id":"ID3","start_timestamp":35000,"end_timestamp":40000,"is_banked":0,"id":"SID35000"},{"activity_id":"ID4","start_timestamp":45000,"end_timestamp":1546322400000,"is_banked":0,"id":"SID45000"}],"preferences":{"largest_duration_unit":0,"home_date_range":"last7Days"}}'));
     });
   });
 

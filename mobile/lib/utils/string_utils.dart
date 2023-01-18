@@ -135,7 +135,6 @@ String formatTotalDuration({
   durations.forEach((Duration duration) {
     totalMillis += duration.inMilliseconds;
   });
-
   includesDays = includesDays && largestDurationUnit == DurationUnit.days;
   includesHours = includesHours && largestDurationUnit != DurationUnit.minutes;
 
@@ -189,6 +188,11 @@ String formatTotalDuration({
       && (includesSeconds || includesMinutes || includesHours || includesDays))
   {
     result += format(Strings.of(context).minutesFormat, [0]);
+  }
+
+  // Remove all '-', except the first.
+  if (result.startsWith("-")) {
+    result = "-${result.substring(1).replaceAll("-", "")}";
   }
 
   return result;

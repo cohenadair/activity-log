@@ -5,10 +5,12 @@ import 'package:mobile/i18n/strings.dart';
 import 'package:mobile/model/activity.dart';
 import 'package:mobile/model/session.dart';
 import 'package:mobile/utils/date_time_utils.dart';
+import 'package:mobile/utils/dialog_utils.dart';
 import 'package:mobile/widgets/date_time_picker.dart';
 import 'package:mobile/widgets/edit_page.dart';
 import 'package:mobile/res/dimen.dart';
 import 'package:mobile/utils/string_utils.dart';
+import 'package:mobile/widgets/list_item.dart';
 import 'package:mobile/widgets/text.dart';
 
 class EditSessionPage extends StatefulWidget {
@@ -43,6 +45,7 @@ class _EditSessionPageState extends State<EditSessionPage> {
   TimeOfDay _startTime;
   DateTime _endDate;
   TimeOfDay _endTime;
+  bool _isBanked;
 
   String _formValidationValue;
 
@@ -52,9 +55,11 @@ class _EditSessionPageState extends State<EditSessionPage> {
       _startDate = _editingSession.startDateTime;
       _endDate = _isEditingInProgress
           ? _startDate : _editingSession.endDateTime;
+      _isBanked = _editingSession.isBanked;
     } else {
       _startDate = DateTime.now();
       _endDate = _startDate;
+      _isBanked = false;
     }
 
     _startTime = TimeOfDay.fromDateTime(_startDate);
@@ -72,7 +77,7 @@ class _EditSessionPageState extends State<EditSessionPage> {
               [_activity.name])
           : format(Strings.of(context).editSessionPageNewTitle,
               [_activity.name]),
-      padding: insetsRowDefault,
+      padding: insetsVerticalSmall,
       onSave: _onPressedSaveButton,
       onDelete: () => _app.dataManager.removeSession(_editingSession),
       deleteDescription: Strings.of(context).sessionListDeleteMessage,
@@ -84,51 +89,84 @@ class _EditSessionPageState extends State<EditSessionPage> {
           children: <Widget>[
             AnimatedErrorText(
               _formValidationValue,
-              padding: insetsVerticalSmall,
-            ),
-            DateTimePickerContainer(
-              datePicker: DatePicker(
-                label: Strings.of(context).editSessionPageStartDate,
-                initialDate: _startDate,
-                validator: _validateStartDate,
-                onChange: (DateTime dateTime) {
-                  _startDate = dateTime;
-                },
+              padding: EdgeInsets.only(
+                left: paddingDefault,
+                right: paddingDefault,
+                top: paddingSmall,
+                bottom: paddingSmall,
               ),
-              timePicker: TimePicker(
-                label: Strings.of(context).editSessionPageStartTime,
-                initialTime: _startTime,
-                validator: _validateStartTime,
-                onChange: (TimeOfDay time) {
-                  _startTime = time;
-                },
+            ),
+            Padding(
+              padding: insetsHorizontalDefault,
+              child: DateTimePickerContainer(
+                datePicker: DatePicker(
+                  label: Strings.of(context).editSessionPageStartDate,
+                  initialDate: _startDate,
+                  validator: _validateStartDate,
+                  onChange: (DateTime dateTime) {
+                    _startDate = dateTime;
+                  },
+                ),
+                timePicker: TimePicker(
+                  label: Strings.of(context).editSessionPageStartTime,
+                  initialTime: _startTime,
+                  validator: _validateStartTime,
+                  onChange: (TimeOfDay time) {
+                    _startTime = time;
+                  },
+                ),
+              ),
+            ),
+            Container(height: paddingDefault),
+            Padding(
+              padding: insetsHorizontalDefault,
+              child: DateTimePickerContainer(
+                datePicker: DatePicker(
+                  label: Strings.of(context).editSessionPageEndDate,
+                  initialDate: _endDate,
+                  validator: _validateEndDate,
+                  enabled: !_isEditingInProgress,
+                  onChange: (DateTime dateTime) {
+                    _endDate = dateTime;
+                  },
+                ),
+                timePicker: TimePicker(
+                  label: Strings.of(context).editSessionPageEndTime,
+                  initialTime: _endTime,
+                  validator: _validateEndTime,
+                  enabled: !_isEditingInProgress,
+                  onChange: (TimeOfDay time) {
+                    _endTime = time;
+                  },
+                ),
+                helper: _isEditingInProgress
+                    ? WarningText(Strings.of(context).editSessionPageInProgress)
+                    : null,
               ),
             ),
             Container(height: paddingDefault),
-            DateTimePickerContainer(
-              datePicker: DatePicker(
-                label: Strings.of(context).editSessionPageEndDate,
-                initialDate: _endDate,
-                validator: _validateEndDate,
-                enabled: !_isEditingInProgress,
-                onChange: (DateTime dateTime) {
-                  _endDate = dateTime;
-                },
+            ListItem(
+              contentPadding: EdgeInsets.only(
+                left: paddingDefault,
               ),
-              timePicker: TimePicker(
-                label: Strings.of(context).editSessionPageEndTime,
-                initialTime: _endTime,
-                validator: _validateEndTime,
-                enabled: !_isEditingInProgress,
-                onChange: (TimeOfDay time) {
-                  _endTime = time;
-                },
+              title: Row(
+                children: [
+                  Text(Strings.of(context).editSessionPageBankedSession),
+                  IconButton(
+                    icon: Icon(Icons.help_outline),
+                    visualDensity: VisualDensity.compact,
+                    onPressed: () => showOk(
+                      context: context,
+                      description: Strings.of(context).editSessionPageBankedSessionDescription,
+                    ),
+                  ),
+                ],
               ),
-              helper: _isEditingInProgress
-                  ? WarningText(Strings.of(context).editSessionPageInProgress)
-                  : null,
+              trailing: Checkbox(
+                value: _isBanked,
+                onChanged: (value) => setState(() => _isBanked = value),
+              ),
             ),
-            Container(height: paddingDefault),
           ],
         ),
       ),
@@ -153,7 +191,8 @@ class _EditSessionPageState extends State<EditSessionPage> {
         ..startTimestamp = combine(_startDate, _startTime)
             .millisecondsSinceEpoch
         ..endTimestamp = _isEditingInProgress
-            ? null : combine(_endDate, _endTime).millisecondsSinceEpoch)
+            ? null : combine(_endDate, _endTime).millisecondsSinceEpoch
+        ..isBanked = _isBanked)
         .build;
 
     _app.dataManager.getOverlappingSession(session)

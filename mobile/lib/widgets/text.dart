@@ -20,17 +20,15 @@ class AnimatedErrorText extends StatefulWidget {
   final String text;
   final EdgeInsets padding;
 
-  AnimatedErrorText(this.text, {
-    EdgeInsets padding = insetsZero
-  }) : padding = padding;
+  AnimatedErrorText(this.text, {EdgeInsets padding = insetsZero})
+      : padding = padding;
 
   @override
   _AnimatedErrorTextState createState() => _AnimatedErrorTextState();
 }
 
 class _AnimatedErrorTextState extends State<AnimatedErrorText>
-    with TickerProviderStateMixin
-{
+    with TickerProviderStateMixin {
   // Animation settings are copied from InputDecorator in order to stay
   // consistent with Material form widgets.
   final animationDuration = defaultAnimationDuration;
@@ -138,8 +136,8 @@ class HeadingText extends StatelessWidget {
     return Text(
       _text,
       style: Theme.of(context).textTheme.bodyText1.copyWith(
-        color: Theme.of(context).primaryColor,
-      ),
+            color: Theme.of(context).primaryColor,
+          ),
     );
   }
 }
@@ -173,8 +171,8 @@ class SecondaryText extends StatelessWidget {
       text,
       // Same style used in ListTile.title.
       style: Theme.of(context).textTheme.subtitle1.copyWith(
-        color: Theme.of(context).disabledColor,
-      ),
+            color: Theme.of(context).disabledColor,
+          ),
     );
   }
 }
@@ -211,7 +209,8 @@ class TotalDurationText extends StatelessWidget {
   final bool showHighestTwoOnly;
   final DurationUnit largestDurationUnit;
 
-  TotalDurationText(this.durations, {
+  TotalDurationText(
+    this.durations, {
     this.includesDays = true,
     this.includesHours = true,
     this.includesMinutes = true,
@@ -250,10 +249,14 @@ class DateDurationText extends StatelessWidget {
   final DateTime startDateTime;
   final Duration duration;
   final TextStyle style;
+  final String suffix;
 
-  DateDurationText(this.startDateTime, this.duration, {
+  DateDurationText(
+    this.startDateTime,
+    this.duration, {
     this.clock = const Clock(),
     this.style,
+    this.suffix = "",
   });
 
   @override
@@ -277,22 +280,32 @@ class DateDurationText extends StatelessWidget {
         DisplayDuration(duration, includesDays: false);
     String formattedDuration = "";
 
-    if (displayDuration.hours > 0) {
-      formattedDuration +=
-          format(Strings.of(context).hoursFormat, [displayDuration.hours]);
-      formattedDuration += " ";
-    }
-
-    if (displayDuration.minutes > 0) {
-      formattedDuration +=
-          format(Strings.of(context).minutesFormat, [displayDuration.minutes]);
-    } else {
+    if (displayDuration.hours == 0 &&
+        displayDuration.minutes == 0 &&
+        displayDuration.seconds > 0) {
       formattedDuration +=
           format(Strings.of(context).secondsFormat, [displayDuration.seconds]);
+    } else {
+      if (displayDuration.hours > 0) {
+        formattedDuration +=
+            format(Strings.of(context).hoursFormat, [displayDuration.hours]);
+        formattedDuration += " ";
+      }
+
+      if (displayDuration.minutes >= 0) {
+        formattedDuration += format(
+            Strings.of(context).minutesFormat, [displayDuration.minutes]);
+      }
+
+      if (isEmpty(formattedDuration)) {
+        formattedDuration += format(
+            Strings.of(context).secondsFormat, [displayDuration.seconds]);
+      }
     }
 
     return format(Strings.of(context).dateDurationFormat,
-        [formattedDate, formattedDuration]);
+            [formattedDate, formattedDuration]) +
+        suffix;
   }
 }
 
@@ -337,7 +350,8 @@ class TimeText extends StatelessWidget {
   final TimeOfDay time;
   final bool enabled;
 
-  TimeText(this.time, {
+  TimeText(
+    this.time, {
     this.enabled = true,
   });
 
@@ -389,7 +403,8 @@ class DateText extends StatelessWidget {
   final DateTime date;
   final bool enabled;
 
-  DateText(this.date, {
+  DateText(
+    this.date, {
     this.enabled = true,
   });
 

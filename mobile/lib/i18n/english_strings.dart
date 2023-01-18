@@ -47,9 +47,12 @@ Map<String, Map<String, String>> englishStrings = {
     "editSessionPage_futureEndTime" : "End time cannot be in the future",
     "editSessionPage_overlap" : "Session must not overlap with another session in the same activity\n\nConflicting session: %s",
     "editSessionPage_inProgress" : "End date and time cannot be modified for in progress sessions",
+    "editSessionPage_bankedSession" : "Banked Session",
+    "editSessionPage_bankedSessionDescription" : "Banked Session durations are subtracted from the Activity's total duration. These sessions are excluded from Stats.",
 
     "sessionList_deleteMessage" : "Are you sure you want to delete this session? This action cannot be undone.",
     "sessionList_inProgress" : "In progress",
+    "sessionList_itemBankedAddition" : " - Banked",
 
     "settingsPage_title" : "Settings",
     "settingsPage_version" : "Version",

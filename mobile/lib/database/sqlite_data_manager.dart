@@ -399,6 +399,7 @@ class SQLiteDataManager {
         sessionMapList = await _database.rawQuery("""
           SELECT * FROM session
             WHERE activity_id = ?
+            AND is_banked = 0
             ORDER BY start_timestamp
           """, [
           activity.id
@@ -411,6 +412,7 @@ class SQLiteDataManager {
             WHERE activity_id = ?
             AND start_timestamp < ?
             AND (end_timestamp IS NULL OR end_timestamp > ?)
+            AND is_banked = 0
             ORDER BY start_timestamp
           """, [
             activity.id,
@@ -467,6 +469,16 @@ class SQLiteDataManager {
       FROM session
       WHERE start_timestamp < ?
       AND (end_timestamp IS NULL OR end_timestamp > ?)
+      AND is_banked = 0
+      GROUP BY activity_id
+    """;
+
+    String bankedSessionsQuery = """
+      SELECT activity_id, SUM(end_timestamp - start_timestamp) as sum_value
+      FROM session
+      WHERE start_timestamp < ?
+      AND (end_timestamp IS NULL OR end_timestamp > ?)
+      AND is_banked = 1
       GROUP BY activity_id
     """;
 
@@ -474,6 +486,7 @@ class SQLiteDataManager {
     batch.rawQuery(allActivitiesQuery);
     batch.rawQuery(inProgressSessionsQuery);
     batch.rawQuery(totalDurationsQuery, [dateRange.endMs, dateRange.startMs]);
+    batch.rawQuery(bankedSessionsQuery, [dateRange.endMs, dateRange.startMs]);
     List<dynamic> mapList = await batch.commit();
 
     if (mapList == null || mapList.isEmpty) {
@@ -498,6 +511,15 @@ class SQLiteDataManager {
     mapList[2].forEach((durationMap) {
       modelMap[durationMap["activity_id"]].duration =
           Duration(milliseconds: durationMap["sum_value"] ?? 0);
+    });
+
+    // Banked sessions.
+    mapList[3].forEach((sessionMap) {
+      var model = modelMap[sessionMap["activity_id"]];
+      if (model.duration == null) {
+        model.duration = Duration();
+      }
+      model.duration -= Duration(milliseconds: sessionMap["sum_value"] ?? 0);
     });
 
     // Sort alphabetically.
