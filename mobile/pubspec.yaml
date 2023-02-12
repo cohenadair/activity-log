@@ -22,8 +22,8 @@ dependencies:
 
   charts_flutter: ^0.12.0       # https://pub.dev/packages/charts_flutter
   collection: ^1.17.0           # https://pub.dev/packages/collection (Dart)
-  share_plus: ^4.5.3            # https://pub.dev/packages/share_plus
-  file_picker: ^4.3.3           # https://pub.dev/packages/file_picker
+  share_plus: ^6.3.1            # https://pub.dev/packages/share_plus (Verified)
+  file_picker: ^5.2.5           # https://pub.dev/packages/file_picker (Verified)
   flutter_email_sender: ^5.1.0  # https://pub.dev/packages/flutter_email_sender
   intl: ^0.17.0                 # https://pub.dev/packages/intl
   package_info_plus: ^1.3.0     # https://pub.dev/packages/package_info_plus

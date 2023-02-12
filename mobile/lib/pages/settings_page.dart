@@ -11,7 +11,6 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:quiver/strings.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:mobile/app_manager.dart';
 import 'package:mobile/i18n/strings.dart';
 import 'package:mobile/preferences_manager.dart';
@@ -208,8 +207,8 @@ class SettingsPageState extends State<SettingsPage> {
           errorMessage = Strings.of(context).settingsPageIosErrorRateMessage;
         }
 
-        if (await canLaunch(url)) {
-          await launch(url);
+        if (await canLaunchUrlString(url)) {
+          await launchUrlString(url);
         } else {
           showError(context: context, description: errorMessage);
         }
@@ -236,9 +235,7 @@ class SettingsPageState extends State<SettingsPage> {
   Widget _buildPrivacy() {
     return ListItem(
       title: Text(Strings.of(context).settingsPagePrivacyPolicy),
-      onTap: () async {
-        await launch(_privacyUrl);
-      },
+      onTap: () => launchUrlString(_privacyUrl),
     );
   }
 
@@ -276,9 +273,8 @@ class SettingsPageState extends State<SettingsPage> {
 
     final box = context.findRenderObject() as RenderBox;
 
-    await Share.shareFiles(
-      [path],
-      mimeTypes: ["text/plain"],
+    await Share.shareXFiles(
+      [XFile(path, mimeType: "text/plain")],
       sharePositionOrigin: box.localToGlobal(Offset.zero) & box.size,
     );
 
