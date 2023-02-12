@@ -37,8 +37,8 @@ class StatsPageState extends State<StatsPage> {
   late DisplayDateRange _currentDateRange;
 
   late Future<SummarizedActivityList> _summarizedActivityListFuture;
-  late Future<int> _activityCountFuture;
   late StreamSubscription<void> _onActivitiesUpdated;
+  Future<int> _activityCountFuture = Future.value(0);
 
   @override
   void initState() {
