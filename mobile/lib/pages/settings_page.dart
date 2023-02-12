@@ -41,7 +41,7 @@ class SettingsPageState extends State<SettingsPage> {
   static const _supportEmail = "cohenadair@gmail.com";
   static const _rateAppStoreUrl =
       "itms-apps://itunes.apple.com/app/id1458926666?action=write-review";
-  static const _playStoreUrl = "market://details?id=";
+  static const _playStoreUrl = "market://details?id=com.cohenadair.activitylog";
   static const _privacyUrl =
       "https://cohenadair.github.io/activity-log/privacy_policy.html";
   static const _backupFileExtension = "dat";
@@ -199,7 +199,7 @@ class SettingsPageState extends State<SettingsPage> {
         String errorMessage;
 
         if (Platform.isAndroid) {
-          url = _playStoreUrl + (await PackageInfo.fromPlatform()).packageName;
+          url = _playStoreUrl;
           errorMessage =
               Strings.of(context).settingsPageAndroidErrorRateMessage;
         } else {
@@ -209,7 +209,7 @@ class SettingsPageState extends State<SettingsPage> {
 
         if (await canLaunchUrlString(url)) {
           await launchUrlString(url);
-        } else {
+        } else if (context.mounted) {
           showError(context: context, description: errorMessage);
         }
       },
@@ -245,11 +245,8 @@ class SettingsPageState extends State<SettingsPage> {
       subtitle: Text(Strings.of(context).settingsPageExportDescription),
       trailing: _isCreatingBackup ? const Loading() : Empty(),
       onTap: () {
-        setState(() {
-          _isCreatingBackup = true;
-        });
-
-        _startExport();
+        setState(() => _isCreatingBackup = true);
+        _startExport(context.findRenderObject() as RenderBox);
       },
     );
   }
@@ -263,7 +260,7 @@ class SettingsPageState extends State<SettingsPage> {
     );
   }
 
-  void _startExport() async {
+  void _startExport(RenderBox renderBox) async {
     // Save backup file to sandbox cache. It'll be small and it'll be overridden
     // by subsequent backups, so let the system handle deletion.
     var tempDir = await getTemporaryDirectory();
@@ -271,11 +268,10 @@ class SettingsPageState extends State<SettingsPage> {
     var backupFile = File(path);
     backupFile.writeAsStringSync(await export(widget.app));
 
-    final box = context.findRenderObject() as RenderBox;
-
     await Share.shareXFiles(
       [XFile(path, mimeType: "text/plain")],
-      sharePositionOrigin: box.localToGlobal(Offset.zero) & box.size,
+      sharePositionOrigin:
+          renderBox.localToGlobal(Offset.zero) & renderBox.size,
     );
 
     setState(() {
@@ -296,17 +292,19 @@ class SettingsPageState extends State<SettingsPage> {
       return;
     }
 
-    showWarning(
-      context: context,
-      description: Strings.of(context).settingsPageImportWarning,
-      onContinue: () {
-        setState(() {
-          _isImporting = true;
-        });
+    if (context.mounted) {
+      showWarning(
+        context: context,
+        description: Strings.of(context).settingsPageImportWarning,
+        onContinue: () {
+          setState(() {
+            _isImporting = true;
+          });
 
-        _import(File(result!.files.first.path!));
-      },
-    );
+          _import(File(result!.files.first.path!));
+        },
+      );
+    }
   }
 
   void _import(File file) async {
@@ -326,19 +324,19 @@ class SettingsPageState extends State<SettingsPage> {
     if (jsonString != null) {
       ImportResult result = await import(widget.app, json: jsonString);
 
-      if (result == ImportResult.success) {
-        showOk(
-          context: context,
-          description: Strings.of(context).settingsPageImportSuccess,
-        );
-      } else {
-        _showImportError(result, file);
+      if (context.mounted) {
+        if (result == ImportResult.success) {
+          showOk(
+            context: context,
+            description: Strings.of(context).settingsPageImportSuccess,
+          );
+        } else {
+          _showImportError(result, file);
+        }
       }
     }
 
-    setState(() {
-      _isImporting = false;
-    });
+    setState(() => _isImporting = false);
   }
 
   void _showImportError(ImportResult result, File importFile) {
