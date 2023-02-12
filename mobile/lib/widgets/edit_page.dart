@@ -10,19 +10,19 @@ class EditPage extends StatelessWidget {
   final String _title;
   final VoidCallback _onPressedSaveButton;
   final VoidCallback _onPressedDeleteButton;
-  final String _deleteDescription;
+  final String? _deleteDescription;
   final bool Function() _isEditingCallback;
   final Form _form;
   final EdgeInsets _padding;
 
   EditPage({
-    String title,
-    VoidCallback onSave,
-    VoidCallback onDelete,
-    String deleteDescription,
-    @required isEditingCallback,
-    @required form,
-    EdgeInsets padding,
+    required String title,
+    required VoidCallback onSave,
+    required VoidCallback onDelete,
+    String? deleteDescription,
+    required isEditingCallback,
+    required form,
+    required EdgeInsets padding,
   }) : assert(form != null),
        _title = title,
        _onPressedSaveButton = onSave,

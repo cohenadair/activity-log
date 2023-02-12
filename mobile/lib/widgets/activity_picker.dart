@@ -17,9 +17,9 @@ class ActivityPicker extends StatefulWidget {
   final OnListPickerChanged<Set<Activity>> onPickedActivitiesChanged;
 
   ActivityPicker({
-    @required this.app,
-    @required this.initialActivities,
-    @required this.onPickedActivitiesChanged,
+    required this.app,
+    required this.initialActivities,
+    required this.onPickedActivitiesChanged,
   });
 
   @override
@@ -27,29 +27,26 @@ class ActivityPicker extends StatefulWidget {
 }
 
 class _ActivityPickerState extends State<ActivityPicker> {
-  Activity _allActivitiesActivity;
+  late Activity _allActivitiesActivity;
 
   @override
   Widget build(BuildContext context) {
     return ActivitiesBuilder(
       app: widget.app,
       builder: (BuildContext context, List<Activity> activities) {
-        if (_allActivitiesActivity == null) {
-          _allActivitiesActivity = ActivityBuilder(
-            Strings.of(context).activityDropdownAllActivities,
-          ).build;
-        }
+        _allActivitiesActivity = ActivityBuilder(
+          Strings.of(context).activityDropdownAllActivities,
+        ).build;
 
         return ListPicker<Activity>(
           allowsMultiSelect: true,
-          initialValues: widget.initialActivities
-              ?? Set.of([_allActivitiesActivity]),
-          onChanged: (Set<Activity> newActivities) {
-            if (newActivities == null
-                || newActivities.first == _allActivitiesActivity)
-            {
+          initialValues: widget.initialActivities.isEmpty
+                ? Set.of([_allActivitiesActivity])
+                : widget.initialActivities,
+            onChanged: (Set<Activity> newActivities) {
+            if (newActivities.first == _allActivitiesActivity) {
               // Invoke the callback with null if "All activities" was picked.
-              widget.onPickedActivitiesChanged(null);
+              widget.onPickedActivitiesChanged({});
             } else {
               widget.onPickedActivitiesChanged(newActivities);
             }

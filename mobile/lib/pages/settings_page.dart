@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
@@ -10,6 +9,7 @@ import 'package:mobile/database/backup.dart';
 import 'package:mobile/res/style.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:quiver/strings.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:mobile/app_manager.dart';
@@ -214,7 +214,7 @@ class _SettingsPageState extends State<SettingsPage> {
       future: PackageInfo.fromPlatform(),
       builder: (_, AsyncSnapshot<PackageInfo> snapshot) {
         if (snapshot.hasData) {
-          return SecondaryText(snapshot.data.version);
+          return SecondaryText(snapshot.data!.version);
         } else {
           return Loading();
         }
@@ -232,7 +232,7 @@ class _SettingsPageState extends State<SettingsPage> {
   Widget _buildExport() => ListItem(
     title: Text(Strings.of(context).settingsPageExportLabel),
     subtitle: Text(Strings.of(context).settingsPageExportDescription),
-    trailing: _isCreatingBackup ? Loading() : null,
+    trailing: _isCreatingBackup ? Loading() : Empty(),
     onTap: () {
       setState(() {
         _isCreatingBackup = true;
@@ -245,7 +245,7 @@ class _SettingsPageState extends State<SettingsPage> {
   Widget _buildImport() => ListItem(
     title: Text(Strings.of(context).settingsPageImportLabel),
     subtitle: Text(Strings.of(context).settingsPageImportDescription),
-    trailing: _isImporting ? Loading() : null,
+    trailing: _isImporting ? Loading() : Empty(),
     onTap: _startImport,
   );
 
@@ -271,7 +271,7 @@ class _SettingsPageState extends State<SettingsPage> {
   }
 
   void _startImport() async {
-    FilePickerResult result;
+    FilePickerResult? result;
     try {
       // TODO: Crashes on old Android devices when picking from downloads folder.
       result = await FilePicker.platform.pickFiles(allowMultiple: false);
@@ -292,13 +292,13 @@ class _SettingsPageState extends State<SettingsPage> {
           _isImporting = true;
         });
 
-        _import(File(result.files.first.path));
+        _import(File(result!.files.first.path!));
       },
     );
   }
 
   void _import(File file) async {
-    String jsonString;
+    String? jsonString;
 
     try {
       // This method will throw an exception for non-text files, such as
@@ -358,17 +358,17 @@ class _SettingsPageState extends State<SettingsPage> {
   }
 
   Future<void> _sendEmail({
-    String subject,
-    String body,
-    String attachmentPath,
+    required String subject,
+    String? body,
+    String? attachmentPath,
   }) async {
     try {
       String osName = Platform.isAndroid ? "Android" : "iOS";
       await FlutterEmailSender.send(Email(
         subject: subject + " ($osName)",
-        body: body,
+        body: body ?? "",
         recipients: [_supportEmail],
-        attachmentPaths: [attachmentPath],
+        attachmentPaths: isEmpty(attachmentPath) ? [] : [attachmentPath!],
       ));
     } on PlatformException {
       showError(

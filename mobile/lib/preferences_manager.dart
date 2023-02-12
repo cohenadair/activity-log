@@ -19,11 +19,11 @@ class PreferencesManager {
 
   Stream<void> get homeDateRangeStream => _homeDateRangeUpdated.stream;
 
-  DurationUnit _largestDurationUnit;
-  DisplayDateRange _homeDateRange;
+  late DurationUnit _largestDurationUnit;
+  late DisplayDateRange _homeDateRange;
 
-  List<String> _statsSelectedActivityIds;
-  DisplayDateRange _statsDateRange;
+  late List<String> _statsSelectedActivityIds;
+  late DisplayDateRange _statsDateRange;
 
   /// The largest unit used to display [Duration] objects. This value will never
   /// be `null`. Defaults to [DurationUnit.days].
@@ -47,16 +47,15 @@ class PreferencesManager {
     _homeDateRange = _getDisplayDateRange(prefs, _keyHomeDateRange);
 
     List<String> activityIds =
-        prefs.getStringList(_keyStatsSelectedActivityIds);
-    _statsSelectedActivityIds =
-        activityIds == null || activityIds.isEmpty ? null : activityIds;
+        prefs.getStringList(_keyStatsSelectedActivityIds) ?? [];
+    _statsSelectedActivityIds = activityIds.isEmpty ? [] : activityIds;
 
     _statsDateRange = _getDisplayDateRange(prefs, _keyStatsDateRange);
   }
 
   DisplayDateRange _getDisplayDateRange(SharedPreferences prefs, String key) {
     return DisplayDateRange.of(
-        prefs.getString(key) ?? DisplayDateRange.allDates.id);
+        prefs.getString(key) ?? DisplayDateRange.allDates.id)!;
   }
 
   void setLargestDurationUnit(DurationUnit unit) async {
@@ -86,7 +85,7 @@ class PreferencesManager {
     _homeDateRangeUpdated.notify();
   }
 
-  void setStatsSelectedActivityIds(List<String> ids) async {
+  void setStatsSelectedActivityIds(List<String>? ids) async {
     if (DeepCollectionEquality.unordered().equals(_statsSelectedActivityIds,
         ids))
     {
@@ -114,8 +113,8 @@ class PreferencesManager {
 
 class LargestDurationBuilder extends _SimpleStreamBuilder<DurationUnit> {
   LargestDurationBuilder({
-    @required AppManager app,
-    @required Widget Function(BuildContext, DurationUnit) builder,
+    required AppManager app,
+    required Widget Function(BuildContext, DurationUnit) builder,
   }) : super(
     app: app,
     stream: app.preferencesManager._largestDurationUnitUpdated.stream,
@@ -126,8 +125,8 @@ class LargestDurationBuilder extends _SimpleStreamBuilder<DurationUnit> {
 
 class HomeDateRangeBuilder extends _SimpleStreamBuilder<DisplayDateRange> {
   HomeDateRangeBuilder({
-    AppManager app,
-    Widget Function(BuildContext, DisplayDateRange) builder,
+    required AppManager app,
+    required Widget Function(BuildContext, DisplayDateRange) builder,
   }) : super(
     app: app,
     stream: app.preferencesManager._homeDateRangeUpdated.stream,
@@ -143,14 +142,11 @@ class _SimpleStreamBuilder<T> extends StatelessWidget {
   final Widget Function(BuildContext, T) builder;
 
   _SimpleStreamBuilder({
-    @required this.app,
-    @required this.stream,
-    @required this.valueCallback,
-    @required this.builder,
-  }) : assert(app != null),
-       assert(stream != null),
-       assert(valueCallback != null),
-       assert(builder != null);
+    required this.app,
+    required this.stream,
+    required this.valueCallback,
+    required this.builder,
+  });
 
   @override
   Widget build(BuildContext context) {

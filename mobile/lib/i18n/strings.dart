@@ -12,7 +12,7 @@ class Strings {
   };
 
   static Strings of(BuildContext context) =>
-      Localizations.of<Strings>(context, Strings);
+      Localizations.of<Strings>(context, Strings)!;
 
   final Locale _locale;
 
@@ -25,9 +25,9 @@ class Strings {
   /// If a specific string for a language and country exists, use it, otherwise
   /// use the default.
   String _getString(String key) {
-    String value = _values[_locale.languageCode][_locale.countryCode][key];
+    var value = _values[_locale.languageCode]?[_locale.countryCode]?[key];
     if (value == null) {
-      return _values[_locale.languageCode]["default"][key];
+      return _values[_locale.languageCode]!["default"]![key]!;
     }
     return value;
   }

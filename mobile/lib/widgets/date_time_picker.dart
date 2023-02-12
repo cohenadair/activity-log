@@ -8,14 +8,13 @@ import 'package:mobile/widgets/widget.dart';
 class DateTimePickerContainer extends StatelessWidget {
   final DatePicker datePicker;
   final TimePicker timePicker;
-  final Widget helper;
+  final Widget? helper;
 
   DateTimePickerContainer({
-    @required this.datePicker,
-    @required this.timePicker,
+    required this.datePicker,
+    required this.timePicker,
     this.helper,
-  }) : assert(datePicker != null),
-       assert(timePicker != null);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -50,10 +49,10 @@ class DateTimePickerContainer extends StatelessWidget {
 
 class DatePicker extends FormField<DateTime> {
   DatePicker({
-    String label,
-    DateTime initialDate,
-    void Function(DateTime) onChange,
-    String Function(DateTime) validator,
+    required String label,
+    DateTime? initialDate,
+    void Function(DateTime)? onChange,
+    String? Function(DateTime?)? validator,
     bool enabled = true,
   }) : super(
     initialValue: initialDate,
@@ -65,18 +64,18 @@ class DatePicker extends FormField<DateTime> {
         enabled: enabled,
         type: _PickerType(
           getValue: () => DateText(
-            state.value,
+            state.value!,
             enabled: enabled,
           ),
           openPicker: () {
             showDatePicker(
               context: state.context,
-              initialDate: state.value,
+              initialDate: state.value!,
               // Weird requirement of showDatePicker, but essentially
               // let the user pick any date in the past.
               firstDate: DateTime(1900),
               lastDate: DateTime.now()
-            ).then((DateTime dateTime) {
+            ).then((DateTime? dateTime) {
               if (dateTime == null) {
                 return;
               }
@@ -94,10 +93,10 @@ class DatePicker extends FormField<DateTime> {
 
 class TimePicker extends FormField<TimeOfDay> {
   TimePicker({
-    String label,
-    TimeOfDay initialTime,
-    Function(TimeOfDay) onChange,
-    String Function(TimeOfDay) validator,
+    required String label,
+    TimeOfDay? initialTime,
+    Function(TimeOfDay)? onChange,
+    String? Function(TimeOfDay?)? validator,
     bool enabled = true,
   }) : super(
     initialValue: initialTime,
@@ -109,14 +108,14 @@ class TimePicker extends FormField<TimeOfDay> {
         enabled: enabled,
         type: _PickerType(
           getValue: () => TimeText(
-            state.value,
+            state.value!,
             enabled: enabled,
           ),
           openPicker: () {
             showTimePicker(
               context: state.context,
-              initialTime: state.value,
-            ).then((TimeOfDay time) {
+              initialTime: state.value!,
+            ).then((TimeOfDay? time) {
               if (time == null) {
                 return;
               }
@@ -137,20 +136,20 @@ class _PickerType {
   final VoidCallback openPicker;
 
   _PickerType({
-    @required this.getValue,
-    @required this.openPicker
+    required this.getValue,
+    required this.openPicker
   });
 }
 
 class _Picker extends StatelessWidget {
   final _PickerType type;
   final String label;
-  final String errorText;
+  final String? errorText;
   final bool enabled;
 
   _Picker({
-    @required this.type,
-    @required this.label,
+    required this.type,
+    required this.label,
     this.errorText,
     this.enabled = true,
   });

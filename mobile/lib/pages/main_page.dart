@@ -74,7 +74,7 @@ class _BarItemData {
   final BottomNavigationBarItem item;
 
   _BarItemData({
-    @required this.page,
-    @required this.item,
+    required this.page,
+    required this.item,
   });
 }

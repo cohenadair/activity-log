@@ -60,9 +60,11 @@ class DateRange {
   final DateTime startDate;
   final DateTime endDate;
 
-  DateRange({this.startDate, this.endDate})
-      : assert(startDate.isAtSameMomentAs(endDate) ||
-          startDate.isBefore(endDate));
+  DateRange({
+    required this.startDate,
+    required this.endDate,
+  }) : assert(
+            startDate.isAtSameMomentAs(endDate) || startDate.isBefore(endDate));
 
   int get startMs => startDate.millisecondsSinceEpoch;
   int get endMs => endDate.millisecondsSinceEpoch;
@@ -242,7 +244,7 @@ class DisplayDateRange {
   ];
 
   /// Returns the [DisplayDateRange] for the given ID, or `null` if none exists.
-  static DisplayDateRange of(String id) {
+  static DisplayDateRange? of(String id) {
     try {
       return all.firstWhere((range) => range.id == id);
     } on StateError {
@@ -255,14 +257,14 @@ class DisplayDateRange {
   final String Function(BuildContext context) getTitle;
 
   DisplayDateRange._({
-    this.id, this.getValue, this.getTitle
+    required this.id, required this.getValue, required this.getTitle
   });
 
   /// Used to create a [DisplayDateRange] with custom start and end dates, but
   /// with the same ID as [DisplayDateRange.custom].
   DisplayDateRange.newCustom({
-    DateRange Function(DateTime now) getValue,
-    String Function(BuildContext context) getTitle,
+    required DateRange Function(DateTime now) getValue,
+    required String Function(BuildContext context) getTitle,
   }) : this._(
     id: custom.id,
     getValue: getValue,
@@ -278,11 +280,12 @@ class DisplayDateRange {
   ///   - 0d 12h 45m 0s last week
   ///   - 0d 0h 45m 0s today
   String formatDuration({
-    @required BuildContext context,
+    required BuildContext context,
     Duration duration = const Duration(),
-    DurationUnit largestDurationUnit,
+    DurationUnit? largestDurationUnit,
   }) {
     String formattedDuration = formatTotalDuration(
+      context: context,
       durations: [duration],
       largestDurationUnit: largestDurationUnit,
     );

@@ -1,6 +1,5 @@
 import 'dart:collection';
 
-import 'package:flutter/material.dart';
 import 'package:mobile/model/activity.dart';
 import 'package:mobile/model/session.dart';
 import 'package:mobile/utils/date_time_utils.dart';
@@ -13,64 +12,64 @@ class SummarizedActivity {
   final Activity value;
 
   /// The [DisplayDateRange] for the summary. Set to `null` for "all dates".
-  final DisplayDateRange displayDateRange;
+  final DisplayDateRange? displayDateRange;
 
   final List<Session> sessions;
   final Clock clock;
 
-  Session _cachedShortestSession;
-  Session _cachedLongestSession;
+  Session? _cachedShortestSession;
+  Session? _cachedLongestSession;
 
-  Duration _cachedTotalDuration;
-  Duration _cachedDurationPerDay;
-  Duration _cachedDurationPerWeek;
-  Duration _cachedDurationPerMonth;
+  Duration? _cachedTotalDuration;
+  Duration? _cachedDurationPerDay;
+  Duration? _cachedDurationPerWeek;
+  Duration? _cachedDurationPerMonth;
 
-  int _cachedLongestStreak;
-  int _cachedCurrentStreak;
+  int? _cachedLongestStreak;
+  int? _cachedCurrentStreak;
 
-  double _cachedSessionsPerDay;
-  double _cachedSessionsPerWeek;
-  double _cachedSessionsPerMonth;
+  double? _cachedSessionsPerDay;
+  double? _cachedSessionsPerWeek;
+  double? _cachedSessionsPerMonth;
 
   SummarizedActivity({
-    @required this.value,
-    @required this.displayDateRange,
-    this.sessions,
+    required this.value,
+    required this.displayDateRange,
+    this.sessions = const [],
     this.clock = const Clock(),
-  }) : assert(value != null);
+  });
 
-  int get numberOfSessions => sessions == null ? 0 : sessions.length;
+  int get numberOfSessions => sessions.length;
 
   double get sessionsPerDay {
     if (_cachedSessionsPerDay == null) {
       _calculate();
     }
-    return _cachedSessionsPerDay;
+    return _cachedSessionsPerDay!;
   }
 
   double get sessionsPerWeek {
     if (_cachedSessionsPerWeek == null) {
       _calculate();
     }
-    return _cachedSessionsPerWeek;
+    return _cachedSessionsPerWeek!;
   }
 
   double get sessionsPerMonth {
     if (_cachedSessionsPerMonth == null) {
       _calculate();
     }
-    return _cachedSessionsPerMonth;
+    return _cachedSessionsPerMonth!;
   }
 
-  Session get shortestSession {
+  Session? get shortestSession {
     if (_cachedShortestSession == null) {
       _cachedShortestSession = min(sessions);
     }
     return _cachedShortestSession;
   }
 
-  Session get longestSession {
+  Session? get longestSession {
     if (_cachedLongestSession == null) {
       _cachedLongestSession = max(sessions);
     }
@@ -83,46 +82,46 @@ class SummarizedActivity {
     if (_cachedTotalDuration == null) {
       _calculate();
     }
-    return _cachedTotalDuration;
+    return _cachedTotalDuration!;
   }
 
   Duration get averageDurationPerDay {
     if (_cachedDurationPerDay == null) {
       _calculate();
     }
-    return _cachedDurationPerDay;
+    return _cachedDurationPerDay!;
   }
 
   Duration get averageDurationPerWeek {
     if (_cachedDurationPerWeek == null) {
       _calculate();
     }
-    return _cachedDurationPerWeek;
+    return _cachedDurationPerWeek!;
   }
 
   Duration get averageDurationPerMonth {
     if (_cachedDurationPerMonth == null) {
       _calculate();
     }
-    return _cachedDurationPerMonth;
+    return _cachedDurationPerMonth!;
   }
 
   int get longestStreak {
     if (_cachedLongestStreak == null) {
       _calculate();
     }
-    return _cachedLongestStreak;
+    return _cachedLongestStreak!;
   }
 
   int get currentStreak {
     if (_cachedCurrentStreak == null) {
       _calculate();
     }
-    return _cachedCurrentStreak;
+    return _cachedCurrentStreak!;
   }
 
   void _calculate() {
-    if (sessions == null || sessions.isEmpty) {
+    if (sessions.isEmpty) {
       _cachedTotalDuration = Duration();
       _cachedDurationPerDay = Duration();
       _cachedDurationPerWeek = Duration();
@@ -144,7 +143,7 @@ class SummarizedActivity {
       allDateTimes.add(dateTimeToDayAccuracy(session.startDateTime));
 
       if (session.endDateTime != null) {
-        allDateTimes.add(dateTimeToDayAccuracy(session.endDateTime));
+        allDateTimes.add(dateTimeToDayAccuracy(session.endDateTime!));
       }
     });
 
@@ -152,10 +151,12 @@ class SummarizedActivity {
 
     // If the date range is null, restrict the range to the earliest
     // and latest sessions.
-    DateRange range = displayDateRange == null ? DateRange(
-      startDate: sessions.first.startDateTime,
-      endDate: sessions.last.endDateTime ?? clock.now(),
-    ) : displayDateRange.getValue(clock.now());
+    DateRange range = displayDateRange == null
+        ? DateRange(
+            startDate: sessions.first.startDateTime,
+            endDate: sessions.last.endDateTime ?? clock.now(),
+          )
+        : displayDateRange!.getValue(clock.now());
 
     _cachedDurationPerDay = getAverageDuration(range.days);
     _cachedDurationPerWeek = getAverageDuration(range.weeks);
@@ -180,7 +181,7 @@ class SummarizedActivity {
           isSameMonth(current, lastsTomorrow) &&
           current.day == lastsTomorrow.day) {
         if (!didResetStreak) {
-          _cachedCurrentStreak++;
+          _cachedCurrentStreak = _cachedCurrentStreak! + 1;
         }
         currentStreak++;
       } else {
@@ -188,9 +189,8 @@ class SummarizedActivity {
         currentStreak = 1;
       }
 
-      if (_cachedLongestStreak == null
-          || currentStreak > _cachedLongestStreak)
-      {
+      if (_cachedLongestStreak == null ||
+          currentStreak > _cachedLongestStreak!) {
         _cachedLongestStreak = currentStreak;
       }
 
@@ -231,17 +231,17 @@ class SummarizedActivity {
 class SummarizedActivityList {
   final List<SummarizedActivity> activities;
 
-  Tuple<Activity, Session> _cachedLongestSession;
-  Tuple<Activity, int> _cachedMostFrequentActivity;
+  Tuple<Activity, Session>? _cachedLongestSession;
+  Tuple<Activity, int>? _cachedMostFrequentActivity;
 
-  List<SummarizedActivity> _cachedActivitiesSortedByDuration;
-  List<SummarizedActivity> _cachedActivitiesSortedByNumberOfSessions;
-  int _cachedTotalDuration;
+  List<SummarizedActivity>? _cachedActivitiesSortedByDuration;
+  List<SummarizedActivity>? _cachedActivitiesSortedByNumberOfSessions;
+  int? _cachedTotalDuration;
 
   SummarizedActivityList(this.activities);
 
   /// A [Tuple] of [Activity] and its longest [Session].
-  Tuple<Activity, Session> get longestSession {
+  Tuple<Activity, Session>? get longestSession {
     if (_cachedLongestSession == null) {
       _calculate();
     }
@@ -249,7 +249,7 @@ class SummarizedActivityList {
   }
 
   /// A [Tuple] of [Activity] and its number of sessions.
-  Tuple<Activity, int> get mostFrequentActivity {
+  Tuple<Activity, int>? get mostFrequentActivity {
     if (_cachedMostFrequentActivity == null) {
       _calculate();
     }
@@ -260,11 +260,11 @@ class SummarizedActivityList {
     if (_cachedTotalDuration == null) {
       _calculate();
     }
-    return _cachedTotalDuration;
+    return _cachedTotalDuration!;
   }
 
   /// Returns a copy of `activities`, sorted descending by total duration.
-  List<SummarizedActivity> get activitiesSortedByDuration {
+  List<SummarizedActivity>? get activitiesSortedByDuration {
     if (_cachedActivitiesSortedByDuration == null) {
       List<SummarizedActivity> copy = List.of(activities);
       copy.sort((SummarizedActivity a, SummarizedActivity b) =>
@@ -275,7 +275,7 @@ class SummarizedActivityList {
   }
 
   /// Returns a copy of `activities`, sorted descending by number of sessions.
-  List<SummarizedActivity> get activitiesSortedByNumberOfSessions {
+  List<SummarizedActivity>? get activitiesSortedByNumberOfSessions {
     if (_cachedActivitiesSortedByNumberOfSessions == null) {
       List<SummarizedActivity> copy = List.of(activities);
       copy.sort((SummarizedActivity a, SummarizedActivity b) =>
@@ -290,7 +290,7 @@ class SummarizedActivityList {
 
     activities.forEach((SummarizedActivity activity) {
       if (_cachedMostFrequentActivity == null
-          || activity.sessions.length > _cachedMostFrequentActivity.second)
+          || activity.sessions.length > _cachedMostFrequentActivity!.second)
       {
         _cachedMostFrequentActivity =
             Tuple(activity.value, activity.sessions.length);
@@ -298,13 +298,14 @@ class SummarizedActivityList {
 
       activity.sessions.forEach((Session session) {
         if (_cachedLongestSession == null
-            || session > _cachedLongestSession.second)
+            || session > _cachedLongestSession!.second)
         {
           _cachedLongestSession = Tuple(activity.value, session);
         }
       });
 
-      _cachedTotalDuration += activity.totalDuration.inMilliseconds;
+      _cachedTotalDuration =
+          _cachedTotalDuration! + activity.totalDuration.inMilliseconds;
     });
   }
 }

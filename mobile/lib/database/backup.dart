@@ -82,14 +82,14 @@ Future<String> export(AppManager app, {
 /// file is just a JSON file that can be modified by anyone. We can't
 /// guarantee that the user didn't modify the file after it was exported, or
 /// that they even selected the correct JSON file.
-Future<ImportResult> import(AppManager app, {String json}) async {
+Future<ImportResult> import(AppManager app, {String? json}) async {
   if (isEmpty(json)) {
     return ImportResult.errorNullInput;
   }
 
   Map<String, dynamic> jsonMap;
   try {
-    jsonMap = jsonDecode(json);
+    jsonMap = jsonDecode(json!);
   } on FormatException {
     return ImportResult.errorDecodingJson;
   }
@@ -130,10 +130,12 @@ Future<ImportResult> import(AppManager app, {String json}) async {
 
     Session session = Session.fromMap(sessionJson);
 
-    // ID and session ID can't be empty, and the session must be complete.
-    if (isEmpty(session.id) || isEmpty(session.activityId)
-        || session.startTimestamp == null || session.endTimestamp == null)
-    {
+    // ID, start time, and session ID can't be empty, and the session must be
+    // complete.
+    if (isEmpty(session.id)
+        || isEmpty(session.activityId)
+        || session.startTimestamp == -1
+        || session.endTimestamp == null) {
       return ImportResult.errorSessionInvalid;
     } else {
       sessionsToAdd.add(session);
@@ -158,10 +160,10 @@ Future<ImportResult> import(AppManager app, {String json}) async {
     Map<String, dynamic> preferences = jsonMap[_keyPreferences];
 
     if (preferences[_keyPreferencesHomeDateRange] is String) {
-      String dateRangeId = preferences[_keyPreferencesHomeDateRange];
-      if (!isEmpty(dateRangeId)) {
-        app.preferencesManager.setHomeDateRange(
-            DisplayDateRange.of(dateRangeId));
+      var displayDateRange =
+          DisplayDateRange.of(preferences[_keyPreferencesHomeDateRange]);
+      if (displayDateRange != null) {
+        app.preferencesManager.setHomeDateRange(displayDateRange);
       }
     }
 

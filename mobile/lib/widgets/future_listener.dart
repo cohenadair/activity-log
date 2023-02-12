@@ -19,12 +19,12 @@ class FutureListener extends StatefulWidget {
   /// Invoked when the default constructor is used to instantiate a
   /// [FutureListener] object. The passed in [List] include the values returned
   /// by each future in [getFutureCallbacks], in the order given.
-  final Widget Function(BuildContext, List<dynamic>) builder;
+  final Widget Function(BuildContext, List<dynamic>?)? builder;
 
   /// Invoked when the [FutureListener.single] constructor is used to
   /// instantiate a [FutureListener] object. The passed in `dynamic` value is
   /// equal to the value returned by [getFutureCallback].
-  final Widget Function(BuildContext, dynamic) singleBuilder;
+  final Widget Function(BuildContext, dynamic)? singleBuilder;
 
   /// Values to show while the given [Future] objects are being executed.
   /// The types of values in this [List] should be the same as the return
@@ -32,26 +32,23 @@ class FutureListener extends StatefulWidget {
   final List<dynamic> initialValues;
 
   /// Called when the given [Future] objects are finished retrieving data.
-  final VoidCallback futuresHaveDataCallback;
+  final VoidCallback? futuresHaveDataCallback;
 
   FutureListener({
-    @required this.getFutureCallbacks,
-    @required this.streams,
-    @required this.builder,
-    this.initialValues,
+    required this.getFutureCallbacks,
+    required this.streams,
+    required this.builder,
+    this.initialValues = const [],
     this.futuresHaveDataCallback,
-  }) : assert(getFutureCallbacks != null),
-       assert(getFutureCallbacks.isNotEmpty),
-       assert(streams != null),
+  }) : assert(getFutureCallbacks.isNotEmpty),
        assert(streams.isNotEmpty),
-       assert(builder != null),
        singleBuilder = null;
 
   FutureListener.single({
-    @required Future Function() getFutureCallback,
-    @required Stream stream,
-    @required Widget Function(BuildContext, dynamic) builder,
-    this.initialValues,
+    required Future Function() getFutureCallback,
+    required Stream stream,
+    required Widget Function(BuildContext, dynamic) builder,
+    this.initialValues = const [],
     this.futuresHaveDataCallback,
   }) : getFutureCallbacks = [ getFutureCallback ],
        streams = [ stream ],
@@ -92,7 +89,7 @@ class _FutureListenerState extends State<FutureListener> {
       future: Future.wait(_futures),
       builder: (BuildContext context, AsyncSnapshot snapshot) {
         if (!snapshot.hasData) {
-          if (widget.initialValues == null) {
+          if (widget.initialValues.isEmpty) {
             return Empty();
           }
 
@@ -112,11 +109,11 @@ class _FutureListenerState extends State<FutureListener> {
     );
   }
 
-  Widget _build({dynamic singleValue, List<dynamic> multiValue}) {
+  Widget _build({dynamic singleValue, List<dynamic>? multiValue}) {
     if (widget.builder == null) {
-      return widget.singleBuilder(context, singleValue);
+      return widget.singleBuilder!(context, singleValue);
     } else {
-      return widget.builder(context, multiValue);
+      return widget.builder!(context, multiValue);
     }
   }
 

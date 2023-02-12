@@ -24,7 +24,7 @@ typedef OnListPickerChanged<T> = void Function(T);
 /// widget.
 class ListPicker<T> extends StatelessWidget {
   /// A title for the [AppBar].
-  final String pageTitle;
+  final String? pageTitle;
 
   /// A [Set] of initially selected options.
   final Set<T> initialValues;
@@ -36,7 +36,7 @@ class ListPicker<T> extends StatelessWidget {
   /// This is meant to be used as a "pick everything" option. For example,
   /// in an [Activity] picker that allows selection of all activities, this
   /// value could be "All activities".
-  final ListPickerItem<T> allItem;
+  final ListPickerItem<T>? allItem;
 
   final List<ListPickerItem<T>> items;
   final OnListPickerChanged<Set<T>> onChanged;
@@ -50,42 +50,29 @@ class ListPicker<T> extends StatelessWidget {
   /// Implement this property to create a custom title widget for displaying
   /// which items are selected. Default behaviour is to display a [Column] of
   /// all [ListPickerItem.title] properties.
-  final Widget Function(Set<T>) titleBuilder;
+  final Widget Function(Set<T>)? titleBuilder;
 
   /// A [Widget] to show at the top of the underlying [ListView]. This [Widget]
   /// will scroll with the [ListView].
-  final Widget listHeader;
+  final Widget? listHeader;
 
   ListPicker({
     this.pageTitle,
-    @required this.initialValues,
+    required this.initialValues,
     this.allItem,
-    @required this.items,
-    @required this.onChanged,
+    required this.items,
+    required this.onChanged,
     this.allowsMultiSelect = false,
     this.titleBuilder,
     this.listHeader,
     this.showsValueOnTrailing = false,
-  }) : assert(initialValues != null),
-       assert(items != null),
-       assert(onChanged != null)
-  {
-    // Assert that all initial values exist in the given items, and that there
-    // are no duplicates.
-    initialValues.forEach((T value) {
-      try {
-        assert(_getListPickerItem(value) != null);
-      } on StateError catch(_) {
-        assert(false, "Initial value must appear 1 time in items");
-      }
-    });
-  }
+  });
 
   @override
   Widget build(BuildContext context) {
     return ListItem(
       title: titleBuilder == null
-          ? _buildTitle() : titleBuilder(initialValues),
+          ? _buildTitle() : titleBuilder!(initialValues),
       trailing: Row(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
@@ -118,7 +105,7 @@ class ListPicker<T> extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: initialValues.map((item) {
-        return Text(_getListPickerItem(item).title);
+        return Text(_getListPickerItem(item).title ?? "");
       }).toList(),
     );
   }
@@ -127,8 +114,7 @@ class ListPicker<T> extends StatelessWidget {
     if (initialValues.length == 1 && !allowsMultiSelect
         && showsValueOnTrailing)
     {
-      return SecondaryText(_getListPickerItem(initialValues.first).title)
-          ?? Empty();
+      return SecondaryText(_getListPickerItem(initialValues.first).title ?? "");
     }
     return Empty();
   }
@@ -139,8 +125,8 @@ class ListPicker<T> extends StatelessWidget {
   }
 
   ListPickerItem<T> _getListPickerItem(T item) {
-    if (allItem != null && item == allItem.value) {
-      return allItem;
+    if (allItem != null && item == allItem!.value) {
+      return allItem!;
     }
     return items.singleWhere((indexItem) => indexItem.value == item);
   }
@@ -148,9 +134,9 @@ class ListPicker<T> extends StatelessWidget {
 
 /// A class to be used with [ListPicker].
 class ListPickerItem<T> {
-  final String title;
-  final String subtitle;
-  final T value;
+  final String? title;
+  final String? subtitle;
+  final T? value;
 
   /// Allows custom behaviour of individual items. Returns a non-null object
   /// of type T that was picked to invoke [ListPicker.onChanged]; `null`
@@ -159,7 +145,7 @@ class ListPickerItem<T> {
   /// Implemented as a [Future] because presumably, setting this method is
   /// for custom picker behaviour and will need to wait for that behaviour to
   /// finish.
-  final Future<T> Function() onTap;
+  final Future<T?> Function()? onTap;
 
   final bool isDivider;
 
@@ -176,7 +162,7 @@ class ListPickerItem<T> {
       onTap = null;
 
   ListPickerItem({
-    @required this.title,
+    required this.title,
     this.subtitle,
     this.value,
     this.onTap,
@@ -188,15 +174,15 @@ class ListPickerItem<T> {
 
 /// A helper page for [ListPicker] that renders a list of options.
 class _ListPickerPage<T> extends StatefulWidget {
-  final String pageTitle;
-  final Widget listHeader;
+  final String? pageTitle;
+  final Widget? listHeader;
   final Set<T> selectedValues;
 
-  final ListPickerItem<T> allItem;
+  final ListPickerItem<T>? allItem;
   final List<ListPickerItem<T>> items;
 
   final Function(T) onItemPicked;
-  final Function(Set<T>) onDonePressed;
+  final Function(Set<T>)? onDonePressed;
 
   final bool allowsMultiSelect;
 
@@ -204,21 +190,19 @@ class _ListPickerPage<T> extends StatefulWidget {
     this.pageTitle,
     this.listHeader,
     this.allowsMultiSelect = false,
-    @required this.selectedValues,
+    required this.selectedValues,
     this.allItem,
-    @required this.items,
-    @required this.onItemPicked,
+    required this.items,
+    required this.onItemPicked,
     this.onDonePressed,
-  }) : assert(selectedValues != null),
-       assert(items != null),
-       assert(onItemPicked != null);
+  });
 
   @override
   _ListPickerPageState<T> createState() => _ListPickerPageState();
 }
 
 class _ListPickerPageState<T> extends State<_ListPickerPage<T>> {
-  Set<T> _selectedValues;
+  late Set<T> _selectedValues;
 
   @override
   void initState() {
@@ -229,14 +213,14 @@ class _ListPickerPageState<T> extends State<_ListPickerPage<T>> {
   @override
   Widget build(BuildContext context) {
     List<ListPickerItem<T>> items =
-        (widget.allItem == null ? [] : [widget.allItem])..addAll(widget.items);
+        (widget.allItem == null ? [] : [widget.allItem!])..addAll(widget.items);
 
     return p.Page(
       appBarStyle: p.PageAppBarStyle(
         title: widget.pageTitle,
         actions: widget.allowsMultiSelect ? [
           ActionButton.done(onPressed: () {
-            widget.onDonePressed(_selectedValues);
+            widget.onDonePressed?.call(_selectedValues);
           }),
         ] : [],
       ),
@@ -252,8 +236,8 @@ class _ListPickerPageState<T> extends State<_ListPickerPage<T>> {
           }
 
           return ListItem(
-            title: Text(item.title),
-            subtitle: item.subtitle == null ? null : Text(item.subtitle),
+            title: Text(item.title!),
+            subtitle: item.subtitle == null ? null : Text(item.subtitle!),
             trailing: _selectedValues.contains(item.value) ? Icon(
               Icons.check,
               color: Theme.of(context).primaryColor,
@@ -264,11 +248,11 @@ class _ListPickerPageState<T> extends State<_ListPickerPage<T>> {
                 // but not picked -- multi select picker items aren't
                 // technically picked until "Done" is pressed.
                 if (!widget.allowsMultiSelect) {
-                  widget.onItemPicked(item.value);
+                  widget.onItemPicked(item.value!);
                 }
-                _updateState(item.value);
+                _updateState(item.value!);
               } else {
-                T pickedItem = await item.onTap();
+                T? pickedItem = await item.onTap?.call();
                 if (pickedItem != null) {
                   widget.onItemPicked(pickedItem);
                   _updateState(pickedItem);
@@ -284,16 +268,16 @@ class _ListPickerPageState<T> extends State<_ListPickerPage<T>> {
   void _updateState(T pickedItem) {
     setState(() {
       if (widget.allowsMultiSelect) {
-        if (widget.allItem != null && widget.allItem.value == pickedItem) {
+        if (widget.allItem != null && widget.allItem!.value == pickedItem) {
           // If the "all" item was picked, deselect all other items.
-          _selectedValues = Set.of([widget.allItem.value]);
+          _selectedValues = Set.of([widget.allItem!.value!]);
         } else {
           // Otherwise, toggle the picked item, and deselect the "all" item
           // if it exists.
           _toggleItemSelected(pickedItem);
 
           if (widget.allItem != null) {
-            _selectedValues.remove(widget.allItem.value);
+            _selectedValues.remove(widget.allItem!.value);
           }
         }
       } else {

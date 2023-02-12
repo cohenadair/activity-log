@@ -22,33 +22,31 @@ class MinDivider extends StatelessWidget {
 /// A wrapper for an [AnimatedOpacity] widget.
 class FadeIn<T> extends StatefulWidget {
   final Widget Function(T) childBuilder;
-  final Duration duration;
+  final Duration? duration;
   final bool visible;
   final T value;
 
   FadeIn({
-    @required this.childBuilder,
-    this.duration = defaultAnimationDuration,
+    required this.childBuilder,
+    this.duration,
     this.visible = true,
-    @required this.value,
-  }) : assert(childBuilder != null);
+    required this.value,
+  });
 
   @override
   _FadeInState createState() => _FadeInState<T>();
 }
 
 class _FadeInState<T> extends State<FadeIn<T>> {
-  T _lastValue;
+  late T _lastValue;
 
   @override
   Widget build(BuildContext context) {
-    if (widget.value != null) {
-      _lastValue = widget.value;
-    }
+    _lastValue = widget.value;
 
     return AnimatedOpacity(
       opacity: widget.visible ? 1.0 : 0.0,
-      duration: widget.duration,
+      duration: widget.duration ?? defaultAnimationDuration,
       child: widget.childBuilder(_lastValue),
     );
   }
@@ -64,7 +62,10 @@ class EmptyPageHelp extends StatelessWidget {
   final IconData icon;
   final String message;
 
-  EmptyPageHelp({this.icon, this.message});
+  EmptyPageHelp({
+    required this.icon,
+    required this.message,
+  });
 
   @override
   Widget build(BuildContext context) {

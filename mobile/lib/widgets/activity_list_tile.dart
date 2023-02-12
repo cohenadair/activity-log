@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:mobile/app_manager.dart';
 import 'package:mobile/model/activity.dart';
@@ -14,10 +12,10 @@ import 'package:mobile/widgets/widget.dart';
 
 class ActivityListTileModel {
   final Activity activity;
-  Session currentSession;
-  Duration duration;
+  Session? currentSession;
+  Duration? duration;
 
-  ActivityListTileModel(this.activity) : assert(activity != null);
+  ActivityListTileModel(this.activity);
 }
 
 class ActivityListTile extends StatelessWidget {
@@ -28,13 +26,12 @@ class ActivityListTile extends StatelessWidget {
   final Function() onTapEndSession;
 
   ActivityListTile({
-    @required this.app,
-    this.model,
-    this.onTap,
-    this.onTapStartSession,
-    this.onTapEndSession,
-  }) : assert(app != null),
-       assert(model != null);
+    required this.app,
+    required this.model,
+    required this.onTap,
+    required this.onTapStartSession,
+    required this.onTapEndSession,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -46,10 +43,10 @@ class ActivityListTile extends StatelessWidget {
           title: Text(model.activity.name),
           subtitle: TotalDurationText(model.duration == null
               ? []
-              : [model.duration],
+              : [model.duration!],
             largestDurationUnit: largestDurationUnit,
           ),
-          onTap: () => onTap?.call(model.activity),
+          onTap: () => onTap.call(model.activity),
           trailing: Row(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
@@ -66,20 +63,17 @@ class ActivityListTile extends StatelessWidget {
 
   Widget _buildStartButton() {
     return _buildButton(Icons.play_arrow, Colors.green, () {
-      onTapStartSession?.call();
+      onTapStartSession.call();
     });
   }
 
   Widget _buildStopButton() {
     return _buildButton(Icons.stop, Colors.red, () {
-      onTapEndSession?.call();
+      onTapEndSession.call();
     });
   }
 
-  Widget _buildButton(IconData icon, Color color, Function onPressed) {
-    assert(icon != null);
-    assert(onPressed != null);
-
+  Widget _buildButton(IconData icon, Color color, VoidCallback onPressed) {
     return IconButton(
       icon: Icon(icon),
       color: color,
@@ -87,16 +81,15 @@ class ActivityListTile extends StatelessWidget {
     );
   }
 
-  Widget _buildRunningDuration(Session session) {
+  Widget _buildRunningDuration(Session? session) {
     return Timer(
       shouldUpdateCallback: () => model.activity.isRunning,
       childBuilder: () {
         bool visible = session != null;
         return FadeIn<Duration>(
           visible: visible,
-          value: visible ? session.duration : null,
-          childBuilder: (Duration value) =>
-              RunningDurationText(value ?? Duration()),
+          value: visible ? session.duration : Duration(),
+          childBuilder: (Duration value) => RunningDurationText(value),
         );
       },
     );

@@ -43,8 +43,8 @@ String formatTimeOfDay(BuildContext context, TimeOfDay time) {
 ///   - Jan. 8 at 2:35 PM
 ///   - Dec. 8, 2018 at 2:35 PM
 String formatDateTime({
-  BuildContext context,
-  DateTime dateTime,
+  required BuildContext context,
+  required DateTime dateTime,
   clock = const Clock(),
 }) {
   return format(Strings.of(context).dateTimeFormat, [
@@ -73,8 +73,8 @@ String formatDateRange(DateRange dateRange) {
 ///   - Jan. 8
 ///   - Dec. 8, 2018
 String formatDateAsRecent({
-  @required BuildContext context,
-  @required DateTime dateTime,
+  required BuildContext context,
+  required DateTime dateTime,
   clock = const Clock(),
 }) {
   final DateTime now = clock.now();
@@ -103,8 +103,8 @@ String formatDateAsRecent({
 /// Example:
 ///   - 0d 5h 30m 0s
 String formatTotalDuration({
-  BuildContext context,
-  List<Duration> durations,
+  required BuildContext context,
+  required List<Duration> durations,
   bool includesDays = true,
   bool includesHours = true,
   bool includesMinutes = true,
@@ -128,8 +128,9 @@ String formatTotalDuration({
   ///
   /// This is primarily meant for use with a user-preference where the
   /// [DurationUnit] is read from [SharedPreferences].
-  DurationUnit largestDurationUnit = DurationUnit.days,
+  DurationUnit? largestDurationUnit,
 }) {
+  largestDurationUnit ??= DurationUnit.days;
   int totalMillis = 0;
 
   durations.forEach((Duration duration) {

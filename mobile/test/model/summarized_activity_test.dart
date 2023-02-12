@@ -8,7 +8,7 @@ import 'package:quiver/time.dart';
 import '../test_utils.dart';
 
 void main() {
-  Session buildSession(String activityId, DateTime start, DateTime end, {
+  Session buildSession(String activityId, DateTime start, DateTime? end, {
     Clock clock = const Clock(),
   }) {
     SessionBuilder builder = SessionBuilder(activityId)
@@ -51,7 +51,6 @@ void main() {
           startDate: DateTime.now(),
           endDate: DateTime.now(),
         )),
-        sessions: null,
       );
 
       expect(activity.totalDuration, equals(Duration()));
@@ -166,12 +165,12 @@ void main() {
     );
 
     test("Max", () {
-      expect(activity.longestSession.millisecondsDuration,
+      expect(activity.longestSession!.millisecondsDuration,
           sessions[3].millisecondsDuration);
     });
 
     test("Min", () {
-      expect(activity.shortestSession.millisecondsDuration,
+      expect(activity.shortestSession!.millisecondsDuration,
           sessions[1].millisecondsDuration);
     });
   });
@@ -482,11 +481,11 @@ void main() {
       expect(result.activities, isNotNull);
       expect(result.activities.length, equals(3));
 
-      expect(result.mostFrequentActivity.first, equals(activity2));
-      expect(result.mostFrequentActivity.second, equals(3));
+      expect(result.mostFrequentActivity!.first, equals(activity2));
+      expect(result.mostFrequentActivity!.second, equals(3));
 
-      expect(result.longestSession.first, equals(activity3));
-      expect(result.longestSession.second.millisecondsDuration,
+      expect(result.longestSession!.first, equals(activity3));
+      expect(result.longestSession!.second.millisecondsDuration,
           equals(longestSession.millisecondsDuration));
       expect(result.totalDuration, Duration(hours: 18).inMilliseconds);
     });

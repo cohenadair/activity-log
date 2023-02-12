@@ -18,7 +18,7 @@ class ActivityLog extends StatefulWidget {
 
 class _ActivityLogState extends State<ActivityLog> {
   final AppManager _app = AppManager();
-  Future<bool> _appInitializedFuture;
+  late Future<bool> _appInitializedFuture;
 
   @override
   void initState() {
@@ -33,17 +33,15 @@ class _ActivityLogState extends State<ActivityLog> {
 
   @override
   Widget build(BuildContext context) {
-    Color primaryColor = Colors.green;
-
     return MaterialApp(
       onGenerateTitle: (context) => Strings.of(context).appName,
       theme: ThemeData(
-        primarySwatch: primaryColor,
+        primarySwatch: Colors.green,
         buttonTheme: ButtonThemeData(
           textTheme: ButtonTextTheme.primary,
         ),
         iconTheme: IconThemeData(
-          color: primaryColor,
+          color: Colors.green,
         ),
         errorColor: Colors.red,
       ),

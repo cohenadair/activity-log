@@ -20,11 +20,11 @@ class ActivitiesDurationBarChart extends StatelessWidget {
   final ActivitiesBarChartOnSelectCallback onSelect;
 
   ActivitiesDurationBarChart({
-    @required this.app,
-    this.activities,
-    this.padding,
-    this.onSelect,
-  }) : assert(app != null);
+    required this.app,
+    required this.activities,
+    required this.padding,
+    required this.onSelect,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -64,9 +64,7 @@ class ActivitiesDurationBarChart extends StatelessWidget {
     Duration longestDuration = Duration();
 
     activities.forEach((SummarizedActivity activity) {
-      if (activity.totalDuration != null
-          && activity.totalDuration > longestDuration)
-      {
+      if (activity.totalDuration > longestDuration) {
         longestDuration = activity.totalDuration;
       }
     });
@@ -109,8 +107,8 @@ class ActivitiesNumberOfSessionsBarChart extends StatelessWidget {
   final ActivitiesBarChartOnSelectCallback onSelect;
 
   ActivitiesNumberOfSessionsBarChart(this.activities, {
-    this.padding,
-    this.onSelect,
+    required this.padding,
+    required this.onSelect,
   });
 
   @override
@@ -133,7 +131,7 @@ class _ActivitiesBarChart extends StatelessWidget {
   final String title;
   final EdgeInsets padding;
   final List<SummarizedActivity> activities;
-  final Charts.AxisSpec primaryAxisSpec;
+  final Charts.NumericAxisSpec? primaryAxisSpec;
   final ActivitiesBarChartOnSelectCallback onSelect;
 
   /// Return the quantity value for the given [SummarizedActivity].
@@ -143,14 +141,14 @@ class _ActivitiesBarChart extends StatelessWidget {
   final String Function(SummarizedActivity) onBuildLabel;
 
   _ActivitiesBarChart({
-    @required this.chartId,
-    this.title,
+    required this.chartId,
+    required this.title,
     this.padding = insetsZero,
-    this.activities,
-    this.onMeasure,
-    this.onBuildLabel,
+    required this.activities,
+    required this.onMeasure,
+    required this.onBuildLabel,
     this.primaryAxisSpec,
-    this.onSelect,
+    required this.onSelect,
   }) : assert(!isEmpty(chartId)),
        assert(activities.isNotEmpty);
 
@@ -160,7 +158,7 @@ class _ActivitiesBarChart extends StatelessWidget {
       padding: padding,
       child: Column(
         children: <Widget>[
-          title == null ? Empty() : LargeHeadingText(title),
+          isEmpty(title) ? Empty() : LargeHeadingText(title),
           Container(
             height: activities.length == 1
                 ? chartBarHeightSingle
@@ -178,9 +176,7 @@ class _ActivitiesBarChart extends StatelessWidget {
                 selectionModels: [
                   Charts.SelectionModelConfig(
                     changedListener: (Charts.SelectionModel model) {
-                      if (onSelect != null) {
-                        onSelect(model.selectedDatum.first.datum);
-                      }
+                      onSelect(model.selectedDatum.first.datum);
                     },
                   ),
                 ],
@@ -221,8 +217,8 @@ class _DurationTickFormatter extends Charts.SimpleTickFormatterBase<num>
   final _DurationTickFormatCallback formatCallback;
 
   _DurationTickFormatter({
-    this.context,
-    this.formatCallback,
+    required this.context,
+    required this.formatCallback,
   });
 
   @override

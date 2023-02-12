@@ -5,10 +5,10 @@ class Activity extends Model {
   static final keyCurrentSessionId = "current_session_id";
 
   final String _name;
-  final String _currentSessionId;
+  final String? _currentSessionId;
 
   String get name => _name;
-  String get currentSessionId => _currentSessionId;
+  String? get currentSessionId => _currentSessionId;
 
   Activity.fromMap(Map<String, dynamic> map)
     : _name = map[keyName],
@@ -32,7 +32,7 @@ class Activity extends Model {
 
   @override
   bool operator ==(other) {
-    return other.name == _name;
+    return other is Activity && other.name == _name;
   }
 
   @override
@@ -41,7 +41,7 @@ class Activity extends Model {
 
 class ActivityBuilder extends ModelBuilder {
   String name;
-  String currentSessionId;
+  String? currentSessionId;
 
   ActivityBuilder(this.name);
 

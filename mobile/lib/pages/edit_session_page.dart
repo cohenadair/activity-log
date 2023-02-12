@@ -16,15 +16,13 @@ import 'package:mobile/widgets/text.dart';
 class EditSessionPage extends StatefulWidget {
   final AppManager _app;
   final Activity _activity;
-  final Session _editingSession;
+  final Session? _editingSession;
 
   EditSessionPage({
-    @required AppManager app,
-    @required Activity activity,
-    Session editingSession
-  }) : assert(app != null),
-       assert(activity != null),
-       _app = app,
+    required AppManager app,
+    required Activity activity,
+    Session? editingSession
+  }) : _app = app,
        _activity = activity,
        _editingSession = editingSession;
 
@@ -37,25 +35,25 @@ class _EditSessionPageState extends State<EditSessionPage> {
 
   AppManager get _app => widget._app;
   Activity get _activity => widget._activity;
-  Session get _editingSession => widget._editingSession;
+  Session? get _editingSession => widget._editingSession;
   bool get _isEditing => _editingSession != null;
-  bool get _isEditingInProgress => _isEditing && _editingSession.inProgress;
+  bool get _isEditingInProgress => _isEditing && _editingSession!.inProgress;
 
-  DateTime _startDate;
-  TimeOfDay _startTime;
-  DateTime _endDate;
-  TimeOfDay _endTime;
-  bool _isBanked;
+  late DateTime _startDate;
+  late TimeOfDay _startTime;
+  late DateTime _endDate;
+  late TimeOfDay _endTime;
+  late bool _isBanked;
 
-  String _formValidationValue;
+  String? _formValidationValue;
 
   @override
   void initState() {
     if (_isEditing) {
-      _startDate = _editingSession.startDateTime;
+      _startDate = _editingSession!.startDateTime;
       _endDate = _isEditingInProgress
-          ? _startDate : _editingSession.endDateTime;
-      _isBanked = _editingSession.isBanked;
+          ? _startDate : _editingSession!.endDateTime!;
+      _isBanked = _editingSession!.isBanked ?? false;
     } else {
       _startDate = DateTime.now();
       _endDate = _startDate;
@@ -79,7 +77,7 @@ class _EditSessionPageState extends State<EditSessionPage> {
               [_activity.name]),
       padding: insetsVerticalSmall,
       onSave: _onPressedSaveButton,
-      onDelete: () => _app.dataManager.removeSession(_editingSession),
+      onDelete: () => _app.dataManager.removeSession(_editingSession!),
       deleteDescription: Strings.of(context).sessionListDeleteMessage,
       isEditingCallback: () => _isEditing,
       form: Form(
@@ -164,7 +162,7 @@ class _EditSessionPageState extends State<EditSessionPage> {
               ),
               trailing: Checkbox(
                 value: _isBanked,
-                onChanged: (value) => setState(() => _isBanked = value),
+                onChanged: (value) => setState(() => _isBanked = value ?? false),
               ),
             ),
           ],
@@ -176,13 +174,13 @@ class _EditSessionPageState extends State<EditSessionPage> {
   void _onPressedSaveButton() {
     _clearFormValidationText();
 
-    if (!_formKey.currentState.validate()) {
+    if (_formKey.currentState != null && !_formKey.currentState!.validate()) {
       return;
     }
 
     SessionBuilder builder;
     if (_isEditing) {
-      builder = SessionBuilder.fromSession(_editingSession);
+      builder = SessionBuilder.fromSession(_editingSession!);
     } else {
       builder = SessionBuilder(_activity.id);
     }
@@ -196,7 +194,7 @@ class _EditSessionPageState extends State<EditSessionPage> {
         .build;
 
     _app.dataManager.getOverlappingSession(session)
-        .then((Session overlappingSession) {
+        .then((Session? overlappingSession) {
           if (overlappingSession != null) {
             setState(() {
               String conflictingString =
@@ -210,7 +208,7 @@ class _EditSessionPageState extends State<EditSessionPage> {
                     " (${Strings.of(context).sessionListInProgress})";
               } else {
                 conflictingString += " - "
-                    + formatTimeOfDay(context, overlappingSession.endTimeOfDay);
+                    + formatTimeOfDay(context, overlappingSession.endTimeOfDay!);
               }
 
               _formValidationValue =
@@ -238,7 +236,7 @@ class _EditSessionPageState extends State<EditSessionPage> {
     });
   }
 
-  String _validateStartDate(DateTime dateTime) {
+  String? _validateStartDate(DateTime? dateTime) {
     // Start time is always valid if the session is in progress.
     if (_isEditingInProgress) {
       return null;
@@ -252,12 +250,12 @@ class _EditSessionPageState extends State<EditSessionPage> {
     return null;
   }
 
-  String _validateEndDate(DateTime dateTime) {
+  String? _validateEndDate(DateTime? dateTime) {
     // Nothing required.
     return null;
   }
 
-  String _validateStartTime(TimeOfDay time) {
+  String? _validateStartTime(TimeOfDay? time) {
     // Start time comes after end time.
     if (!_isEditingInProgress
         && isSameDate(_startDate, _endDate)
@@ -276,7 +274,7 @@ class _EditSessionPageState extends State<EditSessionPage> {
     return null;
   }
 
-  String _validateEndTime(TimeOfDay time) {
+  String? _validateEndTime(TimeOfDay? time) {
     // Don't validate end time for in progress sessions. The user can't
     // modify it anyway.
     if (_isEditingInProgress) {

@@ -14,16 +14,14 @@ class SessionListTile extends StatelessWidget {
   final AppManager _app;
   final Session _session;
   final bool _hasDivider;
-  final OnTapSessionListTile _onTap;
+  final OnTapSessionListTile? _onTap;
 
   SessionListTile({
-    @required AppManager app,
-    @required Session session,
+    required AppManager app,
+    required Session session,
     bool hasDivider = false,
-    OnTapSessionListTile onTap,
-  }) : assert(app != null),
-       assert(session != null),
-       _app = app,
+    OnTapSessionListTile? onTap,
+  }) : _app = app,
        _session = session,
        _hasDivider = hasDivider,
        _onTap = onTap;
@@ -35,9 +33,7 @@ class SessionListTile extends StatelessWidget {
         ListItem(
           contentPadding: insetsLeftDefault,
           onTap: () {
-            if (_onTap != null) {
-              _onTap(_session);
-            }
+            _onTap?.call(_session);
           },
           title: DateDurationText(
             _session.startDateTime,

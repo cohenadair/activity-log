@@ -11,10 +11,9 @@ class StatsActivitySummaryPage extends StatelessWidget {
   final scrollController = ScrollController();
 
   StatsActivitySummaryPage({
-    @required this.app,
-    @required this.activity
-  }) : assert(app != null),
-       assert(activity != null);
+    required this.app,
+    required this.activity
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +22,7 @@ class StatsActivitySummaryPage extends StatelessWidget {
         title: activity.value.name,
         subtitle: activity.displayDateRange == null
             ? DisplayDateRange.allDates.getTitle(context)
-            : activity.displayDateRange.getTitle(context),
+            : activity.displayDateRange!.getTitle(context),
       ),
       child: SingleChildScrollView(
         controller: scrollController,

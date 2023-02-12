@@ -16,7 +16,7 @@ import 'package:mobile/widgets/widget.dart';
 
 class EditActivityPage extends StatefulWidget {
   final AppManager app;
-  final Activity editingActivity;
+  final Activity? editingActivity;
 
   EditActivityPage(this.app, [this.editingActivity]);
 
@@ -30,13 +30,13 @@ class _EditActivityPageState extends State<EditActivityPage> {
 
   bool get _isEditing => widget.editingActivity != null;
 
-  TextEditingController _nameController;
-  String _nameValidatorValue;
+  late TextEditingController _nameController;
+  String? _nameValidatorValue;
 
   @override
   void initState() {
     _nameController = TextEditingController(
-      text: _isEditing ? widget.editingActivity.name : null
+      text: _isEditing ? widget.editingActivity!.name : null
     );
 
     super.initState();
@@ -51,10 +51,11 @@ class _EditActivityPageState extends State<EditActivityPage> {
       padding: insetsVerticalSmall,
       onSave: () => _onPressedSaveButton(),
       onDelete: () => widget.app.dataManager
-          .removeActivity(widget.editingActivity.id),
-      deleteDescription: _isEditing ? format(
-          Strings.of(context).editActivityPageDeleteMessage,
-          [widget.editingActivity.name]) : null,
+          .removeActivity(widget.editingActivity!.id),
+      deleteDescription: _isEditing
+          ? format(Strings.of(context).editActivityPageDeleteMessage,
+              [widget.editingActivity!.name])
+          : null,
       isEditingCallback: () => _isEditing,
       form: Form(
         key: _formKey,
@@ -73,7 +74,7 @@ class _EditActivityPageState extends State<EditActivityPage> {
                 decoration: InputDecoration(
                   labelText: Strings.of(context).editActivityPageNameLabel,
                 ),
-                validator: (String value) => _nameValidatorValue,
+                validator: (value) => _nameValidatorValue,
               ),
             ),
             _isEditing ? _buildRecentSessions() : Empty(),
@@ -86,7 +87,7 @@ class _EditActivityPageState extends State<EditActivityPage> {
   Widget _buildRecentSessions() {
     return RecentSessionsBuilder(
       app: widget.app,
-      activityId: widget.editingActivity.id,
+      activityId: widget.editingActivity!.id,
       limit: _recentSessionLimit,
       builder: (BuildContext context, List<Session> sessions, int sessionCount)
       {
@@ -103,7 +104,7 @@ class _EditActivityPageState extends State<EditActivityPage> {
               onTap: (Session session) {
                 push(context, EditSessionPage(
                   app: widget.app,
-                  activity: widget.editingActivity,
+                  activity: widget.editingActivity!,
                   editingSession: session,
                 ));
               },
@@ -132,7 +133,7 @@ class _EditActivityPageState extends State<EditActivityPage> {
                 context,
                 EditSessionPage(
                   app: widget.app,
-                  activity: widget.editingActivity
+                  activity: widget.editingActivity!
                 ),
                 fullscreenDialog: true
               );
@@ -147,12 +148,14 @@ class _EditActivityPageState extends State<EditActivityPage> {
     return sessionCount <= _recentSessionLimit ? Empty() : Row(
       mainAxisAlignment: MainAxisAlignment.end,
       children: <Widget>[
-        FlatButton(
+        Padding(
           padding: insetsHorizontalDefault,
-          onPressed: () =>
-              push(context, SessionsPage(widget.app, widget.editingActivity)),
-          child: Text(Strings.of(context).editActivityPageMoreSessions
-              .toUpperCase()),
+          child: TextButton(
+            onPressed: () =>
+                push(context, SessionsPage(widget.app, widget.editingActivity!)),
+            child: Text(Strings.of(context).editActivityPageMoreSessions
+                .toUpperCase()),
+          ),
         ),
       ],
     );
@@ -162,15 +165,15 @@ class _EditActivityPageState extends State<EditActivityPage> {
     // Remove any trailing or leading spaces entered by the user.
     String nameCandidate = _nameController.text.trim();
 
-    _validateNameField(nameCandidate, (String validationText) {
+    _validateNameField(nameCandidate, (String? validationText) {
       _nameValidatorValue = validationText;
 
-      if (!_formKey.currentState.validate()) {
+      if (_formKey.currentState == null || !_formKey.currentState!.validate()) {
         return;
       }
 
       if (_isEditing) {
-        var builder = ActivityBuilder.fromActivity(widget.editingActivity)
+        var builder = ActivityBuilder.fromActivity(widget.editingActivity!)
             ..name = nameCandidate;
         widget.app.dataManager.updateActivity(builder.build);
       } else {
@@ -182,10 +185,10 @@ class _EditActivityPageState extends State<EditActivityPage> {
     });
   }
 
-  void _validateNameField(String name, Function(String) onFinish) {
+  void _validateNameField(String name, Function(String?) onFinish) {
     // The name hasn't changed, and therefore is still valid.
     if (_isEditing &&
-        isEqualTrimmedLowercase(widget.editingActivity.name, name))
+        isEqualTrimmedLowercase(widget.editingActivity!.name, name))
     {
       onFinish(null);
       return;
@@ -207,14 +210,14 @@ class _EditActivityPageState extends State<EditActivityPage> {
 class RecentSessionsBuilder extends StatelessWidget {
   final AppManager app;
   final String activityId;
-  final int limit;
+  final int? limit;
   final Widget Function(BuildContext, List<Session>, int) builder;
 
   RecentSessionsBuilder({
-    @required this.app,
-    @required this.activityId,
+    required this.app,
+    required this.activityId,
     this.limit,
-    @required this.builder,
+    required this.builder,
   });
 
   @override
@@ -226,7 +229,7 @@ class RecentSessionsBuilder extends StatelessWidget {
       ],
       streams: [app.dataManager.getSessionsUpdatedStream(activityId)],
       builder: (context, values) =>
-          builder(context, values[0] as List<Session>, values[1] as int),
+          builder(context, values?[0] as List<Session>, values?[1] as int),
     );
   }
 }

@@ -5,27 +5,27 @@ import 'package:flutter/material.dart';
 class Timer extends StatefulWidget {
   final int durationMillis;
   final Widget Function() childBuilder;
-  final bool Function() shouldUpdateCallback;
+  final bool Function()? shouldUpdateCallback;
 
   Timer({
-    @required this.childBuilder,
+    required this.childBuilder,
     this.durationMillis = 1000,
     this.shouldUpdateCallback,
-  }) : assert(childBuilder != null);
+  });
 
   @override
   State<StatefulWidget> createState() => _TimerState();
 }
 
 class _TimerState extends State<Timer> {
-  Async.Timer _timer;
+  late Async.Timer _timer;
 
   @override
   void initState() {
     _timer = Async.Timer.periodic(
       Duration(milliseconds: widget.durationMillis), (Async.Timer timer) {
         if (widget.shouldUpdateCallback == null ||
-            widget.shouldUpdateCallback())
+            widget.shouldUpdateCallback!.call())
         {
           setState(() {});
         }

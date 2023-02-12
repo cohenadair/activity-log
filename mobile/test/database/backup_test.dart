@@ -1,26 +1,21 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mobile/app_manager.dart';
 import 'package:mobile/database/backup.dart';
-import 'package:mobile/database/sqlite_data_manager.dart';
 import 'package:mobile/model/activity.dart';
 import 'package:mobile/model/session.dart';
-import 'package:mobile/preferences_manager.dart';
 import 'package:mobile/utils/date_time_utils.dart';
 import 'package:mockito/mockito.dart';
 import 'package:quiver/time.dart';
 
-class MockAppManager extends Mock implements AppManager {}
-class MockDataManager extends Mock implements SQLiteDataManager {}
-class MockPreferencesManager extends Mock implements PreferencesManager {}
+import '../mocks/mocks.mocks.dart';
 
 void main() {
-  MockAppManager app;
-  MockDataManager dataManager;
-  MockPreferencesManager preferencesManager;
+  late MockAppManager app;
+  late MockSQLiteDataManager dataManager;
+  late MockPreferencesManager preferencesManager;
 
   setUp(() {
     app = MockAppManager();
-    dataManager = MockDataManager();
+    dataManager = MockSQLiteDataManager();
     preferencesManager = MockPreferencesManager();
 
     when(app.dataManager).thenReturn(dataManager);
@@ -32,13 +27,13 @@ void main() {
         .thenReturn(DisplayDateRange.last7Days);
   });
 
-  Session _buildSession(String id, int startMs, int endMs) =>
+  Session _buildSession(String id, int startMs, int? endMs) =>
       (SessionBuilder(id)
         ..id = "SID$startMs"
         ..startTimestamp = startMs
         ..endTimestamp = endMs).build;
 
-  Activity _buildActivity(String id, String name, String currentSessionId) =>
+  Activity _buildActivity(String id, String name, String? currentSessionId) =>
       (ActivityBuilder(name)
         ..id = id
         ..currentSessionId = currentSessionId).build;

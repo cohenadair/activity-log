@@ -6,11 +6,11 @@ import 'package:mobile/widgets/widget.dart';
 
 /// A [ListTile] wrapper with app default properties.
 class ListItem extends StatelessWidget {
-  final EdgeInsets contentPadding;
-  final Widget title;
-  final Widget subtitle;
-  final Widget trailing;
-  final VoidCallback onTap;
+  final EdgeInsets? contentPadding;
+  final Widget? title;
+  final Widget? subtitle;
+  final Widget? trailing;
+  final VoidCallback? onTap;
 
   ListItem({
     this.contentPadding,
@@ -39,13 +39,13 @@ class ListItem extends StatelessWidget {
 class ExpansionListItem extends StatefulWidget {
   final Widget title;
   final List<Widget> children;
-  final Function(bool) onExpansionChanged;
+  final Function(bool)? onExpansionChanged;
   final bool toBottomSafeArea;
-  final ScrollController scrollController;
+  final ScrollController? scrollController;
 
   ExpansionListItem({
-    @required this.title,
-    this.children,
+    required this.title,
+    this.children = const [],
     this.onExpansionChanged,
     this.toBottomSafeArea = false,
     this.scrollController,
@@ -57,7 +57,7 @@ class ExpansionListItem extends StatefulWidget {
 
 class _ExpansionListItemState extends State<ExpansionListItem> {
   final GlobalKey _key = GlobalKey();
-  double _previousScrollOffset;
+  double _previousScrollOffset = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -72,7 +72,7 @@ class _ExpansionListItemState extends State<ExpansionListItem> {
           widget.onExpansionChanged?.call(isExpanded);
 
           if (isExpanded && widget.scrollController != null) {
-            _previousScrollOffset = widget.scrollController.offset;
+            _previousScrollOffset = widget.scrollController!.offset;
 
             // This is a hack to scroll after ExpansionTile has finished
             // animating, since there is no built in functionality to fire an
@@ -93,9 +93,9 @@ class _ExpansionListItemState extends State<ExpansionListItem> {
       return;
     }
 
-    RenderBox box = _key.currentContext.findRenderObject() as RenderBox;
-    widget.scrollController.animateTo(
-      min(widget.scrollController.position.maxScrollExtent,
+    RenderBox box = _key.currentContext!.findRenderObject() as RenderBox;
+    widget.scrollController!.animateTo(
+      min(widget.scrollController!.position.maxScrollExtent,
           _previousScrollOffset + box.size.height),
       duration: defaultAnimationDuration,
       curve: Curves.linear,

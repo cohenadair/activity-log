@@ -3,10 +3,10 @@ import 'package:mobile/i18n/strings.dart';
 import 'package:mobile/res/style.dart';
 
 showDeleteDialog({
-  @required BuildContext context,
-  String title,
-  String description,
-  VoidCallback onDelete
+  required BuildContext context,
+  String? title,
+  String? description,
+  required VoidCallback onDelete,
 }) {
   showDialog(
     context: context,
@@ -31,9 +31,9 @@ showDeleteDialog({
 }
 
 showWarning({
-  @required BuildContext context,
-  VoidCallback onContinue,
-  String description,
+  required BuildContext context,
+  required VoidCallback onContinue,
+  String? description,
 }) {
   showDialog(
     context: context,
@@ -58,8 +58,8 @@ showWarning({
 }
 
 showError({
-  @required BuildContext context,
-  String description,
+  required BuildContext context,
+  required String description,
 }) {
   showOk(
     context: context,
@@ -69,9 +69,9 @@ showError({
 }
 
 showOk({
-  @required BuildContext context,
-  String title,
-  String description,
+  required BuildContext context,
+  String? title,
+  String? description,
 }) {
   showDialog(
     context: context,
@@ -87,14 +87,18 @@ showOk({
 }
 
 Widget buildDialogButton({
-  @required BuildContext context,
-  @required String name,
-  Color textColor,
-  VoidCallback onTap,
+  required BuildContext context,
+  required String name,
+  Color? textColor,
+  VoidCallback? onTap,
 }) {
-  return FlatButton(
-    child: Text(name.toUpperCase()),
-    textColor: textColor,
+  return TextButton(
+    child: Text(
+      name.toUpperCase(),
+      style: TextStyle(
+        color: textColor,
+      ),
+    ),
     onPressed: () {
       onTap?.call();
       Navigator.pop(context);

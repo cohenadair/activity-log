@@ -11,29 +11,30 @@ class Session extends Model implements Comparable<Session> {
 
   final String _activityId;
   final int _startTimestamp;
-  final int _endTimestamp;
-  final bool _isBanked;
+  final int? _endTimestamp;
+  final bool? _isBanked;
   final Clock _clock;
 
   String get activityId => _activityId;
   int get startTimestamp => _startTimestamp;
-  int get endTimestamp => _endTimestamp;
-  bool get isBanked => _isBanked != null && _isBanked;
+  int? get endTimestamp => _endTimestamp;
+  bool get isBanked => _isBanked != null && _isBanked!;
 
   Session.fromMap(Map<String, dynamic> map)
     : _activityId = map[keyActivityId],
-      _startTimestamp = map[keyStartTimestamp],
+      _startTimestamp = map[keyStartTimestamp] ?? -1,
       _endTimestamp = map[keyEndTimestamp],
       _isBanked = map[keyIsBanked] == 1,
       _clock = Clock(),
       super.fromMap(map);
 
   Session.fromBuilder(SessionBuilder builder)
-    : _activityId = builder.activityId,
-      _startTimestamp = builder.startTimestamp,
+    : assert(builder.startTimestamp != null),
+        _activityId = builder.activityId,
+      _startTimestamp = builder.startTimestamp!,
       _endTimestamp = builder.endTimestamp,
       _isBanked = builder.isBanked,
-      _clock = builder.clock,
+      _clock = builder.clock ?? Clock(),
       super.fromBuilder(builder);
 
   int get millisecondsDuration {
@@ -41,7 +42,7 @@ class Session extends Model implements Comparable<Session> {
       // Session isn't over yet.
       return _clock.now().millisecondsSinceEpoch - _startTimestamp;
     }
-    return _endTimestamp - _startTimestamp;
+    return _endTimestamp! - _startTimestamp;
   }
 
   Duration get duration => Duration(milliseconds: millisecondsDuration);
@@ -49,17 +50,14 @@ class Session extends Model implements Comparable<Session> {
   DateTime get startDateTime =>
       DateTime.fromMillisecondsSinceEpoch(startTimestamp);
 
-  DateTime get endDateTime => endTimestamp == null
+  DateTime? get endDateTime => endTimestamp == null
       ? null
-      : DateTime.fromMillisecondsSinceEpoch(endTimestamp);
-
-  DateRange get dateRange =>
-      DateRange(startDate: startDateTime, endDate: endDateTime);
+      : DateTime.fromMillisecondsSinceEpoch(endTimestamp!);
 
   TimeOfDay get startTimeOfDay => TimeOfDay.fromDateTime(startDateTime);
-  TimeOfDay get endTimeOfDay => endDateTime == null
+  TimeOfDay? get endTimeOfDay => endDateTime == null
       ? null
-      : TimeOfDay.fromDateTime(endDateTime);
+      : TimeOfDay.fromDateTime(endDateTime!);
 
   bool get inProgress {
     return _endTimestamp == null;
@@ -71,7 +69,7 @@ class Session extends Model implements Comparable<Session> {
       keyActivityId : _activityId,
       keyStartTimestamp : _startTimestamp,
       keyEndTimestamp : _endTimestamp,
-      keyIsBanked : _isBanked != null && _isBanked ? 1 : 0,
+      keyIsBanked : _isBanked != null && _isBanked! ? 1 : 0,
     }..addAll(super.toMap());
   }
 
@@ -109,10 +107,10 @@ class Session extends Model implements Comparable<Session> {
 
 class SessionBuilder extends ModelBuilder {
   String activityId;
-  int startTimestamp;
-  int endTimestamp;
-  bool isBanked;
-  Clock clock;
+  int? startTimestamp;
+  int? endTimestamp;
+  bool? isBanked;
+  Clock? clock;
 
   SessionBuilder(this.activityId);
 
@@ -127,23 +125,23 @@ class SessionBuilder extends ModelBuilder {
     if (clock == null) {
       endTimestamp = DateTime.now().millisecondsSinceEpoch;
     } else {
-      endTimestamp = clock.now().millisecondsSinceEpoch;
+      endTimestamp = clock!.now().millisecondsSinceEpoch;
     }
     return this;
   }
 
   /// Pins the session start and end time to the given [DateRange], if the
   /// session falls outside said range.
-  SessionBuilder pinToDateRange(DateRange dateRange) {
+  SessionBuilder pinToDateRange(DateRange? dateRange) {
     if (dateRange == null) {
       return this;
     }
 
-    if (startTimestamp < dateRange.startMs) {
+    if (startTimestamp == null || startTimestamp! < dateRange.startMs) {
       startTimestamp = dateRange.startMs;
     }
 
-    if (endTimestamp != null && endTimestamp > dateRange.endMs) {
+    if (endTimestamp != null && endTimestamp! > dateRange.endMs) {
       endTimestamp = dateRange.endMs;
     }
 
@@ -156,7 +154,7 @@ class SessionBuilder extends ModelBuilder {
     }
 
     if (startTimestamp == null) {
-      startTimestamp = clock.now().millisecondsSinceEpoch;
+      startTimestamp = clock!.now().millisecondsSinceEpoch;
     }
 
     return Session.fromBuilder(this);

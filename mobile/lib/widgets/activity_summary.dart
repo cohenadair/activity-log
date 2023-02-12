@@ -18,10 +18,10 @@ class ActivitySummary extends StatelessWidget {
   final ScrollController scrollController;
 
   ActivitySummary({
-    @required this.app,
-    this.activity,
-    this.scrollController,
-  }) : assert(app != null);
+    required this.app,
+    required this.activity,
+    required this.scrollController,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -72,13 +72,13 @@ class ActivitySummary extends StatelessWidget {
                       ? null
                       : formatDateTime(
                     context: context,
-                    dateTime: activity.shortestSession.startDateTime,
+                    dateTime: activity.shortestSession!.startDateTime,
                   ),
                   value: activity.shortestSession == null
                       ? Strings.of(context).none
                       : _formatDuration(
                     context,
-                    activity.shortestSession.duration,
+                    activity.shortestSession!.duration,
                     largestDurationUnit,
                   ),
                 ),
@@ -88,13 +88,13 @@ class ActivitySummary extends StatelessWidget {
                       ? null
                       : formatDateTime(
                     context: context,
-                    dateTime: activity.longestSession.startDateTime,
+                    dateTime: activity.longestSession!.startDateTime,
                   ),
                   value: activity.longestSession == null
                       ? Strings.of(context).none
                       : _formatDuration(
                     context,
-                    activity.longestSession.duration,
+                    activity.longestSession!.duration,
                     largestDurationUnit,
                   ),
                 ),
@@ -188,7 +188,7 @@ class ActivitySummary extends StatelessWidget {
   Widget _buildSessionsChart() {
     return SessionsLineChart(
       app: app,
-      sessions: activity.sessions == null ? [] : activity.sessions,
+      sessions: activity.sessions,
       padding: insetsVerticalDefault,
     );
   }

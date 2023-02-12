@@ -33,12 +33,12 @@ class StatsPage extends StatefulWidget {
 class _StatsPageState extends State<StatsPage> {
   final scrollController = ScrollController();
 
-  Set<Activity> _currentActivities;
-  DisplayDateRange _currentDateRange;
+  Set<Activity> _currentActivities = {};
+  late DisplayDateRange _currentDateRange;
 
-  Future<SummarizedActivityList> _summarizedActivityListFuture;
-  Future<int> _activityCountFuture;
-  StreamSubscription<void> _onActivitiesUpdated;
+  late Future<SummarizedActivityList> _summarizedActivityListFuture;
+  late Future<int> _activityCountFuture;
+  late StreamSubscription<void> _onActivitiesUpdated;
 
   @override
   void initState() {
@@ -54,9 +54,9 @@ class _StatsPageState extends State<StatsPage> {
     // Retrieve initial activities if needed.
     List<String> selectedIds =
         widget.app.preferencesManager.statsSelectedActivityIds;
-    if (selectedIds != null) {
+    if (selectedIds.isNotEmpty) {
       widget.app.dataManager.getActivities(selectedIds).then((activities) {
-        if (activities != null && activities.isNotEmpty) {
+        if (activities.isNotEmpty) {
           _currentActivities = Set.of(activities);
         }
         _updateFutures();
@@ -85,7 +85,7 @@ class _StatsPageState extends State<StatsPage> {
             return Empty();
           }
 
-          int activityCount = snapshot.data;
+          int activityCount = snapshot.data!;
           if (activityCount <= 0) {
             return EmptyPageHelp(
               icon: Icons.show_chart,
@@ -128,9 +128,9 @@ class _StatsPageState extends State<StatsPage> {
                       return Loading.centered();
                     }
 
-                    List<SummarizedActivity> activities = snapshot.data
+                    List<SummarizedActivity> activities = snapshot.data!
                         .activities;
-                    if (activities == null || activities.isEmpty) {
+                    if (activities.isEmpty) {
                       return Padding(
                         padding: insetsDefault,
                         child: ErrorText(Strings.of(context)
@@ -144,7 +144,7 @@ class _StatsPageState extends State<StatsPage> {
                     {
                       return _buildForSingleActivity(activities.first);
                     } else {
-                      return _buildForMultipleActivities(snapshot.data);
+                      return _buildForMultipleActivities(snapshot.data!);
                     }
                   },
                 ),
@@ -157,19 +157,23 @@ class _StatsPageState extends State<StatsPage> {
   }
 
   Widget _buildForMultipleActivities(SummarizedActivityList summary) {
+    if (summary.activitiesSortedByDuration == null || summary.activitiesSortedByNumberOfSessions == null) {
+      return Empty();
+    }
+
     return Column(
       children: <Widget>[
         _buildSummary(summary),
         MinDivider(),
         ActivitiesDurationBarChart(
           app: widget.app,
-          activities: summary.activitiesSortedByDuration,
+          activities: summary.activitiesSortedByDuration!,
           padding: insetsVerticalDefaultHorizontalSmall,
           onSelect: _onSelectChartActivity,
         ),
         MinDivider(),
         ActivitiesNumberOfSessionsBarChart(
-          summary.activitiesSortedByNumberOfSessions,
+          summary.activitiesSortedByNumberOfSessions!,
           padding: insetsVerticalDefaultHorizontalSmall,
           onSelect: _onSelectChartActivity,
         ),
@@ -185,6 +189,10 @@ class _StatsPageState extends State<StatsPage> {
   }
 
   Widget _buildSummary(SummarizedActivityList summary) {
+    if (summary.mostFrequentActivity == null || summary.longestSession == null) {
+      return Empty();
+    }
+
     return LargestDurationBuilder(
       app: widget.app,
       builder: (BuildContext context, DurationUnit largestDurationUnit) {
@@ -205,31 +213,23 @@ class _StatsPageState extends State<StatsPage> {
             ),
             SummaryItem(
               title: Strings.of(context).statsPageMostFrequentActivityLabel,
-              subtitle: summary.mostFrequentActivity == null
-                  ? null
-                  : summary.mostFrequentActivity.first.name,
-              value: summary.mostFrequentActivity == null
-                  ? Strings.of(context).none
-                  : format(
-                      Strings.of(context).statsPageMostFrequentActivityValue,
-                      [summary.mostFrequentActivity.second],
-                    ),
+              subtitle: summary.mostFrequentActivity!.first.name,
+              value: format(
+                Strings.of(context).statsPageMostFrequentActivityValue,
+                [summary.mostFrequentActivity!.second],
+              ),
             ),
             SummaryItem(
               title: Strings.of(context).statsPageLongestSessionLabel,
-              subtitle: summary.longestSession == null
-                  ? null
-                  : summary.longestSession.first.name,
-              value: summary.longestSession == null
-                  ? Strings.of(context).none
-                  : formatTotalDuration(
-                      context: context,
-                      durations: [summary.longestSession.second.duration],
-                      includesSeconds: false,
-                      condensed: true,
-                      showHighestTwoOnly: true,
-                      largestDurationUnit: largestDurationUnit,
-                    ),
+              subtitle: summary.longestSession!.first.name,
+              value: formatTotalDuration(
+                context: context,
+                durations: [summary.longestSession!.second.duration],
+                includesSeconds: false,
+                condensed: true,
+                showHighestTwoOnly: true,
+                largestDurationUnit: largestDurationUnit,
+              ),
             ),
           ],
         );
@@ -249,17 +249,13 @@ class _StatsPageState extends State<StatsPage> {
     // Update preferences.
     widget.app.preferencesManager.setStatsDateRange(_currentDateRange);
     widget.app.preferencesManager.setStatsSelectedActivityIds(
-        _currentActivities == null
-            ? null
-            : _currentActivities.map((activity) => activity.id).toList());
+        _currentActivities.map((activity) => activity.id).toList());
 
-    List<Activity> activities = _currentActivities == null
-        ? []
-        : List.of(_currentActivities);
+    List<Activity> activities = List.of(_currentActivities);
 
     // Pass null for "All dates" so the stats are restricted to the existing
     // sessions, rather than whatever the "All dates" start date is.
-    DisplayDateRange dateRange = _currentDateRange == DisplayDateRange.allDates
+    DisplayDateRange? dateRange = _currentDateRange == DisplayDateRange.allDates
         ? null : _currentDateRange;
     _summarizedActivityListFuture = widget.app.dataManager
         .getSummarizedActivities(dateRange, activities);

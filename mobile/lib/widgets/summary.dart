@@ -36,7 +36,7 @@ class Summary extends StatelessWidget {
     return items.map((SummaryItem item) {
       return ListItem(
         title: Text(item.title),
-        subtitle: isEmpty(item.subtitle) ? null : Text(item.subtitle),
+        subtitle: isEmpty(item.subtitle) ? null : Text(item.subtitle!),
         trailing: SecondaryText(
           item.value is String ? item.value : item.value.toString(),
         ),
@@ -47,11 +47,11 @@ class Summary extends StatelessWidget {
 
 class SummaryItem {
   final String title;
-  final String subtitle;
+  final String? subtitle;
   final dynamic value;
 
   SummaryItem({
-    @required this.title,
+    required this.title,
     this.subtitle,
     this.value,
   });

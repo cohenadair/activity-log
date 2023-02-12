@@ -4,16 +4,15 @@ import 'package:mobile/i18n/strings.dart';
 class Button extends StatelessWidget {
   final String _text;
   final VoidCallback _onPressed;
-  final Icon _icon;
-  final Color _color;
+  final Icon? _icon;
+  final Color? _color;
 
   Button({
-    @required String text,
-    @required VoidCallback onPressed,
-    Icon icon,
-    Color color,
-  }) : assert(text != null),
-       assert(onPressed != null),
+    required String text,
+    required VoidCallback onPressed,
+    Icon? icon,
+    Color? color,
+  }) :
        _text = text,
        _onPressed = onPressed,
        _icon = icon,
@@ -21,55 +20,57 @@ class Button extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return _icon == null ? RaisedButton(
+    return _icon == null ? ElevatedButton(
       child: _textWidget,
       onPressed: _onPressed,
-      color: _color,
-      elevation: 0,
-      highlightElevation: 0,
-      disabledElevation: 0,
-    ) : RaisedButton.icon(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: _color,
+        elevation: 0,
+      ),
+    ) : ElevatedButton.icon(
       onPressed: _onPressed,
-      icon: _icon,
+      icon: _icon!,
       label: _textWidget,
-      color: _color,
-      elevation: 0,
-      highlightElevation: 0,
-      disabledElevation: 0,
+      style: ElevatedButton.styleFrom(
+        backgroundColor: _color,
+        elevation: 0,
+      ),
     );
   }
 
   Widget get _textWidget => Text(_text.toUpperCase());
 }
 
-/// A [FlatButton] wrapper meant to be used as an action in an [AppBar].
+/// A [TextButton] wrapper meant to be used as an action in an [AppBar].
 class ActionButton extends StatelessWidget {
-  final String text;
+  final String? text;
   final VoidCallback onPressed;
 
-  final String _stringId;
+  final String? _stringId;
 
   ActionButton({
-    @required this.text,
-    this.onPressed,
+    required this.text,
+    required this.onPressed,
   }) : _stringId = null;
 
-  ActionButton.done({this.onPressed})
+  ActionButton.done({required this.onPressed})
       : _stringId = "done",
         text = null;
 
-  ActionButton.save({this.onPressed})
+  ActionButton.save({required this.onPressed})
       : _stringId = "save",
         text = null;
 
   @override
   Widget build(BuildContext context) {
-    return FlatButton(
+    return TextButton(
       onPressed: onPressed,
-      child: Text((text == null ? Strings.of(context).fromId(_stringId) : text)
+      child: Text((text == null ? Strings.of(context).fromId(_stringId!) : text)!
           .toUpperCase()
       ),
-      textColor: Colors.white,
+      style: TextButton.styleFrom(
+        foregroundColor: Colors.white,
+      )
     );
   }
 }

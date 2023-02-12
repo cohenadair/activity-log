@@ -17,7 +17,7 @@ const monthDayYearFormat = "MMM. d, yyyy";
 /// way [InputDecorator] animates errors into view (slide in from the top with
 /// opacity).
 class AnimatedErrorText extends StatefulWidget {
-  final String text;
+  final String? text;
   final EdgeInsets padding;
 
   AnimatedErrorText(this.text, {EdgeInsets padding = insetsZero})
@@ -34,8 +34,8 @@ class _AnimatedErrorTextState extends State<AnimatedErrorText>
   final animationDuration = defaultAnimationDuration;
   final yStartOffset = -0.25;
 
-  AnimationController _controller;
-  Animation<Offset> _animationOffset;
+  late AnimationController _controller;
+  late Animation<Offset> _animationOffset;
 
   @override
   void initState() {
@@ -89,7 +89,7 @@ class _AnimatedErrorTextState extends State<AnimatedErrorText>
         position: _animationOffset,
         child: Padding(
           padding: widget.padding,
-          child: ErrorText(widget.text),
+          child: ErrorText(widget.text!),
         ),
       ),
     );
@@ -135,7 +135,7 @@ class HeadingText extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       _text,
-      style: Theme.of(context).textTheme.bodyText1.copyWith(
+      style: Theme.of(context).textTheme.bodyText1!.copyWith(
             color: Theme.of(context).primaryColor,
           ),
     );
@@ -170,7 +170,7 @@ class SecondaryText extends StatelessWidget {
     return Text(
       text,
       // Same style used in ListTile.title.
-      style: Theme.of(context).textTheme.subtitle1.copyWith(
+      style: Theme.of(context).textTheme.subtitle1!.copyWith(
             color: Theme.of(context).disabledColor,
           ),
     );
@@ -248,7 +248,7 @@ class DateDurationText extends StatelessWidget {
   final Clock clock;
   final DateTime startDateTime;
   final Duration duration;
-  final TextStyle style;
+  final TextStyle? style;
   final String suffix;
 
   DateDurationText(
@@ -371,14 +371,14 @@ class TimeText extends StatelessWidget {
 /// Two [TimeText] widgets in a row, separated by a dash.
 class TimeRangeText extends StatelessWidget {
   final TimeOfDay startTime;
-  final TimeOfDay endTime;
+  final TimeOfDay? endTime;
   final bool enabled;
 
   TimeRangeText({
-    @required this.startTime,
-    @required this.endTime,
+    required this.startTime,
+    required this.endTime,
     this.enabled = false,
-  }) : assert(startTime != null);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -389,7 +389,7 @@ class TimeRangeText extends StatelessWidget {
         EnabledText(" - ", enabled: enabled),
         endTime == null
             ? EnabledText(Strings.of(context).now, enabled: enabled)
-            : TimeText(endTime, enabled: enabled),
+            : TimeText(endTime!, enabled: enabled),
       ],
     );
   }

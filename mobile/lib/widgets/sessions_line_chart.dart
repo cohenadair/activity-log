@@ -16,10 +16,10 @@ class SessionsLineChart extends StatefulWidget {
   final EdgeInsets padding;
 
   SessionsLineChart({
-    @required this.app,
-    this.sessions,
+    required this.app,
+    this.sessions = const [],
     this.padding = insetsZero
-  }) : assert(app != null);
+  });
 
   @override
   _SessionsLineChartState createState() => _SessionsLineChartState();
@@ -29,7 +29,7 @@ class _SessionsLineChartState extends State<SessionsLineChart> {
   final String _chartId = "ActivitySummaryLineChart";
   final double _height = 250;
 
-  Session _selectedSession;
+  Session? _selectedSession;
 
   @override
   Widget build(BuildContext context) {
@@ -68,13 +68,13 @@ class _SessionsLineChartState extends State<SessionsLineChart> {
     return Column(
       children: <Widget>[
         DateDurationText(
-          _selectedSession.startDateTime,
-          _selectedSession.duration,
+          _selectedSession!.startDateTime,
+          _selectedSession!.duration,
           style: Theme.of(context).textTheme.subtitle1,
         ),
         TimeRangeText(
-          startTime: _selectedSession.startTimeOfDay,
-          endTime: _selectedSession.endTimeOfDay,
+          startTime: _selectedSession!.startTimeOfDay,
+          endTime: _selectedSession!.endTimeOfDay,
           enabled: false,
         ),
       ],
@@ -115,7 +115,7 @@ class _SessionsLineChartState extends State<SessionsLineChart> {
         id: _chartId,
         colorFn: (_, __) => Charts.ColorUtil
             .fromDartColor(Theme.of(context).primaryColor),
-        domainFn: (_, int index) => index,
+        domainFn: (_, int? index) => index ?? 0,
         measureFn: (Session session, _) => session.millisecondsDuration,
         data: widget.sessions,
       ),
@@ -127,8 +127,8 @@ class _SessionsLineChartState extends State<SessionsLineChart> {
       Charts.PanAndZoomBehavior(),
     ];
 
-    int selectedIndex = widget.sessions.indexOf(_selectedSession);
-    if (selectedIndex >= 0) {
+    int? selectedIndex = _selectedSession == null ? null : widget.sessions.indexOf(_selectedSession!);
+    if (selectedIndex != null) {
       result.add(Charts.InitialSelection(selectedDataConfig: [
         new Charts.SeriesDatumConfig(_chartId, selectedIndex)
       ]));

@@ -14,7 +14,7 @@ import 'package:mobile/widgets/future_listener.dart';
 import 'package:sqflite/sqflite.dart';
 
 class SQLiteDataManager {
-  Database _database;
+  late Database _database;
 
   final _activitiesUpdated = VoidStreamController();
   final Map<String, VoidStreamController> _sessionsUpdatedMap = Map();
@@ -24,13 +24,13 @@ class SQLiteDataManager {
   ///
   /// This value is loaded during [SQLiteDataManager] initialization, and used
   /// as an initial value for a [ActivityListModelBuilder].
-  List<ActivityListTileModel> _initialActivityListTileModels;
+  late List<ActivityListTileModel> _initialActivityListTileModels;
 
   /// Events are added to this [Stream] when an [Activity] is added, removed,
   /// or modified.
   Stream<void> get activitiesUpdatedStream => _activitiesUpdated.stream;
 
-  Future<void> initialize(AppManager app, [Database database]) async {
+  Future<void> initialize(AppManager app, [Database? database]) async {
     if (database == null) {
       _database = await SQLiteOpenHelper.open();
     } else {
@@ -67,7 +67,7 @@ class SQLiteDataManager {
 
   Future<int> _getRowCount(String tableName) async {
     String query = "SELECT COUNT(*) FROM $tableName";
-    return Sqflite.firstIntValue(await _database.rawQuery(query));
+    return Sqflite.firstIntValue(await _database.rawQuery(query)) ?? 0;
   }
 
   /// Events are added to this [Stream] when sessions for the given activity ID
@@ -76,7 +76,7 @@ class SQLiteDataManager {
     if (!_sessionsUpdatedMap.containsKey(activityId)) {
       _sessionsUpdatedMap[activityId] = VoidStreamController();
     }
-    return _sessionsUpdatedMap[activityId].stream;
+    return _sessionsUpdatedMap[activityId]!.stream;
   }
 
   Future<List<Activity>> get activities async {
@@ -163,7 +163,7 @@ class SQLiteDataManager {
       _activitiesUpdated.notify();
       sessionList.forEach((Session session) {
         if (_sessionsUpdatedMap.containsKey(session.activityId)) {
-          _sessionsUpdatedMap[session.activityId].notify();
+          _sessionsUpdatedMap[session.activityId]!.notify();
         }
       });
     }
@@ -172,7 +172,7 @@ class SQLiteDataManager {
   /// Creates and starts a new [Session] for the given [Activity]. If the given
   /// [Activity] is already running, this method does nothing. Returns the ID
   /// of the new [Session].
-  Future<String> startSession(Activity activity) async {
+  Future<String?> startSession(Activity activity) async {
     if (activity.isRunning) {
       // Only one session per activity can be running at a given time.
       return null;
@@ -257,7 +257,7 @@ class SQLiteDataManager {
     return getLimitedSessions(activityId, null);
   }
 
-  Future<List<Session>> getRecentSessions(String activityId, int limit) async {
+  Future<List<Session>> getRecentSessions(String activityId, int? limit) async {
     return getLimitedSessions(activityId, limit);
   }
 
@@ -265,12 +265,12 @@ class SQLiteDataManager {
     String query = """
       SELECT COUNT(*) FROM session WHERE activity_id = ?
     """;
-    return Sqflite.firstIntValue(await _database.rawQuery(query, [activityId]));
+    return Sqflite.firstIntValue(await _database.rawQuery(query, [activityId])) ?? 0;
   }
 
   /// Returns the [Session] the given [Session] overlaps with, if one exists;
   /// `null` otherwise.
-  Future<Session> getOverlappingSession(Session session) async {
+  Future<Session?> getOverlappingSession(Session session) async {
     String query;
     List<dynamic> params;
 
@@ -318,7 +318,7 @@ class SQLiteDataManager {
     return Session.fromMap(result.first);
   }
 
-  Future<List<Session>> getLimitedSessions(String activityId, int limit) async {
+  Future<List<Session>> getLimitedSessions(String activityId, int? limit) async {
     String query;
     List<dynamic> args;
 
@@ -345,7 +345,7 @@ class SQLiteDataManager {
   }
 
   /// Returns the session with the given ID, or `null` if one isn't found.
-  Future<Session> getSession(String sessionId) async {
+  Future<Session?> getSession(String? sessionId) async {
     if (sessionId == null) {
       return null;
     }
@@ -376,14 +376,15 @@ class SQLiteDataManager {
   /// If the given [DisplayDateRange] is `null`, the result will include all
   /// [Session] objects associated with each given [Activity].
   Future<SummarizedActivityList> getSummarizedActivities(
-      DisplayDateRange displayDateRange, [List<Activity> activities]) async
-  {
-    List<Activity> activityList = activities == null ? [] : List.of(activities);
-    DateRange dateRange = displayDateRange == null
-        ? null : displayDateRange.value;
+    DisplayDateRange? displayDateRange, [
+    List<Activity> activities = const [],
+  ]) async {
+    DateRange? dateRange =
+        displayDateRange == null ? null : displayDateRange.value;
 
+    var activityList = List.of(activities);
     // Get all activities if none were provided.
-    if (activities == null || activities.length == 0) {
+    if (activityList.isEmpty) {
       var mapList = await _database.rawQuery("SELECT * FROM activity");
       mapList.forEach((map) => activityList.add(Activity.fromMap(map)));
     }
@@ -424,14 +425,12 @@ class SQLiteDataManager {
 
       List<Session> sessionList = [];
 
-      if (sessionMapList != null) {
-        sessionMapList.forEach((Map<String, dynamic> map) {
-          sessionList.add(SessionBuilder
-              .fromSession(Session.fromMap(map))
-              .pinToDateRange(dateRange)
-              .build);
-        });
-      }
+      sessionMapList.forEach((Map<String, dynamic> map) {
+        sessionList.add(SessionBuilder
+            .fromSession(Session.fromMap(map))
+            .pinToDateRange(dateRange)
+            .build);
+      });
 
       summarizedActivities.add(SummarizedActivity(
         value: activity,
@@ -454,10 +453,8 @@ class SQLiteDataManager {
   /// The passed in [DateRange] object is used for calculating the total
   /// duration to display.
   Future<List<ActivityListTileModel>> getActivityListModel({
-    @required DateRange dateRange,
+    required DateRange dateRange,
   }) async {
-    assert(dateRange != null);
-
     String allActivitiesQuery = "SELECT * FROM activity";
 
     String inProgressSessionsQuery = """
@@ -489,7 +486,7 @@ class SQLiteDataManager {
     batch.rawQuery(bankedSessionsQuery, [dateRange.endMs, dateRange.startMs]);
     List<dynamic> mapList = await batch.commit();
 
-    if (mapList == null || mapList.isEmpty) {
+    if (mapList.isEmpty) {
       return [];
     }
 
@@ -504,22 +501,23 @@ class SQLiteDataManager {
     // In progress sessions.
     mapList[1].forEach((sessionMap) {
       Session session = Session.fromMap(sessionMap);
-      modelMap[session.activityId].currentSession = session;
+      modelMap[session.activityId]!.currentSession = session;
     });
 
     // Total durations.
     mapList[2].forEach((durationMap) {
-      modelMap[durationMap["activity_id"]].duration =
+      modelMap[durationMap["activity_id"]]!.duration =
           Duration(milliseconds: durationMap["sum_value"] ?? 0);
     });
 
     // Banked sessions.
     mapList[3].forEach((sessionMap) {
-      var model = modelMap[sessionMap["activity_id"]];
+      var model = modelMap[sessionMap["activity_id"]]!;
       if (model.duration == null) {
         model.duration = Duration();
       }
-      model.duration -= Duration(milliseconds: sessionMap["sum_value"] ?? 0);
+      model.duration = model.duration! -
+          Duration(milliseconds: sessionMap["sum_value"] ?? 0);
     });
 
     // Sort alphabetically.
@@ -533,10 +531,7 @@ class SQLiteDataManager {
     // Technically, when a session is added, the Activity is updated, although
     // the Activity table in the DB isn't directly updated.
     _activitiesUpdated.notify();
-
-    if (_sessionsUpdatedMap.containsKey(activityId)) {
-      _sessionsUpdatedMap[activityId].notify();
-    }
+    _sessionsUpdatedMap[activityId]?.notify();
   }
 }
 
@@ -546,8 +541,8 @@ class ActivitiesBuilder extends StatelessWidget {
   final Widget Function(BuildContext, List<Activity>) builder;
 
   ActivitiesBuilder({
-    @required this.app,
-    @required this.builder,
+    required this.app,
+    required this.builder,
   });
 
   @override
@@ -567,8 +562,8 @@ class ActivityListModelBuilder extends StatelessWidget {
   final Widget Function(BuildContext, List<ActivityListTileModel>) builder;
 
   ActivityListModelBuilder({
-    @required this.app,
-    @required this.builder,
+    required this.app,
+    required this.builder,
   });
 
   @override
@@ -577,7 +572,7 @@ class ActivityListModelBuilder extends StatelessWidget {
       initialValues: [app.dataManager._initialActivityListTileModels],
       futuresHaveDataCallback: () =>
           // Cleanup now unused data.
-          app.dataManager._initialActivityListTileModels = null,
+          app.dataManager._initialActivityListTileModels = const [],
       getFutureCallbacks: [
         () => app.dataManager.getActivityListModel(
           dateRange: app.preferencesManager.homeDateRange.value,
@@ -587,7 +582,7 @@ class ActivityListModelBuilder extends StatelessWidget {
         app.preferencesManager.homeDateRangeStream,
         app.dataManager._activitiesUpdated.stream,
       ],
-      builder: (context, result) => builder(context, result.first),
+      builder: (context, result) => builder(context, result?.first),
     );
   }
 }
@@ -600,9 +595,9 @@ class SessionsBuilder extends StatelessWidget {
   final Widget Function(BuildContext, List<Session>) builder;
 
   SessionsBuilder({
-    @required this.app,
-    @required this.activityId,
-    @required this.builder,
+    required this.app,
+    required this.activityId,
+    required this.builder,
   });
 
   @override

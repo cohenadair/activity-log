@@ -12,10 +12,9 @@ class StatsDateRangePicker extends StatefulWidget {
   final OnListPickerChanged<DisplayDateRange> onDurationPicked;
 
   StatsDateRangePicker({
-    @required this.initialValue,
-    @required this.onDurationPicked
-  }) : assert(initialValue != null),
-       assert(onDurationPicked != null);
+    required this.initialValue,
+    required this.onDurationPicked
+  });
 
   @override
   _StatsDateRangePickerState createState() => _StatsDateRangePickerState();
@@ -78,7 +77,7 @@ class _StatsDateRangePickerState extends State<StatsDateRangePicker> {
     );
   }
 
-  Future<DisplayDateRange> _onTapCustom(BuildContext context) async {
+  Future<DisplayDateRange?> _onTapCustom(BuildContext context) async {
     DateTime now = DateTime.now();
     DateRange customValue = _customDateRange.getValue(now);
 
@@ -92,7 +91,11 @@ class _StatsDateRangePickerState extends State<StatsDateRangePicker> {
       lastDate: now,
     );
 
-    DateTime endDate;
+    if (pickedRange == null) {
+      return null;
+    }
+
+    DateTime? endDate;
     if (pickedRange.start == pickedRange.end) {
       // If only the start date was picked, or the start and end time are equal,
       // set the end date to a range of 1 day.

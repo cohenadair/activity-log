@@ -30,7 +30,7 @@ class _ActivitiesPageState extends State<ActivitiesPage> {
             message: Strings.of(context).activitiesPageNoActivitiesMessage,
           ),
           title: Strings.of(context).activitiesPageTitle,
-          getEditPageCallback: (ActivityListTileModel model) {
+          getEditPageCallback: (ActivityListTileModel? model) {
             return EditActivityPage(
               widget.app,
               model == null ? null : model.activity,

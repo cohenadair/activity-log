@@ -1,32 +1,27 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mobile/app_manager.dart';
 import 'package:mobile/database/sqlite_data_manager.dart';
 import 'package:mobile/model/activity.dart';
 import 'package:mobile/model/session.dart';
-import 'package:mobile/preferences_manager.dart';
 import 'package:mobile/utils/date_time_utils.dart';
 import 'package:mockito/mockito.dart';
-import 'package:sqflite/sqflite.dart';
 
+import '../mocks/mocks.mocks.dart';
 import '../test_utils.dart';
 
-class MockAppManager extends Mock implements AppManager {}
-class MockBatch extends Mock implements Batch {}
-class MockDatabase extends Mock implements Database {}
-class MockPreferencesManager extends Mock implements PreferencesManager {}
-
 void main() {
-  MockAppManager appManager;
-  MockDatabase database;
-  MockPreferencesManager preferencesManager;
-  SQLiteDataManager dataManager;
+  late MockAppManager appManager;
+  late MockDatabase database;
+  late MockPreferencesManager preferencesManager;
+  late SQLiteDataManager dataManager;
 
   setUp(() async {
     appManager = MockAppManager();
 
+    var batch = MockBatch();
+    when(batch.commit()).thenAnswer((_) => Future.value([]));
+
     database = MockDatabase();
-    when(database.batch()).thenReturn(MockBatch());
+    when(database.batch()).thenReturn(batch);
 
     dataManager = SQLiteDataManager();
 
@@ -69,11 +64,11 @@ void main() {
     }
 
     assertSummarizedActivities({
-      @required DateTime startDate,
-      @required DateTime endDate,
-      @required List<DateRange> sessionRangeList,
-      @required int expectedLength,
-      @required Duration expectedDuration,
+      required DateTime startDate,
+      required DateTime endDate,
+      required List<DateRange> sessionRangeList,
+      required int expectedLength,
+      required Duration expectedDuration,
     }) async {
       DisplayDateRange dateRange = stubDateRange(DateRange(
         startDate: startDate,
@@ -304,6 +299,8 @@ void main() {
           DateTime(2018, 2, 1),
         ), // Expected 31 days
       ]);
+
+      stubOverlappingSessions(activities[4].id, dateRange.value, []);
 
       var result = await dataManager.getSummarizedActivities(dateRange);
 
