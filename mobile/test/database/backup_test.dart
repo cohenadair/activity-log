@@ -21,22 +21,23 @@ void main() {
     when(app.dataManager).thenReturn(dataManager);
     when(app.preferencesManager).thenReturn(preferencesManager);
 
-    when(preferencesManager.largestDurationUnit)
-        .thenReturn(DurationUnit.days);
+    when(preferencesManager.largestDurationUnit).thenReturn(DurationUnit.days);
     when(preferencesManager.homeDateRange)
         .thenReturn(DisplayDateRange.last7Days);
   });
 
   Session _buildSession(String id, int startMs, int? endMs) =>
       (SessionBuilder(id)
-        ..id = "SID$startMs"
-        ..startTimestamp = startMs
-        ..endTimestamp = endMs).build;
+            ..id = "SID$startMs"
+            ..startTimestamp = startMs
+            ..endTimestamp = endMs)
+          .build;
 
   Activity _buildActivity(String id, String name, String? currentSessionId) =>
       (ActivityBuilder(name)
-        ..id = id
-        ..currentSessionId = currentSessionId).build;
+            ..id = id
+            ..currentSessionId = currentSessionId)
+          .build;
 
   group("Export", () {
     test("toJsonString with empty database", () async {
@@ -49,7 +50,12 @@ void main() {
           .thenReturn(DisplayDateRange.last7Days);
 
       String json = await export(app);
-      expect(json, equals('{"activities":[],"sessions":[],"preferences":{"largest_duration_unit":0,"home_date_range":"last7Days"}}'));
+      expect(
+        json,
+        equals(
+          '{"activities":[],"sessions":[],"preferences":{"largest_duration_unit":0,"home_date_range":"last7Days"}}',
+        ),
+      );
     });
 
     test("toJsonString with non-empty database", () async {
@@ -82,7 +88,12 @@ void main() {
       var clock = Clock.fixed(DateTime(2019, 1, 1));
       String json = await export(app, clock: clock);
 
-      expect(json, equals('{"activities":[{"name":"Test1","current_session_id":null,"id":"AID1"},{"name":"Test2","current_session_id":null,"id":"AID2"},{"name":"Test3","current_session_id":null,"id":"AID3"},{"name":"Test4","current_session_id":null,"id":"AID4"}],"sessions":[{"activity_id":"ID0","start_timestamp":5000,"end_timestamp":10000,"is_banked":0,"id":"SID5000"},{"activity_id":"ID1","start_timestamp":15000,"end_timestamp":20000,"is_banked":0,"id":"SID15000"},{"activity_id":"ID2","start_timestamp":25000,"end_timestamp":30000,"is_banked":0,"id":"SID25000"},{"activity_id":"ID3","start_timestamp":35000,"end_timestamp":40000,"is_banked":0,"id":"SID35000"},{"activity_id":"ID4","start_timestamp":45000,"end_timestamp":1546322400000,"is_banked":0,"id":"SID45000"}],"preferences":{"largest_duration_unit":0,"home_date_range":"last7Days"}}'));
+      expect(
+        json,
+        equals(
+          '{"activities":[{"name":"Test1","current_session_id":null,"id":"AID1"},{"name":"Test2","current_session_id":null,"id":"AID2"},{"name":"Test3","current_session_id":null,"id":"AID3"},{"name":"Test4","current_session_id":null,"id":"AID4"}],"sessions":[{"activity_id":"ID0","start_timestamp":5000,"end_timestamp":10000,"is_banked":0,"id":"SID5000"},{"activity_id":"ID1","start_timestamp":15000,"end_timestamp":20000,"is_banked":0,"id":"SID15000"},{"activity_id":"ID2","start_timestamp":25000,"end_timestamp":30000,"is_banked":0,"id":"SID25000"},{"activity_id":"ID3","start_timestamp":35000,"end_timestamp":40000,"is_banked":0,"id":"SID35000"},{"activity_id":"ID4","start_timestamp":45000,"end_timestamp":1546322400000,"is_banked":0,"id":"SID45000"}],"preferences":{"largest_duration_unit":0,"home_date_range":"last7Days"}}',
+        ),
+      );
     });
   });
 
@@ -118,15 +129,18 @@ void main() {
     });
 
     test("errorActivityInvalid", () async {
-      String json = '{"activities":[{"name":"","current_session_id":null,"id":"AID1"}]}';
+      String json =
+          '{"activities":[{"name":"","current_session_id":null,"id":"AID1"}]}';
       ImportResult result = await import(app, json: json);
       expect(result, equals(ImportResult.errorActivityInvalid));
 
-      json = '{"activities":[{"name":"Test1","current_session_id":null,"id":""}]}';
+      json =
+          '{"activities":[{"name":"Test1","current_session_id":null,"id":""}]}';
       result = await import(app, json: json);
       expect(result, equals(ImportResult.errorActivityInvalid));
 
-      json = '{"activities":[{"name":"Test1","current_session_id":"ID","id":"AID1"}]}';
+      json =
+          '{"activities":[{"name":"Test1","current_session_id":"ID","id":"AID1"}]}';
       result = await import(app, json: json);
       expect(result, equals(ImportResult.errorActivityInvalid));
     });
@@ -148,19 +162,23 @@ void main() {
     });
 
     test("errorSessionInvalid", () async {
-      String json = '{"activities":[],"sessions":[{"activity_id":"","start_timestamp":5000,"end_timestamp":10000,"id":"SID5000"}]}';
+      String json =
+          '{"activities":[],"sessions":[{"activity_id":"","start_timestamp":5000,"end_timestamp":10000,"id":"SID5000"}]}';
       ImportResult result = await import(app, json: json);
       expect(result, equals(ImportResult.errorSessionInvalid));
 
-      json = '{"activities":[],"sessions":[{"activity_id":"ID0","start_timestamp":null,"end_timestamp":10000,"id":"SID5000"}]}';
+      json =
+          '{"activities":[],"sessions":[{"activity_id":"ID0","start_timestamp":null,"end_timestamp":10000,"id":"SID5000"}]}';
       result = await import(app, json: json);
       expect(result, equals(ImportResult.errorSessionInvalid));
 
-      json = '{"activities":[],"sessions":[{"activity_id":"ID0","start_timestamp":5000,"end_timestamp":null,"id":"SID5000"}]}';
+      json =
+          '{"activities":[],"sessions":[{"activity_id":"ID0","start_timestamp":5000,"end_timestamp":null,"id":"SID5000"}]}';
       result = await import(app, json: json);
       expect(result, equals(ImportResult.errorSessionInvalid));
 
-      json = '{"activities":[],"sessions":[{"activity_id":"ID0","start_timestamp":5000,"end_timestamp":10000,"id":""}]}';
+      json =
+          '{"activities":[],"sessions":[{"activity_id":"ID0","start_timestamp":5000,"end_timestamp":10000,"id":""}]}';
       result = await import(app, json: json);
       expect(result, equals(ImportResult.errorSessionInvalid));
     });
@@ -180,7 +198,7 @@ void main() {
       verifyNever(preferencesManager.setHomeDateRange(argThat(anything)));
       verifyNever(preferencesManager.setLargestDurationUnit(argThat(anything)));
     });
-    
+
     test("Preferences not a map", () async {
       when(dataManager.clearDatabase()).thenAnswer((_) async => true);
 
@@ -189,7 +207,7 @@ void main() {
       verifyNever(preferencesManager.setHomeDateRange(argThat(anything)));
       verifyNever(preferencesManager.setLargestDurationUnit(argThat(anything)));
     });
-    
+
     test("Preferences map is empty", () async {
       when(dataManager.clearDatabase()).thenAnswer((_) async => true);
 
@@ -198,20 +216,22 @@ void main() {
       verifyNever(preferencesManager.setHomeDateRange(argThat(anything)));
       verifyNever(preferencesManager.setLargestDurationUnit(argThat(anything)));
     });
-    
+
     test("Preferences values have wrong type", () async {
       when(dataManager.clearDatabase()).thenAnswer((_) async => true);
 
-      String json = '{"activities":[],"sessions":[],"preferences":{"largest_duration_unit":"non-int","home_date_range":0}}';
+      String json =
+          '{"activities":[],"sessions":[],"preferences":{"largest_duration_unit":"non-int","home_date_range":0}}';
       await import(app, json: json);
       verifyNever(preferencesManager.setHomeDateRange(argThat(anything)));
       verifyNever(preferencesManager.setLargestDurationUnit(argThat(anything)));
     });
-    
+
     test("Preferences are correctly set", () async {
       when(dataManager.clearDatabase()).thenAnswer((_) async => true);
 
-      String json = '{"activities":[],"sessions":[],"preferences":{"largest_duration_unit":0,"home_date_range":"last7Days"}}';
+      String json =
+          '{"activities":[],"sessions":[],"preferences":{"largest_duration_unit":0,"home_date_range":"last7Days"}}';
       await import(app, json: json);
       verify(preferencesManager
           .setHomeDateRange(argThat(equals(DisplayDateRange.last7Days))));
@@ -222,17 +242,18 @@ void main() {
     test("success", () async {
       when(dataManager.clearDatabase()).thenAnswer((_) async => true);
 
-      String json = '{"activities":[{"name":"Test1","current_session_id":null,"id":"AID1"},{"name":"Test2","current_session_id":null,"id":"AID2"},{"name":"Test3","current_session_id":null,"id":"AID3"},{"name":"Test4","current_session_id":null,"id":"AID4"}],"sessions":[{"activity_id":"ID0","start_timestamp":5000,"end_timestamp":10000,"id":"SID5000"},{"activity_id":"ID1","start_timestamp":15000,"end_timestamp":20000,"id":"SID15000"},{"activity_id":"ID2","start_timestamp":25000,"end_timestamp":30000,"id":"SID25000"},{"activity_id":"ID3","start_timestamp":35000,"end_timestamp":40000,"id":"SID35000"},{"activity_id":"ID4","start_timestamp":45000,"end_timestamp":1546318800000,"id":"SID45000"}],"preferences":{"largest_duration_unit":1,"home_date_range":"last14Days"}}';
+      String json =
+          '{"activities":[{"name":"Test1","current_session_id":null,"id":"AID1"},{"name":"Test2","current_session_id":null,"id":"AID2"},{"name":"Test3","current_session_id":null,"id":"AID3"},{"name":"Test4","current_session_id":null,"id":"AID4"}],"sessions":[{"activity_id":"ID0","start_timestamp":5000,"end_timestamp":10000,"id":"SID5000"},{"activity_id":"ID1","start_timestamp":15000,"end_timestamp":20000,"id":"SID15000"},{"activity_id":"ID2","start_timestamp":25000,"end_timestamp":30000,"id":"SID25000"},{"activity_id":"ID3","start_timestamp":35000,"end_timestamp":40000,"id":"SID35000"},{"activity_id":"ID4","start_timestamp":45000,"end_timestamp":1546318800000,"id":"SID45000"}],"preferences":{"largest_duration_unit":1,"home_date_range":"last14Days"}}';
       expect(await import(app, json: json), equals(ImportResult.success));
-      
+
       List<Activity> activityList = verify(dataManager.addActivities(
         captureThat(isInstanceOf<List<Activity>>()),
         notify: false,
       )).captured.single;
 
       List<Session> sessionList = verify(dataManager.addSessions(
-          captureThat(isInstanceOf<List<Session>>()),
-          notify: true,
+        captureThat(isInstanceOf<List<Session>>()),
+        notify: true,
       )).captured.single;
 
       expect(activityList.length, equals(4));

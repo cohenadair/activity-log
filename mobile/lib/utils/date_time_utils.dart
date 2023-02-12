@@ -4,11 +4,7 @@ import 'package:mobile/i18n/strings.dart';
 import 'package:mobile/utils/string_utils.dart';
 import 'package:quiver/time.dart';
 
-enum DurationUnit {
-  days,
-  hours,
-  minutes
-}
+enum DurationUnit { days, hours, minutes }
 
 /// A representation of a [Duration] object meant to be shown to the user. Units
 /// are split by largest possible. For example, the hours property is the
@@ -19,13 +15,14 @@ class DisplayDuration {
   final bool _includesHours;
   final bool _includesMinutes;
 
-  DisplayDuration(this._duration, {
+  DisplayDuration(
+    this._duration, {
     bool includesDays = true,
     bool includesHours = true,
     bool includesMinutes = true,
-  }) : _includesDays = includesDays,
-       _includesHours = includesHours,
-       _includesMinutes = includesMinutes;
+  })  : _includesDays = includesDays,
+        _includesHours = includesHours,
+        _includesMinutes = includesMinutes;
 
   int get days => _duration.inDays;
 
@@ -67,7 +64,9 @@ class DateRange {
             startDate.isAtSameMomentAs(endDate) || startDate.isBefore(endDate));
 
   int get startMs => startDate.millisecondsSinceEpoch;
+
   int get endMs => endDate.millisecondsSinceEpoch;
+
   int get durationMs => endMs - startMs;
 
   /// The number of days spanned by the [DateRange]. This is calculated by
@@ -151,8 +150,8 @@ class DisplayDateRange {
     id: "lastWeek",
     getValue: (DateTime now) {
       DateTime endOfLastWeek = getStartOfWeek(now);
-      DateTime startOfLastWeek = endOfLastWeek.subtract(Duration(
-          days: DateTime.daysPerWeek),
+      DateTime startOfLastWeek = endOfLastWeek.subtract(
+        Duration(days: DateTime.daysPerWeek),
       );
       return DateRange(startDate: startOfLastWeek, endDate: endOfLastWeek);
     },
@@ -238,9 +237,21 @@ class DisplayDateRange {
   );
 
   static final all = [
-    allDates, today, yesterday, thisWeek, thisMonth, thisYear, lastWeek,
-    lastMonth, lastYear, last7Days, last14Days, last30Days, last60Days,
-    last12Months, custom,
+    allDates,
+    today,
+    yesterday,
+    thisWeek,
+    thisMonth,
+    thisYear,
+    lastWeek,
+    lastMonth,
+    lastYear,
+    last7Days,
+    last14Days,
+    last30Days,
+    last60Days,
+    last12Months,
+    custom,
   ];
 
   /// Returns the [DisplayDateRange] for the given ID, or `null` if none exists.
@@ -257,7 +268,9 @@ class DisplayDateRange {
   final String Function(BuildContext context) getTitle;
 
   DisplayDateRange._({
-    required this.id, required this.getValue, required this.getTitle
+    required this.id,
+    required this.getValue,
+    required this.getTitle,
   });
 
   /// Used to create a [DisplayDateRange] with custom start and end dates, but
@@ -266,10 +279,10 @@ class DisplayDateRange {
     required DateRange Function(DateTime now) getValue,
     required String Function(BuildContext context) getTitle,
   }) : this._(
-    id: custom.id,
-    getValue: getValue,
-    getTitle: getTitle,
-  );
+          id: custom.id,
+          getValue: getValue,
+          getTitle: getTitle,
+        );
 
   DateRange get value => getValue(DateTime.now());
 

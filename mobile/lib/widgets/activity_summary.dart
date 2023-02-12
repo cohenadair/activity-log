@@ -71,43 +71,43 @@ class ActivitySummary extends StatelessWidget {
                   subtitle: activity.shortestSession == null
                       ? null
                       : formatDateTime(
-                    context: context,
-                    dateTime: activity.shortestSession!.startDateTime,
-                  ),
+                          context: context,
+                          dateTime: activity.shortestSession!.startDateTime,
+                        ),
                   value: activity.shortestSession == null
                       ? Strings.of(context).none
                       : _formatDuration(
-                    context,
-                    activity.shortestSession!.duration,
-                    largestDurationUnit,
-                  ),
+                          context,
+                          activity.shortestSession!.duration,
+                          largestDurationUnit,
+                        ),
                 ),
                 SummaryItem(
                   title: Strings.of(context).activitySummaryLongestSession,
                   subtitle: activity.longestSession == null
                       ? null
                       : formatDateTime(
-                    context: context,
-                    dateTime: activity.longestSession!.startDateTime,
-                  ),
+                          context: context,
+                          dateTime: activity.longestSession!.startDateTime,
+                        ),
                   value: activity.longestSession == null
                       ? Strings.of(context).none
                       : _formatDuration(
-                    context,
-                    activity.longestSession!.duration,
-                    largestDurationUnit,
-                  ),
+                          context,
+                          activity.longestSession!.duration,
+                          largestDurationUnit,
+                        ),
                 ),
                 SummaryItem(
                   title: Strings.of(context).activitySummaryCurrentStreak,
-                  subtitle: Strings.of(context)
-                      .activitySummaryStreakDescription,
+                  subtitle:
+                      Strings.of(context).activitySummaryStreakDescription,
                   value: activity.currentStreak,
                 ),
                 SummaryItem(
                   title: Strings.of(context).activitySummaryStreak,
-                  subtitle: Strings.of(context)
-                      .activitySummaryStreakDescription,
+                  subtitle:
+                      Strings.of(context).activitySummaryStreakDescription,
                   value: activity.longestStreak,
                 ),
               ],
@@ -173,9 +173,11 @@ class ActivitySummary extends StatelessWidget {
     );
   }
 
-  String _formatDuration(BuildContext context, Duration duration,
-      DurationUnit largestDurationUnit)
-  {
+  String _formatDuration(
+    BuildContext context,
+    Duration duration,
+    DurationUnit largestDurationUnit,
+  ) {
     return formatTotalDuration(
       context: context,
       durations: [duration],

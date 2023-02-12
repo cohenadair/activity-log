@@ -23,10 +23,12 @@ class Summary extends StatelessWidget {
       padding: padding,
       child: Column(
         children: <Widget>[
-          isEmpty(title) ? Empty() : Padding(
-            padding: insetsBottomDefault,
-            child: LargeHeadingText(title),
-          ),
+          isEmpty(title)
+              ? Empty()
+              : Padding(
+                  padding: insetsBottomDefault,
+                  child: LargeHeadingText(title),
+                ),
         ]..addAll(_buildItems(context)),
       ),
     );

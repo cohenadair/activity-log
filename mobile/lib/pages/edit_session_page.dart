@@ -21,10 +21,10 @@ class EditSessionPage extends StatefulWidget {
   EditSessionPage({
     required AppManager app,
     required Activity activity,
-    Session? editingSession
-  }) : _app = app,
-       _activity = activity,
-       _editingSession = editingSession;
+    Session? editingSession,
+  })  : _app = app,
+        _activity = activity,
+        _editingSession = editingSession;
 
   @override
   _EditSessionPageState createState() => _EditSessionPageState();
@@ -34,9 +34,13 @@ class _EditSessionPageState extends State<EditSessionPage> {
   final _formKey = GlobalKey<FormState>();
 
   AppManager get _app => widget._app;
+
   Activity get _activity => widget._activity;
+
   Session? get _editingSession => widget._editingSession;
+
   bool get _isEditing => _editingSession != null;
+
   bool get _isEditingInProgress => _isEditing && _editingSession!.inProgress;
 
   late DateTime _startDate;
@@ -51,9 +55,9 @@ class _EditSessionPageState extends State<EditSessionPage> {
   void initState() {
     if (_isEditing) {
       _startDate = _editingSession!.startDateTime;
-      _endDate = _isEditingInProgress
-          ? _startDate : _editingSession!.endDateTime!;
-      _isBanked = _editingSession!.isBanked ?? false;
+      _endDate =
+          _isEditingInProgress ? _startDate : _editingSession!.endDateTime!;
+      _isBanked = _editingSession!.isBanked;
     } else {
       _startDate = DateTime.now();
       _endDate = _startDate;
@@ -61,8 +65,8 @@ class _EditSessionPageState extends State<EditSessionPage> {
     }
 
     _startTime = TimeOfDay.fromDateTime(_startDate);
-    _endTime = _isEditingInProgress
-        ? _startTime : TimeOfDay.fromDateTime(_endDate);
+    _endTime =
+        _isEditingInProgress ? _startTime : TimeOfDay.fromDateTime(_endDate);
 
     super.initState();
   }
@@ -71,10 +75,10 @@ class _EditSessionPageState extends State<EditSessionPage> {
   Widget build(BuildContext context) {
     return EditPage(
       title: _isEditing
-          ? format(Strings.of(context).editSessionPageEditTitle,
-              [_activity.name])
-          : format(Strings.of(context).editSessionPageNewTitle,
-              [_activity.name]),
+          ? format(
+              Strings.of(context).editSessionPageEditTitle, [_activity.name])
+          : format(
+              Strings.of(context).editSessionPageNewTitle, [_activity.name]),
       padding: insetsVerticalSmall,
       onSave: _onPressedSaveButton,
       onDelete: () => _app.dataManager.removeSession(_editingSession!),
@@ -155,14 +159,16 @@ class _EditSessionPageState extends State<EditSessionPage> {
                     visualDensity: VisualDensity.compact,
                     onPressed: () => showOk(
                       context: context,
-                      description: Strings.of(context).editSessionPageBankedSessionDescription,
+                      description: Strings.of(context)
+                          .editSessionPageBankedSessionDescription,
                     ),
                   ),
                 ],
               ),
               trailing: Checkbox(
                 value: _isBanked,
-                onChanged: (value) => setState(() => _isBanked = value ?? false),
+                onChanged: (value) =>
+                    setState(() => _isBanked = value ?? false),
               ),
             ),
           ],
@@ -186,48 +192,46 @@ class _EditSessionPageState extends State<EditSessionPage> {
     }
 
     Session session = (builder
-        ..startTimestamp = combine(_startDate, _startTime)
-            .millisecondsSinceEpoch
-        ..endTimestamp = _isEditingInProgress
-            ? null : combine(_endDate, _endTime).millisecondsSinceEpoch
-        ..isBanked = _isBanked)
+          ..startTimestamp =
+              combine(_startDate, _startTime).millisecondsSinceEpoch
+          ..endTimestamp = _isEditingInProgress
+              ? null
+              : combine(_endDate, _endTime).millisecondsSinceEpoch
+          ..isBanked = _isBanked)
         .build;
 
-    _app.dataManager.getOverlappingSession(session)
+    _app.dataManager
+        .getOverlappingSession(session)
         .then((Session? overlappingSession) {
-          if (overlappingSession != null) {
-            setState(() {
-              String conflictingString =
-                  DateFormat(monthDayFormat)
-                      .format(overlappingSession.startDateTime)
-                  + ", "
-                  + formatTimeOfDay(context, overlappingSession.startTimeOfDay);
+      if (overlappingSession != null) {
+        setState(() {
+          String conflictingString = DateFormat(monthDayFormat)
+                  .format(overlappingSession.startDateTime) +
+              ", " +
+              formatTimeOfDay(context, overlappingSession.startTimeOfDay);
 
-              if (overlappingSession.inProgress) {
-                conflictingString +=
-                    " (${Strings.of(context).sessionListInProgress})";
-              } else {
-                conflictingString += " - "
-                    + formatTimeOfDay(context, overlappingSession.endTimeOfDay!);
-              }
-
-              _formValidationValue =
-                  format(Strings.of(context).editSessionPageOverlap, [
-                    conflictingString
-                  ]
-              );
-            });
-            return;
-          }
-
-          if (_isEditing) {
-            _app.dataManager.updateSession(session);
+          if (overlappingSession.inProgress) {
+            conflictingString +=
+                " (${Strings.of(context).sessionListInProgress})";
           } else {
-            _app.dataManager.addSession(session);
+            conflictingString += " - " +
+                formatTimeOfDay(context, overlappingSession.endTimeOfDay!);
           }
 
-          Navigator.pop(context);
+          _formValidationValue = format(
+              Strings.of(context).editSessionPageOverlap, [conflictingString]);
         });
+        return;
+      }
+
+      if (_isEditing) {
+        _app.dataManager.updateSession(session);
+      } else {
+        _app.dataManager.addSession(session);
+      }
+
+      Navigator.pop(context);
+    });
   }
 
   void _clearFormValidationText() {
@@ -257,17 +261,15 @@ class _EditSessionPageState extends State<EditSessionPage> {
 
   String? _validateStartTime(TimeOfDay? time) {
     // Start time comes after end time.
-    if (!_isEditingInProgress
-        && isSameDate(_startDate, _endDate)
-        && isLater(_startTime, _endTime))
-    {
+    if (!_isEditingInProgress &&
+        isSameDate(_startDate, _endDate) &&
+        isLater(_startTime, _endTime)) {
       return Strings.of(context).editSessionPageInvalidStartTime;
     }
 
     // Start time is in the future.
-    if (isInFutureWithMinuteAccuracy(combine(_startDate, _startTime),
-        DateTime.now()))
-    {
+    if (isInFutureWithMinuteAccuracy(
+        combine(_startDate, _startTime), DateTime.now())) {
       return Strings.of(context).editSessionPageFutureStartTime;
     }
 
@@ -287,9 +289,8 @@ class _EditSessionPageState extends State<EditSessionPage> {
     }
 
     // End time is in the future.
-    if (isInFutureWithMinuteAccuracy(combine(_endDate, _endTime),
-        DateTime.now()))
-    {
+    if (isInFutureWithMinuteAccuracy(
+        combine(_endDate, _endTime), DateTime.now())) {
       return Strings.of(context).editSessionPageFutureEndTime;
     }
 

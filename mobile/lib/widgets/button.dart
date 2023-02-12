@@ -12,30 +12,31 @@ class Button extends StatelessWidget {
     required VoidCallback onPressed,
     Icon? icon,
     Color? color,
-  }) :
-       _text = text,
-       _onPressed = onPressed,
-       _icon = icon,
-       _color = color;
+  })  : _text = text,
+        _onPressed = onPressed,
+        _icon = icon,
+        _color = color;
 
   @override
   Widget build(BuildContext context) {
-    return _icon == null ? ElevatedButton(
-      child: _textWidget,
-      onPressed: _onPressed,
-      style: ElevatedButton.styleFrom(
-        backgroundColor: _color,
-        elevation: 0,
-      ),
-    ) : ElevatedButton.icon(
-      onPressed: _onPressed,
-      icon: _icon!,
-      label: _textWidget,
-      style: ElevatedButton.styleFrom(
-        backgroundColor: _color,
-        elevation: 0,
-      ),
-    );
+    return _icon == null
+        ? ElevatedButton(
+            child: _textWidget,
+            onPressed: _onPressed,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: _color,
+              elevation: 0,
+            ),
+          )
+        : ElevatedButton.icon(
+            onPressed: _onPressed,
+            icon: _icon!,
+            label: _textWidget,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: _color,
+              elevation: 0,
+            ),
+          );
   }
 
   Widget get _textWidget => Text(_text.toUpperCase());
@@ -65,12 +66,12 @@ class ActionButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextButton(
       onPressed: onPressed,
-      child: Text((text == null ? Strings.of(context).fromId(_stringId!) : text)!
-          .toUpperCase()
-      ),
+      child: Text(
+          (text == null ? Strings.of(context).fromId(_stringId!) : text)!
+              .toUpperCase()),
       style: TextButton.styleFrom(
         foregroundColor: Colors.white,
-      )
+      ),
     );
   }
 }

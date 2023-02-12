@@ -8,7 +8,10 @@ import 'package:quiver/time.dart';
 import '../test_utils.dart';
 
 void main() {
-  Session buildSession(String activityId, DateTime start, DateTime? end, {
+  Session buildSession(
+    String activityId,
+    DateTime start,
+    DateTime? end, {
     Clock clock = const Clock(),
   }) {
     SessionBuilder builder = SessionBuilder(activityId)
@@ -47,7 +50,7 @@ void main() {
     test("Null sessions", () {
       SummarizedActivity activity = SummarizedActivity(
         value: ActivityBuilder("").build,
-          displayDateRange: stubDateRange(DateRange(
+        displayDateRange: stubDateRange(DateRange(
           startDate: DateTime.now(),
           endDate: DateTime.now(),
         )),
@@ -66,11 +69,13 @@ void main() {
 
     test("Normal use case", () {
       List<Session> sessions = [
-        buildSession("",
+        buildSession(
+          "",
           DateTime(2020, 5, 5, 13),
           DateTime(2020, 5, 5, 20),
         ), // 7 hours
-        buildSession("",
+        buildSession(
+          "",
           DateTime(2020, 5, 6, 13),
           DateTime(2020, 5, 6, 18),
         ), // 5 hours
@@ -91,8 +96,8 @@ void main() {
       expect(activity.averageDurationOverall, equals(Duration(hours: 6)));
       expect(activity.averageDurationPerDay.inMilliseconds, equals(8640000));
       expect(activity.averageDurationPerWeek.inMilliseconds, equals(60480000));
-      expect(activity.averageDurationPerMonth.inMilliseconds,
-          equals(259200000));
+      expect(
+          activity.averageDurationPerMonth.inMilliseconds, equals(259200000));
       expect(activity.longestStreak, equals(2));
       expect(activity.sessionsPerDay, equals(2 / 5));
       expect(activity.sessionsPerWeek, equals(2.8));
@@ -101,23 +106,28 @@ void main() {
 
     test("All time averages", () {
       List<Session> sessions = [
-        buildSession("",
+        buildSession(
+          "",
           DateTime.fromMillisecondsSinceEpoch(35000),
           DateTime.fromMillisecondsSinceEpoch(40000),
         ),
-        buildSession("",
+        buildSession(
+          "",
           DateTime.fromMillisecondsSinceEpoch(5000),
           DateTime.fromMillisecondsSinceEpoch(10000),
         ),
-        buildSession("",
+        buildSession(
+          "",
           DateTime.fromMillisecondsSinceEpoch(15000),
           DateTime.fromMillisecondsSinceEpoch(20000),
         ),
-        buildSession("",
+        buildSession(
+          "",
           DateTime.fromMillisecondsSinceEpoch(45000),
           DateTime.fromMillisecondsSinceEpoch(50000),
         ),
-        buildSession("",
+        buildSession(
+          "",
           DateTime.fromMillisecondsSinceEpoch(25000),
           DateTime.fromMillisecondsSinceEpoch(30000),
         ),
@@ -137,19 +147,23 @@ void main() {
 
   group("Boundary sessions are calculated correctly", () {
     List<Session> sessions = [
-      buildSession("",
+      buildSession(
+        "",
         DateTime(2019, 3, 15, 3),
         DateTime(2019, 3, 15, 10),
       ), // 7 hours
-      buildSession("",
+      buildSession(
+        "",
         DateTime(2018, 11, 24, 7),
         DateTime(2018, 11, 24, 12),
       ), // 5 hours
-      buildSession("",
+      buildSession(
+        "",
         DateTime(2019, 1, 10, 15),
         DateTime(2019, 1, 10, 21),
       ), // 6 hours
-      buildSession("",
+      buildSession(
+        "",
         DateTime(2019, 10, 10, 1),
         DateTime(2019, 10, 10, 20),
       ), // 19 hours
@@ -377,19 +391,23 @@ void main() {
   group("Date range pinning", () {
     test("Infinite date range is pinned to earliest/latest sessions", () {
       List<Session> sessions = [
-        buildSession("",
+        buildSession(
+          "",
           DateTime(2019, 3, 15, 3),
           DateTime(2019, 3, 15, 10),
         ), // 7 hours
-        buildSession("",
+        buildSession(
+          "",
           DateTime(2018, 11, 24, 7),
           DateTime(2018, 11, 24, 12),
         ), // 5 hours
-        buildSession("",
+        buildSession(
+          "",
           DateTime(2019, 1, 10, 15),
           DateTime(2019, 1, 10, 21),
         ), // 6 hours
-        buildSession("",
+        buildSession(
+          "",
           DateTime(2019, 10, 10, 1),
           DateTime(2019, 10, 10, 20),
         ), // 19 hours
@@ -496,20 +514,24 @@ void main() {
       Clock clock = Clock.fixed(DateTime(2019, 11, 1));
 
       List<Session> sessions = [
-        buildSession("",
+        buildSession(
+          "",
           DateTime(2019, 3, 15, 3),
           DateTime(2019, 3, 15, 10),
         ), // 7 hours
-        buildSession("",
+        buildSession(
+          "",
           DateTime(2018, 11, 24, 7),
           DateTime(2018, 11, 24, 12),
         ), // 5 hours
-        buildSession("",
+        buildSession(
+          "",
           DateTime(2019, 10, 31, 23),
           null,
           clock: clock,
         ), // 1 hours
-        buildSession("",
+        buildSession(
+          "",
           DateTime(2019, 10, 10, 1),
           DateTime(2019, 10, 10, 20),
         ), // 19 hours
@@ -530,24 +552,29 @@ void main() {
       Clock clock = Clock.fixed(DateTime(2019, 11, 1));
 
       List<Session> sessions = [
-        buildSession("",
+        buildSession(
+          "",
           DateTime(2019, 3, 15, 3),
           DateTime(2019, 3, 15, 10),
         ), // 7 hours
-        buildSession("",
+        buildSession(
+          "",
           DateTime(2018, 11, 24, 7),
           DateTime(2018, 11, 24, 12),
         ), // 5 hours
-        buildSession("",
+        buildSession(
+          "",
           DateTime(2019, 10, 31, 23),
           null,
           clock: clock,
         ), // 1 hour
-        buildSession("",
+        buildSession(
+          "",
           DateTime(2019, 10, 10, 1),
           DateTime(2019, 10, 10, 20),
         ), // 19 hours
-        buildSession("",
+        buildSession(
+          "",
           DateTime(2019, 10, 31, 22),
           null,
           clock: clock,

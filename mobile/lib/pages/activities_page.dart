@@ -46,7 +46,7 @@ class _ActivitiesPageState extends State<ActivitiesPage> {
             );
           },
         );
-      }
+      },
     );
   }
 
@@ -59,7 +59,6 @@ class _ActivitiesPageState extends State<ActivitiesPage> {
   }
 
   void _update() {
-    setState(() {
-    });
+    setState(() {});
   }
 }

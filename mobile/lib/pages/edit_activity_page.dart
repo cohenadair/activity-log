@@ -36,8 +36,7 @@ class _EditActivityPageState extends State<EditActivityPage> {
   @override
   void initState() {
     _nameController = TextEditingController(
-      text: _isEditing ? widget.editingActivity!.name : null
-    );
+        text: _isEditing ? widget.editingActivity!.name : null);
 
     super.initState();
   }
@@ -50,8 +49,8 @@ class _EditActivityPageState extends State<EditActivityPage> {
           : Strings.of(context).editActivityPageNewTitle,
       padding: insetsVerticalSmall,
       onSave: () => _onPressedSaveButton(),
-      onDelete: () => widget.app.dataManager
-          .removeActivity(widget.editingActivity!.id),
+      onDelete: () =>
+          widget.app.dataManager.removeActivity(widget.editingActivity!.id),
       deleteDescription: _isEditing
           ? format(Strings.of(context).editActivityPageDeleteMessage,
               [widget.editingActivity!.name])
@@ -89,32 +88,34 @@ class _EditActivityPageState extends State<EditActivityPage> {
       app: widget.app,
       activityId: widget.editingActivity!.id,
       limit: _recentSessionLimit,
-      builder: (BuildContext context, List<Session> sessions, int sessionCount)
-      {
+      builder: (context, sessions, sessionCount) {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildRecentSessionsTitle(),
-          ]
-          ..addAll(sessions.isNotEmpty ? sessions.map((session) {
-            return SessionListTile(
-              app: widget.app,
-              session: session,
-              hasDivider: session != sessions.last,
-              onTap: (Session session) {
-                push(context, EditSessionPage(
-                  app: widget.app,
-                  activity: widget.editingActivity!,
-                  editingSession: session,
-                ));
-              },
-            );
-          }) : [Empty()])
-          ..add(
-            sessions.isNotEmpty ? _buildViewAllButton(sessionCount) : Empty(),
-          )
+          children: [_buildRecentSessionsTitle()]
+            ..addAll(sessions.isNotEmpty
+                ? sessions.map((session) {
+                    return SessionListTile(
+                      app: widget.app,
+                      session: session,
+                      hasDivider: session != sessions.last,
+                      onTap: (Session session) {
+                        push(
+                          context,
+                          EditSessionPage(
+                            app: widget.app,
+                            activity: widget.editingActivity!,
+                            editingSession: session,
+                          ),
+                        );
+                      },
+                    );
+                  })
+                : [Empty()])
+            ..add(sessions.isNotEmpty
+                ? _buildViewAllButton(sessionCount)
+                : Empty()),
         );
-      }
+      },
     );
   }
 
@@ -132,10 +133,8 @@ class _EditActivityPageState extends State<EditActivityPage> {
               push(
                 context,
                 EditSessionPage(
-                  app: widget.app,
-                  activity: widget.editingActivity!
-                ),
-                fullscreenDialog: true
+                    app: widget.app, activity: widget.editingActivity!),
+                fullscreenDialog: true,
               );
             },
           ),
@@ -145,20 +144,23 @@ class _EditActivityPageState extends State<EditActivityPage> {
   }
 
   Widget _buildViewAllButton(int sessionCount) {
-    return sessionCount <= _recentSessionLimit ? Empty() : Row(
-      mainAxisAlignment: MainAxisAlignment.end,
-      children: <Widget>[
-        Padding(
-          padding: insetsHorizontalDefault,
-          child: TextButton(
-            onPressed: () =>
-                push(context, SessionsPage(widget.app, widget.editingActivity!)),
-            child: Text(Strings.of(context).editActivityPageMoreSessions
-                .toUpperCase()),
-          ),
-        ),
-      ],
-    );
+    return sessionCount <= _recentSessionLimit
+        ? Empty()
+        : Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: <Widget>[
+              Padding(
+                padding: insetsHorizontalDefault,
+                child: TextButton(
+                  onPressed: () => push(context,
+                      SessionsPage(widget.app, widget.editingActivity!)),
+                  child: Text(Strings.of(context)
+                      .editActivityPageMoreSessions
+                      .toUpperCase()),
+                ),
+              ),
+            ],
+          );
   }
 
   void _onPressedSaveButton() {
@@ -174,7 +176,7 @@ class _EditActivityPageState extends State<EditActivityPage> {
 
       if (_isEditing) {
         var builder = ActivityBuilder.fromActivity(widget.editingActivity!)
-            ..name = nameCandidate;
+          ..name = nameCandidate;
         widget.app.dataManager.updateActivity(builder.build);
       } else {
         widget.app.dataManager
@@ -188,8 +190,7 @@ class _EditActivityPageState extends State<EditActivityPage> {
   void _validateNameField(String name, Function(String?) onFinish) {
     // The name hasn't changed, and therefore is still valid.
     if (_isEditing &&
-        isEqualTrimmedLowercase(widget.editingActivity!.name, name))
-    {
+        isEqualTrimmedLowercase(widget.editingActivity!.name, name)) {
       onFinish(null);
       return;
     }

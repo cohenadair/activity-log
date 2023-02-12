@@ -40,7 +40,8 @@ class _SettingsPageState extends State<SettingsPage> {
   static final _rateAppStoreUrl =
       "itms-apps://itunes.apple.com/app/id1458926666?action=write-review";
   static final _playStoreUrl = "market://details?id=";
-  static final _privacyUrl = "https://cohenadair.github.io/activity-log/privacy_policy.html";
+  static final _privacyUrl =
+      "https://cohenadair.github.io/activity-log/privacy_policy.html";
   static final _backupFileExtension = "dat";
   static final _backupFileName = "ActivityLogBackup.$_backupFileExtension";
 
@@ -121,14 +122,15 @@ class _SettingsPageState extends State<SettingsPage> {
             ),
           ],
         );
-      }
+      },
     );
   }
 
   String _getLargestDurationUnitSubtitle(DurationUnit unit) {
     return formatTotalDuration(
       largestDurationUnit: unit,
-      context: context, durations: [
+      context: context,
+      durations: [
         Duration(days: 3, hours: 15, minutes: 30, seconds: 55),
       ],
     );
@@ -146,10 +148,10 @@ class _SettingsPageState extends State<SettingsPage> {
             widget.app.preferencesManager
                 .setHomeDateRange(selectedValues.first);
           },
-          titleBuilder: (_) => Text(Strings.of(context)
-              .settingsPageHomeDateRangeLabel),
-          listHeader: Text(Strings.of(context)
-              .settingsPageHomeDateRangeDescription),
+          titleBuilder: (_) =>
+              Text(Strings.of(context).settingsPageHomeDateRangeLabel),
+          listHeader:
+              Text(Strings.of(context).settingsPageHomeDateRangeDescription),
           items: [
             _buildDisplayDateRangeItem(DisplayDateRange.allDates),
             ListPickerItem.divider(),
@@ -164,90 +166,100 @@ class _SettingsPageState extends State<SettingsPage> {
             _buildDisplayDateRangeItem(DisplayDateRange.last12Months),
           ],
         );
-      }
+      },
     );
   }
 
   ListPickerItem<DisplayDateRange> _buildDisplayDateRangeItem(
-      DisplayDateRange dateRange)
-  {
+      DisplayDateRange dateRange) {
     return ListPickerItem<DisplayDateRange>(
       title: dateRange.getTitle(context),
       value: dateRange,
     );
   }
 
-  Widget _buildContact() => ListItem(
-    title: Text(Strings.of(context).settingsPageContactLabel),
-    onTap: () async {
-      await _sendEmail(
-        subject: "Support Message From Activity Log"
-      );
-    },
-  );
+  Widget _buildContact() {
+    return ListItem(
+      title: Text(Strings.of(context).settingsPageContactLabel),
+      onTap: () async {
+        await _sendEmail(subject: "Support Message From Activity Log");
+      },
+    );
+  }
 
-  Widget _buildRate() => ListItem(
-    title: Text(Strings.of(context).settingsPageRateLabel),
-    onTap: () async {
-      String url;
-      String errorMessage;
+  Widget _buildRate() {
+    return ListItem(
+      title: Text(Strings.of(context).settingsPageRateLabel),
+      onTap: () async {
+        String url;
+        String errorMessage;
 
-      if (Platform.isAndroid) {
-        url = _playStoreUrl + (await PackageInfo.fromPlatform()).packageName;
-        errorMessage = Strings.of(context).settingsPageAndroidErrorRateMessage;
-      } else {
-        url = _rateAppStoreUrl;
-        errorMessage = Strings.of(context).settingsPageIosErrorRateMessage;
-      }
-
-      if (await canLaunch(url)) {
-        await launch(url);
-      } else {
-        showError(context: context, description: errorMessage);
-      }
-    },
-  );
-
-  Widget _buildAbout() => ListItem(
-    title: Text(Strings.of(context).settingsPageVersion),
-    trailing: FutureBuilder<PackageInfo>(
-      future: PackageInfo.fromPlatform(),
-      builder: (_, AsyncSnapshot<PackageInfo> snapshot) {
-        if (snapshot.hasData) {
-          return SecondaryText(snapshot.data!.version);
+        if (Platform.isAndroid) {
+          url = _playStoreUrl + (await PackageInfo.fromPlatform()).packageName;
+          errorMessage =
+              Strings.of(context).settingsPageAndroidErrorRateMessage;
         } else {
-          return Loading();
+          url = _rateAppStoreUrl;
+          errorMessage = Strings.of(context).settingsPageIosErrorRateMessage;
+        }
+
+        if (await canLaunch(url)) {
+          await launch(url);
+        } else {
+          showError(context: context, description: errorMessage);
         }
       },
-    ),
-  );
+    );
+  }
 
-  Widget _buildPrivacy() => ListItem(
-    title: Text(Strings.of(context).settingsPagePrivacyPolicy),
-    onTap: () async {
-      await launch(_privacyUrl);
-    },
-  );
+  Widget _buildAbout() {
+    return ListItem(
+      title: Text(Strings.of(context).settingsPageVersion),
+      trailing: FutureBuilder<PackageInfo>(
+        future: PackageInfo.fromPlatform(),
+        builder: (_, AsyncSnapshot<PackageInfo> snapshot) {
+          if (snapshot.hasData) {
+            return SecondaryText(snapshot.data!.version);
+          } else {
+            return Loading();
+          }
+        },
+      ),
+    );
+  }
 
-  Widget _buildExport() => ListItem(
-    title: Text(Strings.of(context).settingsPageExportLabel),
-    subtitle: Text(Strings.of(context).settingsPageExportDescription),
-    trailing: _isCreatingBackup ? Loading() : Empty(),
-    onTap: () {
-      setState(() {
-        _isCreatingBackup = true;
-      });
+  Widget _buildPrivacy() {
+    return ListItem(
+      title: Text(Strings.of(context).settingsPagePrivacyPolicy),
+      onTap: () async {
+        await launch(_privacyUrl);
+      },
+    );
+  }
 
-      _startExport();
-    },
-  );
+  Widget _buildExport() {
+    return ListItem(
+      title: Text(Strings.of(context).settingsPageExportLabel),
+      subtitle: Text(Strings.of(context).settingsPageExportDescription),
+      trailing: _isCreatingBackup ? Loading() : Empty(),
+      onTap: () {
+        setState(() {
+          _isCreatingBackup = true;
+        });
 
-  Widget _buildImport() => ListItem(
-    title: Text(Strings.of(context).settingsPageImportLabel),
-    subtitle: Text(Strings.of(context).settingsPageImportDescription),
-    trailing: _isImporting ? Loading() : Empty(),
-    onTap: _startImport,
-  );
+        _startExport();
+      },
+    );
+  }
+
+  Widget _buildImport() {
+    return ListItem(
+      title: Text(Strings.of(context).settingsPageImportLabel),
+      subtitle: Text(Strings.of(context).settingsPageImportDescription),
+      trailing: _isImporting ? Loading() : Empty(),
+      onTap: _startImport,
+    );
+  }
 
   void _startExport() async {
     // Save backup file to sandbox cache. It'll be small and it'll be overridden
@@ -264,7 +276,7 @@ class _SettingsPageState extends State<SettingsPage> {
       mimeTypes: ["text/plain"],
       sharePositionOrigin: box.localToGlobal(Offset.zero) & box.size,
     );
-    
+
     setState(() {
       _isCreatingBackup = false;
     });
@@ -346,7 +358,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 body: "${result.toString()}",
                 attachmentPath: importFile.path,
               );
-            }
+            },
           ),
           buildDialogButton(
             context: context,

@@ -14,9 +14,7 @@ class Loading extends StatelessWidget {
   final EdgeInsets _padding;
 
   // ignore: missing_identifier
-  Loading({
-    EdgeInsets padding = insetsZero
-  }) : _padding = padding;
+  Loading({EdgeInsets padding = insetsZero}) : _padding = padding;
 
   @override
   Widget build(BuildContext context) {

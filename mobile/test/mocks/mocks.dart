@@ -9,5 +9,4 @@ import 'package:sqflite/sqflite.dart';
 @GenerateMocks([PreferencesManager])
 @GenerateMocks([Database])
 @GenerateMocks([Batch])
-
 void main() {}

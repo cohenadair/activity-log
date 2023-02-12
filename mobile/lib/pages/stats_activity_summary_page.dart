@@ -10,10 +10,7 @@ class StatsActivitySummaryPage extends StatelessWidget {
   final SummarizedActivity activity;
   final scrollController = ScrollController();
 
-  StatsActivitySummaryPage({
-    required this.app,
-    required this.activity
-  });
+  StatsActivitySummaryPage({required this.app, required this.activity});
 
   @override
   Widget build(BuildContext context) {

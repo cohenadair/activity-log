@@ -207,8 +207,8 @@ class SummarizedActivity {
       return Duration();
     }
 
-    return Duration(milliseconds: (totalDuration.inMilliseconds / divisor)
-        .round());
+    return Duration(
+        milliseconds: (totalDuration.inMilliseconds / divisor).round());
   }
 
   double getAverageSessions(num divisor) {
@@ -221,8 +221,8 @@ class SummarizedActivity {
 
   @override
   String toString() {
-    return "{activity=${value.name}; duration=$totalDuration; "
-        + "numberOfSessions=$numberOfSessions}";
+    return "{activity=${value.name}; duration=$totalDuration; " +
+        "numberOfSessions=$numberOfSessions}";
   }
 }
 
@@ -289,17 +289,15 @@ class SummarizedActivityList {
     _cachedTotalDuration = 0;
 
     activities.forEach((SummarizedActivity activity) {
-      if (_cachedMostFrequentActivity == null
-          || activity.sessions.length > _cachedMostFrequentActivity!.second)
-      {
+      if (_cachedMostFrequentActivity == null ||
+          activity.sessions.length > _cachedMostFrequentActivity!.second) {
         _cachedMostFrequentActivity =
             Tuple(activity.value, activity.sessions.length);
       }
 
       activity.sessions.forEach((Session session) {
-        if (_cachedLongestSession == null
-            || session > _cachedLongestSession!.second)
-        {
+        if (_cachedLongestSession == null ||
+            session > _cachedLongestSession!.second) {
           _cachedLongestSession = Tuple(activity.value, session);
         }
       });

@@ -23,14 +23,14 @@ class EditPage extends StatelessWidget {
     required isEditingCallback,
     required form,
     required EdgeInsets padding,
-  }) : assert(form != null),
-       _title = title,
-       _onPressedSaveButton = onSave,
-       _onPressedDeleteButton = onDelete,
+  })  : assert(form != null),
+        _title = title,
+        _onPressedSaveButton = onSave,
+        _onPressedDeleteButton = onDelete,
         _deleteDescription = deleteDescription,
-       _isEditingCallback = isEditingCallback,
-       _form = form,
-       _padding = padding;
+        _isEditingCallback = isEditingCallback,
+        _form = form,
+        _padding = padding;
 
   @override
   Widget build(BuildContext context) {
@@ -51,14 +51,16 @@ class EditPage extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 _form,
-                _isEditingCallback() ? Container(
-                  padding: EdgeInsets.only(
-                    top: paddingDefault,
-                    left: _padding.left == 0 ? paddingDefault : 0,
-                    right: _padding.right == 0 ? paddingDefault : 0,
-                  ),
-                  child: _getDeleteButton(context),
-                ) : Empty(),
+                _isEditingCallback()
+                    ? Container(
+                        padding: EdgeInsets.only(
+                          top: paddingDefault,
+                          left: _padding.left == 0 ? paddingDefault : 0,
+                          right: _padding.right == 0 ? paddingDefault : 0,
+                        ),
+                        child: _getDeleteButton(context),
+                      )
+                    : Empty(),
               ],
             ),
           ),
@@ -87,7 +89,7 @@ class EditPage extends StatelessWidget {
             onDelete: () {
               _onPressedDeleteButton();
               Navigator.pop(context);
-            }
+            },
           );
         }
       },

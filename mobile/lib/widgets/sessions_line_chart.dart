@@ -18,7 +18,7 @@ class SessionsLineChart extends StatefulWidget {
   SessionsLineChart({
     required this.app,
     this.sessions = const [],
-    this.padding = insetsZero
+    this.padding = insetsZero,
   });
 
   @override
@@ -70,7 +70,7 @@ class _SessionsLineChartState extends State<SessionsLineChart> {
         DateDurationText(
           _selectedSession!.startDateTime,
           _selectedSession!.duration,
-          style: Theme.of(context).textTheme.subtitle1,
+          style: Theme.of(context).textTheme.titleMedium,
         ),
         TimeRangeText(
           startTime: _selectedSession!.startTimeOfDay,
@@ -93,7 +93,7 @@ class _SessionsLineChartState extends State<SessionsLineChart> {
         ),
         primaryMeasureAxis: Charts.NumericAxisSpec(
           tickFormatterSpec:
-          _DurationAxisFormatter(context, longestDurationUnit),
+              _DurationAxisFormatter(context, longestDurationUnit),
         ),
         selectionModels: [
           Charts.SelectionModelConfig(
@@ -113,8 +113,8 @@ class _SessionsLineChartState extends State<SessionsLineChart> {
     return [
       Charts.Series<Session, int>(
         id: _chartId,
-        colorFn: (_, __) => Charts.ColorUtil
-            .fromDartColor(Theme.of(context).primaryColor),
+        colorFn: (_, __) =>
+            Charts.ColorUtil.fromDartColor(Theme.of(context).primaryColor),
         domainFn: (_, int? index) => index ?? 0,
         measureFn: (Session session, _) => session.millisecondsDuration,
         data: widget.sessions,
@@ -127,7 +127,9 @@ class _SessionsLineChartState extends State<SessionsLineChart> {
       Charts.PanAndZoomBehavior(),
     ];
 
-    int? selectedIndex = _selectedSession == null ? null : widget.sessions.indexOf(_selectedSession!);
+    int? selectedIndex = _selectedSession == null
+        ? null
+        : widget.sessions.indexOf(_selectedSession!);
     if (selectedIndex != null) {
       result.add(Charts.InitialSelection(selectedDataConfig: [
         new Charts.SeriesDatumConfig(_chartId, selectedIndex)
@@ -143,8 +145,7 @@ class _SessionsLineChartState extends State<SessionsLineChart> {
 /// A custom formatter for the vertical axis, so units can be formatted as a
 /// duration, rather than number of milliseconds.
 class _DurationAxisFormatter extends Charts.SimpleTickFormatterBase<num>
-    implements Charts.NumericTickFormatterSpec
-{
+    implements Charts.NumericTickFormatterSpec {
   final BuildContext context;
   final DurationUnit largestDurationUnit;
 

@@ -10,9 +10,7 @@ abstract class Model {
   Model.fromBuilder(ModelBuilder builder) : _id = builder.id;
 
   Map<String, dynamic> toMap() {
-    return {
-      keyId : _id
-    };
+    return {keyId: _id};
   }
 }
 

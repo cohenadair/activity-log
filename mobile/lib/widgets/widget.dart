@@ -73,7 +73,7 @@ class EmptyPageHelp extends StatelessWidget {
       opacity: _opacity,
       child: Center(
         child: LayoutBuilder(
-          builder: (BuildContext context, BoxConstraints constraints) {
+          builder: (context, constraints) {
             double iconSize = min(constraints.maxWidth, constraints.maxHeight);
 
             return Container(
@@ -89,7 +89,7 @@ class EmptyPageHelp extends StatelessWidget {
                   Text(
                     message,
                     textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.subtitle1,
+                    style: Theme.of(context).textTheme.titleMedium,
                   ),
                   // Offset centering to account for icon padding.
                   SizedBox.fromSize(
@@ -98,7 +98,7 @@ class EmptyPageHelp extends StatelessWidget {
                 ],
               ),
             );
-          }
+          },
         ),
       ),
     );

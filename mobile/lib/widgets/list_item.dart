@@ -17,7 +17,7 @@ class ListItem extends StatelessWidget {
     this.title,
     this.subtitle,
     this.trailing,
-    this.onTap
+    this.onTap,
   });
 
   @override

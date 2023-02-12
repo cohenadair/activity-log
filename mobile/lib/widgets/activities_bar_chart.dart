@@ -37,7 +37,7 @@ class ActivitiesDurationBarChart extends StatelessWidget {
           padding: padding,
           activities: activities,
           onBuildLabel: (SummarizedActivity activity) =>
-          "${activity.value.name} (${formatTotalDuration(
+              "${activity.value.name} (${formatTotalDuration(
             context: context,
             durations: [activity.totalDuration],
             includesSeconds: false,
@@ -58,9 +58,10 @@ class ActivitiesDurationBarChart extends StatelessWidget {
     );
   }
 
-  _DurationTickFormatCallback _getFormatCallback(BuildContext context,
-      DurationUnit largestDurationUnit)
-  {
+  _DurationTickFormatCallback _getFormatCallback(
+    BuildContext context,
+    DurationUnit largestDurationUnit,
+  ) {
     Duration longestDuration = Duration();
 
     activities.forEach((SummarizedActivity activity) {
@@ -72,31 +73,31 @@ class ActivitiesDurationBarChart extends StatelessWidget {
     if (longestDuration.inDays > 0) {
       // 0d 0h
       return (Duration duration) => formatTotalDuration(
-        context: context,
-        durations: [duration],
-        includesSeconds: false,
-        includesMinutes: false,
-        largestDurationUnit: largestDurationUnit,
-      );
+            context: context,
+            durations: [duration],
+            includesSeconds: false,
+            includesMinutes: false,
+            largestDurationUnit: largestDurationUnit,
+          );
     } else if (longestDuration.inHours > 0) {
       // 0h 0m
       return (Duration duration) => formatTotalDuration(
-        context: context,
-        durations: [duration],
-        includesDays: false,
-        includesSeconds: false,
-        largestDurationUnit: largestDurationUnit,
-      );
+            context: context,
+            durations: [duration],
+            includesDays: false,
+            includesSeconds: false,
+            largestDurationUnit: largestDurationUnit,
+          );
     } else {
       // 0m
       return (Duration duration) => formatTotalDuration(
-        context: context,
-        durations: [duration],
-        includesDays: false,
-        includesHours: false,
-        includesSeconds: false,
-        largestDurationUnit: largestDurationUnit,
-      );
+            context: context,
+            durations: [duration],
+            includesDays: false,
+            includesHours: false,
+            includesSeconds: false,
+            largestDurationUnit: largestDurationUnit,
+          );
     }
   }
 }
@@ -106,7 +107,8 @@ class ActivitiesNumberOfSessionsBarChart extends StatelessWidget {
   final List<SummarizedActivity> activities;
   final ActivitiesBarChartOnSelectCallback onSelect;
 
-  ActivitiesNumberOfSessionsBarChart(this.activities, {
+  ActivitiesNumberOfSessionsBarChart(
+    this.activities, {
     required this.padding,
     required this.onSelect,
   });
@@ -149,8 +151,8 @@ class _ActivitiesBarChart extends StatelessWidget {
     required this.onBuildLabel,
     this.primaryAxisSpec,
     required this.onSelect,
-  }) : assert(!isEmpty(chartId)),
-       assert(activities.isNotEmpty);
+  })  : assert(!isEmpty(chartId)),
+        assert(activities.isNotEmpty);
 
   @override
   Widget build(BuildContext context) {
@@ -188,17 +190,17 @@ class _ActivitiesBarChart extends StatelessWidget {
     );
   }
 
-  List<Charts.Series<SummarizedActivity, String>>
-      _getSeriesList(BuildContext context)
-  {
+  List<Charts.Series<SummarizedActivity, String>> _getSeriesList(
+    BuildContext context,
+  ) {
     return [
       Charts.Series<SummarizedActivity, String>(
         id: chartId,
         data: activities,
         domainFn: (SummarizedActivity activity, _) => activity.value.name,
         measureFn: (SummarizedActivity activity, _) => onMeasure(activity),
-        colorFn: (_, __) => Charts.ColorUtil
-            .fromDartColor(Theme.of(context).primaryColor),
+        colorFn: (_, __) =>
+            Charts.ColorUtil.fromDartColor(Theme.of(context).primaryColor),
         labelAccessorFn: (SummarizedActivity activity, _) =>
             onBuildLabel(activity),
       ),
@@ -211,8 +213,7 @@ typedef _DurationTickFormatCallback = String Function(Duration);
 /// A custom formatter for the measure axis, so units can be displayed as "5d"
 /// rather than "5".
 class _DurationTickFormatter extends Charts.SimpleTickFormatterBase<num>
-    implements Charts.NumericTickFormatterSpec
-{
+    implements Charts.NumericTickFormatterSpec {
   final BuildContext context;
   final _DurationTickFormatCallback formatCallback;
 

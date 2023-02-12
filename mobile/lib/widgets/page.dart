@@ -24,20 +24,23 @@ class Page extends StatelessWidget {
   Page({
     required Widget child,
     PageAppBarStyle? appBarStyle,
-  }) : _child = child,
-       _appBarStyle = appBarStyle;
+  })  : _child = child,
+        _appBarStyle = appBarStyle;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: _appBarStyle == null ? null : AppBar(
-        title: _appBarStyle!.subtitle == null
-            ? Text(_appBarStyle!.title == null ? "" : _appBarStyle!.title!)
-            : _buildTitleWithSubtitle(context),
-        actions: _appBarStyle!.actions,
-        leading: _appBarStyle!.leading,
-        elevation: 0,
-      ),
+      appBar: _appBarStyle == null
+          ? null
+          : AppBar(
+              title: _appBarStyle!.subtitle == null
+                  ? Text(
+                      _appBarStyle!.title == null ? "" : _appBarStyle!.title!)
+                  : _buildTitleWithSubtitle(context),
+              actions: _appBarStyle!.actions,
+              leading: _appBarStyle!.leading,
+              elevation: 0,
+            ),
       body: _child,
     );
   }
@@ -51,10 +54,12 @@ class Page extends StatelessWidget {
             : CrossAxisAlignment.center,
         children: <Widget>[
           Text(_appBarStyle!.title ?? ""),
-          Text(_appBarStyle!.subtitle ?? "",
-            style: Theme.of(context).textTheme.subtitle2!.copyWith(
-              color: Colors.white,
-            ),
+          Text(
+            _appBarStyle!.subtitle ?? "",
+            style: Theme.of(context)
+                .textTheme
+                .titleSmall!
+                .copyWith(color: Colors.white),
           ),
         ],
       ),

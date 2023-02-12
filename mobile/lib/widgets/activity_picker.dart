@@ -32,36 +32,37 @@ class _ActivityPickerState extends State<ActivityPicker> {
   @override
   Widget build(BuildContext context) {
     return ActivitiesBuilder(
-      app: widget.app,
-      builder: (BuildContext context, List<Activity> activities) {
-        _allActivitiesActivity = ActivityBuilder(
-          Strings.of(context).activityDropdownAllActivities,
-        ).build;
+        app: widget.app,
+        builder: (BuildContext context, List<Activity> activities) {
+          _allActivitiesActivity = ActivityBuilder(
+            Strings.of(context).activityDropdownAllActivities,
+          ).build;
 
-        return ListPicker<Activity>(
-          allowsMultiSelect: true,
-          initialValues: widget.initialActivities.isEmpty
+          return ListPicker<Activity>(
+            allowsMultiSelect: true,
+            initialValues: widget.initialActivities.isEmpty
                 ? Set.of([_allActivitiesActivity])
                 : widget.initialActivities,
             onChanged: (Set<Activity> newActivities) {
-            if (newActivities.first == _allActivitiesActivity) {
-              // Invoke the callback with null if "All activities" was picked.
-              widget.onPickedActivitiesChanged({});
-            } else {
-              widget.onPickedActivitiesChanged(newActivities);
-            }
-          },
-          allItem: _buildItem(_allActivitiesActivity),
-          items: activities.map((activity) => _buildItem(activity)).toList(),
-          titleBuilder: (Set<Activity> selectedActivities) {
-            return Text(
-              selectedActivities.map((activity) => activity.name)
-                  .toList().join(", "),
-            );
-          },
-        );
-      }
-    );
+              if (newActivities.first == _allActivitiesActivity) {
+                // Invoke the callback with null if "All activities" was picked.
+                widget.onPickedActivitiesChanged({});
+              } else {
+                widget.onPickedActivitiesChanged(newActivities);
+              }
+            },
+            allItem: _buildItem(_allActivitiesActivity),
+            items: activities.map((activity) => _buildItem(activity)).toList(),
+            titleBuilder: (Set<Activity> selectedActivities) {
+              return Text(
+                selectedActivities
+                    .map((activity) => activity.name)
+                    .toList()
+                    .join(", "),
+              );
+            },
+          );
+        });
   }
 
   ListPickerItem<Activity> _buildItem(Activity activity) {

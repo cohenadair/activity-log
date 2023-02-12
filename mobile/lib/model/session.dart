@@ -21,21 +21,21 @@ class Session extends Model implements Comparable<Session> {
   bool get isBanked => _isBanked != null && _isBanked!;
 
   Session.fromMap(Map<String, dynamic> map)
-    : _activityId = map[keyActivityId],
-      _startTimestamp = map[keyStartTimestamp] ?? -1,
-      _endTimestamp = map[keyEndTimestamp],
-      _isBanked = map[keyIsBanked] == 1,
-      _clock = Clock(),
-      super.fromMap(map);
+      : _activityId = map[keyActivityId],
+        _startTimestamp = map[keyStartTimestamp] ?? -1,
+        _endTimestamp = map[keyEndTimestamp],
+        _isBanked = map[keyIsBanked] == 1,
+        _clock = Clock(),
+        super.fromMap(map);
 
   Session.fromBuilder(SessionBuilder builder)
-    : assert(builder.startTimestamp != null),
+      : assert(builder.startTimestamp != null),
         _activityId = builder.activityId,
-      _startTimestamp = builder.startTimestamp!,
-      _endTimestamp = builder.endTimestamp,
-      _isBanked = builder.isBanked,
-      _clock = builder.clock ?? Clock(),
-      super.fromBuilder(builder);
+        _startTimestamp = builder.startTimestamp!,
+        _endTimestamp = builder.endTimestamp,
+        _isBanked = builder.isBanked,
+        _clock = builder.clock ?? Clock(),
+        super.fromBuilder(builder);
 
   int get millisecondsDuration {
     if (_endTimestamp == null) {
@@ -55,9 +55,8 @@ class Session extends Model implements Comparable<Session> {
       : DateTime.fromMillisecondsSinceEpoch(endTimestamp!);
 
   TimeOfDay get startTimeOfDay => TimeOfDay.fromDateTime(startDateTime);
-  TimeOfDay? get endTimeOfDay => endDateTime == null
-      ? null
-      : TimeOfDay.fromDateTime(endDateTime!);
+  TimeOfDay? get endTimeOfDay =>
+      endDateTime == null ? null : TimeOfDay.fromDateTime(endDateTime!);
 
   bool get inProgress {
     return _endTimestamp == null;
@@ -66,21 +65,21 @@ class Session extends Model implements Comparable<Session> {
   @override
   Map<String, dynamic> toMap() {
     return {
-      keyActivityId : _activityId,
-      keyStartTimestamp : _startTimestamp,
-      keyEndTimestamp : _endTimestamp,
-      keyIsBanked : _isBanked != null && _isBanked! ? 1 : 0,
+      keyActivityId: _activityId,
+      keyStartTimestamp: _startTimestamp,
+      keyEndTimestamp: _endTimestamp,
+      keyIsBanked: _isBanked != null && _isBanked! ? 1 : 0,
     }..addAll(super.toMap());
   }
 
   operator >(other) {
-    return other is Session
-        && millisecondsDuration > other.millisecondsDuration;
+    return other is Session &&
+        millisecondsDuration > other.millisecondsDuration;
   }
 
   operator >=(other) {
-    return other is Session
-        && millisecondsDuration >= other.millisecondsDuration;
+    return other is Session &&
+        millisecondsDuration >= other.millisecondsDuration;
   }
 
   operator <(other) {

@@ -7,8 +7,8 @@ void main() {
   group("Session builder", () {
     test("Pin to date range start", () {
       SessionBuilder builder = SessionBuilder("0")
-          ..startTimestamp = DateTime(2018, 1, 15, 3).millisecondsSinceEpoch
-          ..endTimestamp = DateTime(2018, 3, 10).millisecondsSinceEpoch;
+        ..startTimestamp = DateTime(2018, 1, 15, 3).millisecondsSinceEpoch
+        ..endTimestamp = DateTime(2018, 3, 10).millisecondsSinceEpoch;
 
       Session session = builder.pinToDateRange(null).build;
       expect(session.startDateTime, equals(session.startDateTime));
@@ -81,8 +81,12 @@ void main() {
     });
 
     test("Sessions with equal durations and different start times", () {
-      builder1..startTimestamp = 0..endTimestamp = 250;
-      builder1..startTimestamp = 500..endTimestamp = 750;
+      builder1
+        ..startTimestamp = 0
+        ..endTimestamp = 250;
+      builder1
+        ..startTimestamp = 500
+        ..endTimestamp = 750;
 
       // Less than
       expect(builder1.build.compareTo(builder2.build), equals(-1));
@@ -91,7 +95,9 @@ void main() {
       expect(builder2.build.compareTo(builder1.build), equals(1));
 
       // Equal
-      builder1..startTimestamp = 0..endTimestamp = 250;
+      builder1
+        ..startTimestamp = 0
+        ..endTimestamp = 250;
       expect(builder2.build.compareTo(builder1.build), equals(1));
     });
   });

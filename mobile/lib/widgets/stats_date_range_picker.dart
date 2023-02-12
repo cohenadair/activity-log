@@ -13,7 +13,7 @@ class StatsDateRangePicker extends StatefulWidget {
 
   StatsDateRangePicker({
     required this.initialValue,
-    required this.onDurationPicked
+    required this.onDurationPicked,
   });
 
   @override
@@ -68,9 +68,10 @@ class _StatsDateRangePickerState extends State<StatsDateRangePicker> {
     );
   }
 
-  ListPickerItem<DisplayDateRange> _buildItem(BuildContext context,
-      DisplayDateRange duration)
-  {
+  ListPickerItem<DisplayDateRange> _buildItem(
+    BuildContext context,
+    DisplayDateRange duration,
+  ) {
     return ListPickerItem<DisplayDateRange>(
       title: duration.getTitle(context),
       value: duration,

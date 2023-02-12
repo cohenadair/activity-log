@@ -41,8 +41,7 @@ void main() {
 
   group("getSummarizedActivities", () {
     stubOverlappingSessions(String activityId, DateRange dateRange,
-        List<Map<String, dynamic>> result)
-    {
+        List<Map<String, dynamic>> result) {
       when(database.rawQuery("""
           SELECT * FROM session
             WHERE activity_id = ?
@@ -50,17 +49,17 @@ void main() {
             AND (end_timestamp IS NULL OR end_timestamp > ?)
             AND is_banked = 0
             ORDER BY start_timestamp
-          """, [activityId, dateRange.endMs, dateRange.startMs]
-      )).thenAnswer((_) async => result);
+          """, [activityId, dateRange.endMs, dateRange.startMs]))
+          .thenAnswer((_) async => result);
     }
 
-    Map<String, dynamic> buildSession(String activityId, DateTime start,
-        DateTime end)
-    {
+    Map<String, dynamic> buildSession(
+        String activityId, DateTime start, DateTime end) {
       return (SessionBuilder(activityId)
-        ..startTimestamp = start.millisecondsSinceEpoch
-        ..endTimestamp = end.millisecondsSinceEpoch)
-          .build.toMap();
+            ..startTimestamp = start.millisecondsSinceEpoch
+            ..endTimestamp = end.millisecondsSinceEpoch)
+          .build
+          .toMap();
     }
 
     assertSummarizedActivities({
@@ -78,7 +77,9 @@ void main() {
       Activity activity = ActivityBuilder("").build;
 
       stubActivities([activity.toMap()]);
-      stubOverlappingSessions(activity.id, dateRange.value,
+      stubOverlappingSessions(
+          activity.id,
+          dateRange.value,
           sessionRangeList.map((DateRange dateRange) {
             return buildSession(
               activity.id,
@@ -245,8 +246,8 @@ void main() {
         ActivityBuilder("Activity 4").build,
       ];
 
-      stubActivities(activities.map((Activity activity) => activity.toMap())
-          .toList());
+      stubActivities(
+          activities.map((Activity activity) => activity.toMap()).toList());
 
       stubOverlappingSessions(activities[0].id, dateRange.value, [
         buildSession(

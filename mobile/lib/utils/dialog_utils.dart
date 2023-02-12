@@ -26,7 +26,7 @@ showDeleteDialog({
           onTap: onDelete,
         ),
       ],
-    )
+    ),
   );
 }
 

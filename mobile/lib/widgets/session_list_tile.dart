@@ -21,10 +21,10 @@ class SessionListTile extends StatelessWidget {
     required Session session,
     bool hasDivider = false,
     OnTapSessionListTile? onTap,
-  }) : _app = app,
-       _session = session,
-       _hasDivider = hasDivider,
-       _onTap = onTap;
+  })  : _app = app,
+        _session = session,
+        _hasDivider = hasDivider,
+        _onTap = onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -52,9 +52,9 @@ class SessionListTile extends StatelessWidget {
                 description: Strings.of(context).sessionListDeleteMessage,
                 onDelete: () {
                   _app.dataManager.removeSession(_session);
-                }
+                },
               );
-            }
+            },
           ),
         ),
         _hasDivider ? Divider(height: 1) : Empty(),

@@ -27,10 +27,8 @@ String format(String s, List<dynamic> args) {
 ///   21:35, or
 ///   9:35 PM
 String formatTimeOfDay(BuildContext context, TimeOfDay time) {
-  return MaterialLocalizations.of(context).formatTimeOfDay(
-    time,
-    alwaysUse24HourFormat: MediaQuery.of(context).alwaysUse24HourFormat
-  );
+  return MaterialLocalizations.of(context).formatTimeOfDay(time,
+      alwaysUse24HourFormat: MediaQuery.of(context).alwaysUse24HourFormat);
 }
 
 /// Returns a formatted [DateTime] to be displayed to the user. Includes date
@@ -58,9 +56,9 @@ String formatDateTime({
 /// Example:
 ///   Dec. 8, 2018 - Dec. 29, 2018
 String formatDateRange(DateRange dateRange) {
-  return DateFormat(monthDayYearFormat).format(dateRange.startDate)
-      + " - "
-      + DateFormat(monthDayYearFormat).format(dateRange.endDate);
+  return DateFormat(monthDayYearFormat).format(dateRange.startDate) +
+      " - " +
+      DateFormat(monthDayYearFormat).format(dateRange.endDate);
 }
 
 /// Returns a formatted [DateTime] to be displayed to the user. Includes
@@ -157,9 +155,9 @@ String formatTotalDuration({
   int numberIncluded = 0;
 
   bool shouldAdd(bool include, int value) {
-    return include
-        && (!condensed || value > 0)
-        && (!showHighestTwoOnly || numberIncluded < 2);
+    return include &&
+        (!condensed || value > 0) &&
+        (!showHighestTwoOnly || numberIncluded < 2);
   }
 
   if (shouldAdd(includesDays, duration.days)) {
@@ -185,9 +183,8 @@ String formatTotalDuration({
   }
 
   // If there is no result and not everything is excluded, default to 0m.
-  if (result.isEmpty
-      && (includesSeconds || includesMinutes || includesHours || includesDays))
-  {
+  if (result.isEmpty &&
+      (includesSeconds || includesMinutes || includesHours || includesDays)) {
     result += format(Strings.of(context).minutesFormat, [0]);
   }
 

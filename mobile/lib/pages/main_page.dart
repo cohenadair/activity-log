@@ -17,31 +17,31 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage> {
   int _currentItemIndex = 0;
 
-  List<_BarItemData> get _navItems => [
-    _BarItemData(
-      page: ActivitiesPage(widget._app),
-      item: BottomNavigationBarItem(
-        icon: Icon(Icons.home),
-        label: Strings.of(context).navigationBarHome,
+  List<_BarItemData> get _navItems {
+    return [
+      _BarItemData(
+        page: ActivitiesPage(widget._app),
+        item: BottomNavigationBarItem(
+          icon: Icon(Icons.home),
+          label: Strings.of(context).navigationBarHome,
+        ),
       ),
-    ),
-
-    _BarItemData(
-      page: StatsPage(widget._app),
-      item: BottomNavigationBarItem(
-        icon: Icon(Icons.show_chart),
-        label: Strings.of(context).navigationBarStats,
+      _BarItemData(
+        page: StatsPage(widget._app),
+        item: BottomNavigationBarItem(
+          icon: Icon(Icons.show_chart),
+          label: Strings.of(context).navigationBarStats,
+        ),
       ),
-    ),
-
-    _BarItemData(
-      page: SettingsPage(widget._app),
-      item: BottomNavigationBarItem(
-        icon: Icon(Icons.settings),
-        label: Strings.of(context).navigationBarSettings,
+      _BarItemData(
+        page: SettingsPage(widget._app),
+        item: BottomNavigationBarItem(
+          icon: Icon(Icons.settings),
+          label: Strings.of(context).navigationBarSettings,
+        ),
       ),
-    ),
-  ];
+    ];
+  }
 
   @override
   Widget build(BuildContext context) {

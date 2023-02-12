@@ -30,7 +30,7 @@ class DateTimePickerContainer extends StatelessWidget {
               child: Padding(
                 padding: insetsRightWidget,
                 child: datePicker,
-              )
+              ),
             ),
             Flexible(
               flex: 2,
@@ -38,10 +38,12 @@ class DateTimePickerContainer extends StatelessWidget {
             ),
           ],
         ),
-        helper == null ? Empty() : Padding(
-          padding: insetsTopSmall,
-          child: helper,
-        ),
+        helper == null
+            ? Empty()
+            : Padding(
+                padding: insetsTopSmall,
+                child: helper,
+              ),
       ],
     );
   }
@@ -55,40 +57,40 @@ class DatePicker extends FormField<DateTime> {
     String? Function(DateTime?)? validator,
     bool enabled = true,
   }) : super(
-    initialValue: initialDate,
-    validator: validator,
-    builder: (FormFieldState<DateTime> state) {
-      return _Picker(
-        label: label,
-        errorText: state.errorText,
-        enabled: enabled,
-        type: _PickerType(
-          getValue: () => DateText(
-            state.value!,
-            enabled: enabled,
-          ),
-          openPicker: () {
-            showDatePicker(
-              context: state.context,
-              initialDate: state.value!,
-              // Weird requirement of showDatePicker, but essentially
-              // let the user pick any date in the past.
-              firstDate: DateTime(1900),
-              lastDate: DateTime.now()
-            ).then((DateTime? dateTime) {
-              if (dateTime == null) {
-                return;
-              }
-              state.didChange(dateTime);
-              if (onChange != null) {
-                onChange(dateTime);
-              }
-            });
-          }
-        ),
-      );
-    }
-  );
+          initialValue: initialDate,
+          validator: validator,
+          builder: (FormFieldState<DateTime> state) {
+            return _Picker(
+              label: label,
+              errorText: state.errorText,
+              enabled: enabled,
+              type: _PickerType(
+                getValue: () => DateText(
+                  state.value!,
+                  enabled: enabled,
+                ),
+                openPicker: () {
+                  showDatePicker(
+                    context: state.context,
+                    initialDate: state.value!,
+                    // Weird requirement of showDatePicker, but
+                    // essentially let the user pick any date in the past.
+                    firstDate: DateTime(1900),
+                    lastDate: DateTime.now(),
+                  ).then((DateTime? dateTime) {
+                    if (dateTime == null) {
+                      return;
+                    }
+                    state.didChange(dateTime);
+                    if (onChange != null) {
+                      onChange(dateTime);
+                    }
+                  });
+                },
+              ),
+            );
+          },
+        );
 }
 
 class TimePicker extends FormField<TimeOfDay> {
@@ -99,46 +101,40 @@ class TimePicker extends FormField<TimeOfDay> {
     String? Function(TimeOfDay?)? validator,
     bool enabled = true,
   }) : super(
-    initialValue: initialTime,
-    validator: validator,
-    builder: (FormFieldState<TimeOfDay> state) {
-      return _Picker(
-        label: label,
-        errorText: state.errorText,
-        enabled: enabled,
-        type: _PickerType(
-          getValue: () => TimeText(
-            state.value!,
-            enabled: enabled,
-          ),
-          openPicker: () {
-            showTimePicker(
-              context: state.context,
-              initialTime: state.value!,
-            ).then((TimeOfDay? time) {
-              if (time == null) {
-                return;
-              }
-              state.didChange(time);
-              if (onChange != null) {
-                onChange(time);
-              }
-            });
-          }
-        ),
-      );
-    }
-  );
+          initialValue: initialTime,
+          validator: validator,
+          builder: (FormFieldState<TimeOfDay> state) {
+            return _Picker(
+              label: label,
+              errorText: state.errorText,
+              enabled: enabled,
+              type: _PickerType(
+                getValue: () => TimeText(state.value!, enabled: enabled),
+                openPicker: () {
+                  showTimePicker(
+                    context: state.context,
+                    initialTime: state.value!,
+                  ).then((TimeOfDay? time) {
+                    if (time == null) {
+                      return;
+                    }
+                    state.didChange(time);
+                    if (onChange != null) {
+                      onChange(time);
+                    }
+                  });
+                },
+              ),
+            );
+          },
+        );
 }
 
 class _PickerType {
   final Widget Function() getValue;
   final VoidCallback openPicker;
 
-  _PickerType({
-    required this.getValue,
-    required this.openPicker
-  });
+  _PickerType({required this.getValue, required this.openPicker});
 }
 
 class _Picker extends StatelessWidget {

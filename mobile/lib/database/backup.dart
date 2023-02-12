@@ -30,7 +30,8 @@ const _keyPreferencesHomeDateRange = "home_date_range";
 
 /// Returns a JSON [String] representation of the given [AppManager] database,
 /// or `null` if there was an error.
-Future<String> export(AppManager app, {
+Future<String> export(
+  AppManager app, {
   Clock clock = const Clock(),
 }) async {
   Map<String, dynamic> jsonMap = Map();
@@ -42,7 +43,7 @@ Future<String> export(AppManager app, {
       // End any running activities. This ensures that when the database
       // is imported, there isn't a potentially long session in progress.
       activity = (ActivityBuilder.fromActivity(activity)
-        ..currentSessionId = null)
+            ..currentSessionId = null)
           .build;
     }
 
@@ -55,9 +56,8 @@ Future<String> export(AppManager app, {
     if (session.inProgress) {
       // End any running sessions. This ensures that when the database
       // is imported, there isn't a potentially long session in progress.
-      session = (SessionBuilder.fromSession(session)..clock = clock)
-          .endNow()
-          .build;
+      session =
+          (SessionBuilder.fromSession(session)..clock = clock).endNow().build;
     }
     return session.toMap();
   }).toList();
@@ -132,10 +132,10 @@ Future<ImportResult> import(AppManager app, {String? json}) async {
 
     // ID, start time, and session ID can't be empty, and the session must be
     // complete.
-    if (isEmpty(session.id)
-        || isEmpty(session.activityId)
-        || session.startTimestamp == -1
-        || session.endTimestamp == null) {
+    if (isEmpty(session.id) ||
+        isEmpty(session.activityId) ||
+        session.startTimestamp == -1 ||
+        session.endTimestamp == null) {
       return ImportResult.errorSessionInvalid;
     } else {
       sessionsToAdd.add(session);
@@ -170,11 +170,10 @@ Future<ImportResult> import(AppManager app, {String? json}) async {
     if (preferences[_keyPreferencesLargestDurationUnit] is int) {
       int durationUnitIndex = preferences[_keyPreferencesLargestDurationUnit];
 
-      if (durationUnitIndex >= 0
-          && durationUnitIndex < DurationUnit.values.length)
-      {
-        app.preferencesManager.setLargestDurationUnit(
-            DurationUnit.values[durationUnitIndex]);
+      if (durationUnitIndex >= 0 &&
+          durationUnitIndex < DurationUnit.values.length) {
+        app.preferencesManager
+            .setLargestDurationUnit(DurationUnit.values[durationUnitIndex]);
       }
     }
   }

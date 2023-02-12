@@ -22,15 +22,15 @@ class _TimerState extends State<Timer> {
 
   @override
   void initState() {
-    _timer = Async.Timer.periodic(
-      Duration(milliseconds: widget.durationMillis), (Async.Timer timer) {
-        if (widget.shouldUpdateCallback == null ||
-            widget.shouldUpdateCallback!.call())
-        {
-          setState(() {});
-        }
+    _timer =
+        Async.Timer.periodic(Duration(milliseconds: widget.durationMillis), (
+      Async.Timer timer,
+    ) {
+      if (widget.shouldUpdateCallback == null ||
+          widget.shouldUpdateCallback!.call()) {
+        setState(() {});
       }
-    );
+    });
 
     super.initState();
   }

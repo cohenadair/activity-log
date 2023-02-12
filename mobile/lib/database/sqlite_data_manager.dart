@@ -59,7 +59,7 @@ class SQLiteDataManager {
       table,
       model.toMap(),
       where: "id = ?",
-      whereArgs: [model.id]
+      whereArgs: [model.id],
     ).then((int value) {
       notify();
     });
@@ -107,8 +107,9 @@ class SQLiteDataManager {
 
   /// Batch inserts the list of [Activity] objects into the database. To
   /// increase performance, a single insert may silently fail.
-  Future<void> addActivities(List<Activity> activityList, {
-    bool notify = false
+  Future<void> addActivities(
+    List<Activity> activityList, {
+    bool notify = false,
   }) async {
     Batch batch = _database.batch();
     activityList.forEach((Activity activity) {
@@ -150,8 +151,9 @@ class SQLiteDataManager {
 
   /// Batch inserts the list of [Session] objects into the database. To
   /// increase performance, a single insert may silently fail.
-  Future<void> addSessions(List<Session> sessionList, {
-    bool notify = false
+  Future<void> addSessions(
+    List<Session> sessionList, {
+    bool notify = false,
   }) async {
     Batch batch = _database.batch();
     sessionList.forEach((Session session) {
@@ -182,10 +184,8 @@ class SQLiteDataManager {
 
     Batch batch = _database.batch();
     batch.insert("session", newSession.toMap());
-    batch.rawUpdate(
-      "UPDATE activity SET current_session_id = ? WHERE id = ?",
-      [newSession.id, activity.id]
-    );
+    batch.rawUpdate("UPDATE activity SET current_session_id = ? WHERE id = ?",
+        [newSession.id, activity.id]);
 
     var _ = await batch.commit();
     _activitiesUpdated.notify();
@@ -206,13 +206,12 @@ class SQLiteDataManager {
 
     // Update session's end time.
     batch.rawUpdate("UPDATE session SET end_timestamp = ? WHERE id = ?",
-      [DateTime.now().millisecondsSinceEpoch, activity.currentSessionId]
-    );
+        [DateTime.now().millisecondsSinceEpoch, activity.currentSessionId]);
 
     // Set the associated activity's current session to null.
     batch.rawUpdate(
       "UPDATE activity SET current_session_id = NULL WHERE id = ?",
-      [activity.id]
+      [activity.id],
     );
 
     var _ = await batch.commit();
@@ -242,7 +241,7 @@ class SQLiteDataManager {
         UPDATE activity SET current_session_id = NULL 
           WHERE current_session_id = ?
       """,
-      [session.id]
+      [session.id],
     );
 
     // Delete session.
@@ -265,7 +264,9 @@ class SQLiteDataManager {
     String query = """
       SELECT COUNT(*) FROM session WHERE activity_id = ?
     """;
-    return Sqflite.firstIntValue(await _database.rawQuery(query, [activityId])) ?? 0;
+    return Sqflite.firstIntValue(
+            await _database.rawQuery(query, [activityId])) ??
+        0;
   }
 
   /// Returns the [Session] the given [Session] overlaps with, if one exists;
@@ -318,7 +319,10 @@ class SQLiteDataManager {
     return Session.fromMap(result.first);
   }
 
-  Future<List<Session>> getLimitedSessions(String activityId, int? limit) async {
+  Future<List<Session>> getLimitedSessions(
+    String activityId,
+    int? limit,
+  ) async {
     String query;
     List<dynamic> args;
 
@@ -402,20 +406,20 @@ class SQLiteDataManager {
             WHERE activity_id = ?
             AND is_banked = 0
             ORDER BY start_timestamp
-          """, [
-          activity.id
-        ]);
+          """, [activity.id]);
       } else {
         // Query for sessions that belong to this Activity and overlap the
         // desired date range.
-        sessionMapList = await _database.rawQuery("""
+        sessionMapList = await _database.rawQuery(
+          """
           SELECT * FROM session
             WHERE activity_id = ?
             AND start_timestamp < ?
             AND (end_timestamp IS NULL OR end_timestamp > ?)
             AND is_banked = 0
             ORDER BY start_timestamp
-          """, [
+          """,
+          [
             activity.id,
             dateRange.endMs,
             dateRange.startMs,
@@ -426,8 +430,7 @@ class SQLiteDataManager {
       List<Session> sessionList = [];
 
       sessionMapList.forEach((Map<String, dynamic> map) {
-        sessionList.add(SessionBuilder
-            .fromSession(Session.fromMap(map))
+        sessionList.add(SessionBuilder.fromSession(Session.fromMap(map))
             .pinToDateRange(dateRange)
             .build);
       });
@@ -575,8 +578,7 @@ class ActivityListModelBuilder extends StatelessWidget {
           app.dataManager._initialActivityListTileModels = const [],
       getFutureCallbacks: [
         () => app.dataManager.getActivityListModel(
-          dateRange: app.preferencesManager.homeDateRange.value,
-        ),
+            dateRange: app.preferencesManager.homeDateRange.value),
       ],
       streams: [
         app.preferencesManager.homeDateRangeStream,

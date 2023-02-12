@@ -86,17 +86,16 @@ class PreferencesManager {
   }
 
   void setStatsSelectedActivityIds(List<String>? ids) async {
-    if (DeepCollectionEquality.unordered().equals(_statsSelectedActivityIds,
-        ids))
-    {
+    if (DeepCollectionEquality.unordered()
+        .equals(_statsSelectedActivityIds, ids)) {
       return;
     }
 
     _statsSelectedActivityIds = ids ?? [];
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setStringList(_keyStatsSelectedActivityIds,
-        _statsSelectedActivityIds);
+    await prefs.setStringList(
+        _keyStatsSelectedActivityIds, _statsSelectedActivityIds);
   }
 
   void setStatsDateRange(DisplayDateRange range) async {
@@ -116,11 +115,11 @@ class LargestDurationBuilder extends _SimpleStreamBuilder<DurationUnit> {
     required AppManager app,
     required Widget Function(BuildContext, DurationUnit) builder,
   }) : super(
-    app: app,
-    stream: app.preferencesManager._largestDurationUnitUpdated.stream,
-    valueCallback: () => app.preferencesManager.largestDurationUnit,
-    builder: builder,
-  );
+          app: app,
+          stream: app.preferencesManager._largestDurationUnitUpdated.stream,
+          valueCallback: () => app.preferencesManager.largestDurationUnit,
+          builder: builder,
+        );
 }
 
 class HomeDateRangeBuilder extends _SimpleStreamBuilder<DisplayDateRange> {
@@ -128,11 +127,11 @@ class HomeDateRangeBuilder extends _SimpleStreamBuilder<DisplayDateRange> {
     required AppManager app,
     required Widget Function(BuildContext, DisplayDateRange) builder,
   }) : super(
-    app: app,
-    stream: app.preferencesManager._homeDateRangeUpdated.stream,
-    valueCallback: () => app.preferencesManager.homeDateRange,
-    builder: builder,
-  );
+          app: app,
+          stream: app.preferencesManager._homeDateRangeUpdated.stream,
+          valueCallback: () => app.preferencesManager.homeDateRange,
+          builder: builder,
+        );
 }
 
 class _SimpleStreamBuilder<T> extends StatelessWidget {

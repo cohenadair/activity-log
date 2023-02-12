@@ -47,9 +47,7 @@ class _StatsPageState extends State<StatsPage> {
     _currentDateRange = widget.app.preferencesManager.statsDateRange;
 
     _onActivitiesUpdated = widget.app.dataManager.activitiesUpdatedStream
-        .listen((_) {
-          _updateFutures();
-        });
+        .listen((_) => _updateFutures());
 
     // Retrieve initial activities if needed.
     List<String> selectedIds =
@@ -101,8 +99,7 @@ class _StatsPageState extends State<StatsPage> {
                 ActivityPicker(
                   app: widget.app,
                   initialActivities: _currentActivities,
-                  onPickedActivitiesChanged: (
-                      Set<Activity> pickedActivities) {
+                  onPickedActivitiesChanged: (Set<Activity> pickedActivities) {
                     setState(() {
                       _currentActivities = pickedActivities;
                       _updateFutures();
@@ -122,26 +119,24 @@ class _StatsPageState extends State<StatsPage> {
                 FutureBuilder<SummarizedActivityList>(
                   future: _summarizedActivityListFuture,
                   builder: (BuildContext context,
-                      AsyncSnapshot<SummarizedActivityList> snapshot)
-                  {
+                      AsyncSnapshot<SummarizedActivityList> snapshot) {
                     if (!snapshot.hasData) {
                       return Loading.centered();
                     }
 
-                    List<SummarizedActivity> activities = snapshot.data!
-                        .activities;
+                    List<SummarizedActivity> activities =
+                        snapshot.data!.activities;
                     if (activities.isEmpty) {
                       return Padding(
                         padding: insetsDefault,
-                        child: ErrorText(Strings.of(context)
-                            .statsPageNoDataMessage),
+                        child: ErrorText(
+                            Strings.of(context).statsPageNoDataMessage),
                       );
                     }
 
-                    if (activities.length == 1
-                        && activities.first.displayDateRange
-                            != DisplayDateRange.allDates)
-                    {
+                    if (activities.length == 1 &&
+                        activities.first.displayDateRange !=
+                            DisplayDateRange.allDates) {
                       return _buildForSingleActivity(activities.first);
                     } else {
                       return _buildForMultipleActivities(snapshot.data!);
@@ -157,7 +152,8 @@ class _StatsPageState extends State<StatsPage> {
   }
 
   Widget _buildForMultipleActivities(SummarizedActivityList summary) {
-    if (summary.activitiesSortedByDuration == null || summary.activitiesSortedByNumberOfSessions == null) {
+    if (summary.activitiesSortedByDuration == null ||
+        summary.activitiesSortedByNumberOfSessions == null) {
       return Empty();
     }
 
@@ -182,14 +178,18 @@ class _StatsPageState extends State<StatsPage> {
   }
 
   void _onSelectChartActivity(SummarizedActivity activity) {
-    push(context, StatsActivitySummaryPage(
-      app: widget.app,
-      activity: activity,
-    ));
+    push(
+      context,
+      StatsActivitySummaryPage(
+        app: widget.app,
+        activity: activity,
+      ),
+    );
   }
 
   Widget _buildSummary(SummarizedActivityList summary) {
-    if (summary.mostFrequentActivity == null || summary.longestSession == null) {
+    if (summary.mostFrequentActivity == null ||
+        summary.longestSession == null) {
       return Empty();
     }
 
@@ -256,10 +256,11 @@ class _StatsPageState extends State<StatsPage> {
     // Pass null for "All dates" so the stats are restricted to the existing
     // sessions, rather than whatever the "All dates" start date is.
     DisplayDateRange? dateRange = _currentDateRange == DisplayDateRange.allDates
-        ? null : _currentDateRange;
-    _summarizedActivityListFuture = widget.app.dataManager
-        .getSummarizedActivities(dateRange, activities);
-    
+        ? null
+        : _currentDateRange;
+    _summarizedActivityListFuture =
+        widget.app.dataManager.getSummarizedActivities(dateRange, activities);
+
     _activityCountFuture = widget.app.dataManager.activityCount;
   }
 }
