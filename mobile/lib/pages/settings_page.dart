@@ -27,6 +27,8 @@ import 'package:mobile/widgets/text.dart';
 import 'package:mobile/widgets/widget.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
+import '../log.dart';
+
 class SettingsPage extends StatefulWidget {
   final AppManager app;
 
@@ -45,6 +47,8 @@ class SettingsPageState extends State<SettingsPage> {
       "https://cohenadair.github.io/activity-log/privacy_policy.html";
   static const _backupFileExtension = "dat";
   static const _backupFileName = "ActivityLogBackup.$_backupFileExtension";
+
+  static const _log = Log("SettingsPage");
 
   bool _isCreatingBackup = false;
   bool _isImporting = false;
@@ -289,8 +293,7 @@ class SettingsPageState extends State<SettingsPage> {
       // TODO: Crashes on old Android devices when picking from downloads folder.
       result = await FilePicker.platform.pickFiles(allowMultiple: false);
     } catch (e) {
-      print(e);
-      // Nothing to do
+      _log.e(StackTrace.current, e.toString());
     }
 
     if (result == null || result.files.isEmpty) {

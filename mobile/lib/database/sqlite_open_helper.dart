@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
+import '../log.dart';
+
 class SQLiteOpenHelper {
   static const String _name = "activitylog.db";
   static const int _version = 2;
@@ -36,9 +38,11 @@ class SQLiteOpenHelper {
     _schema1,
   ];
 
+  static const _log = Log("SQLiteOpenHelper");
+
   static Future<Database> open() async {
     String path = join(await getDatabasesPath(), _name);
-    print(path.toString());
+    _log.d(path.toString());
     return openDatabase(
       path,
       version: _version,
