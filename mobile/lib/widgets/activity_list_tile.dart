@@ -25,7 +25,7 @@ class ActivityListTile extends StatelessWidget {
   final Function() onTapStartSession;
   final Function() onTapEndSession;
 
-  ActivityListTile({
+  const ActivityListTile({
     required this.app,
     required this.model,
     required this.onTap,
@@ -39,7 +39,7 @@ class ActivityListTile extends StatelessWidget {
       app: app,
       builder: (BuildContext context, DurationUnit largestDurationUnit) {
         return ListItem(
-          contentPadding: EdgeInsets.only(right: 0, left: paddingDefault),
+          contentPadding: const EdgeInsets.only(right: 0, left: paddingDefault),
           title: Text(model.activity.name),
           subtitle: TotalDurationText(
             model.duration == null ? [] : [model.duration!],
@@ -87,7 +87,7 @@ class ActivityListTile extends StatelessWidget {
         bool visible = session != null;
         return FadeIn<Duration>(
           visible: visible,
-          value: visible ? session.duration : Duration(),
+          value: visible ? session.duration : const Duration(),
           childBuilder: (Duration value) => RunningDurationText(value),
         );
       },

@@ -11,7 +11,7 @@ class Summary extends StatelessWidget {
   final EdgeInsets padding;
   final List<SummaryItem> items;
 
-  Summary({
+  const Summary({
     this.title = "",
     this.padding = insetsZero,
     this.items = const [],
@@ -29,7 +29,8 @@ class Summary extends StatelessWidget {
                   padding: insetsBottomDefault,
                   child: LargeHeadingText(title),
                 ),
-        ]..addAll(_buildItems(context)),
+          ..._buildItems(context),
+        ],
       ),
     );
   }

@@ -113,7 +113,7 @@ class DisplayDateRange {
   static final yesterday = DisplayDateRange._(
     id: "yesterday",
     getValue: (DateTime now) => DateRange(
-      startDate: dateTimeToDayAccuracy(now).subtract(Duration(days: 1)),
+      startDate: dateTimeToDayAccuracy(now).subtract(const Duration(days: 1)),
       endDate: dateTimeToDayAccuracy(now),
     ),
     getTitle: (context) => Strings.of(context).analysisDurationYesterday,
@@ -151,7 +151,7 @@ class DisplayDateRange {
     getValue: (DateTime now) {
       DateTime endOfLastWeek = getStartOfWeek(now);
       DateTime startOfLastWeek = endOfLastWeek.subtract(
-        Duration(days: DateTime.daysPerWeek),
+        const Duration(days: DateTime.daysPerWeek),
       );
       return DateRange(startDate: startOfLastWeek, endDate: endOfLastWeek);
     },
@@ -188,7 +188,7 @@ class DisplayDateRange {
   static final last7Days = DisplayDateRange._(
     id: "last7Days",
     getValue: (DateTime now) => DateRange(
-      startDate: now.subtract(Duration(days: 7)),
+      startDate: now.subtract(const Duration(days: 7)),
       endDate: now,
     ),
     getTitle: (context) => Strings.of(context).analysisDurationLast7Days,
@@ -197,7 +197,7 @@ class DisplayDateRange {
   static final last14Days = DisplayDateRange._(
     id: "last14Days",
     getValue: (DateTime now) => DateRange(
-      startDate: now.subtract(Duration(days: 14)),
+      startDate: now.subtract(const Duration(days: 14)),
       endDate: now,
     ),
     getTitle: (context) => Strings.of(context).analysisDurationLast14Days,
@@ -206,7 +206,7 @@ class DisplayDateRange {
   static final last30Days = DisplayDateRange._(
     id: "last30Days",
     getValue: (DateTime now) => DateRange(
-      startDate: now.subtract(Duration(days: 30)),
+      startDate: now.subtract(const Duration(days: 30)),
       endDate: now,
     ),
     getTitle: (context) => Strings.of(context).analysisDurationLast30Days,
@@ -215,7 +215,7 @@ class DisplayDateRange {
   static final last60Days = DisplayDateRange._(
     id: "last60Days",
     getValue: (DateTime now) => DateRange(
-      startDate: now.subtract(Duration(days: 60)),
+      startDate: now.subtract(const Duration(days: 60)),
       endDate: now,
     ),
     getTitle: (context) => Strings.of(context).analysisDurationLast60Days,
@@ -224,7 +224,7 @@ class DisplayDateRange {
   static final last12Months = DisplayDateRange._(
     id: "last12Months",
     getValue: (DateTime now) => DateRange(
-      startDate: now.subtract(Duration(days: 365)),
+      startDate: now.subtract(const Duration(days: 365)),
       endDate: now,
     ),
     getTitle: (context) => Strings.of(context).analysisDurationLast12Months,
@@ -267,7 +267,7 @@ class DisplayDateRange {
   final DateRange Function(DateTime now) getValue;
   final String Function(BuildContext context) getTitle;
 
-  DisplayDateRange._({
+  const DisplayDateRange._({
     required this.id,
     required this.getValue,
     required this.getTitle,
@@ -307,7 +307,7 @@ class DisplayDateRange {
       return formattedDuration;
     }
 
-    return formattedDuration + " " + getTitle(context);
+    return "$formattedDuration ${getTitle(context)}";
   }
 
   @override

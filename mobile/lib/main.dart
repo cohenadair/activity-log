@@ -5,7 +5,6 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:mobile/app_manager.dart';
 import 'package:mobile/i18n/strings.dart';
 import 'package:mobile/pages/main_page.dart';
-import 'package:mobile/res/style.dart';
 
 void main() {
   runApp(ActivityLog());
@@ -13,10 +12,10 @@ void main() {
 
 class ActivityLog extends StatefulWidget {
   @override
-  _ActivityLogState createState() => _ActivityLogState();
+  ActivityLogState createState() => ActivityLogState();
 }
 
-class _ActivityLogState extends State<ActivityLog> {
+class ActivityLogState extends State<ActivityLog> {
   final AppManager _app = AppManager();
   late Future<bool> _appInitializedFuture;
 
@@ -37,13 +36,14 @@ class _ActivityLogState extends State<ActivityLog> {
       onGenerateTitle: (context) => Strings.of(context).appName,
       theme: ThemeData(
         primarySwatch: Colors.green,
-        buttonTheme: ButtonThemeData(
+        buttonTheme: const ButtonThemeData(
           textTheme: ButtonTextTheme.primary,
         ),
-        iconTheme: IconThemeData(
+        iconTheme: const IconThemeData(
           color: Colors.green,
         ),
-        errorColor: Colors.red,
+        colorScheme: ColorScheme.fromSwatch(
+            primarySwatch: Colors.green, errorColor: Colors.red),
       ),
       home: FutureBuilder<bool>(
         future: _appInitializedFuture,
@@ -63,7 +63,7 @@ class _ActivityLogState extends State<ActivityLog> {
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
       ],
-      supportedLocales: [
+      supportedLocales: const [
         Locale('en', 'US'),
         Locale('en', 'CA'),
       ],

@@ -14,7 +14,7 @@ class ListPage<T> extends StatefulWidget {
   final Widget Function(T, Function(T)) buildTileCallback;
   final List<T> items;
 
-  ListPage({
+  const ListPage({
     required this.title,
     this.empty,
     required this.getEditPageCallback,
@@ -23,10 +23,10 @@ class ListPage<T> extends StatefulWidget {
   });
 
   @override
-  _ListPageState createState() => _ListPageState<T>();
+  ListPageState createState() => ListPageState<T>();
 }
 
-class _ListPageState<T> extends State<ListPage<T>> {
+class ListPageState<T> extends State<ListPage<T>> {
   @override
   Widget build(BuildContext context) {
     return p.Page(
@@ -34,7 +34,7 @@ class _ListPageState<T> extends State<ListPage<T>> {
         title: widget.title,
         actions: <Widget>[
           IconButton(
-            icon: Icon(Icons.add),
+            icon: const Icon(Icons.add),
             onPressed: _onPressAddButton,
           ),
         ],

@@ -11,7 +11,7 @@ class SessionsPage extends StatelessWidget {
   final AppManager app;
   final Activity activity;
 
-  SessionsPage(this.app, this.activity);
+  const SessionsPage(this.app, this.activity);
 
   @override
   Widget build(BuildContext context) {

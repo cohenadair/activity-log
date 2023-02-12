@@ -8,13 +8,13 @@ import 'package:mobile/pages/stats_page.dart';
 class MainPage extends StatefulWidget {
   final AppManager _app;
 
-  MainPage(this._app);
+  const MainPage(this._app);
 
   @override
-  _MainPageState createState() => _MainPageState();
+  MainPageState createState() => MainPageState();
 }
 
-class _MainPageState extends State<MainPage> {
+class MainPageState extends State<MainPage> {
   int _currentItemIndex = 0;
 
   List<_BarItemData> get _navItems {
@@ -22,21 +22,21 @@ class _MainPageState extends State<MainPage> {
       _BarItemData(
         page: ActivitiesPage(widget._app),
         item: BottomNavigationBarItem(
-          icon: Icon(Icons.home),
+          icon: const Icon(Icons.home),
           label: Strings.of(context).navigationBarHome,
         ),
       ),
       _BarItemData(
         page: StatsPage(widget._app),
         item: BottomNavigationBarItem(
-          icon: Icon(Icons.show_chart),
+          icon: const Icon(Icons.show_chart),
           label: Strings.of(context).navigationBarStats,
         ),
       ),
       _BarItemData(
         page: SettingsPage(widget._app),
         item: BottomNavigationBarItem(
-          icon: Icon(Icons.settings),
+          icon: const Icon(Icons.settings),
           label: Strings.of(context).navigationBarSettings,
         ),
       ),

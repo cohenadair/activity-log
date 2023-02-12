@@ -18,13 +18,13 @@ class EditActivityPage extends StatefulWidget {
   final AppManager app;
   final Activity? editingActivity;
 
-  EditActivityPage(this.app, [this.editingActivity]);
+  const EditActivityPage(this.app, [this.editingActivity]);
 
   @override
-  _EditActivityPageState createState() => _EditActivityPageState();
+  EditActivityPageState createState() => EditActivityPageState();
 }
 
-class _EditActivityPageState extends State<EditActivityPage> {
+class EditActivityPageState extends State<EditActivityPage> {
   final _formKey = GlobalKey<FormState>();
   final _recentSessionLimit = 3;
 
@@ -61,7 +61,7 @@ class _EditActivityPageState extends State<EditActivityPage> {
         child: Column(
           children: <Widget>[
             Padding(
-              padding: EdgeInsets.only(
+              padding: const EdgeInsets.only(
                 left: paddingDefault,
                 right: paddingDefault,
                 bottom: paddingDefault,
@@ -91,8 +91,9 @@ class _EditActivityPageState extends State<EditActivityPage> {
       builder: (context, sessions, sessionCount) {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: [_buildRecentSessionsTitle()]
-            ..addAll(sessions.isNotEmpty
+          children: [
+            _buildRecentSessionsTitle(),
+            ...sessions.isNotEmpty
                 ? sessions.map((session) {
                     return SessionListTile(
                       app: widget.app,
@@ -110,10 +111,9 @@ class _EditActivityPageState extends State<EditActivityPage> {
                       },
                     );
                   })
-                : [Empty()])
-            ..add(sessions.isNotEmpty
-                ? _buildViewAllButton(sessionCount)
-                : Empty()),
+                : [Empty()],
+            sessions.isNotEmpty ? _buildViewAllButton(sessionCount) : Empty()
+          ],
         );
       },
     );
@@ -127,7 +127,7 @@ class _EditActivityPageState extends State<EditActivityPage> {
         children: <Widget>[
           HeadingText(Strings.of(context).editActivityPageRecentSessions),
           IconButton(
-            icon: Icon(Icons.add),
+            icon: const Icon(Icons.add),
             padding: insetsZero,
             onPressed: () {
               push(
@@ -214,7 +214,7 @@ class RecentSessionsBuilder extends StatelessWidget {
   final int? limit;
   final Widget Function(BuildContext, List<Session>, int) builder;
 
-  RecentSessionsBuilder({
+  const RecentSessionsBuilder({
     required this.app,
     required this.activityId,
     this.limit,

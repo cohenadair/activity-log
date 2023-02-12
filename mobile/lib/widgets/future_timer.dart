@@ -1,4 +1,4 @@
-import 'dart:async' as Async;
+import 'dart:async' as d_async;
 
 import 'package:flutter/material.dart';
 
@@ -7,7 +7,7 @@ class Timer extends StatefulWidget {
   final Widget Function() childBuilder;
   final bool Function()? shouldUpdateCallback;
 
-  Timer({
+  const Timer({
     required this.childBuilder,
     this.durationMillis = 1000,
     this.shouldUpdateCallback,
@@ -18,13 +18,13 @@ class Timer extends StatefulWidget {
 }
 
 class _TimerState extends State<Timer> {
-  late Async.Timer _timer;
+  late d_async.Timer _timer;
 
   @override
   void initState() {
     _timer =
-        Async.Timer.periodic(Duration(milliseconds: widget.durationMillis), (
-      Async.Timer timer,
+        d_async.Timer.periodic(Duration(milliseconds: widget.durationMillis), (
+      d_async.Timer timer,
     ) {
       if (widget.shouldUpdateCallback == null ||
           widget.shouldUpdateCallback!.call()) {

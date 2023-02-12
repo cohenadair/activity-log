@@ -11,22 +11,22 @@ class StatsDateRangePicker extends StatefulWidget {
   final DisplayDateRange initialValue;
   final OnListPickerChanged<DisplayDateRange> onDurationPicked;
 
-  StatsDateRangePicker({
+  const StatsDateRangePicker({
     required this.initialValue,
     required this.onDurationPicked,
   });
 
   @override
-  _StatsDateRangePickerState createState() => _StatsDateRangePickerState();
+  StatsDateRangePickerState createState() => StatsDateRangePickerState();
 }
 
-class _StatsDateRangePickerState extends State<StatsDateRangePicker> {
+class StatsDateRangePickerState extends State<StatsDateRangePicker> {
   DisplayDateRange _customDateRange = DisplayDateRange.custom;
 
   @override
   Widget build(BuildContext context) {
     return ListPicker<DisplayDateRange>(
-      initialValues: Set.of([widget.initialValue]),
+      initialValues: {widget.initialValue},
       onChanged: (Set<DisplayDateRange> pickedDurations) {
         widget.onDurationPicked(pickedDurations.first);
 
@@ -100,7 +100,7 @@ class _StatsDateRangePickerState extends State<StatsDateRangePicker> {
     if (pickedRange.start == pickedRange.end) {
       // If only the start date was picked, or the start and end time are equal,
       // set the end date to a range of 1 day.
-      endDate = pickedRange.start.add(Duration(days: 1));
+      endDate = pickedRange.start.add(const Duration(days: 1));
     }
 
     DateRange dateRange = DateRange(

@@ -24,13 +24,13 @@ import 'package:mobile/widgets/widget.dart';
 class StatsPage extends StatefulWidget {
   final AppManager app;
 
-  StatsPage(this.app);
+  const StatsPage(this.app);
 
   @override
-  _StatsPageState createState() => _StatsPageState();
+  StatsPageState createState() => StatsPageState();
 }
 
-class _StatsPageState extends State<StatsPage> {
+class StatsPageState extends State<StatsPage> {
   final scrollController = ScrollController();
 
   Set<Activity> _currentActivities = {};

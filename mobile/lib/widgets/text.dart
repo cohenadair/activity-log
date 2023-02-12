@@ -20,14 +20,13 @@ class AnimatedErrorText extends StatefulWidget {
   final String? text;
   final EdgeInsets padding;
 
-  AnimatedErrorText(this.text, {EdgeInsets padding = insetsZero})
-      : padding = padding;
+  const AnimatedErrorText(this.text, {this.padding = insetsZero});
 
   @override
-  _AnimatedErrorTextState createState() => _AnimatedErrorTextState();
+  AnimatedErrorTextState createState() => AnimatedErrorTextState();
 }
 
-class _AnimatedErrorTextState extends State<AnimatedErrorText>
+class AnimatedErrorTextState extends State<AnimatedErrorText>
     with TickerProviderStateMixin {
   // Animation settings are copied from InputDecorator in order to stay
   // consistent with Material form widgets.
@@ -48,7 +47,7 @@ class _AnimatedErrorTextState extends State<AnimatedErrorText>
 
     _animationOffset = Tween<Offset>(
       begin: Offset(0.0, yStartOffset),
-      end: Offset(0.0, 0.0),
+      end: const Offset(0.0, 0.0),
     ).animate(CurvedAnimation(
       parent: _controller,
       curve: Curves.linear,
@@ -99,7 +98,7 @@ class _AnimatedErrorTextState extends State<AnimatedErrorText>
 class ErrorText extends StatelessWidget {
   final String text;
 
-  ErrorText(this.text);
+  const ErrorText(this.text);
 
   @override
   Widget build(BuildContext context) {
@@ -113,13 +112,13 @@ class ErrorText extends StatelessWidget {
 class WarningText extends StatelessWidget {
   final String text;
 
-  WarningText(this.text);
+  const WarningText(this.text);
 
   @override
   Widget build(BuildContext context) {
     return Text(
       text,
-      style: TextStyle(
+      style: const TextStyle(
         color: Colors.orange,
       ),
     );
@@ -129,13 +128,13 @@ class WarningText extends StatelessWidget {
 class HeadingText extends StatelessWidget {
   final String _text;
 
-  HeadingText(this._text);
+  const HeadingText(this._text);
 
   @override
   Widget build(BuildContext context) {
     return Text(
       _text,
-      style: Theme.of(context).textTheme.bodyText1!.copyWith(
+      style: Theme.of(context).textTheme.bodyLarge!.copyWith(
             color: Theme.of(context).primaryColor,
           ),
     );
@@ -145,13 +144,13 @@ class HeadingText extends StatelessWidget {
 class LargeHeadingText extends StatelessWidget {
   final String _text;
 
-  LargeHeadingText(this._text);
+  const LargeHeadingText(this._text);
 
   @override
   Widget build(BuildContext context) {
     return Text(
       _text,
-      style: TextStyle(
+      style: const TextStyle(
         fontSize: 18,
       ),
     );
@@ -163,16 +162,17 @@ class LargeHeadingText extends StatelessWidget {
 class SecondaryText extends StatelessWidget {
   final String text;
 
-  SecondaryText(this.text);
+  const SecondaryText(this.text);
 
   @override
   Widget build(BuildContext context) {
     return Text(
       text,
       // Same style used in ListTile.title.
-      style: Theme.of(context).textTheme.subtitle1!.copyWith(
-            color: Theme.of(context).disabledColor,
-          ),
+      style: Theme.of(context)
+          .textTheme
+          .titleMedium!
+          .copyWith(color: Theme.of(context).disabledColor),
     );
   }
 }
@@ -183,7 +183,7 @@ class EnabledText extends StatelessWidget {
   final String text;
   final bool enabled;
 
-  EnabledText(this.text, {this.enabled = false});
+  const EnabledText(this.text, {this.enabled = false});
 
   @override
   Widget build(BuildContext context) {
@@ -209,7 +209,7 @@ class TotalDurationText extends StatelessWidget {
   final bool showHighestTwoOnly;
   final DurationUnit largestDurationUnit;
 
-  TotalDurationText(
+  const TotalDurationText(
     this.durations, {
     this.includesDays = true,
     this.includesHours = true,
@@ -251,7 +251,7 @@ class DateDurationText extends StatelessWidget {
   final TextStyle? style;
   final String suffix;
 
-  DateDurationText(
+  const DateDurationText(
     this.startDateTime,
     this.duration, {
     this.clock = const Clock(),
@@ -318,7 +318,7 @@ class DateDurationText extends StatelessWidget {
 class RunningDurationText extends StatelessWidget {
   final Duration _duration;
 
-  RunningDurationText(this._duration);
+  const RunningDurationText(this._duration);
 
   @override
   Widget build(BuildContext context) {
@@ -350,7 +350,7 @@ class TimeText extends StatelessWidget {
   final TimeOfDay time;
   final bool enabled;
 
-  TimeText(
+  const TimeText(
     this.time, {
     this.enabled = true,
   });
@@ -374,7 +374,7 @@ class TimeRangeText extends StatelessWidget {
   final TimeOfDay? endTime;
   final bool enabled;
 
-  TimeRangeText({
+  const TimeRangeText({
     required this.startTime,
     required this.endTime,
     this.enabled = false,
@@ -403,7 +403,7 @@ class DateText extends StatelessWidget {
   final DateTime date;
   final bool enabled;
 
-  DateText(
+  const DateText(
     this.date, {
     this.enabled = true,
   });

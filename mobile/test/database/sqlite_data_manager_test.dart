@@ -131,7 +131,10 @@ void main() {
 
       expect(result.activities, isNotNull);
       expect(result.activities.length, equals(1));
-      expect(result.activities[0].totalDuration, equals(Duration(hours: 2)));
+      expect(
+        result.activities[0].totalDuration,
+        equals(const Duration(hours: 2)),
+      );
 
       // Non-null input, 0 length.
       stubActivities([activity.toMap()]);
@@ -139,7 +142,10 @@ void main() {
 
       expect(result.activities, isNotNull);
       expect(result.activities.length, equals(1));
-      expect(result.activities[0].totalDuration, equals(Duration(hours: 2)));
+      expect(
+        result.activities[0].totalDuration,
+        equals(const Duration(hours: 2)),
+      );
     });
 
     test("Session start outside range, session end inside range", () async {
@@ -153,7 +159,7 @@ void main() {
           ),
         ],
         expectedLength: 1,
-        expectedDuration: Duration(hours: 3),
+        expectedDuration: const Duration(hours: 3),
       );
     });
 
@@ -168,7 +174,7 @@ void main() {
           ),
         ],
         expectedLength: 1,
-        expectedDuration: Duration(hours: 2),
+        expectedDuration: const Duration(hours: 2),
       );
     });
 
@@ -183,7 +189,7 @@ void main() {
           ),
         ],
         expectedLength: 1,
-        expectedDuration: Duration(days: 1),
+        expectedDuration: const Duration(days: 1),
       );
     });
 
@@ -198,7 +204,7 @@ void main() {
           ),
         ],
         expectedLength: 1,
-        expectedDuration: Duration(hours: 12),
+        expectedDuration: const Duration(hours: 12),
       );
     });
 
@@ -213,7 +219,7 @@ void main() {
           ),
         ],
         expectedLength: 1,
-        expectedDuration: Duration(),
+        expectedDuration: const Duration(),
       );
     });
 
@@ -228,7 +234,7 @@ void main() {
           ),
         ],
         expectedLength: 1,
-        expectedDuration: Duration(),
+        expectedDuration: const Duration(),
       );
     });
 
@@ -311,19 +317,31 @@ void main() {
       // Should be sorted alphabetically and have the correct duration.
 
       expect(result.activities[0].value.name, equals(activities[2].name));
-      expect(result.activities[0].totalDuration, equals(Duration(hours: 36)));
+      expect(
+        result.activities[0].totalDuration,
+        equals(const Duration(hours: 36)),
+      );
 
       expect(result.activities[1].value.name, equals(activities[0].name));
-      expect(result.activities[1].totalDuration, equals(Duration(hours: 16)));
+      expect(
+        result.activities[1].totalDuration,
+        equals(const Duration(hours: 16)),
+      );
 
       expect(result.activities[2].value.name, equals(activities[3].name));
-      expect(result.activities[2].totalDuration, equals(Duration(days: 31)));
+      expect(
+        result.activities[2].totalDuration,
+        equals(const Duration(days: 31)),
+      );
 
       expect(result.activities[3].value.name, equals(activities[1].name));
-      expect(result.activities[3].totalDuration, equals(Duration(hours: 8)));
+      expect(
+        result.activities[3].totalDuration,
+        equals(const Duration(hours: 8)),
+      );
 
       expect(result.activities[4].value.name, equals(activities[4].name));
-      expect(result.activities[4].totalDuration, equals(Duration()));
+      expect(result.activities[4].totalDuration, equals(const Duration()));
 
       // Last two activities do not have any overlapping sessions.
     });

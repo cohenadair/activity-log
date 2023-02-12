@@ -17,7 +17,7 @@ class ActivitySummary extends StatelessWidget {
   final SummarizedActivity activity;
   final ScrollController scrollController;
 
-  ActivitySummary({
+  const ActivitySummary({
     required this.app,
     required this.activity,
     required this.scrollController,

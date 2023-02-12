@@ -56,19 +56,21 @@ class FutureListener extends StatefulWidget {
         builder = null;
 
   @override
-  _FutureListenerState createState() => _FutureListenerState();
+  FutureListenerState createState() => FutureListenerState();
 }
 
-class _FutureListenerState extends State<FutureListener> {
-  List<StreamSubscription> _onUpdateEvents = [];
-  List<Future> _futures = [];
+class FutureListenerState extends State<FutureListener> {
+  final List<StreamSubscription> _onUpdateEvents = [];
+  final List<Future> _futures = [];
 
   @override
   void initState() {
     super.initState();
 
-    widget.streams.forEach((stream) => _onUpdateEvents
-        .add(stream.listen((newValue) => setState(() => _updateFutures()))));
+    for (var stream in widget.streams) {
+      _onUpdateEvents
+          .add(stream.listen((newValue) => setState(() => _updateFutures())));
+    }
 
     _updateFutures();
   }
@@ -76,7 +78,9 @@ class _FutureListenerState extends State<FutureListener> {
   @override
   void dispose() {
     super.dispose();
-    _onUpdateEvents.forEach((event) => event.cancel());
+    for (var event in _onUpdateEvents) {
+      event.cancel();
+    }
   }
 
   @override
@@ -115,8 +119,8 @@ class _FutureListenerState extends State<FutureListener> {
 
   void _updateFutures() {
     _futures.clear();
-    widget.getFutureCallbacks.forEach((getFuture) {
+    for (var getFuture in widget.getFutureCallbacks) {
       _futures.add(getFuture());
-    });
+    }
   }
 }

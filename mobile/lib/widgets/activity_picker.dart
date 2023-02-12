@@ -16,17 +16,17 @@ class ActivityPicker extends StatefulWidget {
   /// This function is invoked with `null` if "All activities" is selected.
   final OnListPickerChanged<Set<Activity>> onPickedActivitiesChanged;
 
-  ActivityPicker({
+  const ActivityPicker({
     required this.app,
     required this.initialActivities,
     required this.onPickedActivitiesChanged,
   });
 
   @override
-  _ActivityPickerState createState() => _ActivityPickerState();
+  ActivityPickerState createState() => ActivityPickerState();
 }
 
-class _ActivityPickerState extends State<ActivityPicker> {
+class ActivityPickerState extends State<ActivityPicker> {
   late Activity _allActivitiesActivity;
 
   @override
@@ -41,7 +41,7 @@ class _ActivityPickerState extends State<ActivityPicker> {
           return ListPicker<Activity>(
             allowsMultiSelect: true,
             initialValues: widget.initialActivities.isEmpty
-                ? Set.of([_allActivitiesActivity])
+                ? {_allActivitiesActivity}
                 : widget.initialActivities,
             onChanged: (Set<Activity> newActivities) {
               if (newActivities.first == _allActivitiesActivity) {

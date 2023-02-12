@@ -18,7 +18,7 @@ class EditSessionPage extends StatefulWidget {
   final Activity _activity;
   final Session? _editingSession;
 
-  EditSessionPage({
+  const EditSessionPage({
     required AppManager app,
     required Activity activity,
     Session? editingSession,
@@ -27,10 +27,10 @@ class EditSessionPage extends StatefulWidget {
         _editingSession = editingSession;
 
   @override
-  _EditSessionPageState createState() => _EditSessionPageState();
+  EditSessionPageState createState() => EditSessionPageState();
 }
 
-class _EditSessionPageState extends State<EditSessionPage> {
+class EditSessionPageState extends State<EditSessionPage> {
   final _formKey = GlobalKey<FormState>();
 
   AppManager get _app => widget._app;
@@ -91,7 +91,7 @@ class _EditSessionPageState extends State<EditSessionPage> {
           children: <Widget>[
             AnimatedErrorText(
               _formValidationValue,
-              padding: EdgeInsets.only(
+              padding: const EdgeInsets.only(
                 left: paddingDefault,
                 right: paddingDefault,
                 top: paddingSmall,
@@ -148,14 +148,14 @@ class _EditSessionPageState extends State<EditSessionPage> {
             ),
             Container(height: paddingDefault),
             ListItem(
-              contentPadding: EdgeInsets.only(
+              contentPadding: const EdgeInsets.only(
                 left: paddingDefault,
               ),
               title: Row(
                 children: [
                   Text(Strings.of(context).editSessionPageBankedSession),
                   IconButton(
-                    icon: Icon(Icons.help_outline),
+                    icon: const Icon(Icons.help_outline),
                     visualDensity: VisualDensity.compact,
                     onPressed: () => showOk(
                       context: context,
@@ -205,17 +205,16 @@ class _EditSessionPageState extends State<EditSessionPage> {
         .then((Session? overlappingSession) {
       if (overlappingSession != null) {
         setState(() {
-          String conflictingString = DateFormat(monthDayFormat)
-                  .format(overlappingSession.startDateTime) +
-              ", " +
-              formatTimeOfDay(context, overlappingSession.startTimeOfDay);
+          String conflictingString =
+              "${DateFormat(monthDayFormat).format(overlappingSession.startDateTime)}, "
+              "${formatTimeOfDay(context, overlappingSession.startTimeOfDay)}";
 
           if (overlappingSession.inProgress) {
             conflictingString +=
                 " (${Strings.of(context).sessionListInProgress})";
           } else {
-            conflictingString += " - " +
-                formatTimeOfDay(context, overlappingSession.endTimeOfDay!);
+            conflictingString +=
+                " - ${formatTimeOfDay(context, overlappingSession.endTimeOfDay!)}";
           }
 
           _formValidationValue = format(

@@ -1,8 +1,8 @@
 import 'package:mobile/model/model.dart';
 
 class Activity extends Model {
-  static final keyName = "name";
-  static final keyCurrentSessionId = "current_session_id";
+  static const keyName = "name";
+  static const keyCurrentSessionId = "current_session_id";
 
   final String _name;
   final String? _currentSessionId;
@@ -50,6 +50,7 @@ class ActivityBuilder extends ModelBuilder {
         currentSessionId = activity._currentSessionId,
         super.fromModel(activity);
 
+  @override
   Activity get build {
     return Activity.fromBuilder(this);
   }

@@ -36,11 +36,11 @@ void main() {
         sessions: [],
       );
 
-      expect(activity.totalDuration, equals(Duration()));
-      expect(activity.averageDurationOverall, equals(Duration()));
-      expect(activity.averageDurationPerDay, equals(Duration()));
-      expect(activity.averageDurationPerWeek, equals(Duration()));
-      expect(activity.averageDurationPerMonth, equals(Duration()));
+      expect(activity.totalDuration, equals(const Duration()));
+      expect(activity.averageDurationOverall, equals(const Duration()));
+      expect(activity.averageDurationPerDay, equals(const Duration()));
+      expect(activity.averageDurationPerWeek, equals(const Duration()));
+      expect(activity.averageDurationPerMonth, equals(const Duration()));
       expect(activity.longestStreak, equals(0));
       expect(activity.sessionsPerDay, equals(0));
       expect(activity.sessionsPerWeek, equals(0));
@@ -56,11 +56,11 @@ void main() {
         )),
       );
 
-      expect(activity.totalDuration, equals(Duration()));
-      expect(activity.averageDurationOverall, equals(Duration()));
-      expect(activity.averageDurationPerDay, equals(Duration()));
-      expect(activity.averageDurationPerWeek, equals(Duration()));
-      expect(activity.averageDurationPerMonth, equals(Duration()));
+      expect(activity.totalDuration, equals(const Duration()));
+      expect(activity.averageDurationOverall, equals(const Duration()));
+      expect(activity.averageDurationPerDay, equals(const Duration()));
+      expect(activity.averageDurationPerWeek, equals(const Duration()));
+      expect(activity.averageDurationPerMonth, equals(const Duration()));
       expect(activity.longestStreak, equals(0));
       expect(activity.sessionsPerDay, equals(0));
       expect(activity.sessionsPerWeek, equals(0));
@@ -92,8 +92,8 @@ void main() {
         sessions: sessions,
       );
 
-      expect(activity.totalDuration, equals(Duration(hours: 12)));
-      expect(activity.averageDurationOverall, equals(Duration(hours: 6)));
+      expect(activity.totalDuration, equals(const Duration(hours: 12)));
+      expect(activity.averageDurationOverall, equals(const Duration(hours: 6)));
       expect(activity.averageDurationPerDay.inMilliseconds, equals(8640000));
       expect(activity.averageDurationPerWeek.inMilliseconds, equals(60480000));
       expect(
@@ -505,7 +505,7 @@ void main() {
       expect(result.longestSession!.first, equals(activity3));
       expect(result.longestSession!.second.millisecondsDuration,
           equals(longestSession.millisecondsDuration));
-      expect(result.totalDuration, Duration(hours: 18).inMilliseconds);
+      expect(result.totalDuration, const Duration(hours: 18).inMilliseconds);
     });
   });
 

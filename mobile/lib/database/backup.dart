@@ -34,7 +34,7 @@ Future<String> export(
   AppManager app, {
   Clock clock = const Clock(),
 }) async {
-  Map<String, dynamic> jsonMap = Map();
+  Map<String, dynamic> jsonMap = {};
 
   // Activities.
   List<Activity> activityList = await app.dataManager.activities;
@@ -63,7 +63,7 @@ Future<String> export(
   }).toList();
 
   // Preferences.
-  jsonMap[_keyPreferences] = Map<String, dynamic>();
+  jsonMap[_keyPreferences] = <String, dynamic>{};
   jsonMap[_keyPreferences][_keyPreferencesLargestDurationUnit] =
       app.preferencesManager.largestDurationUnit.index;
   jsonMap[_keyPreferences][_keyPreferencesHomeDateRange] =

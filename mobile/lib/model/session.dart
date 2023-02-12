@@ -4,10 +4,10 @@ import 'package:mobile/utils/date_time_utils.dart';
 import 'package:quiver/time.dart';
 
 class Session extends Model implements Comparable<Session> {
-  static final keyActivityId = "activity_id";
-  static final keyStartTimestamp = "start_timestamp";
-  static final keyEndTimestamp = "end_timestamp";
-  static final keyIsBanked = "is_banked";
+  static const keyActivityId = "activity_id";
+  static const keyStartTimestamp = "start_timestamp";
+  static const keyEndTimestamp = "end_timestamp";
+  static const keyIsBanked = "is_banked";
 
   final String _activityId;
   final int _startTimestamp;
@@ -25,7 +25,7 @@ class Session extends Model implements Comparable<Session> {
         _startTimestamp = map[keyStartTimestamp] ?? -1,
         _endTimestamp = map[keyEndTimestamp],
         _isBanked = map[keyIsBanked] == 1,
-        _clock = Clock(),
+        _clock = const Clock(),
         super.fromMap(map);
 
   Session.fromBuilder(SessionBuilder builder)
@@ -34,7 +34,7 @@ class Session extends Model implements Comparable<Session> {
         _startTimestamp = builder.startTimestamp!,
         _endTimestamp = builder.endTimestamp,
         _isBanked = builder.isBanked,
-        _clock = builder.clock ?? Clock(),
+        _clock = builder.clock ?? const Clock(),
         super.fromBuilder(builder);
 
   int get millisecondsDuration {
@@ -93,11 +93,11 @@ class Session extends Model implements Comparable<Session> {
   @override
   int compareTo(Session other) {
     int durationCompare =
-        this.millisecondsDuration.compareTo(other.millisecondsDuration);
+        millisecondsDuration.compareTo(other.millisecondsDuration);
 
     if (durationCompare == 0) {
       // Fallback on session start time.
-      return this.startDateTime.compareTo(other.startDateTime);
+      return startDateTime.compareTo(other.startDateTime);
     }
 
     return durationCompare;
@@ -147,15 +147,10 @@ class SessionBuilder extends ModelBuilder {
     return this;
   }
 
+  @override
   Session get build {
-    if (clock == null) {
-      clock = Clock();
-    }
-
-    if (startTimestamp == null) {
-      startTimestamp = clock!.now().millisecondsSinceEpoch;
-    }
-
+    clock ??= const Clock();
+    startTimestamp ??= clock!.now().millisecondsSinceEpoch;
     return Session.fromBuilder(this);
   }
 }

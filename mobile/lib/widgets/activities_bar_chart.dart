@@ -1,4 +1,4 @@
-import 'package:charts_flutter/flutter.dart' as Charts;
+import 'package:charts_flutter/flutter.dart' as f_charts;
 import 'package:flutter/material.dart';
 import 'package:mobile/app_manager.dart';
 import 'package:mobile/i18n/strings.dart';
@@ -19,7 +19,7 @@ class ActivitiesDurationBarChart extends StatelessWidget {
   final List<SummarizedActivity> activities;
   final ActivitiesBarChartOnSelectCallback onSelect;
 
-  ActivitiesDurationBarChart({
+  const ActivitiesDurationBarChart({
     required this.app,
     required this.activities,
     required this.padding,
@@ -46,7 +46,7 @@ class ActivitiesDurationBarChart extends StatelessWidget {
             largestDurationUnit: largestDurationUnit,
           )})",
           onMeasure: (activity) => activity.totalDuration.inSeconds,
-          primaryAxisSpec: Charts.NumericAxisSpec(
+          primaryAxisSpec: f_charts.NumericAxisSpec(
             tickFormatterSpec: _DurationTickFormatter(
               context: context,
               formatCallback: _getFormatCallback(context, largestDurationUnit),
@@ -62,13 +62,13 @@ class ActivitiesDurationBarChart extends StatelessWidget {
     BuildContext context,
     DurationUnit largestDurationUnit,
   ) {
-    Duration longestDuration = Duration();
+    Duration longestDuration = const Duration();
 
-    activities.forEach((SummarizedActivity activity) {
+    for (var activity in activities) {
       if (activity.totalDuration > longestDuration) {
         longestDuration = activity.totalDuration;
       }
-    });
+    }
 
     if (longestDuration.inDays > 0) {
       // 0d 0h
@@ -107,7 +107,7 @@ class ActivitiesNumberOfSessionsBarChart extends StatelessWidget {
   final List<SummarizedActivity> activities;
   final ActivitiesBarChartOnSelectCallback onSelect;
 
-  ActivitiesNumberOfSessionsBarChart(
+  const ActivitiesNumberOfSessionsBarChart(
     this.activities, {
     required this.padding,
     required this.onSelect,
@@ -133,7 +133,7 @@ class _ActivitiesBarChart extends StatelessWidget {
   final String title;
   final EdgeInsets padding;
   final List<SummarizedActivity> activities;
-  final Charts.NumericAxisSpec? primaryAxisSpec;
+  final f_charts.NumericAxisSpec? primaryAxisSpec;
   final ActivitiesBarChartOnSelectCallback onSelect;
 
   /// Return the quantity value for the given [SummarizedActivity].
@@ -161,23 +161,23 @@ class _ActivitiesBarChart extends StatelessWidget {
       child: Column(
         children: <Widget>[
           isEmpty(title) ? Empty() : LargeHeadingText(title),
-          Container(
+          SizedBox(
             height: activities.length == 1
                 ? chartBarHeightSingle
                 : (activities.length * chartBarHeightDefault).toDouble(),
             child: SafeArea(
-              child: Charts.BarChart(
+              child: f_charts.BarChart(
                 _getSeriesList(context),
                 animate: true,
                 vertical: false,
-                barRendererDecorator: Charts.BarLabelDecorator<String>(),
-                domainAxis: Charts.OrdinalAxisSpec(
-                  renderSpec: Charts.NoneRenderSpec(),
+                barRendererDecorator: f_charts.BarLabelDecorator<String>(),
+                domainAxis: const f_charts.OrdinalAxisSpec(
+                  renderSpec: f_charts.NoneRenderSpec(),
                 ),
                 primaryMeasureAxis: primaryAxisSpec,
                 selectionModels: [
-                  Charts.SelectionModelConfig(
-                    changedListener: (Charts.SelectionModel model) {
+                  f_charts.SelectionModelConfig(
+                    changedListener: (f_charts.SelectionModel model) {
                       onSelect(model.selectedDatum.first.datum);
                     },
                   ),
@@ -190,17 +190,17 @@ class _ActivitiesBarChart extends StatelessWidget {
     );
   }
 
-  List<Charts.Series<SummarizedActivity, String>> _getSeriesList(
+  List<f_charts.Series<SummarizedActivity, String>> _getSeriesList(
     BuildContext context,
   ) {
     return [
-      Charts.Series<SummarizedActivity, String>(
+      f_charts.Series<SummarizedActivity, String>(
         id: chartId,
         data: activities,
         domainFn: (SummarizedActivity activity, _) => activity.value.name,
         measureFn: (SummarizedActivity activity, _) => onMeasure(activity),
         colorFn: (_, __) =>
-            Charts.ColorUtil.fromDartColor(Theme.of(context).primaryColor),
+            f_charts.ColorUtil.fromDartColor(Theme.of(context).primaryColor),
         labelAccessorFn: (SummarizedActivity activity, _) =>
             onBuildLabel(activity),
       ),
@@ -212,8 +212,8 @@ typedef _DurationTickFormatCallback = String Function(Duration);
 
 /// A custom formatter for the measure axis, so units can be displayed as "5d"
 /// rather than "5".
-class _DurationTickFormatter extends Charts.SimpleTickFormatterBase<num>
-    implements Charts.NumericTickFormatterSpec {
+class _DurationTickFormatter extends f_charts.SimpleTickFormatterBase<num>
+    implements f_charts.NumericTickFormatterSpec {
   final BuildContext context;
   final _DurationTickFormatCallback formatCallback;
 
@@ -228,7 +228,8 @@ class _DurationTickFormatter extends Charts.SimpleTickFormatterBase<num>
   }
 
   @override
-  Charts.TickFormatter<num> createTickFormatter(Charts.ChartContext context) {
+  f_charts.TickFormatter<num> createTickFormatter(
+      f_charts.ChartContext context) {
     return _DurationTickFormatter(
       context: this.context,
       formatCallback: formatCallback,

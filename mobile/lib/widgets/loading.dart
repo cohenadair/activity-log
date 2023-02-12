@@ -5,7 +5,7 @@ class Loading extends StatelessWidget {
   static Widget centered() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
+      children: const <Widget>[
         Loading(padding: insetsDefault),
       ],
     );
@@ -14,15 +14,15 @@ class Loading extends StatelessWidget {
   final EdgeInsets _padding;
 
   // ignore: missing_identifier
-  Loading({EdgeInsets padding = insetsZero}) : _padding = padding;
+  const Loading({EdgeInsets padding = insetsZero}) : _padding = padding;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: _padding,
       child: SizedBox.fromSize(
-        size: Size(20, 20),
-        child: CircularProgressIndicator(
+        size: const Size(20, 20),
+        child: const CircularProgressIndicator(
           strokeWidth: 2,
         ),
       ),

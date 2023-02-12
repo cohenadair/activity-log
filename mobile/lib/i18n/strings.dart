@@ -7,7 +7,7 @@ import 'package:mobile/i18n/english_strings.dart';
 class Strings {
   static const List<String> _supportedLanguages = ["en"];
 
-  static Map<String, Map<String, Map<String, String>>> _values = {
+  static final Map<String, Map<String, Map<String, String>>> _values = {
     "en": englishStrings,
   };
 

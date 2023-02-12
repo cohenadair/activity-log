@@ -15,7 +15,7 @@ class EditPage extends StatelessWidget {
   final Form _form;
   final EdgeInsets _padding;
 
-  EditPage({
+  const EditPage({
     required String title,
     required VoidCallback onSave,
     required VoidCallback onDelete,
@@ -72,7 +72,7 @@ class EditPage extends StatelessWidget {
   Widget _getDeleteButton(BuildContext context) {
     return Button(
       text: Strings.of(context).delete,
-      icon: Icon(
+      icon: const Icon(
         Icons.delete,
         color: Colors.white,
       ),

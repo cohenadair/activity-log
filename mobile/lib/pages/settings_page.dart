@@ -25,25 +25,26 @@ import 'package:mobile/widgets/loading.dart';
 import 'package:mobile/widgets/page.dart' as p;
 import 'package:mobile/widgets/text.dart';
 import 'package:mobile/widgets/widget.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 class SettingsPage extends StatefulWidget {
   final AppManager app;
 
-  SettingsPage(this.app);
+  const SettingsPage(this.app);
 
   @override
-  _SettingsPageState createState() => _SettingsPageState();
+  SettingsPageState createState() => SettingsPageState();
 }
 
-class _SettingsPageState extends State<SettingsPage> {
-  static final _supportEmail = "cohenadair@gmail.com";
-  static final _rateAppStoreUrl =
+class SettingsPageState extends State<SettingsPage> {
+  static const _supportEmail = "cohenadair@gmail.com";
+  static const _rateAppStoreUrl =
       "itms-apps://itunes.apple.com/app/id1458926666?action=write-review";
-  static final _playStoreUrl = "market://details?id=";
-  static final _privacyUrl =
+  static const _playStoreUrl = "market://details?id=";
+  static const _privacyUrl =
       "https://cohenadair.github.io/activity-log/privacy_policy.html";
-  static final _backupFileExtension = "dat";
-  static final _backupFileName = "ActivityLogBackup.$_backupFileExtension";
+  static const _backupFileExtension = "dat";
+  static const _backupFileName = "ActivityLogBackup.$_backupFileExtension";
 
   bool _isCreatingBackup = false;
   bool _isImporting = false;
@@ -78,7 +79,7 @@ class _SettingsPageState extends State<SettingsPage> {
 
   Widget _buildHeading(String title) {
     return Padding(
-      padding: EdgeInsets.only(
+      padding: const EdgeInsets.only(
         top: paddingDefault,
         bottom: paddingSmall,
         left: paddingDefault,
@@ -96,7 +97,7 @@ class _SettingsPageState extends State<SettingsPage> {
       builder: (BuildContext context, DurationUnit durationUnit) {
         return ListPicker<DurationUnit>(
           pageTitle: Strings.of(context).settingsPageLargestDurationLabel,
-          initialValues: Set.of([durationUnit]),
+          initialValues: {durationUnit},
           showsValueOnTrailing: true,
           onChanged: (selectedValues) {
             widget.app.preferencesManager
@@ -131,7 +132,7 @@ class _SettingsPageState extends State<SettingsPage> {
       largestDurationUnit: unit,
       context: context,
       durations: [
-        Duration(days: 3, hours: 15, minutes: 30, seconds: 55),
+        const Duration(days: 3, hours: 15, minutes: 30, seconds: 55),
       ],
     );
   }
@@ -142,7 +143,7 @@ class _SettingsPageState extends State<SettingsPage> {
       builder: (BuildContext context, DisplayDateRange dateRange) {
         return ListPicker<DisplayDateRange>(
           pageTitle: Strings.of(context).settingsPageHomeDateRangeLabel,
-          initialValues: Set.of([dateRange]),
+          initialValues: {dateRange},
           showsValueOnTrailing: true,
           onChanged: (selectedValues) {
             widget.app.preferencesManager
@@ -221,7 +222,7 @@ class _SettingsPageState extends State<SettingsPage> {
           if (snapshot.hasData) {
             return SecondaryText(snapshot.data!.version);
           } else {
-            return Loading();
+            return const Loading();
           }
         },
       ),
@@ -241,7 +242,7 @@ class _SettingsPageState extends State<SettingsPage> {
     return ListItem(
       title: Text(Strings.of(context).settingsPageExportLabel),
       subtitle: Text(Strings.of(context).settingsPageExportDescription),
-      trailing: _isCreatingBackup ? Loading() : Empty(),
+      trailing: _isCreatingBackup ? const Loading() : Empty(),
       onTap: () {
         setState(() {
           _isCreatingBackup = true;
@@ -256,7 +257,7 @@ class _SettingsPageState extends State<SettingsPage> {
     return ListItem(
       title: Text(Strings.of(context).settingsPageImportLabel),
       subtitle: Text(Strings.of(context).settingsPageImportDescription),
-      trailing: _isImporting ? Loading() : Empty(),
+      trailing: _isImporting ? const Loading() : Empty(),
       onTap: _startImport,
     );
   }
@@ -265,7 +266,7 @@ class _SettingsPageState extends State<SettingsPage> {
     // Save backup file to sandbox cache. It'll be small and it'll be overridden
     // by subsequent backups, so let the system handle deletion.
     var tempDir = await getTemporaryDirectory();
-    var path = "${tempDir.path}/backup.activitylog";
+    var path = "${tempDir.path}/$_backupFileName";
     var backupFile = File(path);
     backupFile.writeAsStringSync(await export(widget.app));
 
@@ -355,7 +356,7 @@ class _SettingsPageState extends State<SettingsPage> {
             onTap: () async {
               await _sendEmail(
                 subject: "Activity Log Import Error",
-                body: "${result.toString()}",
+                body: result.toString(),
                 attachmentPath: importFile.path,
               );
             },
@@ -377,7 +378,7 @@ class _SettingsPageState extends State<SettingsPage> {
     try {
       String osName = Platform.isAndroid ? "Android" : "iOS";
       await FlutterEmailSender.send(Email(
-        subject: subject + " ($osName)",
+        subject: "$subject ($osName)",
         body: body ?? "",
         recipients: [_supportEmail],
         attachmentPaths: isEmpty(attachmentPath) ? [] : [attachmentPath!],

@@ -16,7 +16,7 @@ class SessionListTile extends StatelessWidget {
   final bool _hasDivider;
   final OnTapSessionListTile? _onTap;
 
-  SessionListTile({
+  const SessionListTile({
     required AppManager app,
     required Session session,
     bool hasDivider = false,
@@ -45,7 +45,7 @@ class SessionListTile extends StatelessWidget {
           subtitle: _getSubtitle(context),
           trailing: IconButton(
             color: Colors.red,
-            icon: Icon(Icons.delete),
+            icon: const Icon(Icons.delete),
             onPressed: () {
               showDeleteDialog(
                 context: context,
@@ -57,7 +57,7 @@ class SessionListTile extends StatelessWidget {
             },
           ),
         ),
-        _hasDivider ? Divider(height: 1) : Empty(),
+        _hasDivider ? const Divider(height: 1) : Empty(),
       ],
     );
   }

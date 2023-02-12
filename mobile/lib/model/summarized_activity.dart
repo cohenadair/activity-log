@@ -63,16 +63,12 @@ class SummarizedActivity {
   }
 
   Session? get shortestSession {
-    if (_cachedShortestSession == null) {
-      _cachedShortestSession = min(sessions);
-    }
+    _cachedShortestSession ??= min(sessions);
     return _cachedShortestSession;
   }
 
   Session? get longestSession {
-    if (_cachedLongestSession == null) {
-      _cachedLongestSession = max(sessions);
-    }
+    _cachedLongestSession ??= max(sessions);
     return _cachedLongestSession;
   }
 
@@ -122,10 +118,10 @@ class SummarizedActivity {
 
   void _calculate() {
     if (sessions.isEmpty) {
-      _cachedTotalDuration = Duration();
-      _cachedDurationPerDay = Duration();
-      _cachedDurationPerWeek = Duration();
-      _cachedDurationPerMonth = Duration();
+      _cachedTotalDuration = const Duration();
+      _cachedDurationPerDay = const Duration();
+      _cachedDurationPerWeek = const Duration();
+      _cachedDurationPerMonth = const Duration();
       _cachedLongestStreak = 0;
       _cachedCurrentStreak = 0;
       _cachedSessionsPerDay = 0;
@@ -138,14 +134,14 @@ class SummarizedActivity {
     Set<DateTime> allDateTimes = SplayTreeSet();
 
     int totalMs = 0;
-    sessions.forEach((Session session) {
+    for (var session in sessions) {
       totalMs += session.millisecondsDuration;
       allDateTimes.add(dateTimeToDayAccuracy(session.startDateTime));
 
       if (session.endDateTime != null) {
         allDateTimes.add(dateTimeToDayAccuracy(session.endDateTime!));
       }
-    });
+    }
 
     _cachedTotalDuration = Duration(milliseconds: totalMs);
 
@@ -204,7 +200,7 @@ class SummarizedActivity {
 
   Duration getAverageDuration(num divisor) {
     if (divisor <= 0) {
-      return Duration();
+      return const Duration();
     }
 
     return Duration(
@@ -221,8 +217,7 @@ class SummarizedActivity {
 
   @override
   String toString() {
-    return "{activity=${value.name}; duration=$totalDuration; " +
-        "numberOfSessions=$numberOfSessions}";
+    return "{activity=${value.name}; duration=$totalDuration; numberOfSessions=$numberOfSessions}";
   }
 }
 
@@ -288,22 +283,22 @@ class SummarizedActivityList {
   void _calculate() {
     _cachedTotalDuration = 0;
 
-    activities.forEach((SummarizedActivity activity) {
+    for (var activity in activities) {
       if (_cachedMostFrequentActivity == null ||
           activity.sessions.length > _cachedMostFrequentActivity!.second) {
         _cachedMostFrequentActivity =
             Tuple(activity.value, activity.sessions.length);
       }
 
-      activity.sessions.forEach((Session session) {
+      for (var session in activity.sessions) {
         if (_cachedLongestSession == null ||
             session > _cachedLongestSession!.second) {
           _cachedLongestSession = Tuple(activity.value, session);
         }
-      });
+      }
 
       _cachedTotalDuration =
           _cachedTotalDuration! + activity.totalDuration.inMilliseconds;
-    });
+    }
   }
 }

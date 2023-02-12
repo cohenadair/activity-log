@@ -56,9 +56,7 @@ String formatDateTime({
 /// Example:
 ///   Dec. 8, 2018 - Dec. 29, 2018
 String formatDateRange(DateRange dateRange) {
-  return DateFormat(monthDayYearFormat).format(dateRange.startDate) +
-      " - " +
-      DateFormat(monthDayYearFormat).format(dateRange.endDate);
+  return "${DateFormat(monthDayYearFormat).format(dateRange.startDate)} - ${DateFormat(monthDayYearFormat).format(dateRange.endDate)}";
 }
 
 /// Returns a formatted [DateTime] to be displayed to the user. Includes
@@ -131,9 +129,9 @@ String formatTotalDuration({
   largestDurationUnit ??= DurationUnit.days;
   int totalMillis = 0;
 
-  durations.forEach((Duration duration) {
+  for (var duration in durations) {
     totalMillis += duration.inMilliseconds;
-  });
+  }
   includesDays = includesDays && largestDurationUnit == DurationUnit.days;
   includesHours = includesHours && largestDurationUnit != DurationUnit.minutes;
 

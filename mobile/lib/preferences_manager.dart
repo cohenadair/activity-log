@@ -86,7 +86,7 @@ class PreferencesManager {
   }
 
   void setStatsSelectedActivityIds(List<String>? ids) async {
-    if (DeepCollectionEquality.unordered()
+    if (const DeepCollectionEquality.unordered()
         .equals(_statsSelectedActivityIds, ids)) {
       return;
     }
@@ -140,7 +140,7 @@ class _SimpleStreamBuilder<T> extends StatelessWidget {
   final T Function() valueCallback;
   final Widget Function(BuildContext, T) builder;
 
-  _SimpleStreamBuilder({
+  const _SimpleStreamBuilder({
     required this.app,
     required this.stream,
     required this.valueCallback,

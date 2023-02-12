@@ -44,17 +44,17 @@ void main() {
       // >
       expect(builder1.build > builder2.build, isTrue);
 
-      builder1..endTimestamp = 250;
+      builder1.endTimestamp = 250;
       expect(builder1.build > builder2.build, isFalse);
 
       // <
       expect(builder1.build < builder2.build, isTrue);
 
-      builder1..endTimestamp = 750;
+      builder1.endTimestamp = 750;
       expect(builder1.build < builder2.build, isFalse);
 
       // <=
-      builder1..endTimestamp = 500;
+      builder1.endTimestamp = 500;
       expect(builder1.build <= builder2.build, true);
 
       // >=
@@ -76,7 +76,7 @@ void main() {
       expect(builder1.build.compareTo(builder2.build), equals(1));
 
       // Less than
-      builder1..endTimestamp = 100;
+      builder1.endTimestamp = 100;
       expect(builder1.build.compareTo(builder2.build), equals(-1));
     });
 

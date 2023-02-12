@@ -8,14 +8,14 @@ const defaultAnimationDuration = Duration(milliseconds: 200);
 class Empty extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return SizedBox();
+    return const SizedBox();
   }
 }
 
 class MinDivider extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Divider(height: 1);
+    return const Divider(height: 1);
   }
 }
 
@@ -26,7 +26,7 @@ class FadeIn<T> extends StatefulWidget {
   final bool visible;
   final T value;
 
-  FadeIn({
+  const FadeIn({
     required this.childBuilder,
     this.duration,
     this.visible = true,
@@ -34,10 +34,10 @@ class FadeIn<T> extends StatefulWidget {
   });
 
   @override
-  _FadeInState createState() => _FadeInState<T>();
+  FadeInState createState() => FadeInState<T>();
 }
 
-class _FadeInState<T> extends State<FadeIn<T>> {
+class FadeInState<T> extends State<FadeIn<T>> {
   late T _lastValue;
 
   @override
@@ -62,7 +62,7 @@ class EmptyPageHelp extends StatelessWidget {
   final IconData icon;
   final String message;
 
-  EmptyPageHelp({
+  const EmptyPageHelp({
     required this.icon,
     required this.message,
   });

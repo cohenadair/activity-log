@@ -4,10 +4,10 @@ import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
 class SQLiteOpenHelper {
-  static final String _name = "activitylog.db";
-  static final int _version = 2;
+  static const String _name = "activitylog.db";
+  static const int _version = 2;
 
-  static final List<String> _schema0 = [
+  static const List<String> _schema0 = [
     """
     CREATE TABLE activity (
       id TEXT PRIMARY KEY,
@@ -25,13 +25,13 @@ class SQLiteOpenHelper {
     """
   ];
 
-  static final List<String> _schema1 = [
+  static const List<String> _schema1 = [
     """
     ALTER TABLE session ADD COLUMN is_banked BOOLEAN DEFAULT false
     """,
   ];
 
-  static final List<List<String>> _schema = [
+  static const List<List<String>> _schema = [
     _schema0,
     _schema1,
   ];
@@ -48,7 +48,9 @@ class SQLiteOpenHelper {
   }
 
   static void _onCreate(Database db, int version) {
-    _schema.forEach((List<String> schema) => _executeSchema(db, schema));
+    for (var schema in _schema) {
+      _executeSchema(db, schema);
+    }
   }
 
   static void _onUpgrade(Database db, int oldVersion, int newVersion) {
@@ -61,6 +63,8 @@ class SQLiteOpenHelper {
   }
 
   static void _executeSchema(Database db, List<String> schema) {
-    schema.forEach((String query) => db.execute(query));
+    for (var query in schema) {
+      db.execute(query);
+    }
   }
 }

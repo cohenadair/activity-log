@@ -21,7 +21,7 @@ class Page extends StatelessWidget {
   final Widget _child;
   final PageAppBarStyle? _appBarStyle;
 
-  Page({
+  const Page({
     required Widget child,
     PageAppBarStyle? appBarStyle,
   })  : _child = child,

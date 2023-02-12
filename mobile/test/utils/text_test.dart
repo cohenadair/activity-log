@@ -23,10 +23,10 @@ void main() {
 
     testWidgets("All", (WidgetTester tester) async {
       List<Duration> durations = [
-        Duration(days: 2),
-        Duration(hours: 5),
-        Duration(minutes: 45),
-        Duration(seconds: 30),
+        const Duration(days: 2),
+        const Duration(hours: 5),
+        const Duration(minutes: 45),
+        const Duration(seconds: 30),
       ];
 
       await tester.pumpWidget(Testable(TotalDurationText(durations)));
@@ -41,7 +41,7 @@ void main() {
 
     testWidgets("Days only", (WidgetTester tester) async {
       List<Duration> durations = [
-        Duration(days: 2),
+        const Duration(days: 2),
       ];
 
       await tester.pumpWidget(Testable(TotalDurationText(durations)));
@@ -56,7 +56,7 @@ void main() {
 
     testWidgets("Hours only", (WidgetTester tester) async {
       List<Duration> durations = [
-        Duration(hours: 10),
+        const Duration(hours: 10),
       ];
 
       await tester.pumpWidget(Testable(TotalDurationText(durations)));
@@ -71,7 +71,7 @@ void main() {
 
     testWidgets("Minutes only", (WidgetTester tester) async {
       List<Duration> durations = [
-        Duration(minutes: 20),
+        const Duration(minutes: 20),
       ];
 
       await tester.pumpWidget(Testable(TotalDurationText(durations)));
@@ -86,7 +86,7 @@ void main() {
 
     testWidgets("Seconds only", (WidgetTester tester) async {
       List<Duration> durations = [
-        Duration(seconds: 50),
+        const Duration(seconds: 50),
       ];
 
       await tester.pumpWidget(Testable(TotalDurationText(durations)));
@@ -101,10 +101,10 @@ void main() {
 
     testWidgets("Excluding days", (WidgetTester tester) async {
       List<Duration> durations = [
-        Duration(days: 2),
-        Duration(hours: 5),
-        Duration(minutes: 45),
-        Duration(seconds: 30),
+        const Duration(days: 2),
+        const Duration(hours: 5),
+        const Duration(minutes: 45),
+        const Duration(seconds: 30),
       ];
 
       await tester.pumpWidget(Testable(TotalDurationText(
@@ -116,10 +116,10 @@ void main() {
 
     testWidgets("Excluding hours", (WidgetTester tester) async {
       List<Duration> durations = [
-        Duration(days: 2),
-        Duration(hours: 5),
-        Duration(minutes: 45),
-        Duration(seconds: 30),
+        const Duration(days: 2),
+        const Duration(hours: 5),
+        const Duration(minutes: 45),
+        const Duration(seconds: 30),
       ];
 
       await tester.pumpWidget(Testable(TotalDurationText(
@@ -132,10 +132,10 @@ void main() {
 
     testWidgets("Excluding minutes", (WidgetTester tester) async {
       List<Duration> durations = [
-        Duration(days: 2),
-        Duration(hours: 5),
-        Duration(minutes: 45),
-        Duration(seconds: 30),
+        const Duration(days: 2),
+        const Duration(hours: 5),
+        const Duration(minutes: 45),
+        const Duration(seconds: 30),
       ];
 
       await tester.pumpWidget(Testable(TotalDurationText(
@@ -149,10 +149,10 @@ void main() {
 
     testWidgets("Excluding all", (WidgetTester tester) async {
       List<Duration> durations = [
-        Duration(days: 2),
-        Duration(hours: 5),
-        Duration(minutes: 45),
-        Duration(seconds: 30),
+        const Duration(days: 2),
+        const Duration(hours: 5),
+        const Duration(minutes: 45),
+        const Duration(seconds: 30),
       ];
 
       await tester.pumpWidget(Testable(TotalDurationText(
@@ -167,7 +167,7 @@ void main() {
 
     testWidgets("Show highest two only", (WidgetTester tester) async {
       List<Duration> durations = [
-        Duration(days: 2, hours: 5, minutes: 45, seconds: 30),
+        const Duration(days: 2, hours: 5, minutes: 45, seconds: 30),
       ];
 
       await tester.pumpWidget(Testable(TotalDurationText(
@@ -177,7 +177,7 @@ void main() {
       expect(find.text("2d 5h"), findsOneWidget);
 
       durations = [
-        Duration(hours: 5, minutes: 45, seconds: 30),
+        const Duration(hours: 5, minutes: 45, seconds: 30),
       ];
 
       await tester.pumpWidget(Testable(TotalDurationText(
@@ -188,7 +188,7 @@ void main() {
       expect(find.text("5h 45m"), findsOneWidget);
 
       durations = [
-        Duration(minutes: 45, seconds: 30),
+        const Duration(minutes: 45, seconds: 30),
       ];
 
       await tester.pumpWidget(Testable(TotalDurationText(
@@ -199,7 +199,7 @@ void main() {
       expect(find.text("45m 30s"), findsOneWidget);
 
       durations = [
-        Duration(seconds: 30),
+        const Duration(seconds: 30),
       ];
 
       await tester.pumpWidget(Testable(TotalDurationText(
@@ -212,7 +212,7 @@ void main() {
 
     testWidgets("With duration unit", (WidgetTester tester) async {
       List<Duration> durations = [
-        Duration(days: 2, hours: 5, minutes: 45, seconds: 30),
+        const Duration(days: 2, hours: 5, minutes: 45, seconds: 30),
       ];
 
       await tester.pumpWidget(Testable(TotalDurationText(
@@ -235,13 +235,16 @@ void main() {
 
     testWidgets("Today", (WidgetTester tester) async {
       await tester.pumpWidget(Testable(
-          DateDurationText(today.add(anHour), Duration(), clock: clock)));
+          DateDurationText(today.add(anHour), const Duration(), clock: clock)));
       expect(find.text("Today (0m)"), findsOneWidget);
     });
 
     testWidgets("Yesterday", (WidgetTester tester) async {
-      await tester.pumpWidget(Testable(
-          DateDurationText(today.subtract(aDay), Duration(), clock: clock)));
+      await tester.pumpWidget(Testable(DateDurationText(
+        today.subtract(aDay),
+        const Duration(),
+        clock: clock,
+      )));
       expect(find.text("Yesterday (0m)"), findsOneWidget);
     });
 
@@ -249,7 +252,7 @@ void main() {
       // 2 days
       await tester.pumpWidget(Testable(DateDurationText(
         today.subtract(aDay * 2),
-        Duration(),
+        const Duration(),
         clock: clock,
       )));
       expect(find.text("Sunday (0m)"), findsOneWidget);
@@ -257,7 +260,7 @@ void main() {
       // 7 days
       await tester.pumpWidget(Testable(DateDurationText(
         today.subtract(aDay * 7),
-        Duration(),
+        const Duration(),
         clock: clock,
       )));
       expect(find.text("Tuesday (0m)"), findsOneWidget);
@@ -267,7 +270,7 @@ void main() {
       // 8 days
       await tester.pumpWidget(Testable(DateDurationText(
         today.subtract(aDay * 8),
-        Duration(),
+        const Duration(),
         clock: clock,
       )));
       expect(find.text("Jan. 7 (0m)"), findsOneWidget);
@@ -275,7 +278,7 @@ void main() {
       // 10 days
       await tester.pumpWidget(Testable(DateDurationText(
         today.subtract(aDay * 10),
-        Duration(),
+        const Duration(),
         clock: clock,
       )));
       expect(find.text("Jan. 5 (0m)"), findsOneWidget);
@@ -284,22 +287,23 @@ void main() {
     testWidgets("Different year", (WidgetTester tester) async {
       await tester.pumpWidget(Testable(DateDurationText(
         today.subtract(aDay * 30),
-        Duration(),
+        const Duration(),
         clock: clock,
       )));
       expect(find.text("Dec. 16, 2018 (0m)"), findsOneWidget);
     });
 
     testWidgets("No days", (WidgetTester tester) async {
-      await tester.pumpWidget(Testable(
-          DateDurationText(today, Duration(days: 1, hours: 3), clock: clock)));
+      await tester.pumpWidget(Testable(DateDurationText(
+          today, const Duration(days: 1, hours: 3),
+          clock: clock)));
       expect(find.text("Today (27h 0m)"), findsOneWidget);
     });
 
     testWidgets("No seconds", (WidgetTester tester) async {
       await tester.pumpWidget(Testable(DateDurationText(
         today,
-        Duration(hours: 5, seconds: 10),
+        const Duration(hours: 5, seconds: 10),
         clock: clock,
       )));
       expect(find.text("Today (5h 0m)"), findsOneWidget);
@@ -307,20 +311,20 @@ void main() {
 
     testWidgets("Only minutes", (WidgetTester tester) async {
       await tester.pumpWidget(Testable(
-          DateDurationText(today, Duration(minutes: 30), clock: clock)));
+          DateDurationText(today, const Duration(minutes: 30), clock: clock)));
       expect(find.text("Today (30m)"), findsOneWidget);
     });
 
     testWidgets("Only seconds", (WidgetTester tester) async {
       await tester.pumpWidget(Testable(
-          DateDurationText(today, Duration(seconds: 30), clock: clock)));
+          DateDurationText(today, const Duration(seconds: 30), clock: clock)));
       expect(find.text("Today (30s)"), findsOneWidget);
     });
 
     testWidgets("Hours and minutes", (WidgetTester tester) async {
       await tester.pumpWidget(Testable(DateDurationText(
         today,
-        Duration(hours: 1, minutes: 3),
+        const Duration(hours: 1, minutes: 3),
         clock: clock,
       )));
       expect(find.text("Today (1h 3m)"), findsOneWidget);
@@ -329,39 +333,43 @@ void main() {
 
   group("RunningDurationText", () {
     testWidgets("All", (WidgetTester tester) async {
-      await tester.pumpWidget(Testable(
-          RunningDurationText(Duration(hours: 5, minutes: 6, seconds: 7))));
+      await tester.pumpWidget(
+        const Testable(
+            RunningDurationText(Duration(hours: 5, minutes: 6, seconds: 7))),
+      );
       expect(find.text("05:06:07"), findsOneWidget);
     });
 
     testWidgets("Hours only", (WidgetTester tester) async {
       await tester
-          .pumpWidget(Testable(RunningDurationText(Duration(hours: 5))));
+          .pumpWidget(const Testable(RunningDurationText(Duration(hours: 5))));
       expect(find.text("05:00:00"), findsOneWidget);
     });
 
     testWidgets("Minutes only", (WidgetTester tester) async {
-      await tester
-          .pumpWidget(Testable(RunningDurationText(Duration(minutes: 30))));
+      await tester.pumpWidget(
+        const Testable(RunningDurationText(Duration(minutes: 30))),
+      );
       expect(find.text("00:30:00"), findsOneWidget);
     });
 
     testWidgets("Seconds only", (WidgetTester tester) async {
-      await tester
-          .pumpWidget(Testable(RunningDurationText(Duration(seconds: 7))));
+      await tester.pumpWidget(
+        const Testable(RunningDurationText(Duration(seconds: 7))),
+      );
       expect(find.text("00:00:07"), findsOneWidget);
     });
   });
 
   group("TimeText", () {
     testWidgets("12 hour", (WidgetTester tester) async {
-      await tester.pumpWidget(MediaQuery(
+      await tester.pumpWidget(const MediaQuery(
         data: MediaQueryData(alwaysUse24HourFormat: false),
         child: Testable(TimeText(TimeOfDay(hour: 15, minute: 30))),
       ));
       expect(find.text("3:30 PM"), findsOneWidget);
 
-      await tester.pumpWidget(MediaQuery(
+      await tester.pumpWidget(const MediaQuery(
         data: MediaQueryData(alwaysUse24HourFormat: false),
         child: Testable(TimeText(TimeOfDay(hour: 4, minute: 30))),
       ));
@@ -369,13 +377,13 @@ void main() {
     });
 
     testWidgets("24 hour", (WidgetTester tester) async {
-      await tester.pumpWidget(MediaQuery(
+      await tester.pumpWidget(const MediaQuery(
         data: MediaQueryData(alwaysUse24HourFormat: true),
         child: Testable(TimeText(TimeOfDay(hour: 15, minute: 30))),
       ));
       expect(find.text("15:30"), findsOneWidget);
 
-      await tester.pumpWidget(MediaQuery(
+      await tester.pumpWidget(const MediaQuery(
         data: MediaQueryData(alwaysUse24HourFormat: true),
         child: Testable(TimeText(TimeOfDay(hour: 4, minute: 30))),
       ));

@@ -1,4 +1,4 @@
-import 'package:charts_flutter/flutter.dart' as Charts;
+import 'package:charts_flutter/flutter.dart' as f_charts;
 import 'package:flutter/material.dart';
 import 'package:mobile/app_manager.dart';
 import 'package:mobile/i18n/strings.dart';
@@ -15,17 +15,17 @@ class SessionsLineChart extends StatefulWidget {
   final List<Session> sessions;
   final EdgeInsets padding;
 
-  SessionsLineChart({
+  const SessionsLineChart({
     required this.app,
     this.sessions = const [],
     this.padding = insetsZero,
   });
 
   @override
-  _SessionsLineChartState createState() => _SessionsLineChartState();
+  SessionsLineChartState createState() => SessionsLineChartState();
 }
 
-class _SessionsLineChartState extends State<SessionsLineChart> {
+class SessionsLineChartState extends State<SessionsLineChart> {
   final String _chartId = "ActivitySummaryLineChart";
   final double _height = 250;
 
@@ -85,19 +85,19 @@ class _SessionsLineChartState extends State<SessionsLineChart> {
     return Container(
       height: _height,
       padding: insetsLeftDefault,
-      child: Charts.LineChart(
+      child: f_charts.LineChart(
         _getSeriesList(context),
         animate: true,
-        domainAxis: Charts.NumericAxisSpec(
-          renderSpec: Charts.NoneRenderSpec(),
+        domainAxis: const f_charts.NumericAxisSpec(
+          renderSpec: f_charts.NoneRenderSpec(),
         ),
-        primaryMeasureAxis: Charts.NumericAxisSpec(
+        primaryMeasureAxis: f_charts.NumericAxisSpec(
           tickFormatterSpec:
               _DurationAxisFormatter(context, longestDurationUnit),
         ),
         selectionModels: [
-          Charts.SelectionModelConfig(
-            changedListener: (Charts.SelectionModel model) {
+          f_charts.SelectionModelConfig(
+            changedListener: (f_charts.SelectionModel model) {
               setState(() {
                 _selectedSession = model.selectedDatum.first.datum;
               });
@@ -109,12 +109,12 @@ class _SessionsLineChartState extends State<SessionsLineChart> {
     );
   }
 
-  List<Charts.Series<Session, int>> _getSeriesList(BuildContext context) {
+  List<f_charts.Series<Session, int>> _getSeriesList(BuildContext context) {
     return [
-      Charts.Series<Session, int>(
+      f_charts.Series<Session, int>(
         id: _chartId,
         colorFn: (_, __) =>
-            Charts.ColorUtil.fromDartColor(Theme.of(context).primaryColor),
+            f_charts.ColorUtil.fromDartColor(Theme.of(context).primaryColor),
         domainFn: (_, int? index) => index ?? 0,
         measureFn: (Session session, _) => session.millisecondsDuration,
         data: widget.sessions,
@@ -122,17 +122,17 @@ class _SessionsLineChartState extends State<SessionsLineChart> {
     ];
   }
 
-  List<Charts.ChartBehavior<num>> get _behaviors {
-    List<Charts.ChartBehavior<num>> result = [
-      Charts.PanAndZoomBehavior(),
+  List<f_charts.ChartBehavior<num>> get _behaviors {
+    List<f_charts.ChartBehavior<num>> result = [
+      f_charts.PanAndZoomBehavior(),
     ];
 
     int? selectedIndex = _selectedSession == null
         ? null
         : widget.sessions.indexOf(_selectedSession!);
     if (selectedIndex != null) {
-      result.add(Charts.InitialSelection(selectedDataConfig: [
-        new Charts.SeriesDatumConfig(_chartId, selectedIndex)
+      result.add(f_charts.InitialSelection(selectedDataConfig: [
+        f_charts.SeriesDatumConfig(_chartId, selectedIndex)
       ]));
     } else {
       _selectedSession = null;
@@ -144,8 +144,8 @@ class _SessionsLineChartState extends State<SessionsLineChart> {
 
 /// A custom formatter for the vertical axis, so units can be formatted as a
 /// duration, rather than number of milliseconds.
-class _DurationAxisFormatter extends Charts.SimpleTickFormatterBase<num>
-    implements Charts.NumericTickFormatterSpec {
+class _DurationAxisFormatter extends f_charts.SimpleTickFormatterBase<num>
+    implements f_charts.NumericTickFormatterSpec {
   final BuildContext context;
   final DurationUnit largestDurationUnit;
 
@@ -163,7 +163,9 @@ class _DurationAxisFormatter extends Charts.SimpleTickFormatterBase<num>
   }
 
   @override
-  Charts.TickFormatter<num> createTickFormatter(Charts.ChartContext context) {
-    return _DurationAxisFormatter(this.context, this.largestDurationUnit);
+  f_charts.TickFormatter<num> createTickFormatter(
+    f_charts.ChartContext context,
+  ) {
+    return _DurationAxisFormatter(this.context, largestDurationUnit);
   }
 }

@@ -56,7 +56,7 @@ class ListPicker<T> extends StatelessWidget {
   /// will scroll with the [ListView].
   final Widget? listHeader;
 
-  ListPicker({
+  const ListPicker({
     this.pageTitle,
     required this.initialValues,
     this.allItem,
@@ -77,7 +77,7 @@ class ListPicker<T> extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           _buildSingleDetail(),
-          Icon(Icons.chevron_right),
+          const Icon(Icons.chevron_right),
         ],
       ),
       onTap: () {
@@ -92,7 +92,7 @@ class ListPicker<T> extends StatelessWidget {
             items: items,
             onItemPicked: (T pickedItem) {
               if (!allowsMultiSelect) {
-                _popPickerPage(context, Set.of([pickedItem]));
+                _popPickerPage(context, {pickedItem});
               }
             },
             onDonePressed: allowsMultiSelect
@@ -191,7 +191,7 @@ class _ListPickerPage<T> extends StatefulWidget {
 
   final bool allowsMultiSelect;
 
-  _ListPickerPage({
+  const _ListPickerPage({
     this.pageTitle,
     this.listHeader,
     this.allowsMultiSelect = false,
@@ -239,41 +239,40 @@ class _ListPickerPageState<T> extends State<_ListPickerPage<T>> {
                   padding: insetsDefault,
                   child: widget.listHeader,
                 ),
-        ]..addAll(
-            items.map((ListPickerItem<T> item) {
-              if (item.isDivider) {
-                return Divider();
-              }
+          ...items.map((ListPickerItem<T> item) {
+            if (item.isDivider) {
+              return const Divider();
+            }
 
-              return ListItem(
-                title: Text(item.title!),
-                subtitle: item.subtitle == null ? null : Text(item.subtitle!),
-                trailing: _selectedValues.contains(item.value)
-                    ? Icon(
-                        Icons.check,
-                        color: Theme.of(context).primaryColor,
-                      )
-                    : null,
-                onTap: () async {
-                  if (item.onTap == null) {
-                    // Do not trigger the callback for an item that was
-                    // selected, but not picked -- multi select picker items
-                    // aren't technically picked until "Done" is pressed.
-                    if (!widget.allowsMultiSelect) {
-                      widget.onItemPicked(item.value!);
-                    }
-                    _updateState(item.value!);
-                  } else {
-                    T? pickedItem = await item.onTap?.call();
-                    if (pickedItem != null) {
-                      widget.onItemPicked(pickedItem);
-                      _updateState(pickedItem);
-                    }
+            return ListItem(
+              title: Text(item.title!),
+              subtitle: item.subtitle == null ? null : Text(item.subtitle!),
+              trailing: _selectedValues.contains(item.value)
+                  ? Icon(
+                      Icons.check,
+                      color: Theme.of(context).primaryColor,
+                    )
+                  : null,
+              onTap: () async {
+                if (item.onTap == null) {
+                  // Do not trigger the callback for an item that was
+                  // selected, but not picked -- multi select picker items
+                  // aren't technically picked until "Done" is pressed.
+                  if (!widget.allowsMultiSelect) {
+                    widget.onItemPicked(item.value as T);
                   }
-                },
-              );
-            }).toList(),
-          ),
+                  _updateState(item.value as T);
+                } else {
+                  T? pickedItem = await item.onTap?.call();
+                  if (pickedItem != null) {
+                    widget.onItemPicked(pickedItem);
+                    _updateState(pickedItem);
+                  }
+                }
+              },
+            );
+          }).toList(),
+        ],
       ),
     );
   }
@@ -283,7 +282,7 @@ class _ListPickerPageState<T> extends State<_ListPickerPage<T>> {
       if (widget.allowsMultiSelect) {
         if (widget.allItem != null && widget.allItem!.value == pickedItem) {
           // If the "all" item was picked, deselect all other items.
-          _selectedValues = Set.of([widget.allItem!.value!]);
+          _selectedValues = {widget.allItem!.value as T};
         } else {
           // Otherwise, toggle the picked item, and deselect the "all" item
           // if it exists.
@@ -295,7 +294,7 @@ class _ListPickerPageState<T> extends State<_ListPickerPage<T>> {
         }
       } else {
         // For single selection pickers, always have only one item selected.
-        _selectedValues = Set.of([pickedItem]);
+        _selectedValues = {pickedItem};
       }
     });
   }

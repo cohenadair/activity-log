@@ -12,7 +12,7 @@ class ListItem extends StatelessWidget {
   final Widget? trailing;
   final VoidCallback? onTap;
 
-  ListItem({
+  const ListItem({
     this.contentPadding,
     this.title,
     this.subtitle,
@@ -43,7 +43,7 @@ class ExpansionListItem extends StatefulWidget {
   final bool toBottomSafeArea;
   final ScrollController? scrollController;
 
-  ExpansionListItem({
+  const ExpansionListItem({
     required this.title,
     this.children = const [],
     this.onExpansionChanged,
@@ -52,10 +52,10 @@ class ExpansionListItem extends StatefulWidget {
   });
 
   @override
-  _ExpansionListItemState createState() => _ExpansionListItemState();
+  ExpansionListItemState createState() => ExpansionListItemState();
 }
 
-class _ExpansionListItemState extends State<ExpansionListItem> {
+class ExpansionListItemState extends State<ExpansionListItem> {
   final GlobalKey _key = GlobalKey();
   double _previousScrollOffset = 0;
 
@@ -79,7 +79,7 @@ class _ExpansionListItemState extends State<ExpansionListItem> {
             // event after the expansion animation is finished.
             //
             // Duration is the duration of the expansion + 50 ms for insurance.
-            Timer(Duration(milliseconds: 200 + 25), () {
+            Timer(const Duration(milliseconds: 200 + 25), () {
               _scrollIfNeeded();
             });
           }

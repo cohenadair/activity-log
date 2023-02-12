@@ -7,7 +7,7 @@ import 'package:mobile/utils/date_time_utils.dart';
 class Testable extends StatelessWidget {
   final Widget _child;
 
-  Testable(this._child) : assert(_child != null);
+  const Testable(this._child);
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +18,7 @@ class Testable extends StatelessWidget {
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
       ],
-      locale: Locale("en", "CA"),
+      locale: const Locale("en", "CA"),
       child: _child,
     );
   }

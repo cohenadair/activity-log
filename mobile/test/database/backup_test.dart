@@ -26,14 +26,14 @@ void main() {
         .thenReturn(DisplayDateRange.last7Days);
   });
 
-  Session _buildSession(String id, int startMs, int? endMs) =>
+  Session buildSession(String id, int startMs, int? endMs) =>
       (SessionBuilder(id)
             ..id = "SID$startMs"
             ..startTimestamp = startMs
             ..endTimestamp = endMs)
           .build;
 
-  Activity _buildActivity(String id, String name, String? currentSessionId) =>
+  Activity buildActivity(String id, String name, String? currentSessionId) =>
       (ActivityBuilder(name)
             ..id = id
             ..currentSessionId = currentSessionId)
@@ -60,23 +60,23 @@ void main() {
 
     test("toJsonString with non-empty database", () async {
       List<Activity> activityList = [
-        _buildActivity("AID1", "Test1", null),
-        _buildActivity("AID2", "Test2", null),
-        _buildActivity("AID3", "Test3", null),
+        buildActivity("AID1", "Test1", null),
+        buildActivity("AID2", "Test2", null),
+        buildActivity("AID3", "Test3", null),
 
         // In progress sessions should be ended.
-        _buildActivity("AID4", "Test4", "SID1"),
+        buildActivity("AID4", "Test4", "SID1"),
       ];
       when(dataManager.activities).thenAnswer((_) async => activityList);
 
       List<Session> sessionList = [
         // For the purposes of testing, it doesn't actually matter what the
         // ID values are. They don't need to be associated with an Activity.
-        _buildSession("ID0", 5000, 10000),
-        _buildSession("ID1", 15000, 20000),
-        _buildSession("ID2", 25000, 30000),
-        _buildSession("ID3", 35000, 40000),
-        _buildSession("ID4", 45000, null),
+        buildSession("ID0", 5000, 10000),
+        buildSession("ID1", 15000, 20000),
+        buildSession("ID2", 25000, 30000),
+        buildSession("ID3", 35000, 40000),
+        buildSession("ID4", 45000, null),
       ];
       when(dataManager.sessions).thenAnswer((_) async => sessionList);
 
@@ -259,18 +259,18 @@ void main() {
       expect(activityList.length, equals(4));
       expect(sessionList.length, equals(5));
 
-      activityList.forEach((Activity activity) {
+      for (var activity in activityList) {
         expect(activity.id, isNotEmpty);
         expect(activity.name, isNotEmpty);
         expect(activity.isRunning, isFalse);
-      });
+      }
 
-      sessionList.forEach((Session session) {
+      for (var session in sessionList) {
         expect(session.id, isNotEmpty);
         expect(session.activityId, isNotEmpty);
         expect(session.startTimestamp, isNotNull);
         expect(session.endTimestamp, isNotNull);
-      });
+      }
 
       verify(preferencesManager
           .setHomeDateRange(argThat(equals(DisplayDateRange.last14Days))));

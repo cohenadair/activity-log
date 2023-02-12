@@ -1,7 +1,7 @@
 import 'package:uuid/uuid.dart';
 
 abstract class Model {
-  static final keyId = "id";
+  static const keyId = "id";
 
   final String _id;
   String get id => _id;
@@ -15,7 +15,7 @@ abstract class Model {
 }
 
 abstract class ModelBuilder {
-  String id = Uuid().v1();
+  String id = const Uuid().v1();
 
   ModelBuilder();
   ModelBuilder.fromModel(Model model) : id = model.id;

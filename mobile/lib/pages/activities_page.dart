@@ -11,13 +11,13 @@ import 'package:mobile/widgets/widget.dart';
 class ActivitiesPage extends StatefulWidget {
   final AppManager app;
 
-  ActivitiesPage(this.app);
+  const ActivitiesPage(this.app);
 
   @override
-  _ActivitiesPageState createState() => _ActivitiesPageState();
+  ActivitiesPageState createState() => ActivitiesPageState();
 }
 
-class _ActivitiesPageState extends State<ActivitiesPage> {
+class ActivitiesPageState extends State<ActivitiesPage> {
   @override
   Widget build(BuildContext context) {
     return ActivityListModelBuilder(
@@ -33,7 +33,7 @@ class _ActivitiesPageState extends State<ActivitiesPage> {
           getEditPageCallback: (ActivityListTileModel? model) {
             return EditActivityPage(
               widget.app,
-              model == null ? null : model.activity,
+              model?.activity,
             );
           },
           buildTileCallback: (ActivityListTileModel model, onTapTile) {

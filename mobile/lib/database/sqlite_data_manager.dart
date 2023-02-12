@@ -17,7 +17,7 @@ class SQLiteDataManager {
   late Database _database;
 
   final _activitiesUpdated = VoidStreamController();
-  final Map<String, VoidStreamController> _sessionsUpdatedMap = Map();
+  final Map<String, VoidStreamController> _sessionsUpdatedMap = {};
 
   /// Used for a more seamless transition between the launch screen and
   /// [Activity] list. This value will be `null` after the app has loaded.
@@ -112,9 +112,9 @@ class SQLiteDataManager {
     bool notify = false,
   }) async {
     Batch batch = _database.batch();
-    activityList.forEach((Activity activity) {
+    for (var activity in activityList) {
       batch.insert("activity", activity.toMap());
-    });
+    }
     await batch.commit();
 
     if (notify) {
@@ -156,18 +156,18 @@ class SQLiteDataManager {
     bool notify = false,
   }) async {
     Batch batch = _database.batch();
-    sessionList.forEach((Session session) {
+    for (var session in sessionList) {
       batch.insert("session", session.toMap());
-    });
+    }
     await batch.commit();
 
     if (notify) {
       _activitiesUpdated.notify();
-      sessionList.forEach((Session session) {
+      for (var session in sessionList) {
         if (_sessionsUpdatedMap.containsKey(session.activityId)) {
           _sessionsUpdatedMap[session.activityId]!.notify();
         }
-      });
+      }
     }
   }
 
@@ -199,7 +199,7 @@ class SQLiteDataManager {
   Future<void> endSession(Activity activity) async {
     if (!activity.isRunning) {
       // Can't end a session for an activity that isn't running.
-      return null;
+      return;
     }
 
     Batch batch = _database.batch();
@@ -214,10 +214,8 @@ class SQLiteDataManager {
       [activity.id],
     );
 
-    var _ = await batch.commit();
+    await batch.commit();
     _activitiesUpdated.notify();
-
-    return null;
   }
 
   void addSession(Session session) {
@@ -383,14 +381,15 @@ class SQLiteDataManager {
     DisplayDateRange? displayDateRange, [
     List<Activity> activities = const [],
   ]) async {
-    DateRange? dateRange =
-        displayDateRange == null ? null : displayDateRange.value;
+    DateRange? dateRange = displayDateRange?.value;
 
     var activityList = List.of(activities);
     // Get all activities if none were provided.
     if (activityList.isEmpty) {
       var mapList = await _database.rawQuery("SELECT * FROM activity");
-      mapList.forEach((map) => activityList.add(Activity.fromMap(map)));
+      for (var map in mapList) {
+        activityList.add(Activity.fromMap(map));
+      }
     }
 
     List<SummarizedActivity> summarizedActivities = [];
@@ -429,11 +428,11 @@ class SQLiteDataManager {
 
       List<Session> sessionList = [];
 
-      sessionMapList.forEach((Map<String, dynamic> map) {
+      for (var map in sessionMapList) {
         sessionList.add(SessionBuilder.fromSession(Session.fromMap(map))
             .pinToDateRange(dateRange)
             .build);
-      });
+      }
 
       summarizedActivities.add(SummarizedActivity(
         value: activity,
@@ -493,7 +492,7 @@ class SQLiteDataManager {
       return [];
     }
 
-    Map<String, ActivityListTileModel> modelMap = Map();
+    Map<String, ActivityListTileModel> modelMap = {};
 
     // Activities.
     mapList[0].forEach((activityMap) {
@@ -516,9 +515,7 @@ class SQLiteDataManager {
     // Banked sessions.
     mapList[3].forEach((sessionMap) {
       var model = modelMap[sessionMap["activity_id"]]!;
-      if (model.duration == null) {
-        model.duration = Duration();
-      }
+      model.duration ??= const Duration();
       model.duration = model.duration! -
           Duration(milliseconds: sessionMap["sum_value"] ?? 0);
     });
@@ -543,7 +540,7 @@ class ActivitiesBuilder extends StatelessWidget {
   final AppManager app;
   final Widget Function(BuildContext, List<Activity>) builder;
 
-  ActivitiesBuilder({
+  const ActivitiesBuilder({
     required this.app,
     required this.builder,
   });
@@ -564,7 +561,7 @@ class ActivityListModelBuilder extends StatelessWidget {
   final AppManager app;
   final Widget Function(BuildContext, List<ActivityListTileModel>) builder;
 
-  ActivityListModelBuilder({
+  const ActivityListModelBuilder({
     required this.app,
     required this.builder,
   });
@@ -596,7 +593,7 @@ class SessionsBuilder extends StatelessWidget {
   final String activityId;
   final Widget Function(BuildContext, List<Session>) builder;
 
-  SessionsBuilder({
+  const SessionsBuilder({
     required this.app,
     required this.activityId,
     required this.builder,

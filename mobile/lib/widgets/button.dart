@@ -7,7 +7,7 @@ class Button extends StatelessWidget {
   final Icon? _icon;
   final Color? _color;
 
-  Button({
+  const Button({
     required String text,
     required VoidCallback onPressed,
     Icon? icon,
@@ -21,12 +21,12 @@ class Button extends StatelessWidget {
   Widget build(BuildContext context) {
     return _icon == null
         ? ElevatedButton(
-            child: _textWidget,
             onPressed: _onPressed,
             style: ElevatedButton.styleFrom(
               backgroundColor: _color,
               elevation: 0,
             ),
+            child: _textWidget,
           )
         : ElevatedButton.icon(
             onPressed: _onPressed,
@@ -49,16 +49,16 @@ class ActionButton extends StatelessWidget {
 
   final String? _stringId;
 
-  ActionButton({
+  const ActionButton({
     required this.text,
     required this.onPressed,
   }) : _stringId = null;
 
-  ActionButton.done({required this.onPressed})
+  const ActionButton.done({required this.onPressed})
       : _stringId = "done",
         text = null;
 
-  ActionButton.save({required this.onPressed})
+  const ActionButton.save({required this.onPressed})
       : _stringId = "save",
         text = null;
 
@@ -66,12 +66,11 @@ class ActionButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextButton(
       onPressed: onPressed,
-      child: Text(
-          (text == null ? Strings.of(context).fromId(_stringId!) : text)!
-              .toUpperCase()),
       style: TextButton.styleFrom(
         foregroundColor: Colors.white,
       ),
+      child:
+          Text((text ?? Strings.of(context).fromId(_stringId!)).toUpperCase()),
     );
   }
 }

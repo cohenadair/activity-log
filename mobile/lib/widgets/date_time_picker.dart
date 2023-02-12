@@ -10,7 +10,7 @@ class DateTimePickerContainer extends StatelessWidget {
   final TimePicker timePicker;
   final Widget? helper;
 
-  DateTimePickerContainer({
+  const DateTimePickerContainer({
     required this.datePicker,
     required this.timePicker,
     this.helper,
@@ -143,7 +143,7 @@ class _Picker extends StatelessWidget {
   final String? errorText;
   final bool enabled;
 
-  _Picker({
+  const _Picker({
     required this.type,
     required this.label,
     this.errorText,
