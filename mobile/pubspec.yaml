@@ -7,7 +7,7 @@ description: A simple mobile app for tracking activities.
 # Both the version and the builder number may be overridden in flutter
 # build by specifying --build-name and --build-number, respectively.
 # Read more about versioning at semver.org.
-version: 1.1.0+20230117
+version: 1.1.1+20230212
 
 environment:
   # Note: Increasing min version here will enable null-safety checks (requires a TON of work to
