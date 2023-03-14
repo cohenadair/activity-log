@@ -189,7 +189,7 @@ void main() {
     });
   });
 
-  group("Longest streak is calculated correctly", () {
+  group("Streak is calculated correctly", () {
     test("Longest and current streak", () {
       Activity activity = ActivityBuilder("Activity").build;
       SummarizedActivity summarizedActivity = SummarizedActivity(
@@ -263,7 +263,7 @@ void main() {
       );
 
       expect(summarizedActivity.longestStreak, equals(5));
-      expect(summarizedActivity.currentStreak, equals(1));
+      expect(summarizedActivity.currentStreak, equals(0));
     });
 
     test("Longest single session streak across months", () {
@@ -334,12 +334,13 @@ void main() {
       expect(summarizedActivity.longestStreak, equals(2));
     });
 
-    test("Current streak", () {
-      var now = DateTime.now();
+    test("User has current streak", () {
+      var now = DateTime(2023, 1, 1);
 
       Activity activity = ActivityBuilder("Activity").build;
 
       SummarizedActivity summarizedActivity = SummarizedActivity(
+        clock: Clock.fixed(now),
         value: activity,
         displayDateRange: stubDateRange(DateRange(
           startDate: DateTime(2018, 1, 1),
@@ -384,7 +385,99 @@ void main() {
         ],
       );
 
-      expect(summarizedActivity.longestStreak, equals(3));
+      expect(summarizedActivity.currentStreak, equals(3));
+    });
+
+    test("User does not have a current streak", () {
+      var now = DateTime(2023, 1, 1);
+
+      Activity activity = ActivityBuilder("Activity").build;
+
+      SummarizedActivity summarizedActivity = SummarizedActivity(
+        clock: Clock.fixed(now),
+        value: activity,
+        displayDateRange: stubDateRange(DateRange(
+          startDate: DateTime(2018, 1, 1),
+          endDate: DateTime(2023, 1, 1),
+        )),
+        sessions: [
+          buildSession(
+            activity.id,
+            DateTime.fromMillisecondsSinceEpoch(
+                now.millisecondsSinceEpoch - Duration.millisecondsPerDay * 3),
+            DateTime.fromMillisecondsSinceEpoch(
+                now.millisecondsSinceEpoch - Duration.millisecondsPerDay * 3),
+          ),
+          buildSession(
+            activity.id,
+            DateTime.fromMillisecondsSinceEpoch(
+                now.millisecondsSinceEpoch - Duration.millisecondsPerDay * 2),
+            DateTime.fromMillisecondsSinceEpoch(
+                now.millisecondsSinceEpoch - Duration.millisecondsPerDay * 2),
+          ),
+        ],
+      );
+
+      expect(summarizedActivity.currentStreak, equals(0));
+    });
+
+    test("Current streak with a daylight savings behind change", () {
+      // DST happened on Mar. 11, 2023.
+      var now = DateTime(2023, 3, 14);
+
+      Activity activity = ActivityBuilder("Activity").build;
+
+      SummarizedActivity summarizedActivity = SummarizedActivity(
+        clock: Clock.fixed(now),
+        value: activity,
+        displayDateRange: stubDateRange(DateRange(
+          startDate: DateTime(2018, 1, 1),
+          endDate: now,
+        )),
+        sessions: [
+          // DST causes day rounding to of this to be a day early.
+          buildSession(
+            activity.id,
+            DateTime.fromMillisecondsSinceEpoch(
+                now.millisecondsSinceEpoch - Duration.millisecondsPerDay * 4),
+            DateTime.fromMillisecondsSinceEpoch(
+                now.millisecondsSinceEpoch - Duration.millisecondsPerDay * 4),
+          ),
+          // DST causes day rounding to of this to be a day early.
+          buildSession(
+            activity.id,
+            DateTime.fromMillisecondsSinceEpoch(
+                now.millisecondsSinceEpoch - Duration.millisecondsPerDay * 3),
+            DateTime.fromMillisecondsSinceEpoch(
+                now.millisecondsSinceEpoch - Duration.millisecondsPerDay * 3),
+          ),
+          // DST causes day rounding to of this to be a day early.
+          buildSession(
+            activity.id,
+            DateTime.fromMillisecondsSinceEpoch(
+                now.millisecondsSinceEpoch - Duration.millisecondsPerDay * 2),
+            DateTime.fromMillisecondsSinceEpoch(
+                now.millisecondsSinceEpoch - Duration.millisecondsPerDay * 2),
+          ),
+          // Note that due to the rounding (note above), there is actually
+          // a day gap in the resulting "allDateTimes" list in
+          // SummarizedActivity.
+          buildSession(
+            activity.id,
+            DateTime.fromMillisecondsSinceEpoch(
+                now.millisecondsSinceEpoch - Duration.millisecondsPerDay),
+            DateTime.fromMillisecondsSinceEpoch(
+                now.millisecondsSinceEpoch - Duration.millisecondsPerDay),
+          ),
+          buildSession(
+            activity.id,
+            DateTime.fromMillisecondsSinceEpoch(now.millisecondsSinceEpoch),
+            DateTime.fromMillisecondsSinceEpoch(now.millisecondsSinceEpoch),
+          ),
+        ],
+      );
+
+      expect(summarizedActivity.currentStreak, equals(2));
     });
   });
 

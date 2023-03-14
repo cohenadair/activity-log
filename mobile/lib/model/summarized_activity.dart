@@ -166,17 +166,22 @@ class SummarizedActivity {
     List<DateTime> dateTimeList = List.from(allDateTimes);
     dateTimeList.sort((lhs, rhs) => rhs.compareTo(lhs));
     DateTime last = dateTimeList.first;
-    _cachedCurrentStreak = isSameDate(DateTime.now(), last) ? 1 : 0;
+    _cachedCurrentStreak = _cachedLongestStreak =
+        isSameDate(clock.now(), last) || isSameDate(clock.daysAgo(1), last)
+            ? 1
+            : 0;
+    var hasCurrentStreak = _cachedCurrentStreak == 1;
 
     for (int i = 1; i < dateTimeList.length; i++) {
-      DateTime current = dateTimeList[i];
-      DateTime lastsTomorrow = DateTime.fromMillisecondsSinceEpoch(
-          last.millisecondsSinceEpoch - Duration.millisecondsPerDay);
+      DateTime current = _adjustDateTimeForDst(dateTimeList[i]);
+      DateTime lastsYesterday = _adjustDateTimeForDst(
+          DateTime.fromMillisecondsSinceEpoch(
+              last.millisecondsSinceEpoch - Duration.millisecondsPerDay));
 
-      if (isSameYear(current, lastsTomorrow) &&
-          isSameMonth(current, lastsTomorrow) &&
-          current.day == lastsTomorrow.day) {
-        if (!didResetStreak) {
+      if (isSameYear(current, lastsYesterday) &&
+          isSameMonth(current, lastsYesterday) &&
+          current.day == lastsYesterday.day) {
+        if (!didResetStreak && hasCurrentStreak) {
           _cachedCurrentStreak = _cachedCurrentStreak! + 1;
         }
         currentStreak++;
@@ -196,6 +201,17 @@ class SummarizedActivity {
     _cachedSessionsPerDay = getAverageSessions(range.days);
     _cachedSessionsPerWeek = getAverageSessions(range.weeks);
     _cachedSessionsPerMonth = getAverageSessions(range.months);
+  }
+
+  /// A crude way handle daylight savings time. Since streaks don't care about
+  /// actual time (just the date), we can safely round the day up if a DateTime's
+  /// hour is not equal to 0. Note that there's no need to round the day down
+  /// in the opposite DST case, since the date will already be correct.
+  DateTime _adjustDateTimeForDst(DateTime dateTime) {
+    if (dateTime.hour == 23) {
+      return DateTime(dateTime.year, dateTime.month, dateTime.day + 1);
+    }
+    return dateTime;
   }
 
   Duration getAverageDuration(num divisor) {
