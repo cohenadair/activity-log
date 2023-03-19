@@ -7,11 +7,9 @@ description: A simple mobile app for tracking activities.
 # Both the version and the builder number may be overridden in flutter
 # build by specifying --build-name and --build-number, respectively.
 # Read more about versioning at semver.org.
-version: 1.1.2+20230314
+version: 1.1.2+20230321
 
 environment:
-  # Note: Increasing min version here will enable null-safety checks (requires a TON of work to
-  # resolve).
   sdk: '>=2.19.2 <3.0.0'
 
 dependencies:
@@ -23,18 +21,17 @@ dependencies:
   charts_flutter: ^0.12.0       # https://pub.dev/packages/charts_flutter
   collection: ^1.17.0           # https://pub.dev/packages/collection (Dart)
   share_plus: ^6.3.1            # https://pub.dev/packages/share_plus (Verified)
-  file_picker: ^5.2.5           # https://pub.dev/packages/file_picker (Verified)
-  flutter_email_sender: ^5.1.0  # https://pub.dev/packages/flutter_email_sender
+  file_picker: ^5.2.6           # https://pub.dev/packages/file_picker (Verified)
+  flutter_email_sender: ^5.2.0  # https://pub.dev/packages/flutter_email_sender
   intl: ^0.17.0                 # https://pub.dev/packages/intl
-  package_info_plus: ^1.3.0     # https://pub.dev/packages/package_info_plus
+  package_info_plus: ^3.0.3     # https://pub.dev/packages/package_info_plus
   path: ^1.8.2                  # https://pub.dev/packages/path (Dart)
-  path_provider: ^2.0.11        # https://pub.dev/packages/path_provider
-  quiver: ^3.1.0                # https://pub.dev/packages/quiver
-  shared_preferences: ^2.0.15   # https://pub.dev/packages/shared_preferences
-  sqflite: ^2.0.2               # https://pub.dev/packages/sqflite
-  url_launcher: ^6.1.6          # https://pub.dev/packages/url_launcher
-  uuid: ^3.0.6                  # https://pub.dev/packages/uuid
-
+  path_provider: ^2.0.13        # https://pub.dev/packages/path_provider
+  quiver: ^3.2.1                # https://pub.dev/packages/quiver
+  shared_preferences: ^2.0.18   # https://pub.dev/packages/shared_preferences
+  sqflite: ^2.2.6               # https://pub.dev/packages/sqflite
+  url_launcher: ^6.1.10         # https://pub.dev/packages/url_launcher
+  uuid: ^3.0.7                  # https://pub.dev/packages/uuid
 
 dev_dependencies:
   flutter_test:
