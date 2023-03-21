@@ -223,7 +223,8 @@ class SettingsPageState extends State<SettingsPage> {
         future: PackageInfo.fromPlatform(),
         builder: (_, AsyncSnapshot<PackageInfo> snapshot) {
           if (snapshot.hasData) {
-            return SecondaryText(snapshot.data!.version);
+            return SecondaryText(
+                "${snapshot.data!.version} (${snapshot.data!.buildNumber})");
           } else {
             return const Loading();
           }
