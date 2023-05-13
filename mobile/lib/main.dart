@@ -50,9 +50,8 @@ class ActivityLogState extends State<ActivityLog> {
         inputDecorationTheme: InputDecorationTheme(
           floatingLabelStyle: MaterialStateTextStyle.resolveWith((states) {
             return TextStyle(
-              color: states.contains(MaterialState.focused)
-                  ? colorAppTheme
-                  : null,
+              color:
+                  states.contains(MaterialState.focused) ? colorAppTheme : null,
             );
           }),
           focusedBorder: const UnderlineInputBorder(
@@ -70,8 +69,7 @@ class ActivityLogState extends State<ActivityLog> {
         ),
         iconTheme: const IconThemeData(color: colorAppTheme),
         checkboxTheme: CheckboxThemeData(
-          fillColor:
-              MaterialStateColor.resolveWith((_) => colorAppTheme),
+          fillColor: MaterialStateColor.resolveWith((_) => colorAppTheme),
         ),
         expansionTileTheme: const ExpansionTileThemeData(
           textColor: colorAppTheme,

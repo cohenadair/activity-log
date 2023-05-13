@@ -3,9 +3,9 @@ import 'package:mobile/res/dimen.dart';
 
 class Loading extends StatelessWidget {
   static Widget centered() {
-    return Row(
+    return const Row(
       mainAxisAlignment: MainAxisAlignment.center,
-      children: const <Widget>[
+      children: [
         Loading(padding: insetsDefault),
       ],
     );

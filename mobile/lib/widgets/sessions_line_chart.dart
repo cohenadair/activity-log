@@ -1,4 +1,5 @@
-import 'package:charts_flutter/flutter.dart' as f_charts;
+import 'package:community_charts_flutter/community_charts_flutter.dart'
+    as f_charts;
 import 'package:flutter/material.dart';
 import 'package:mobile/app_manager.dart';
 import 'package:mobile/i18n/strings.dart';
