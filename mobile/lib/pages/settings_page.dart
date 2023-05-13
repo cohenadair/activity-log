@@ -6,7 +6,6 @@ import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:mobile/database/backup.dart';
-import 'package:mobile/res/style.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:quiver/strings.dart';
@@ -345,7 +344,6 @@ class SettingsPageState extends State<SettingsPage> {
       context: context,
       builder: (BuildContext context) => AlertDialog(
         title: Text(Strings.of(context).error),
-        titleTextStyle: styleTitleAlert,
         content: Text(Strings.of(context).settingsPageImportFailed),
         actions: <Widget>[
           buildDialogButton(

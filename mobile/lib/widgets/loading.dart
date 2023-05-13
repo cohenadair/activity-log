@@ -13,7 +13,6 @@ class Loading extends StatelessWidget {
 
   final EdgeInsets _padding;
 
-  // ignore: missing_identifier
   const Loading({EdgeInsets padding = insetsZero}) : _padding = padding;
 
   @override
@@ -22,9 +21,7 @@ class Loading extends StatelessWidget {
       padding: _padding,
       child: SizedBox.fromSize(
         size: const Size(20, 20),
-        child: const CircularProgressIndicator(
-          strokeWidth: 2,
-        ),
+        child: const CircularProgressIndicator(strokeWidth: 2),
       ),
     );
   }

@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:mobile/i18n/strings.dart';
 import 'package:mobile/res/dimen.dart';
 import 'package:mobile/res/style.dart';
+import 'package:mobile/res/theme.dart';
 import 'package:mobile/utils/date_time_utils.dart';
 import 'package:mobile/utils/string_utils.dart';
 import 'package:mobile/widgets/widget.dart';
@@ -134,9 +135,8 @@ class HeadingText extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       _text,
-      style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-            color: Theme.of(context).primaryColor,
-          ),
+      style:
+          Theme.of(context).textTheme.bodyLarge!.copyWith(color: colorAppTheme),
     );
   }
 }
@@ -172,7 +172,7 @@ class SecondaryText extends StatelessWidget {
       style: Theme.of(context)
           .textTheme
           .titleMedium!
-          .copyWith(color: Theme.of(context).disabledColor),
+          .copyWith(color: context.colorSecondaryText),
     );
   }
 }

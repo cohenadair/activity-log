@@ -77,7 +77,11 @@ class ListPicker<T> extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           _buildSingleDetail(),
-          const Icon(Icons.chevron_right),
+          const HorizontalSpace(paddingDefault),
+          const Icon(
+            Icons.chevron_right,
+            color: Colors.grey,
+          ),
         ],
       ),
       onTap: () {
@@ -248,10 +252,7 @@ class _ListPickerPageState<T> extends State<_ListPickerPage<T>> {
               title: Text(item.title!),
               subtitle: item.subtitle == null ? null : Text(item.subtitle!),
               trailing: _selectedValues.contains(item.value)
-                  ? Icon(
-                      Icons.check,
-                      color: Theme.of(context).primaryColor,
-                    )
+                  ? const Icon(Icons.check)
                   : null,
               onTap: () async {
                 if (item.onTap == null) {

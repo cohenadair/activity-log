@@ -6,6 +6,8 @@ import 'package:mobile/app_manager.dart';
 import 'package:mobile/i18n/strings.dart';
 import 'package:mobile/pages/main_page.dart';
 
+import 'res/theme.dart';
+
 void main() {
   runApp(ActivityLog());
 }
@@ -35,23 +37,59 @@ class ActivityLogState extends State<ActivityLog> {
     return MaterialApp(
       onGenerateTitle: (context) => Strings.of(context).appName,
       theme: ThemeData(
-        primarySwatch: Colors.green,
+        primarySwatch: colorAppTheme,
         buttonTheme: const ButtonThemeData(
           textTheme: ButtonTextTheme.primary,
         ),
-        iconTheme: const IconThemeData(
-          color: Colors.green,
+        iconTheme: const IconThemeData(color: colorAppTheme),
+        progressIndicatorTheme: const ProgressIndicatorThemeData(
+          color: colorAppTheme,
         ),
-        colorScheme: ColorScheme.fromSwatch(
-            primarySwatch: Colors.green, errorColor: Colors.red),
       ),
+      darkTheme: ThemeData.dark().copyWith(
+        inputDecorationTheme: InputDecorationTheme(
+          floatingLabelStyle: MaterialStateTextStyle.resolveWith((states) {
+            return TextStyle(
+              color: states.contains(MaterialState.focused)
+                  ? colorAppTheme
+                  : null,
+            );
+          }),
+          focusedBorder: const UnderlineInputBorder(
+            borderSide: BorderSide(
+              color: colorAppTheme,
+              width: 2.0,
+            ),
+          ),
+        ),
+        textButtonTheme: TextButtonThemeData(
+          style: ButtonStyle(
+            foregroundColor:
+                MaterialStateColor.resolveWith((_) => colorAppTheme),
+          ),
+        ),
+        iconTheme: const IconThemeData(color: colorAppTheme),
+        checkboxTheme: CheckboxThemeData(
+          fillColor:
+              MaterialStateColor.resolveWith((_) => colorAppTheme),
+        ),
+        expansionTileTheme: const ExpansionTileThemeData(
+          textColor: colorAppTheme,
+          iconColor: colorAppTheme,
+        ),
+        bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+          selectedItemColor: colorAppTheme,
+        ),
+        progressIndicatorTheme: const ProgressIndicatorThemeData(
+          color: colorAppTheme,
+        ),
+      ),
+      themeMode: themeMode,
       home: FutureBuilder<bool>(
         future: _appInitializedFuture,
         builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
           if (snapshot.hasError || !snapshot.hasData) {
-            return Scaffold(
-              backgroundColor: Theme.of(context).primaryColor,
-            );
+            return const Scaffold(backgroundColor: colorAppTheme);
           }
           return MainPage(_app);
         },

@@ -5,11 +5,14 @@ import 'package:mobile/i18n/strings.dart';
 import 'package:mobile/model/summarized_activity.dart';
 import 'package:mobile/preferences_manager.dart';
 import 'package:mobile/res/dimen.dart';
+import 'package:mobile/res/theme.dart';
 import 'package:mobile/utils/date_time_utils.dart';
 import 'package:mobile/utils/string_utils.dart';
 import 'package:mobile/widgets/text.dart';
 import 'package:mobile/widgets/widget.dart';
 import 'package:quiver/strings.dart';
+
+import '../utils/chart_utils.dart';
 
 typedef ActivitiesBarChartOnSelectCallback = Function(SummarizedActivity);
 
@@ -46,11 +49,9 @@ class ActivitiesDurationBarChart extends StatelessWidget {
             largestDurationUnit: largestDurationUnit,
           )})",
           onMeasure: (activity) => activity.totalDuration.inSeconds,
-          primaryAxisSpec: f_charts.NumericAxisSpec(
-            tickFormatterSpec: _DurationTickFormatter(
-              context: context,
-              formatCallback: _getFormatCallback(context, largestDurationUnit),
-            ),
+          primaryAxisTickFormatterSpec: _DurationTickFormatter(
+            context: context,
+            formatCallback: _getFormatCallback(context, largestDurationUnit),
           ),
           onSelect: onSelect,
         );
@@ -133,7 +134,7 @@ class _ActivitiesBarChart extends StatelessWidget {
   final String title;
   final EdgeInsets padding;
   final List<SummarizedActivity> activities;
-  final f_charts.NumericAxisSpec? primaryAxisSpec;
+  final f_charts.NumericTickFormatterSpec? primaryAxisTickFormatterSpec;
   final ActivitiesBarChartOnSelectCallback onSelect;
 
   /// Return the quantity value for the given [SummarizedActivity].
@@ -149,7 +150,7 @@ class _ActivitiesBarChart extends StatelessWidget {
     required this.activities,
     required this.onMeasure,
     required this.onBuildLabel,
-    this.primaryAxisSpec,
+    this.primaryAxisTickFormatterSpec,
     required this.onSelect,
   })  : assert(!isEmpty(chartId)),
         assert(activities.isNotEmpty);
@@ -174,7 +175,10 @@ class _ActivitiesBarChart extends StatelessWidget {
                 domainAxis: const f_charts.OrdinalAxisSpec(
                   renderSpec: f_charts.NoneRenderSpec(),
                 ),
-                primaryMeasureAxis: primaryAxisSpec,
+                primaryMeasureAxis: f_charts.NumericAxisSpec(
+                  tickFormatterSpec: primaryAxisTickFormatterSpec,
+                  renderSpec: defaultChartRenderSpec(context),
+                ),
                 selectionModels: [
                   f_charts.SelectionModelConfig(
                     changedListener: (f_charts.SelectionModel model) {
@@ -199,10 +203,11 @@ class _ActivitiesBarChart extends StatelessWidget {
         data: activities,
         domainFn: (SummarizedActivity activity, _) => activity.value.name,
         measureFn: (SummarizedActivity activity, _) => onMeasure(activity),
-        colorFn: (_, __) =>
-            f_charts.ColorUtil.fromDartColor(Theme.of(context).primaryColor),
+        colorFn: (_, __) => f_charts.ColorUtil.fromDartColor(colorAppTheme),
         labelAccessorFn: (SummarizedActivity activity, _) =>
             onBuildLabel(activity),
+        outsideLabelStyleAccessorFn: (_, __) => f_charts.TextStyleSpec(
+            color: f_charts.ColorUtil.fromDartColor(context.colorText)),
       ),
     ];
   }

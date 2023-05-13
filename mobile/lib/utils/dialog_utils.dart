@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:mobile/i18n/strings.dart';
-import 'package:mobile/res/style.dart';
 
 showDeleteDialog({
   required BuildContext context,
@@ -12,7 +11,6 @@ showDeleteDialog({
     context: context,
     builder: (BuildContext context) => AlertDialog(
       title: title == null ? null : Text(title),
-      titleTextStyle: styleTitleAlert,
       content: description == null ? null : Text(description),
       actions: <Widget>[
         buildDialogButton(
@@ -39,7 +37,6 @@ showWarning({
     context: context,
     builder: (BuildContext context) => AlertDialog(
       title: Text(Strings.of(context).warning),
-      titleTextStyle: styleTitleAlert,
       content: description == null ? null : Text(description),
       actions: <Widget>[
         buildDialogButton(
@@ -77,7 +74,6 @@ showOk({
     context: context,
     builder: (BuildContext context) => AlertDialog(
       title: title == null ? null : Text(title),
-      titleTextStyle: styleTitleAlert,
       content: description == null ? null : Text(description),
       actions: <Widget>[
         buildDialogButton(context: context, name: Strings.of(context).ok),

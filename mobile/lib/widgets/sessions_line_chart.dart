@@ -5,10 +5,13 @@ import 'package:mobile/i18n/strings.dart';
 import 'package:mobile/model/session.dart';
 import 'package:mobile/preferences_manager.dart';
 import 'package:mobile/res/dimen.dart';
+import 'package:mobile/res/theme.dart';
 import 'package:mobile/utils/date_time_utils.dart';
 import 'package:mobile/utils/string_utils.dart';
 import 'package:mobile/widgets/text.dart';
 import 'package:mobile/widgets/widget.dart';
+
+import '../utils/chart_utils.dart';
 
 class SessionsLineChart extends StatefulWidget {
   final AppManager app;
@@ -94,6 +97,7 @@ class SessionsLineChartState extends State<SessionsLineChart> {
         primaryMeasureAxis: f_charts.NumericAxisSpec(
           tickFormatterSpec:
               _DurationAxisFormatter(context, longestDurationUnit),
+          renderSpec: defaultChartRenderSpec(context),
         ),
         selectionModels: [
           f_charts.SelectionModelConfig(
@@ -113,8 +117,7 @@ class SessionsLineChartState extends State<SessionsLineChart> {
     return [
       f_charts.Series<Session, int>(
         id: _chartId,
-        colorFn: (_, __) =>
-            f_charts.ColorUtil.fromDartColor(Theme.of(context).primaryColor),
+        colorFn: (_, __) => f_charts.ColorUtil.fromDartColor(colorAppTheme),
         domainFn: (_, int? index) => index ?? 0,
         measureFn: (Session session, _) => session.millisecondsDuration,
         data: widget.sessions,
