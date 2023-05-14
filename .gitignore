@@ -1,2 +1,4 @@
 
 mobile/.flutter-plugins-dependencies
+mobile/lib/firebase_options.dart
+mobile/ios/firebase_app_id_file.json

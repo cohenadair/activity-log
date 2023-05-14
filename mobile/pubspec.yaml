@@ -32,6 +32,9 @@ dependencies:
   sqflite: ^2.2.6                   # https://pub.dev/packages/sqflite
   url_launcher: ^6.1.10             # https://pub.dev/packages/url_launcher
   uuid: ^3.0.7                      # https://pub.dev/packages/uuid
+  firebase_crashlytics: ^3.3.0      # https://pub.dev/packages/firebase_crashlytics
+  firebase_core: ^2.12.0            # https://pub.dev/packages/firebase_core
+  firebase_analytics: ^10.4.0       # https://pub.dev/packages/firebase_analytics
 
 dev_dependencies:
   flutter_test:

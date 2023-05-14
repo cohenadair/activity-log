@@ -1,5 +1,12 @@
 import 'dart:async';
+import 'dart:ui';
+import 'package:flutter/foundation.dart';
 
+import 'firebase_options.dart';
+
+import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:mobile/app_manager.dart';
@@ -8,7 +15,29 @@ import 'package:mobile/pages/main_page.dart';
 
 import 'res/theme.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
+  // Analytics.
+  await FirebaseAnalytics.instance.setAnalyticsCollectionEnabled(true);
+
+  // Crashlytics. See https://firebase.flutter.dev/docs/crashlytics/usage for
+  // error handling guidelines.
+  await FirebaseCrashlytics.instance
+      .setCrashlyticsCollectionEnabled(kReleaseMode);
+
+  // Pass all uncaught "fatal" errors from the framework to Crashlytics.
+  FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
+
+  // Pass all uncaught asynchronous errors that aren't handled by the Flutter
+  // framework to Crashlytics.
+  PlatformDispatcher.instance.onError = (error, stack) {
+    FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+    return true;
+  };
+
   runApp(ActivityLog());
 }
 
