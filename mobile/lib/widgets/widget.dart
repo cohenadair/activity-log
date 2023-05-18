@@ -105,6 +105,15 @@ class EmptyPageHelp extends StatelessWidget {
   }
 }
 
+class VerticalSpace extends StatelessWidget {
+  final double size;
+
+  const VerticalSpace(this.size);
+
+  @override
+  Widget build(BuildContext context) => Container(height: size);
+}
+
 class HorizontalSpace extends StatelessWidget {
   final double size;
 
@@ -112,4 +121,16 @@ class HorizontalSpace extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Container(width: size);
+}
+
+class RightChevronIcon extends StatelessWidget {
+  const RightChevronIcon();
+
+  @override
+  Widget build(BuildContext context) {
+    return const Icon(
+      Icons.chevron_right,
+      color: Colors.grey,
+    );
+  }
 }

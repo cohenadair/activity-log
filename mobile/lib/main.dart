@@ -58,6 +58,7 @@ class ActivityLogState extends State<ActivityLog> {
     _appInitializedFuture = Future.wait([
       _app.preferencesManager.initialize(),
       _app.dataManager.initialize(_app),
+      _app.propertiesManager.initialize(),
     ]).then((_) => true);
   }
 
@@ -79,8 +80,10 @@ class ActivityLogState extends State<ActivityLog> {
         inputDecorationTheme: InputDecorationTheme(
           floatingLabelStyle: MaterialStateTextStyle.resolveWith((states) {
             return TextStyle(
-              color:
-                  states.contains(MaterialState.focused) ? colorAppTheme : null,
+              color: (states.contains(MaterialState.focused) &&
+                      !states.contains(MaterialState.error))
+                  ? colorAppTheme
+                  : null,
             );
           }),
           focusedBorder: const UnderlineInputBorder(

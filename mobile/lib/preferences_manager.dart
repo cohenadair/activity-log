@@ -12,6 +12,8 @@ class PreferencesManager {
   final _keyHomeDateRange = "preferences.homeDateRange";
   final _keyStatsSelectedActivityIds = "preferences.statsSelectedActivityIds";
   final _keyStatsDateRange = "preferences.statsDateRange";
+  final _keyUserName = "preferences.userName";
+  final _keyUserEmail = "preferences.userEmail";
 
   final VoidStreamController _largestDurationUnitUpdated =
       VoidStreamController();
@@ -24,6 +26,8 @@ class PreferencesManager {
 
   late List<String> _statsSelectedActivityIds;
   late DisplayDateRange _statsDateRange;
+  late String? _userName;
+  late String? _userEmail;
 
   /// The largest unit used to display [Duration] objects. This value will never
   /// be `null`. Defaults to [DurationUnit.days].
@@ -36,6 +40,8 @@ class PreferencesManager {
 
   List<String> get statsSelectedActivityIds => _statsSelectedActivityIds;
   DisplayDateRange get statsDateRange => _statsDateRange;
+  String? get userName => _userName;
+  String? get userEmail => _userEmail;
 
   /// Initializes preference properties. This method should be called on app
   /// start.
@@ -51,6 +57,9 @@ class PreferencesManager {
     _statsSelectedActivityIds = activityIds.isEmpty ? [] : activityIds;
 
     _statsDateRange = _getDisplayDateRange(prefs, _keyStatsDateRange);
+
+    _userName = prefs.getString(_keyUserName);
+    _userEmail = prefs.getString(_keyUserEmail);
   }
 
   DisplayDateRange _getDisplayDateRange(SharedPreferences prefs, String key) {
@@ -107,6 +116,20 @@ class PreferencesManager {
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString(_keyStatsDateRange, _statsDateRange.id);
+  }
+
+  void setUserInfo(String name, String email) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    if (name != _userName) {
+      _userName = name;
+      await prefs.setString(_keyUserName, name);
+    }
+
+    if (email != _userEmail) {
+      _userEmail = email;
+      await prefs.setString(_keyUserEmail, email);
+    }
   }
 }
 

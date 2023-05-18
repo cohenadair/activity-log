@@ -334,28 +334,28 @@ void main() {
   group("RunningDurationText", () {
     testWidgets("All", (WidgetTester tester) async {
       await tester.pumpWidget(
-        const Testable(
-            RunningDurationText(Duration(hours: 5, minutes: 6, seconds: 7))),
+        Testable(const RunningDurationText(
+            Duration(hours: 5, minutes: 6, seconds: 7))),
       );
       expect(find.text("05:06:07"), findsOneWidget);
     });
 
     testWidgets("Hours only", (WidgetTester tester) async {
       await tester
-          .pumpWidget(const Testable(RunningDurationText(Duration(hours: 5))));
+          .pumpWidget(Testable(const RunningDurationText(Duration(hours: 5))));
       expect(find.text("05:00:00"), findsOneWidget);
     });
 
     testWidgets("Minutes only", (WidgetTester tester) async {
       await tester.pumpWidget(
-        const Testable(RunningDurationText(Duration(minutes: 30))),
+        Testable(const RunningDurationText(Duration(minutes: 30))),
       );
       expect(find.text("00:30:00"), findsOneWidget);
     });
 
     testWidgets("Seconds only", (WidgetTester tester) async {
       await tester.pumpWidget(
-        const Testable(RunningDurationText(Duration(seconds: 7))),
+        Testable(const RunningDurationText(Duration(seconds: 7))),
       );
       expect(find.text("00:00:07"), findsOneWidget);
     });
@@ -363,29 +363,29 @@ void main() {
 
   group("TimeText", () {
     testWidgets("12 hour", (WidgetTester tester) async {
-      await tester.pumpWidget(const MediaQuery(
-        data: MediaQueryData(alwaysUse24HourFormat: false),
-        child: Testable(TimeText(TimeOfDay(hour: 15, minute: 30))),
+      await tester.pumpWidget(MediaQuery(
+        data: const MediaQueryData(alwaysUse24HourFormat: false),
+        child: Testable(const TimeText(TimeOfDay(hour: 15, minute: 30))),
       ));
       expect(find.text("3:30 PM"), findsOneWidget);
 
-      await tester.pumpWidget(const MediaQuery(
-        data: MediaQueryData(alwaysUse24HourFormat: false),
-        child: Testable(TimeText(TimeOfDay(hour: 4, minute: 30))),
+      await tester.pumpWidget(MediaQuery(
+        data: const MediaQueryData(alwaysUse24HourFormat: false),
+        child: Testable(const TimeText(TimeOfDay(hour: 4, minute: 30))),
       ));
       expect(find.text("4:30 AM"), findsOneWidget);
     });
 
     testWidgets("24 hour", (WidgetTester tester) async {
-      await tester.pumpWidget(const MediaQuery(
-        data: MediaQueryData(alwaysUse24HourFormat: true),
-        child: Testable(TimeText(TimeOfDay(hour: 15, minute: 30))),
+      await tester.pumpWidget(MediaQuery(
+        data: const MediaQueryData(alwaysUse24HourFormat: true),
+        child: Testable(const TimeText(TimeOfDay(hour: 15, minute: 30))),
       ));
       expect(find.text("15:30"), findsOneWidget);
 
-      await tester.pumpWidget(const MediaQuery(
-        data: MediaQueryData(alwaysUse24HourFormat: true),
-        child: Testable(TimeText(TimeOfDay(hour: 4, minute: 30))),
+      await tester.pumpWidget(MediaQuery(
+        data: const MediaQueryData(alwaysUse24HourFormat: true),
+        child: Testable(const TimeText(TimeOfDay(hour: 4, minute: 30))),
       ));
       expect(find.text("04:30"), findsOneWidget);
     });

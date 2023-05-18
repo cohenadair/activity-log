@@ -239,6 +239,23 @@ class Strings {
   String get dateTimeFormat => _getString("dateTimeFormat");
   String get dateDurationFormat => _getString("dateDurationFormat");
   String get now => _getString("now");
+
+  String get feedbackPageTitle => _getString("feedbackPage_title");
+  String get feedbackPageSend => _getString("feedbackPage_send");
+  String get feedbackPageName => _getString("feedbackPage_name");
+  String get feedbackPageEmail => _getString("feedbackPage_email");
+  String get feedbackPageMessage => _getString("feedbackPage_message");
+  String get feedbackPageRequired => _getString("feedbackPage_required");
+  String get feedbackPageInvalidEmail =>
+      _getString("feedbackPage_invalidEmail");
+  String get feedbackPageConfirmation =>
+      _getString("feedbackPage_confirmation");
+  String get feedbackPageRequiredFields =>
+      _getString("feedbackPage_requiredFields");
+  String get feedbackPageConnectionError =>
+      _getString("feedbackPage_connectionError");
+  String get feedbackPageErrorSending =>
+      _getString("feedbackPage_errorSending");
 }
 
 class StringsDelegate extends LocalizationsDelegate<Strings> {

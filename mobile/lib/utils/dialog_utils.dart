@@ -69,6 +69,7 @@ showOk({
   required BuildContext context,
   String? title,
   String? description,
+  VoidCallback? onTapOk,
 }) {
   showDialog(
     context: context,
@@ -76,7 +77,11 @@ showOk({
       title: title == null ? null : Text(title),
       content: description == null ? null : Text(description),
       actions: <Widget>[
-        buildDialogButton(context: context, name: Strings.of(context).ok),
+        buildDialogButton(
+          context: context,
+          name: Strings.of(context).ok,
+          onTap: onTapOk,
+        ),
       ],
     ),
   );
@@ -100,4 +105,16 @@ Widget buildDialogButton({
       Navigator.pop(context);
     },
   );
+}
+
+void showErrorSnackBar(BuildContext context, String errorMessage,
+    [Duration? duration]) {
+  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+    content: Text(
+      errorMessage,
+      style: const TextStyle(color: Colors.white),
+    ),
+    duration: duration ?? const Duration(seconds: 5),
+    backgroundColor: Colors.red,
+  ));
 }

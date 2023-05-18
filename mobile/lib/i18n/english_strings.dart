@@ -133,5 +133,20 @@ Map<String, Map<String, String>> englishStrings = {
     "dateTimeFormat": "%s at %s",
     "dateDurationFormat": "%s (%s)",
     "now": "Now",
+    "feedbackPage_title": "Email Support",
+    "feedbackPage_send": "Send",
+    "feedbackPage_name": "Name",
+    "feedbackPage_email": "Email",
+    "feedbackPage_message": "Message",
+    "feedbackPage_required": "Required",
+    "feedbackPage_invalidEmail": "Invalid email format",
+    "feedbackPage_confirmation":
+        "Message successfully sent. Please allow 1-2 business days for a reply.",
+    "feedbackPage_requiredFields":
+        "Please fix all form errors before sending your feedback.",
+    "feedbackPage_connectionError":
+        "No internet connection. Please check your connection and try again.",
+    "feedbackPage_errorSending":
+        "Error sending feedback. Please try again later, or email %s directly.",
   },
 };

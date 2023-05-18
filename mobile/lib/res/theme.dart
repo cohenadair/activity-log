@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-const themeMode = ThemeMode.dark;
+const themeMode = ThemeMode.system;
 const colorAppTheme = Colors.green;
 
 extension BuildContexts on BuildContext {

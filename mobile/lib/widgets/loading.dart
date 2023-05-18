@@ -2,26 +2,36 @@ import 'package:flutter/material.dart';
 import 'package:mobile/res/dimen.dart';
 
 class Loading extends StatelessWidget {
-  static Widget centered() {
-    return const Row(
+  static Widget centered({Color? color}) {
+    return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Loading(padding: insetsDefault),
+        Loading(
+          padding: insetsDefault,
+          color: color,
+        ),
       ],
     );
   }
 
-  final EdgeInsets _padding;
+  final EdgeInsets padding;
+  final Color? color;
 
-  const Loading({EdgeInsets padding = insetsZero}) : _padding = padding;
+  const Loading({
+    this.padding = insetsZero,
+    this.color,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: _padding,
+      padding: padding,
       child: SizedBox.fromSize(
         size: const Size(20, 20),
-        child: const CircularProgressIndicator(strokeWidth: 2),
+        child: CircularProgressIndicator(
+          strokeWidth: 2,
+          color: color,
+        ),
       ),
     );
   }

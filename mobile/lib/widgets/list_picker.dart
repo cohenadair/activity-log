@@ -78,10 +78,7 @@ class ListPicker<T> extends StatelessWidget {
         children: <Widget>[
           _buildSingleDetail(),
           const HorizontalSpace(paddingDefault),
-          const Icon(
-            Icons.chevron_right,
-            color: Colors.grey,
-          ),
+          const RightChevronIcon(),
         ],
       ),
       onTap: () {

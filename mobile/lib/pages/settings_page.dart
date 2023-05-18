@@ -6,6 +6,8 @@ import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:mobile/database/backup.dart';
+import 'package:mobile/pages/feedback_page.dart';
+import 'package:mobile/utils/page_utils.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:quiver/strings.dart';
@@ -184,9 +186,8 @@ class SettingsPageState extends State<SettingsPage> {
   Widget _buildContact() {
     return ListItem(
       title: Text(Strings.of(context).settingsPageContactLabel),
-      onTap: () async {
-        await _sendEmail(subject: "Support Message From Activity Log");
-      },
+      trailing: const RightChevronIcon(),
+      onTap: () => push(context, FeedbackPage(widget.app)),
     );
   }
 

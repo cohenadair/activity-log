@@ -45,7 +45,7 @@ class Button extends StatelessWidget {
 /// A [TextButton] wrapper meant to be used as an action in an [AppBar].
 class ActionButton extends StatelessWidget {
   final String? text;
-  final VoidCallback onPressed;
+  final VoidCallback? onPressed;
 
   final String? _stringId;
 
