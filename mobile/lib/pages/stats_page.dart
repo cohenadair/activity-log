@@ -14,6 +14,7 @@ import 'package:mobile/utils/string_utils.dart';
 import 'package:mobile/widgets/activities_bar_chart.dart';
 import 'package:mobile/widgets/activity_picker.dart';
 import 'package:mobile/widgets/activity_summary.dart';
+import 'package:mobile/widgets/average_durations_list_item.dart';
 import 'package:mobile/widgets/loading.dart';
 import 'package:mobile/widgets/stats_date_range_picker.dart';
 import 'package:mobile/widgets/page.dart' as p;
@@ -196,40 +197,50 @@ class StatsPageState extends State<StatsPage> {
     return LargestDurationBuilder(
       app: widget.app,
       builder: (BuildContext context, DurationUnit largestDurationUnit) {
-        return Summary(
-          title: Strings.of(context).summaryDefaultTitle,
-          padding: insetsVerticalDefault,
-          items: [
-            SummaryItem(
-              title: Strings.of(context).statsPageTotalDuration,
-              value: formatTotalDuration(
-                context: context,
-                durations: [Duration(milliseconds: summary.totalDuration)],
-                includesSeconds: false,
-                condensed: true,
-                showHighestTwoOnly: true,
-                largestDurationUnit: largestDurationUnit,
-              ),
+        return Column(
+          children: [
+            Summary(
+              title: Strings.of(context).summaryDefaultTitle,
+              padding: insetsTopDefault,
             ),
-            SummaryItem(
-              title: Strings.of(context).statsPageMostFrequentActivityLabel,
-              subtitle: summary.mostFrequentActivity!.first.name,
-              value: format(
-                Strings.of(context).statsPageMostFrequentActivityValue,
-                [summary.mostFrequentActivity!.second],
-              ),
+            AverageDurationsListItem(
+              largestDurationUnit: largestDurationUnit,
+              averageDurations: summary.averageDurations,
             ),
-            SummaryItem(
-              title: Strings.of(context).statsPageLongestSessionLabel,
-              subtitle: summary.longestSession!.first.name,
-              value: formatTotalDuration(
-                context: context,
-                durations: [summary.longestSession!.second.duration],
-                includesSeconds: false,
-                condensed: true,
-                showHighestTwoOnly: true,
-                largestDurationUnit: largestDurationUnit,
-              ),
+            Summary(
+              items: [
+                SummaryItem(
+                  title: Strings.of(context).statsPageTotalDuration,
+                  value: formatTotalDuration(
+                    context: context,
+                    durations: [Duration(milliseconds: summary.totalDuration)],
+                    includesSeconds: false,
+                    condensed: true,
+                    showHighestTwoOnly: true,
+                    largestDurationUnit: largestDurationUnit,
+                  ),
+                ),
+                SummaryItem(
+                  title: Strings.of(context).statsPageMostFrequentActivityLabel,
+                  subtitle: summary.mostFrequentActivity!.first.name,
+                  value: format(
+                    Strings.of(context).statsPageMostFrequentActivityValue,
+                    [summary.mostFrequentActivity!.second],
+                  ),
+                ),
+                SummaryItem(
+                  title: Strings.of(context).statsPageLongestSessionLabel,
+                  subtitle: summary.longestSession!.first.name,
+                  value: formatTotalDuration(
+                    context: context,
+                    durations: [summary.longestSession!.second.duration],
+                    includesSeconds: false,
+                    condensed: true,
+                    showHighestTwoOnly: true,
+                    largestDurationUnit: largestDurationUnit,
+                  ),
+                ),
+              ],
             ),
           ],
         );

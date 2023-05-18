@@ -420,3 +420,10 @@ int weekOfYear(DateTime date) {
 int dayOfYear(DateTime date) {
   return int.parse(DateFormat("D").format(date));
 }
+
+Duration averageDuration(int millis, num divisor) {
+  if (divisor <= 0) {
+    return const Duration();
+  }
+  return Duration(milliseconds: (millis / divisor).round());
+}

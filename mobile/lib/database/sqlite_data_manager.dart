@@ -442,7 +442,7 @@ class SQLiteDataManager {
     }
 
     summarizedActivities.sort((a, b) => a.value.name.compareTo(b.value.name));
-    return SummarizedActivityList(summarizedActivities);
+    return SummarizedActivityList(summarizedActivities, displayDateRange);
   }
 
   /// Returns a list of [ActivityListTileModel] objects meant to be used in

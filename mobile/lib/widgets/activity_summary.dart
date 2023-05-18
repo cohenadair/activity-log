@@ -6,6 +6,7 @@ import 'package:mobile/preferences_manager.dart';
 import 'package:mobile/res/dimen.dart';
 import 'package:mobile/utils/date_time_utils.dart';
 import 'package:mobile/utils/string_utils.dart';
+import 'package:mobile/widgets/average_durations_list_item.dart';
 import 'package:mobile/widgets/list_item.dart';
 import 'package:mobile/widgets/sessions_line_chart.dart';
 import 'package:mobile/widgets/summary.dart';
@@ -76,7 +77,7 @@ class ActivitySummary extends StatelessWidget {
                         ),
                   value: activity.shortestSession == null
                       ? Strings.of(context).none
-                      : _formatDuration(
+                      : formatDuration(
                           context,
                           activity.shortestSession!.duration,
                           largestDurationUnit,
@@ -92,7 +93,7 @@ class ActivitySummary extends StatelessWidget {
                         ),
                   value: activity.longestSession == null
                       ? Strings.of(context).none
-                      : _formatDuration(
+                      : formatDuration(
                           context,
                           activity.longestSession!.duration,
                           largestDurationUnit,
@@ -116,7 +117,7 @@ class ActivitySummary extends StatelessWidget {
               items: <SummaryItem>[
                 SummaryItem(
                   title: Strings.of(context).activitySummaryTotalDuration,
-                  value: _formatDuration(
+                  value: formatDuration(
                     context,
                     activity.totalDuration,
                     largestDurationUnit,
@@ -124,66 +125,14 @@ class ActivitySummary extends StatelessWidget {
                 ),
               ],
             ),
-            ExpansionListItem(
+            AverageDurationsListItem(
               scrollController: scrollController,
-              toBottomSafeArea: true,
-              title: Text(Strings.of(context).activitySummaryAverageDurations),
-              children: <Widget>[
-                Summary(
-                  items: <SummaryItem>[
-                    SummaryItem(
-                      title: Strings.of(context).activitySummaryAverageOverall,
-                      value: _formatDuration(
-                        context,
-                        activity.averageDurationOverall,
-                        largestDurationUnit,
-                      ),
-                    ),
-                    SummaryItem(
-                      title: Strings.of(context).activitySummaryAveragePerDay,
-                      value: _formatDuration(
-                        context,
-                        activity.averageDurationPerDay,
-                        largestDurationUnit,
-                      ),
-                    ),
-                    SummaryItem(
-                      title: Strings.of(context).activitySummaryAveragePerWeek,
-                      value: _formatDuration(
-                        context,
-                        activity.averageDurationPerWeek,
-                        largestDurationUnit,
-                      ),
-                    ),
-                    SummaryItem(
-                      title: Strings.of(context).activitySummaryAveragePerMonth,
-                      value: _formatDuration(
-                        context,
-                        activity.averageDurationPerMonth,
-                        largestDurationUnit,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            )
+              largestDurationUnit: largestDurationUnit,
+              averageDurations: activity.averageDurations,
+            ),
           ],
         );
       },
-    );
-  }
-
-  String _formatDuration(
-    BuildContext context,
-    Duration duration,
-    DurationUnit largestDurationUnit,
-  ) {
-    return formatTotalDuration(
-      context: context,
-      durations: [duration],
-      condensed: true,
-      showHighestTwoOnly: true,
-      largestDurationUnit: largestDurationUnit,
     );
   }
 

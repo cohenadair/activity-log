@@ -193,3 +193,17 @@ String formatTotalDuration({
 
   return result;
 }
+
+String formatDuration(
+  BuildContext context,
+  Duration duration,
+  DurationUnit largestDurationUnit,
+) {
+  return formatTotalDuration(
+    context: context,
+    durations: [duration],
+    condensed: true,
+    showHighestTwoOnly: true,
+    largestDurationUnit: largestDurationUnit,
+  );
+}

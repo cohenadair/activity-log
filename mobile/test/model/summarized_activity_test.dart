@@ -583,11 +583,14 @@ void main() {
         sessions: [longestSession],
       );
 
-      SummarizedActivityList result = SummarizedActivityList([
-        summarizedActivity1,
-        summarizedActivity2,
-        summarizedActivity3,
-      ]);
+      SummarizedActivityList result = SummarizedActivityList(
+        [
+          summarizedActivity1,
+          summarizedActivity2,
+          summarizedActivity3,
+        ],
+        null,
+      );
 
       expect(result.activities, isNotNull);
       expect(result.activities.length, equals(3));
@@ -599,6 +602,24 @@ void main() {
       expect(result.longestSession!.second.millisecondsDuration,
           equals(longestSession.millisecondsDuration));
       expect(result.totalDuration, const Duration(hours: 18).inMilliseconds);
+
+      var averageDurations = result.averageDurations;
+      expect(
+        averageDurations.overall,
+        const Duration(milliseconds: 10800000),
+      );
+      expect(
+        averageDurations.perDay,
+        const Duration(milliseconds: 4380845),
+      );
+      expect(
+        averageDurations.perWeek,
+        const Duration(milliseconds: 30665915),
+      );
+      expect(
+        averageDurations.perMonth,
+        const Duration(milliseconds: 131425352),
+      );
     });
   });
 

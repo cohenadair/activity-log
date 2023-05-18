@@ -4,6 +4,7 @@ import 'package:mobile/model/activity.dart';
 import 'package:mobile/model/session.dart';
 import 'package:mobile/utils/date_time_utils.dart';
 import 'package:mobile/utils/tuple.dart';
+import 'package:mobile/widgets/average_durations_list_item.dart';
 import 'package:quiver/iterables.dart';
 import 'package:quiver/time.dart';
 
@@ -72,7 +73,8 @@ class SummarizedActivity {
     return _cachedLongestSession;
   }
 
-  Duration get averageDurationOverall => getAverageDuration(numberOfSessions);
+  Duration get averageDurationOverall =>
+      averageDuration(totalDuration.inMilliseconds, numberOfSessions);
 
   Duration get totalDuration {
     if (_cachedTotalDuration == null) {
@@ -100,6 +102,15 @@ class SummarizedActivity {
       _calculate();
     }
     return _cachedDurationPerMonth!;
+  }
+
+  AverageDurations get averageDurations {
+    return AverageDurations(
+      overall: averageDurationOverall,
+      perDay: averageDurationPerDay,
+      perWeek: averageDurationPerWeek,
+      perMonth: averageDurationPerMonth,
+    );
   }
 
   int get longestStreak {
@@ -154,9 +165,12 @@ class SummarizedActivity {
           )
         : displayDateRange!.getValue(clock.now());
 
-    _cachedDurationPerDay = getAverageDuration(range.days);
-    _cachedDurationPerWeek = getAverageDuration(range.weeks);
-    _cachedDurationPerMonth = getAverageDuration(range.months);
+    _cachedDurationPerDay =
+        averageDuration(totalDuration.inMilliseconds, range.days);
+    _cachedDurationPerWeek =
+        averageDuration(totalDuration.inMilliseconds, range.weeks);
+    _cachedDurationPerMonth =
+        averageDuration(totalDuration.inMilliseconds, range.months);
 
     // Iterate all days, keeping track of the longest streak.
     int currentStreak = 1;
@@ -214,15 +228,6 @@ class SummarizedActivity {
     return dateTime;
   }
 
-  Duration getAverageDuration(num divisor) {
-    if (divisor <= 0) {
-      return const Duration();
-    }
-
-    return Duration(
-        milliseconds: (totalDuration.inMilliseconds / divisor).round());
-  }
-
   double getAverageSessions(num divisor) {
     if (divisor <= 0) {
       return 0;
@@ -241,15 +246,26 @@ class SummarizedActivity {
 /// including summary data across all of its activities.
 class SummarizedActivityList {
   final List<SummarizedActivity> activities;
+  final DisplayDateRange? displayDateRange;
+  final Clock clock;
 
   Tuple<Activity, Session>? _cachedLongestSession;
   Tuple<Activity, int>? _cachedMostFrequentActivity;
 
   List<SummarizedActivity>? _cachedActivitiesSortedByDuration;
   List<SummarizedActivity>? _cachedActivitiesSortedByNumberOfSessions;
-  int? _cachedTotalDuration;
 
-  SummarizedActivityList(this.activities);
+  int? _cachedNumberOfSessions;
+  int? _cachedTotalDuration;
+  Duration? _cachedDurationPerDay;
+  Duration? _cachedDurationPerWeek;
+  Duration? _cachedDurationPerMonth;
+
+  SummarizedActivityList(
+    this.activities,
+    this.displayDateRange, {
+    this.clock = const Clock(),
+  });
 
   /// A [Tuple] of [Activity] and its longest [Session].
   Tuple<Activity, Session>? get longestSession {
@@ -267,11 +283,51 @@ class SummarizedActivityList {
     return _cachedMostFrequentActivity;
   }
 
+  Duration get averageDurationOverall =>
+      averageDuration(totalDuration, numberOfSessions);
+
+  int get numberOfSessions {
+    if (_cachedNumberOfSessions == null) {
+      _calculate();
+    }
+    return _cachedNumberOfSessions!;
+  }
+
   int get totalDuration {
     if (_cachedTotalDuration == null) {
       _calculate();
     }
     return _cachedTotalDuration!;
+  }
+
+  Duration get averageDurationPerDay {
+    if (_cachedDurationPerDay == null) {
+      _calculate();
+    }
+    return _cachedDurationPerDay!;
+  }
+
+  Duration get averageDurationPerWeek {
+    if (_cachedDurationPerWeek == null) {
+      _calculate();
+    }
+    return _cachedDurationPerWeek!;
+  }
+
+  Duration get averageDurationPerMonth {
+    if (_cachedDurationPerMonth == null) {
+      _calculate();
+    }
+    return _cachedDurationPerMonth!;
+  }
+
+  AverageDurations get averageDurations {
+    return AverageDurations(
+      overall: averageDurationOverall,
+      perDay: averageDurationPerDay,
+      perWeek: averageDurationPerWeek,
+      perMonth: averageDurationPerMonth,
+    );
   }
 
   /// Returns a copy of `activities`, sorted descending by total duration.
@@ -298,6 +354,10 @@ class SummarizedActivityList {
 
   void _calculate() {
     _cachedTotalDuration = 0;
+    _cachedNumberOfSessions = 0;
+
+    Session? earliestSession;
+    Session? latestSession;
 
     for (var activity in activities) {
       if (_cachedMostFrequentActivity == null ||
@@ -307,6 +367,18 @@ class SummarizedActivityList {
       }
 
       for (var session in activity.sessions) {
+        _cachedNumberOfSessions = _cachedNumberOfSessions! + 1;
+
+        if (earliestSession == null ||
+            earliestSession.startTimestamp > session.startTimestamp) {
+          earliestSession = session;
+        }
+
+        if (latestSession == null ||
+            latestSession.startTimestamp < session.startTimestamp) {
+          latestSession = session;
+        }
+
         if (_cachedLongestSession == null ||
             session > _cachedLongestSession!.second) {
           _cachedLongestSession = Tuple(activity.value, session);
@@ -316,5 +388,17 @@ class SummarizedActivityList {
       _cachedTotalDuration =
           _cachedTotalDuration! + activity.totalDuration.inMilliseconds;
     }
+
+    // If the date range is null, restrict the range to the earliest
+    // and latest sessions.
+    var range = displayDateRange?.getValue(clock.now()) ??
+        DateRange(
+          startDate: earliestSession?.startDateTime ?? clock.now(),
+          endDate: latestSession?.endDateTime ?? clock.now(),
+        );
+
+    _cachedDurationPerDay = averageDuration(totalDuration, range.days);
+    _cachedDurationPerWeek = averageDuration(totalDuration, range.weeks);
+    _cachedDurationPerMonth = averageDuration(totalDuration, range.months);
   }
 }
