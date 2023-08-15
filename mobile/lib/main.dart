@@ -95,13 +95,12 @@ class ActivityLogState extends State<ActivityLog> {
         ),
         textButtonTheme: TextButtonThemeData(
           style: ButtonStyle(
-            foregroundColor:
-                MaterialStateColor.resolveWith((_) => colorAppTheme),
+            foregroundColor: _appThemeColor(),
           ),
         ),
         iconTheme: const IconThemeData(color: colorAppTheme),
         checkboxTheme: CheckboxThemeData(
-          fillColor: MaterialStateColor.resolveWith((_) => colorAppTheme),
+          fillColor: _appThemeColor(),
         ),
         expansionTileTheme: const ExpansionTileThemeData(
           textColor: colorAppTheme,
@@ -112,6 +111,22 @@ class ActivityLogState extends State<ActivityLog> {
         ),
         progressIndicatorTheme: const ProgressIndicatorThemeData(
           color: colorAppTheme,
+        ),
+        timePickerTheme: TimePickerThemeData(
+          dialHandColor: colorAppTheme,
+          hourMinuteTextColor: _timePickerTextColor(),
+          hourMinuteColor: _timePickerTimeColor(),
+          dayPeriodTextColor: _timePickerTextColor(),
+          dayPeriodColor: _timePickerTimeColor(),
+        ),
+        datePickerTheme: DatePickerThemeData(
+          dayOverlayColor: _appThemeColor(),
+          dayBackgroundColor: _selectedBackgroundColor(),
+          todayForegroundColor: MaterialStateColor.resolveWith((states) =>
+              states.contains(MaterialState.selected)
+                  ? Colors.white
+                  : colorAppTheme),
+          todayBackgroundColor: _selectedBackgroundColor(),
         ),
       ),
       themeMode: themeMode,
@@ -136,5 +151,28 @@ class ActivityLogState extends State<ActivityLog> {
         Locale('en', 'CA'),
       ],
     );
+  }
+
+  MaterialStateColor _timePickerTextColor() {
+    return MaterialStateColor.resolveWith((states) =>
+        states.contains(MaterialState.selected) ? colorAppTheme : Colors.white);
+  }
+
+  MaterialStateColor _timePickerTimeColor() {
+    return MaterialStateColor.resolveWith((states) =>
+        states.contains(MaterialState.selected)
+            ? colorAppTheme.withOpacity(0.24)
+            : ThemeData.dark().colorScheme.onSurface.withOpacity(0.12));
+  }
+
+  MaterialStateColor _appThemeColor() {
+    return MaterialStateColor.resolveWith((_) => colorAppTheme);
+  }
+
+  MaterialStateColor _selectedBackgroundColor() {
+    return MaterialStateColor.resolveWith((states) =>
+        states.contains(MaterialState.selected)
+            ? colorAppTheme
+            : Colors.transparent);
   }
 }
