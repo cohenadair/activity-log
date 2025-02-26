@@ -2,8 +2,6 @@ import 'dart:async';
 import 'dart:ui';
 import 'package:flutter/foundation.dart';
 
-import 'firebase_options.dart';
-
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
@@ -18,7 +16,7 @@ import 'res/theme.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  await Firebase.initializeApp();
 
   // Analytics.
   await FirebaseAnalytics.instance.setAnalyticsCollectionEnabled(true);
@@ -67,6 +65,7 @@ class ActivityLogState extends State<ActivityLog> {
     return MaterialApp(
       onGenerateTitle: (context) => Strings.of(context).appName,
       theme: ThemeData(
+        useMaterial3: false,
         primarySwatch: colorAppTheme,
         buttonTheme: const ButtonThemeData(
           textTheme: ButtonTextTheme.primary,
@@ -76,7 +75,7 @@ class ActivityLogState extends State<ActivityLog> {
           color: colorAppTheme,
         ),
       ),
-      darkTheme: ThemeData.dark().copyWith(
+      darkTheme: ThemeData.dark(useMaterial3: false).copyWith(
         inputDecorationTheme: InputDecorationTheme(
           floatingLabelStyle: MaterialStateTextStyle.resolveWith((states) {
             return TextStyle(

@@ -17,7 +17,7 @@ class SQLiteOpenHelper {
       current_session_id TEXT REFERENCES session(id)
     );
     """,
-    """  
+    """
     CREATE TABLE session (
       id TEXT PRIMARY KEY,
       activity_id TEXT NOT NULL REFERENCES activity(id),

@@ -173,10 +173,22 @@ void main() {
     when(deviceInfoWrapper.iosInfo).thenAnswer(
       (_) => Future.value(
         IosDeviceInfo.fromMap({
+          "name": "iOS Device Info",
           "systemName": "iOS System",
           "systemVersion": "1234",
-          "utsname": {"machine": "iPhone Name"},
+          "model": "iPhone",
+          "modelName": "14 Pro",
+          "localizedModel": "iPhone",
           "identifierForVendor": "Vendor ID",
+          "isPhysicalDevice": true,
+          "isiOSAppOnMac": false,
+          "utsname": {
+            "sysname": "Sys name",
+            "nodename": "Node name",
+            "release": "Release",
+            "version": "Version",
+            "machine": "iPhone Name",
+          },
         }),
       ),
     );
@@ -246,10 +258,22 @@ void main() {
     when(deviceInfoWrapper.iosInfo).thenAnswer(
       (_) => Future.value(
         IosDeviceInfo.fromMap({
+          "name": "iOS Device Info",
           "systemName": "iOS System",
           "systemVersion": "1234",
-          "utsname": {"machine": "iPhone Name"},
+          "model": "iPhone",
+          "modelName": "14 Pro",
+          "localizedModel": "iPhone",
           "identifierForVendor": "Vendor ID",
+          "isPhysicalDevice": true,
+          "isiOSAppOnMac": false,
+          "utsname": {
+            "sysname": "Sys name",
+            "nodename": "Node name",
+            "release": "Release",
+            "version": "Version",
+            "machine": "iPhone Name",
+          },
         }),
       ),
     );
@@ -281,10 +305,22 @@ void main() {
     when(deviceInfoWrapper.iosInfo).thenAnswer(
       (_) => Future.value(
         IosDeviceInfo.fromMap({
+          "name": "iOS Device Info",
           "systemName": "iOS System",
-          "systemVersion": "1",
-          "utsname": {"machine": "iPhone"},
-          "identifierForVendor": "V",
+          "systemVersion": "1234",
+          "model": "iPhone",
+          "modelName": "14 Pro",
+          "localizedModel": "iPhone",
+          "identifierForVendor": "Vendor ID",
+          "isPhysicalDevice": true,
+          "isiOSAppOnMac": false,
+          "utsname": {
+            "sysname": "Sys name",
+            "nodename": "Node name",
+            "release": "Release",
+            "version": "Version",
+            "machine": "iPhone Name",
+          },
         }),
       ),
     );

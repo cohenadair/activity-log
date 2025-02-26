@@ -3,3 +3,7 @@ mobile/.flutter-plugins-dependencies
 mobile/lib/firebase_options.dart
 mobile/ios/firebase_app_id_file.json
 mobile/assets/sensitive.properties
+mobile/Test Results - tests_in_test.html
+mobile/android/keystore.properties
+*.cxx
+mobile/firebase.json
