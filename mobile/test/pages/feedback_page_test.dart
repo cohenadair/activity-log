@@ -47,6 +47,8 @@ void main() {
 
     ioWrapper = MockIoWrapper();
     when(ioWrapper.isConnected()).thenAnswer((_) => Future.value(true));
+    when(ioWrapper.isIOS).thenReturn(false);
+    when(ioWrapper.isAndroid).thenReturn(false);
 
     packageInfoWrapper = MockPackageInfoWrapper();
     when(packageInfoWrapper.fromPlatform()).thenAnswer(

@@ -71,7 +71,7 @@ class _FeedbackPageState extends State<FeedbackPage> {
 
   @override
   Widget build(BuildContext context) {
-    Widget action = Loading.centered(color: context.colorText);
+    Widget action = Loading.centered(color: context.colorTextActionBar);
     if (!_isSending) {
       action = ActionButton(
         text: Strings.of(context).feedbackPageSend,
@@ -198,8 +198,12 @@ class _FeedbackPageState extends State<FeedbackPage> {
         }
       ],
       "from": {
-        "name": "Activity Log App",
+        "name": "Activity Log ${_io.isAndroid ? "Android" : "iOS"} App",
         "email": _propertiesManager.clientSenderEmail,
+      },
+      "reply_to": {
+        "email": email,
+        "name": name,
       },
       "subject": "User Feedback",
       "content": [
