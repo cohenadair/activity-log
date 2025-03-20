@@ -71,9 +71,13 @@ class ActivityLogState extends State<ActivityLog> {
           textTheme: ButtonTextTheme.primary,
         ),
         iconTheme: const IconThemeData(color: colorAppTheme),
+        listTileTheme: ListTileThemeData(
+          iconColor: colorAppTheme,
+        ),
         progressIndicatorTheme: const ProgressIndicatorThemeData(
           color: colorAppTheme,
         ),
+        checkboxTheme: _checkboxThemeData(),
       ),
       darkTheme: ThemeData.dark(useMaterial3: false).copyWith(
         inputDecorationTheme: InputDecorationTheme(
@@ -98,9 +102,7 @@ class ActivityLogState extends State<ActivityLog> {
           ),
         ),
         iconTheme: const IconThemeData(color: colorAppTheme),
-        checkboxTheme: CheckboxThemeData(
-          fillColor: _appThemeColor(),
-        ),
+        checkboxTheme: _checkboxThemeData(),
         expansionTileTheme: const ExpansionTileThemeData(
           textColor: colorAppTheme,
           iconColor: colorAppTheme,
@@ -173,5 +175,12 @@ class ActivityLogState extends State<ActivityLog> {
         states.contains(MaterialState.selected)
             ? colorAppTheme
             : Colors.transparent);
+  }
+
+  CheckboxThemeData _checkboxThemeData() {
+    return CheckboxThemeData(
+      fillColor: _selectedBackgroundColor(),
+      side: BorderSide(color: colorAppTheme, width: 2.0),
+    );
   }
 }
