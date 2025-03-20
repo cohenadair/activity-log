@@ -17,7 +17,7 @@ import 'package:mobile/widgets/activity_summary.dart';
 import 'package:mobile/widgets/average_durations_list_item.dart';
 import 'package:mobile/widgets/loading.dart';
 import 'package:mobile/widgets/stats_date_range_picker.dart';
-import 'package:mobile/widgets/page.dart' as p;
+import 'package:mobile/widgets/my_page.dart' as p;
 import 'package:mobile/widgets/summary.dart';
 import 'package:mobile/widgets/text.dart';
 import 'package:mobile/widgets/widget.dart';
@@ -73,8 +73,8 @@ class StatsPageState extends State<StatsPage> {
 
   @override
   Widget build(BuildContext context) {
-    return p.Page(
-      appBarStyle: p.PageAppBarStyle(
+    return p.MyPage(
+      appBarStyle: p.MyPageAppBarStyle(
         title: Strings.of(context).statsPageTitle,
       ),
       child: FutureBuilder<int>(
@@ -182,7 +182,6 @@ class StatsPageState extends State<StatsPage> {
     push(
       context,
       StatsActivitySummaryPage(
-        app: widget.app,
         activity: activity,
       ),
     );
@@ -195,7 +194,6 @@ class StatsPageState extends State<StatsPage> {
     }
 
     return LargestDurationBuilder(
-      app: widget.app,
       builder: (BuildContext context, DurationUnit largestDurationUnit) {
         return Column(
           children: [
@@ -250,7 +248,6 @@ class StatsPageState extends State<StatsPage> {
 
   Widget _buildForSingleActivity(SummarizedActivity activity) {
     return ActivitySummary(
-      app: widget.app,
       activity: activity,
       scrollController: scrollController,
     );

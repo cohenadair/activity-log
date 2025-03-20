@@ -9,16 +9,16 @@ import 'package:mobile/widgets/widget.dart';
 /// [Stream], each given [Future] callback is invoked, and its [Future]
 /// updated.
 class FutureListener extends StatefulWidget {
-  /// The [Future]s that are updated when their corresponding [Stream]
+  /// The [Future]s that are updated when one of [Stream]s in [streams]
   /// receives an event.
-  final List<Future<dynamic> Function()> getFutureCallbacks;
+  final List<Future<dynamic> Function()> futuresCallbacks;
 
   /// The [Stream]s to listen to.
   final List<Stream<dynamic>> streams;
 
   /// Invoked when the default constructor is used to instantiate a
   /// [FutureListener] object. The passed in [List] include the values returned
-  /// by each future in [getFutureCallbacks], in the order given.
+  /// by each future in [futuresCallbacks], in the order given.
   final Widget Function(BuildContext, List<dynamic>?)? builder;
 
   /// Invoked when the [FutureListener.single] constructor is used to
@@ -32,15 +32,15 @@ class FutureListener extends StatefulWidget {
   final List<dynamic> initialValues;
 
   /// Called when the given [Future] objects are finished retrieving data.
-  final VoidCallback? futuresHaveDataCallback;
+  final VoidCallback? onFuturesFinished;
 
   FutureListener({
-    required this.getFutureCallbacks,
+    required this.futuresCallbacks,
     required this.streams,
     required this.builder,
     this.initialValues = const [],
-    this.futuresHaveDataCallback,
-  })  : assert(getFutureCallbacks.isNotEmpty),
+    this.onFuturesFinished,
+  })  : assert(futuresCallbacks.isNotEmpty),
         assert(streams.isNotEmpty),
         singleBuilder = null;
 
@@ -49,8 +49,8 @@ class FutureListener extends StatefulWidget {
     required Stream stream,
     required Widget Function(BuildContext, dynamic) builder,
     this.initialValues = const [],
-    this.futuresHaveDataCallback,
-  })  : getFutureCallbacks = [getFutureCallback],
+    this.onFuturesFinished,
+  })  : futuresCallbacks = [getFutureCallback],
         streams = [stream],
         singleBuilder = builder,
         builder = null;
@@ -99,7 +99,7 @@ class FutureListenerState extends State<FutureListener> {
           );
         }
 
-        widget.futuresHaveDataCallback?.call();
+        widget.onFuturesFinished?.call();
 
         return _build(
           singleValue: snapshot.data.first,
@@ -119,7 +119,7 @@ class FutureListenerState extends State<FutureListener> {
 
   void _updateFutures() {
     _futures.clear();
-    for (var getFuture in widget.getFutureCallbacks) {
+    for (var getFuture in widget.futuresCallbacks) {
       _futures.add(getFuture());
     }
   }

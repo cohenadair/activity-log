@@ -7,3 +7,4 @@ mobile/Test Results - tests_in_test.html
 mobile/android/keystore.properties
 *.cxx
 mobile/firebase.json
+mobile/coverage/lcov.info

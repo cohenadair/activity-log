@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 const themeMode = ThemeMode.system;
 const colorAppTheme = Colors.green;
@@ -22,4 +23,7 @@ extension BuildContexts on BuildContext {
   Color get colorBarChartLines => isDarkTheme ? Colors.white12 : Colors.black12;
 
   Color get colorSecondaryText => isDarkTheme ? Colors.white54 : Colors.black54;
+
+  SystemUiOverlayStyle get appBarSystemStyle =>
+      isDarkTheme ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark;
 }

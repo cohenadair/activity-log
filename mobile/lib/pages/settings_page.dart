@@ -22,7 +22,7 @@ import 'package:mobile/utils/string_utils.dart';
 import 'package:mobile/widgets/list_item.dart';
 import 'package:mobile/widgets/list_picker.dart';
 import 'package:mobile/widgets/loading.dart';
-import 'package:mobile/widgets/page.dart' as p;
+import 'package:mobile/widgets/my_page.dart' as p;
 import 'package:mobile/widgets/text.dart';
 import 'package:mobile/widgets/widget.dart';
 import 'package:url_launcher/url_launcher_string.dart';
@@ -55,8 +55,8 @@ class SettingsPageState extends State<SettingsPage> {
 
   @override
   Widget build(BuildContext context) {
-    return p.Page(
-      appBarStyle: p.PageAppBarStyle(
+    return p.MyPage(
+      appBarStyle: p.MyPageAppBarStyle(
         title: Strings.of(context).settingsPageTitle,
       ),
       child: ListView(
@@ -97,7 +97,6 @@ class SettingsPageState extends State<SettingsPage> {
 
   Widget _buildLargestDurationPicker() {
     return LargestDurationBuilder(
-      app: widget.app,
       builder: (BuildContext context, DurationUnit durationUnit) {
         return ListPicker<DurationUnit>(
           pageTitle: Strings.of(context).settingsPageLargestDurationLabel,

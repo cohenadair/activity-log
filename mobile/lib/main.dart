@@ -55,7 +55,7 @@ class ActivityLogState extends State<ActivityLog> {
     // Wait for all app initializations before showing the app as "ready".
     _appInitializedFuture = Future.wait([
       _app.preferencesManager.initialize(),
-      _app.dataManager.initialize(_app),
+      _app.dataManager.init(_app),
       _app.propertiesManager.initialize(),
     ]).then((_) => true);
   }

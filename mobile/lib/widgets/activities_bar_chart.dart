@@ -33,7 +33,6 @@ class ActivitiesDurationBarChart extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return LargestDurationBuilder(
-      app: app,
       builder: (BuildContext context, DurationUnit largestDurationUnit) {
         return _ActivitiesBarChart(
           chartId: "ActivitiesDurationBarChart",

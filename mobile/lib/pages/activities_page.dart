@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mobile/app_manager.dart';
-import 'package:mobile/database/sqlite_data_manager.dart';
+import 'package:mobile/database/data_manager.dart';
 import 'package:mobile/i18n/strings.dart';
 import 'package:mobile/model/activity.dart';
 import 'package:mobile/pages/edit_activity_page.dart';
@@ -38,7 +38,6 @@ class ActivitiesPageState extends State<ActivitiesPage> {
           },
           buildTileCallback: (ActivityListTileModel model, onTapTile) {
             return ActivityListTile(
-              app: widget.app,
               model: model,
               onTap: (_) => onTapTile(model),
               onTapStartSession: () => _startSession(model.activity),

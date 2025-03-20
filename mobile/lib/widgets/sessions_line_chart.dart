@@ -15,12 +15,10 @@ import 'package:mobile/widgets/widget.dart';
 import '../utils/chart_utils.dart';
 
 class SessionsLineChart extends StatefulWidget {
-  final AppManager app;
   final List<Session> sessions;
   final EdgeInsets padding;
 
   const SessionsLineChart({
-    required this.app,
     this.sessions = const [],
     this.padding = insetsZero,
   });
@@ -50,7 +48,6 @@ class SessionsLineChartState extends State<SessionsLineChart> {
           SafeArea(
             bottom: false,
             child: LargestDurationBuilder(
-              app: widget.app,
               builder: (BuildContext context, DurationUnit unit) => Column(
                 children: <Widget>[
                   _buildLineChart(unit),

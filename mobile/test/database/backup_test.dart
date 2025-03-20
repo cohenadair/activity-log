@@ -10,12 +10,12 @@ import '../mocks/mocks.mocks.dart';
 
 void main() {
   late MockAppManager app;
-  late MockSQLiteDataManager dataManager;
+  late MockDataManager dataManager;
   late MockPreferencesManager preferencesManager;
 
   setUp(() {
     app = MockAppManager();
-    dataManager = MockSQLiteDataManager();
+    dataManager = MockDataManager();
     preferencesManager = MockPreferencesManager();
 
     when(app.dataManager).thenReturn(dataManager);

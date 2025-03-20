@@ -14,12 +14,10 @@ import 'package:mobile/widgets/widget.dart';
 
 /// A widget displays statistical information about a single [Activity].
 class ActivitySummary extends StatelessWidget {
-  final AppManager app;
   final SummarizedActivity activity;
   final ScrollController scrollController;
 
   const ActivitySummary({
-    required this.app,
     required this.activity,
     required this.scrollController,
   });
@@ -27,7 +25,6 @@ class ActivitySummary extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return LargestDurationBuilder(
-      app: app,
       builder: (BuildContext context, DurationUnit largestDurationUnit) {
         return Column(
           children: <Widget>[
@@ -138,7 +135,6 @@ class ActivitySummary extends StatelessWidget {
 
   Widget _buildSessionsChart() {
     return SessionsLineChart(
-      app: app,
       sessions: activity.sessions,
       padding: insetsVerticalDefault,
     );

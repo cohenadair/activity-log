@@ -13,7 +13,19 @@ import 'package:mobile/widgets/activity_list_tile.dart';
 import 'package:mobile/widgets/future_listener.dart';
 import 'package:sqflite/sqflite.dart';
 
-class SQLiteDataManager {
+class DataManager {
+  static var _instance = DataManager._();
+
+  static DataManager get get => _instance;
+
+  @visibleForTesting
+  static void set(DataManager manager) => _instance = manager;
+
+  @visibleForTesting
+  static void suicide() => _instance = DataManager._();
+
+  DataManager._();
+
   late Database _database;
 
   final _activitiesUpdated = VoidStreamController();
@@ -22,7 +34,7 @@ class SQLiteDataManager {
   /// Used for a more seamless transition between the launch screen and
   /// [Activity] list. This value will be `null` after the app has loaded.
   ///
-  /// This value is loaded during [SQLiteDataManager] initialization, and used
+  /// This value is loaded during [DataManager] initialization, and used
   /// as an initial value for a [ActivityListModelBuilder].
   late List<ActivityListTileModel> _initialActivityListTileModels;
 
@@ -30,7 +42,7 @@ class SQLiteDataManager {
   /// or modified.
   Stream<void> get activitiesUpdatedStream => _activitiesUpdated.stream;
 
-  Future<void> initialize(AppManager app, [Database? database]) async {
+  Future<void> init(AppManager app, [Database? database]) async {
     if (database == null) {
       _database = await SQLiteOpenHelper.open();
     } else {
@@ -85,6 +97,9 @@ class SQLiteDataManager {
       return Activity.fromMap(map);
     }).toList();
   }
+
+  Future<Activity?> activity(String id) async =>
+      (await getActivities([id])).firstOrNull;
 
   Future<List<Activity>> getActivities(List<String> ids) async {
     String query = '''
@@ -252,6 +267,14 @@ class SQLiteDataManager {
 
   Future<List<Session>> getSessions(String activityId) async {
     return getLimitedSessions(activityId, null);
+  }
+
+  Future<Session?> inProgressSession(String activityId) async {
+    String query = """
+      SELECT * FROM session WHERE end_timestamp IS NULL AND activity_id = ?
+    """;
+    var result = await _database.rawQuery(query, [activityId]);
+    return result.isEmpty ? null : Session.fromMap(result.first);
   }
 
   Future<List<Session>> getRecentSessions(String activityId, int? limit) async {
@@ -570,10 +593,10 @@ class ActivityListModelBuilder extends StatelessWidget {
   Widget build(BuildContext context) {
     return FutureListener(
       initialValues: [app.dataManager._initialActivityListTileModels],
-      futuresHaveDataCallback: () =>
+      onFuturesFinished: () =>
           // Cleanup now unused data.
           app.dataManager._initialActivityListTileModels = const [],
-      getFutureCallbacks: [
+      futuresCallbacks: [
         () => app.dataManager.getActivityListModel(
             dateRange: app.preferencesManager.homeDateRange.value),
       ],

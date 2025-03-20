@@ -224,7 +224,7 @@ class RecentSessionsBuilder extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FutureListener(
-      getFutureCallbacks: [
+      futuresCallbacks: [
         () => app.dataManager.getRecentSessions(activityId, limit),
         () => app.dataManager.getSessionCount(activityId),
       ],

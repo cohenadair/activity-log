@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mobile/database/sqlite_data_manager.dart';
+import 'package:mobile/database/data_manager.dart';
 import 'package:mobile/model/activity.dart';
 import 'package:mobile/model/session.dart';
 import 'package:mobile/utils/date_time_utils.dart';
@@ -12,7 +12,6 @@ void main() {
   late MockAppManager appManager;
   late MockDatabase database;
   late MockPreferencesManager preferencesManager;
-  late SQLiteDataManager dataManager;
 
   setUp(() async {
     appManager = MockAppManager();
@@ -23,15 +22,14 @@ void main() {
     database = MockDatabase();
     when(database.batch()).thenReturn(batch);
 
-    dataManager = SQLiteDataManager();
-
     preferencesManager = MockPreferencesManager();
     when(appManager.preferencesManager).thenReturn(preferencesManager);
     when(preferencesManager.largestDurationUnit).thenReturn(DurationUnit.days);
     when(preferencesManager.homeDateRange)
         .thenReturn(DisplayDateRange.allDates);
 
-    await dataManager.initialize(appManager, database);
+    DataManager.suicide();
+    await DataManager.get.init(appManager, database);
   });
 
   stubActivities(List<Map<String, dynamic>> result) {
@@ -88,7 +86,7 @@ void main() {
             );
           }).toList());
 
-      var result = await dataManager.getSummarizedActivities(dateRange);
+      var result = await DataManager.get.getSummarizedActivities(dateRange);
 
       expect(result.activities.length, equals(expectedLength));
       if (expectedLength > 0) {
@@ -102,7 +100,7 @@ void main() {
         startDate: DateTime.now(),
         endDate: DateTime.now(),
       ));
-      var result = await dataManager.getSummarizedActivities(dateRange);
+      var result = await DataManager.get.getSummarizedActivities(dateRange);
       expect(result.activities, isEmpty);
       expect(result.longestSession, isNull);
       expect(result.mostFrequentActivity, isNull);
@@ -125,7 +123,7 @@ void main() {
         ),
       ]);
 
-      var result = await dataManager.getSummarizedActivities(dateRange, [
+      var result = await DataManager.get.getSummarizedActivities(dateRange, [
         activity,
       ]);
 
@@ -138,7 +136,7 @@ void main() {
 
       // Non-null input, 0 length.
       stubActivities([activity.toMap()]);
-      result = await dataManager.getSummarizedActivities(dateRange, []);
+      result = await DataManager.get.getSummarizedActivities(dateRange, []);
 
       expect(result.activities, isNotNull);
       expect(result.activities.length, equals(1));
@@ -309,7 +307,7 @@ void main() {
 
       stubOverlappingSessions(activities[4].id, dateRange.value, []);
 
-      var result = await dataManager.getSummarizedActivities(dateRange);
+      var result = await DataManager.get.getSummarizedActivities(dateRange);
 
       expect(result.activities, isNotNull);
       expect(result.activities.length, equals(5));
@@ -345,5 +343,20 @@ void main() {
 
       // Last two activities do not have any overlapping sessions.
     });
+  });
+
+  test("getInProgressSession returns null", () async {
+    when(database.rawQuery(any, any))
+        .thenAnswer((_) => Future.value(List.empty()));
+    expect(await DataManager.get.inProgressSession("id"), isNull);
+  });
+
+  test("getInProgressSession returns result", () async {
+    when(database.rawQuery(any, any)).thenAnswer(
+      (_) => Future.value([
+        (SessionBuilder("")..startTimestamp = 500).build.toMap(),
+      ]),
+    );
+    expect(await DataManager.get.inProgressSession("id"), isNotNull);
   });
 }

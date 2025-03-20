@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mobile/app_manager.dart';
-import 'package:mobile/database/sqlite_data_manager.dart';
+import 'package:mobile/database/data_manager.dart';
 import 'package:mobile/i18n/strings.dart';
 import 'package:mobile/model/activity.dart';
 import 'package:mobile/widgets/list_picker.dart';

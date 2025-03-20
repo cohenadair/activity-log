@@ -322,7 +322,14 @@ class RunningDurationText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(_format());
+    return Text(
+      _format(),
+      style: TextStyle(
+        fontFeatures: [
+          FontFeature.tabularFigures(),
+        ],
+      ),
+    );
   }
 
   String _format() {
@@ -336,7 +343,7 @@ class RunningDurationText extends StatelessWidget {
     String minutes = twoDigits(duration.minutes);
     String seconds = twoDigits(duration.seconds);
 
-    return "$hours:$minutes:$seconds";
+    return "${hours == "00" ? "" : "$hours:"}$minutes:$seconds";
   }
 }
 

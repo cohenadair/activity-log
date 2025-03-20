@@ -3,13 +3,13 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:mobile/res/dimen.dart';
 
-class PageAppBarStyle {
+class MyPageAppBarStyle {
   final String? title;
   final String? subtitle;
   final List<Widget>? actions;
   final Widget? leading;
 
-  PageAppBarStyle({
+  MyPageAppBarStyle({
     this.title,
     this.subtitle,
     this.actions,
@@ -17,13 +17,13 @@ class PageAppBarStyle {
   });
 }
 
-class Page extends StatelessWidget {
+class MyPage extends StatelessWidget {
   final Widget _child;
-  final PageAppBarStyle? _appBarStyle;
+  final MyPageAppBarStyle? _appBarStyle;
 
-  const Page({
+  const MyPage({
     required Widget child,
-    PageAppBarStyle? appBarStyle,
+    MyPageAppBarStyle? appBarStyle,
   })  : _child = child,
         _appBarStyle = appBarStyle;
 
@@ -41,7 +41,7 @@ class Page extends StatelessWidget {
               leading: _appBarStyle!.leading,
               elevation: 0,
             ),
-      body: _child,
+      body: SafeArea(child: _child),
     );
   }
 

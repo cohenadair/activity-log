@@ -350,14 +350,14 @@ void main() {
       await tester.pumpWidget(
         Testable(const RunningDurationText(Duration(minutes: 30))),
       );
-      expect(find.text("00:30:00"), findsOneWidget);
+      expect(find.text("30:00"), findsOneWidget);
     });
 
     testWidgets("Seconds only", (WidgetTester tester) async {
       await tester.pumpWidget(
         Testable(const RunningDurationText(Duration(seconds: 7))),
       );
-      expect(find.text("00:00:07"), findsOneWidget);
+      expect(find.text("00:07"), findsOneWidget);
     });
   });
 

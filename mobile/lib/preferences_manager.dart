@@ -8,6 +8,18 @@ import 'package:mobile/utils/void_stream_controller.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class PreferencesManager {
+  static var _instance = PreferencesManager._();
+
+  static PreferencesManager get get => _instance;
+
+  @visibleForTesting
+  static void set(PreferencesManager manager) => _instance = manager;
+
+  @visibleForTesting
+  static void suicide() => _instance = PreferencesManager._();
+
+  PreferencesManager._();
+
   final _keyLargestDurationUnit = "preferences.largestDurationUnit";
   final _keyHomeDateRange = "preferences.homeDateRange";
   final _keyStatsSelectedActivityIds = "preferences.statsSelectedActivityIds";
@@ -19,6 +31,8 @@ class PreferencesManager {
       VoidStreamController();
   final VoidStreamController _homeDateRangeUpdated = VoidStreamController();
 
+  Stream<void> get largestDurationUnitStream =>
+      _largestDurationUnitUpdated.stream;
   Stream<void> get homeDateRangeStream => _homeDateRangeUpdated.stream;
 
   late DurationUnit _largestDurationUnit;
@@ -135,13 +149,10 @@ class PreferencesManager {
 
 class LargestDurationBuilder extends _SimpleStreamBuilder<DurationUnit> {
   LargestDurationBuilder({
-    required AppManager app,
-    required Widget Function(BuildContext, DurationUnit) builder,
+    required super.builder,
   }) : super(
-          app: app,
-          stream: app.preferencesManager._largestDurationUnitUpdated.stream,
-          valueCallback: () => app.preferencesManager.largestDurationUnit,
-          builder: builder,
+          stream: PreferencesManager.get.largestDurationUnitStream,
+          valueCallback: () => PreferencesManager.get.largestDurationUnit,
         );
 }
 
@@ -150,7 +161,6 @@ class HomeDateRangeBuilder extends _SimpleStreamBuilder<DisplayDateRange> {
     required AppManager app,
     required Widget Function(BuildContext, DisplayDateRange) builder,
   }) : super(
-          app: app,
           stream: app.preferencesManager._homeDateRangeUpdated.stream,
           valueCallback: () => app.preferencesManager.homeDateRange,
           builder: builder,
@@ -158,13 +168,11 @@ class HomeDateRangeBuilder extends _SimpleStreamBuilder<DisplayDateRange> {
 }
 
 class _SimpleStreamBuilder<T> extends StatelessWidget {
-  final AppManager app;
   final Stream stream;
   final T Function() valueCallback;
   final Widget Function(BuildContext, T) builder;
 
   const _SimpleStreamBuilder({
-    required this.app,
     required this.stream,
     required this.valueCallback,
     required this.builder,

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
 const paddingDefault = 16.0;
+const paddingMedium = 12.0;
 const paddingSmall = 8.0;
+const paddingTiny = 4.0;
 
 const insetsZero = EdgeInsets.all(0);
 const insetsDefault = EdgeInsets.all(paddingDefault);
@@ -70,6 +72,7 @@ const insetsLeftDefault = EdgeInsets.only(
 );
 
 const insetsRightWidget = EdgeInsets.only(right: paddingDefault);
+const insetsRightTiny = EdgeInsets.only(right: paddingTiny);
 const insetsLeftWidgetSmall = EdgeInsets.only(
   left: paddingSmall,
 );

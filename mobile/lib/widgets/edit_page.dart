@@ -3,7 +3,7 @@ import 'package:mobile/i18n/strings.dart';
 import 'package:mobile/res/dimen.dart';
 import 'package:mobile/utils/dialog_utils.dart';
 import 'package:mobile/widgets/button.dart';
-import 'package:mobile/widgets/page.dart' as p;
+import 'package:mobile/widgets/my_page.dart' as p;
 import 'package:mobile/widgets/widget.dart';
 
 class EditPage extends StatelessWidget {
@@ -34,8 +34,8 @@ class EditPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return p.Page(
-      appBarStyle: p.PageAppBarStyle(
+    return p.MyPage(
+      appBarStyle: p.MyPageAppBarStyle(
         title: _title,
         actions: <Widget>[
           ActionButton.save(

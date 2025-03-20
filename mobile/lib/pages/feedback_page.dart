@@ -14,7 +14,7 @@ import 'package:mobile/res/theme.dart';
 import 'package:mobile/utils/dialog_utils.dart';
 import 'package:mobile/utils/widget_utils.dart';
 import 'package:mobile/widgets/button.dart';
-import 'package:mobile/widgets/page.dart' as p;
+import 'package:mobile/widgets/my_page.dart';
 import 'package:mobile/widgets/text.dart';
 import 'package:quiver/strings.dart';
 
@@ -79,8 +79,8 @@ class _FeedbackPageState extends State<FeedbackPage> {
       );
     }
 
-    return p.Page(
-      appBarStyle: p.PageAppBarStyle(
+    return MyPage(
+      appBarStyle: MyPageAppBarStyle(
         title: Strings.of(context).feedbackPageTitle,
         actions: <Widget>[action],
       ),

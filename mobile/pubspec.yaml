@@ -10,7 +10,7 @@ description: A simple mobile app for tracking activities.
 version: 1.2.1+20230814
 
 environment:
-  sdk: '>=2.19.2 <3.0.0'
+  sdk: '>=3.2.3 <4.0.0'
 
 dependencies:
   flutter:
