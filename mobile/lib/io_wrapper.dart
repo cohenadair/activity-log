@@ -1,14 +1,11 @@
 import 'dart:io';
 
 class IoWrapper {
-  Future<bool> isConnected() async {
+  Future<List<InternetAddress>> lookup(String host) async {
     try {
-      // A quick DNS lookup will tell us if there's a current internet
-      // connection. InternetAddress.lookup throws an exception if internet is
-      // off, such as when in Airplane Mode.
-      return (await InternetAddress.lookup("example.com")).isNotEmpty;
-    } on Exception catch (ex, _) {
-      return false;
+      return await InternetAddress.lookup(host);
+    } catch (_) {
+      return Future.value([]);
     }
   }
 

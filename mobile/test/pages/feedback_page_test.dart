@@ -46,7 +46,8 @@ void main() {
     deviceInfoWrapper = MockDeviceInfoWrapper();
 
     ioWrapper = MockIoWrapper();
-    when(ioWrapper.isConnected()).thenAnswer((_) => Future.value(true));
+    when(ioWrapper.lookup(any))
+        .thenAnswer((_) => Future.value([InternetAddress("192.168.2.211")]));
     when(ioWrapper.isIOS).thenReturn(false);
     when(ioWrapper.isAndroid).thenReturn(false);
 
@@ -157,7 +158,7 @@ void main() {
   });
 
   testWidgets("No network shows connection error SnackBar", (tester) async {
-    when(ioWrapper.isConnected()).thenAnswer((_) => Future.value(false));
+    when(ioWrapper.lookup(any)).thenAnswer((_) => Future.value([]));
 
     await pumpContext(tester, (_) => FeedbackPage(appManager));
     await enterTextFieldAndSettle(tester, "Message", "Test");
@@ -294,7 +295,8 @@ void main() {
   testWidgets("Successful send", (tester) async {
     when(preferencesManager.userName).thenReturn("User Name");
     when(preferencesManager.userEmail).thenReturn("useremail@test.com");
-    when(ioWrapper.isConnected()).thenAnswer((_) => Future.value(true));
+    when(ioWrapper.lookup(any))
+        .thenAnswer((_) => Future.value([InternetAddress("192.168.2.211")]));
     when(ioWrapper.isIOS).thenReturn(true);
     when(packageInfoWrapper.fromPlatform()).thenAnswer(
       (_) => Future.value(PackageInfo(

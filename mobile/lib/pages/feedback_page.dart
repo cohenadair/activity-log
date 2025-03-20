@@ -20,6 +20,7 @@ import 'package:quiver/strings.dart';
 
 import '../i18n/strings.dart';
 import '../log.dart';
+import '../utils/io_utils.dart';
 import '../utils/string_utils.dart';
 import '../widgets/loading.dart';
 import '../widgets/widget.dart';
@@ -153,7 +154,7 @@ class _FeedbackPageState extends State<FeedbackPage> {
     }
 
     // Check internet connection.
-    if (!await _io.isConnected()) {
+    if (!await isConnected(_io)) {
       safeUseContext(
         this,
         () => showErrorSnackBar(
