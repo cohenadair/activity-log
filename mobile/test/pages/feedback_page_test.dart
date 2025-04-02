@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:adair_flutter_lib/managers/properties_manager.dart';
 import 'package:adair_flutter_lib/widgets/loading.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
@@ -11,32 +10,35 @@ import 'package:mockito/mockito.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 import '../mocks/mocks.mocks.dart';
+import '../stubbed_managers.dart';
 import '../test_utils.dart';
 
-import '../../../../adair-flutter-lib/test/mocks/mocks.mocks.dart';
 import '../../../../adair-flutter-lib/test/test_utils/finder.dart';
 import '../../../../adair-flutter-lib/test/test_utils/widget.dart';
 
 void main() {
+  late StubbedManagers managers;
+
   late MockAppManager appManager;
 
   late MockPreferencesManager preferencesManager;
-  late MockPropertiesManager propertiesManager;
   late MockDeviceInfoWrapper deviceInfoWrapper;
-  late MockIoWrapper ioWrapper;
   late MockPackageInfoWrapper packageInfoWrapper;
   late MockHttpWrapper httpWrapper;
 
-  setUp(() {
+  setUp(() async {
+    managers = await StubbedManagers.create();
+
     preferencesManager = MockPreferencesManager();
     when(preferencesManager.userName).thenReturn("Cohen");
     when(preferencesManager.userEmail).thenReturn("test@test.com");
     when(preferencesManager.setUserInfo(any, any)).thenAnswer((_) {});
 
-    propertiesManager = MockPropertiesManager();
-    when(propertiesManager.supportEmail).thenReturn("support@test.com");
-    when(propertiesManager.clientSenderEmail).thenReturn("sender@test.com");
-    when(propertiesManager.feedbackTemplate).thenReturn("""
+    when(managers.propertiesManager.supportEmail)
+        .thenReturn("support@test.com");
+    when(managers.propertiesManager.clientSenderEmail)
+        .thenReturn("sender@test.com");
+    when(managers.propertiesManager.feedbackTemplate).thenReturn("""
       App version: %s
       OS version: %s
       Device: %s
@@ -46,17 +48,15 @@ void main() {
       Email: %s
       Message: %s
     """);
-    when(propertiesManager.sendGridApiKey).thenReturn("API KEY");
-    PropertiesManager.set(propertiesManager);
+    when(managers.propertiesManager.sendGridApiKey).thenReturn("API KEY");
 
     deviceInfoWrapper = MockDeviceInfoWrapper();
 
-    ioWrapper = MockIoWrapper();
     when(
-      ioWrapper.lookup(any),
+      managers.ioWrapper.lookup(any),
     ).thenAnswer((_) => Future.value([InternetAddress("192.168.2.211")]));
-    when(ioWrapper.isIOS).thenReturn(false);
-    when(ioWrapper.isAndroid).thenReturn(false);
+    when(managers.ioWrapper.isIOS).thenReturn(false);
+    when(managers.ioWrapper.isAndroid).thenReturn(false);
 
     packageInfoWrapper = MockPackageInfoWrapper();
     when(packageInfoWrapper.fromPlatform()).thenAnswer(
@@ -87,7 +87,6 @@ void main() {
     appManager = MockAppManager();
     when(appManager.preferencesManager).thenReturn(preferencesManager);
     when(appManager.deviceInfoWrapper).thenReturn(deviceInfoWrapper);
-    when(appManager.ioWrapper).thenReturn(ioWrapper);
     when(appManager.packageInfoWrapper).thenReturn(packageInfoWrapper);
     when(appManager.httpWrapper).thenReturn(httpWrapper);
   });
@@ -156,7 +155,7 @@ void main() {
   });
 
   testWidgets("No network shows connection error SnackBar", (tester) async {
-    when(ioWrapper.lookup(any)).thenAnswer((_) => Future.value([]));
+    when(managers.ioWrapper.lookup(any)).thenAnswer((_) => Future.value([]));
 
     await tester.pumpWidget(Testable((_) => FeedbackPage(appManager)));
     await enterTextFieldAndSettle(tester, "Message", "Test");
@@ -171,7 +170,7 @@ void main() {
   });
 
   testWidgets("iOS data is valid", (tester) async {
-    when(ioWrapper.isIOS).thenReturn(true);
+    when(managers.ioWrapper.isIOS).thenReturn(true);
     when(deviceInfoWrapper.iosInfo).thenAnswer(
       (_) => Future.value(
         IosDeviceInfo.fromMap({
@@ -216,8 +215,8 @@ void main() {
   });
 
   testWidgets("Android data is valid", (tester) async {
-    when(ioWrapper.isIOS).thenReturn(false);
-    when(ioWrapper.isAndroid).thenReturn(true);
+    when(managers.ioWrapper.isIOS).thenReturn(false);
+    when(managers.ioWrapper.isAndroid).thenReturn(true);
 
     var buildVersion = MockAndroidBuildVersion();
     when(buildVersion.sdkInt).thenReturn(33);
@@ -259,7 +258,7 @@ void main() {
       ),
     ).thenAnswer((_) => Future.value(Response("", HttpStatus.badGateway)));
 
-    when(ioWrapper.isIOS).thenReturn(true);
+    when(managers.ioWrapper.isIOS).thenReturn(true);
     when(deviceInfoWrapper.iosInfo).thenAnswer(
       (_) => Future.value(
         IosDeviceInfo.fromMap({
@@ -299,9 +298,9 @@ void main() {
     when(preferencesManager.userName).thenReturn("User Name");
     when(preferencesManager.userEmail).thenReturn("useremail@test.com");
     when(
-      ioWrapper.lookup(any),
+      managers.ioWrapper.lookup(any),
     ).thenAnswer((_) => Future.value([InternetAddress("192.168.2.211")]));
-    when(ioWrapper.isIOS).thenReturn(true);
+    when(managers.ioWrapper.isIOS).thenReturn(true);
     when(packageInfoWrapper.fromPlatform()).thenAnswer(
       (_) => Future.value(
         PackageInfo(
