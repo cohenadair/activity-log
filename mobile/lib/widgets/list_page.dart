@@ -33,10 +33,7 @@ class ListPageState<T> extends State<ListPage<T>> {
       appBarStyle: p.MyPageAppBarStyle(
         title: widget.title,
         actions: <Widget>[
-          IconButton(
-            icon: const Icon(Icons.add),
-            onPressed: _onPressAddButton,
-          ),
+          IconButton(icon: const Icon(Icons.add), onPressed: _onPressAddButton),
         ],
       ),
       child: _buildList(),

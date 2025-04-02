@@ -1,9 +1,10 @@
 import 'dart:async';
 
+import 'package:adair_flutter_lib/managers/time_manager.dart';
+import 'package:adair_flutter_lib/utils/date_range.dart';
 import 'package:flutter/material.dart';
-import 'package:mobile/utils/date_time_utils.dart';
-import 'package:mobile/utils/string_utils.dart';
 import 'package:mobile/widgets/list_picker.dart';
+import 'package:timezone/timezone.dart';
 
 /// A [ListPicker] wrapper widget for selecting a date range, such as the
 /// "Last 7 days" or "This week" from a list.
@@ -60,7 +61,7 @@ class StatsDateRangePickerState extends State<StatsDateRangePicker> {
         ListPickerItem.divider(),
         ListPickerItem<DisplayDateRange>(
           popsListOnPicked: false,
-          title: _customDateRange.getTitle(context),
+          title: _customDateRange.onTitle(context),
           onTap: () => _onTapCustom(context),
           value: _customDateRange,
         ),
@@ -73,14 +74,14 @@ class StatsDateRangePickerState extends State<StatsDateRangePicker> {
     DisplayDateRange duration,
   ) {
     return ListPickerItem<DisplayDateRange>(
-      title: duration.getTitle(context),
+      title: duration.onTitle(context),
       value: duration,
     );
   }
 
   Future<DisplayDateRange?> _onTapCustom(BuildContext context) async {
-    DateTime now = DateTime.now();
-    DateRange customValue = _customDateRange.getValue(now);
+    var now = TimeManager.get.now();
+    DateRange customValue = _customDateRange.onValue(now);
 
     var pickedRange = await showDateRangePicker(
       context: context,
@@ -88,7 +89,7 @@ class StatsDateRangePickerState extends State<StatsDateRangePicker> {
         start: customValue.startDate,
         end: customValue.endDate,
       ),
-      firstDate: DateTime.fromMillisecondsSinceEpoch(0),
+      firstDate: TimeManager.get.dateTime(0),
       lastDate: now,
     );
 
@@ -96,25 +97,22 @@ class StatsDateRangePickerState extends State<StatsDateRangePicker> {
       return null;
     }
 
-    DateTime? endDate;
+    TZDateTime? endDate;
     if (pickedRange.start == pickedRange.end) {
       // If only the start date was picked, or the start and end time are equal,
       // set the end date to a range of 1 day.
-      endDate = pickedRange.start.add(const Duration(days: 1));
+      endDate = TimeManager.get.dateTimeToTz(
+        pickedRange.start.add(const Duration(days: 1)),
+      );
     }
 
-    DateRange dateRange = DateRange(
-      startDate: pickedRange.start,
-      endDate: endDate ?? pickedRange.end,
+    var dateRange = DateRange(
+      startDate: TimeManager.get.dateTimeToTz(pickedRange.start),
+      endDate: TimeManager.get.dateTimeToTz(endDate ?? pickedRange.end),
     );
 
     // Reset StatsDateRange.custom properties to return the picked DateRange.
-    setState(() {
-      _customDateRange = DisplayDateRange.newCustom(
-        getValue: (_) => dateRange,
-        getTitle: (_) => formatDateRange(dateRange),
-      );
-    });
+    setState(() => _customDateRange = DisplayDateRange.dateRange(dateRange));
 
     return _customDateRange;
   }

@@ -3,11 +3,21 @@ import 'package:mobile/preferences_manager.dart';
 
 import 'mocks/mocks.mocks.dart';
 
+import '../../../adair-flutter-lib/test/test_utils/stubbed_managers.dart' as s;
+import '../../../adair-flutter-lib/test/test_utils/test_time_manager.dart';
+
 class StubbedManagers {
+  late final s.StubbedManagers _lib;
+
   late final MockDataManager dataManager;
   late final MockPreferencesManager preferencesManager;
 
-  StubbedManagers() {
+  static Future<StubbedManagers> create() async =>
+      StubbedManagers._(await s.StubbedManagers.create());
+
+  TestTimeManager get timeManager => _lib.timeManager;
+
+  StubbedManagers._(this._lib) {
     dataManager = MockDataManager();
     DataManager.set(dataManager);
 

@@ -1,17 +1,18 @@
+import 'package:adair_flutter_lib/app_config.dart';
+import 'package:adair_flutter_lib/l10n/gen/adair_flutter_lib_localizations.dart';
+import 'package:adair_flutter_lib/res/anim.dart';
+import 'package:adair_flutter_lib/res/dimen.dart';
+import 'package:adair_flutter_lib/res/style.dart';
+import 'package:adair_flutter_lib/res/theme.dart';
+import 'package:adair_flutter_lib/utils/date_time.dart';
+import 'package:adair_flutter_lib/utils/duration.dart';
+import 'package:adair_flutter_lib/utils/string.dart';
+import 'package:adair_flutter_lib/widgets/empty.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:mobile/i18n/strings.dart';
-import 'package:mobile/res/dimen.dart';
-import 'package:mobile/res/style.dart';
-import 'package:mobile/res/theme.dart';
-import 'package:mobile/utils/date_time_utils.dart';
-import 'package:mobile/utils/string_utils.dart';
-import 'package:mobile/widgets/widget.dart';
 import 'package:quiver/strings.dart';
-import 'package:quiver/time.dart';
-
-const monthDayFormat = "MMM. d";
-const monthDayYearFormat = "MMM. d, yyyy";
+import 'package:timezone/timezone.dart';
 
 /// An animated Text widget, styled as an error.  When the text changes from
 /// null or empty to !empty or !null, the text is animated to show in the same
@@ -31,7 +32,7 @@ class AnimatedErrorTextState extends State<AnimatedErrorText>
     with TickerProviderStateMixin {
   // Animation settings are copied from InputDecorator in order to stay
   // consistent with Material form widgets.
-  final animationDuration = defaultAnimationDuration;
+  final animationDuration = animDurationDefault;
   final yStartOffset = -0.25;
 
   late AnimationController _controller;
@@ -41,18 +42,12 @@ class AnimatedErrorTextState extends State<AnimatedErrorText>
   void initState() {
     super.initState();
 
-    _controller = AnimationController(
-      duration: animationDuration,
-      vsync: this,
-    );
+    _controller = AnimationController(duration: animationDuration, vsync: this);
 
     _animationOffset = Tween<Offset>(
       begin: Offset(0.0, yStartOffset),
       end: const Offset(0.0, 0.0),
-    ).animate(CurvedAnimation(
-      parent: _controller,
-      curve: Curves.linear,
-    ));
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.linear));
   }
 
   @override
@@ -76,7 +71,7 @@ class AnimatedErrorTextState extends State<AnimatedErrorText>
   @override
   Widget build(BuildContext context) {
     if (isEmpty(widget.text)) {
-      return Empty();
+      return const Empty();
     } else {
       return _buildText();
     }
@@ -87,10 +82,7 @@ class AnimatedErrorTextState extends State<AnimatedErrorText>
       opacity: _controller,
       child: SlideTransition(
         position: _animationOffset,
-        child: Padding(
-          padding: widget.padding,
-          child: ErrorText(widget.text!),
-        ),
+        child: Padding(padding: widget.padding, child: ErrorText(widget.text!)),
       ),
     );
   }
@@ -103,10 +95,7 @@ class ErrorText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(
-      text,
-      style: styleError,
-    );
+    return Text(text, style: styleError(context));
   }
 }
 
@@ -117,12 +106,7 @@ class WarningText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(
-      text,
-      style: const TextStyle(
-        color: Colors.orange,
-      ),
-    );
+    return Text(text, style: const TextStyle(color: Colors.orange));
   }
 }
 
@@ -135,8 +119,9 @@ class HeadingText extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       _text,
-      style:
-          Theme.of(context).textTheme.bodyLarge!.copyWith(color: colorAppTheme),
+      style: Theme.of(
+        context,
+      ).textTheme.bodyLarge!.copyWith(color: AppConfig.get.colorAppTheme),
     );
   }
 }
@@ -148,12 +133,7 @@ class LargeHeadingText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(
-      _text,
-      style: const TextStyle(
-        fontSize: 18,
-      ),
-    );
+    return Text(_text, style: const TextStyle(fontSize: 18));
   }
 }
 
@@ -169,10 +149,9 @@ class SecondaryText extends StatelessWidget {
     return Text(
       text,
       // Same style used in ListTile.title.
-      style: Theme.of(context)
-          .textTheme
-          .titleMedium!
-          .copyWith(color: context.colorSecondaryText),
+      style: Theme.of(
+        context,
+      ).textTheme.titleMedium!.copyWith(color: context.colorSecondaryText),
     );
   }
 }
@@ -189,16 +168,14 @@ class EnabledText extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       text,
-      style: TextStyle(
-        color: enabled ? null : Theme.of(context).disabledColor,
-      ),
+      style: TextStyle(color: enabled ? null : Theme.of(context).disabledColor),
     );
   }
 }
 
 /// A Text widget that displays the total duration of list of [Duration]
 /// objects. This widget is basically a wrapper for the String utility method,
-/// [formatTotalDuration].
+/// [formatDurations].
 class TotalDurationText extends StatelessWidget {
   final List<Duration> durations;
   final bool includesDays;
@@ -222,17 +199,20 @@ class TotalDurationText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(formatTotalDuration(
-      context: context,
-      durations: durations,
-      includesDays: includesDays,
-      includesHours: includesHours,
-      includesMinutes: includesMinutes,
-      includesSeconds: includesSeconds,
-      condensed: condensed,
-      showHighestTwoOnly: showHighestTwoOnly,
-      largestDurationUnit: largestDurationUnit,
-    ));
+    return Text(
+      formatDurations(
+        context: context,
+        durations: durations,
+        includesYears: false,
+        includesDays: includesDays,
+        includesHours: includesHours,
+        includesMinutes: includesMinutes,
+        includesSeconds: includesSeconds,
+        condensed: condensed,
+        numberOfQuantities: showHighestTwoOnly ? 2 : null,
+        largestDurationUnit: largestDurationUnit,
+      ),
+    );
   }
 }
 
@@ -245,8 +225,7 @@ class TotalDurationText extends StatelessWidget {
 ///   - Jan. 8 (30m)
 ///   - Dec. 8, 2018 (5h)
 class DateDurationText extends StatelessWidget {
-  final Clock clock;
-  final DateTime startDateTime;
+  final TZDateTime startDateTime;
   final Duration duration;
   final TextStyle? style;
   final String suffix;
@@ -254,57 +233,57 @@ class DateDurationText extends StatelessWidget {
   const DateDurationText(
     this.startDateTime,
     this.duration, {
-    this.clock = const Clock(),
     this.style,
     this.suffix = "",
   });
 
   @override
   Widget build(BuildContext context) {
-    return Text(
-      _format(context),
-      style: style,
-    );
+    return Text(_format(context), style: style);
   }
 
   String _format(BuildContext context) {
     // Format the date.
-    String formattedDate = formatDateAsRecent(
-      context: context,
-      dateTime: startDateTime,
-      clock: clock,
-    );
+    String formattedDate = formatDateAsRecent(context, startDateTime);
 
     // Format the duration.
-    DisplayDuration displayDuration =
-        DisplayDuration(duration, includesDays: false);
+    DisplayDuration displayDuration = DisplayDuration(
+      duration,
+      includesDays: false,
+    );
     String formattedDuration = "";
 
     if (displayDuration.hours == 0 &&
         displayDuration.minutes == 0 &&
         displayDuration.seconds > 0) {
-      formattedDuration +=
-          format(Strings.of(context).secondsFormat, [displayDuration.seconds]);
+      formattedDuration += AdairFlutterLibLocalizations.of(
+        context,
+      ).secondsFormat(displayDuration.seconds);
     } else {
       if (displayDuration.hours > 0) {
-        formattedDuration +=
-            format(Strings.of(context).hoursFormat, [displayDuration.hours]);
+        formattedDuration += AdairFlutterLibLocalizations.of(
+          context,
+        ).hoursFormat(displayDuration.hours);
         formattedDuration += " ";
       }
 
       if (displayDuration.minutes >= 0) {
-        formattedDuration += format(
-            Strings.of(context).minutesFormat, [displayDuration.minutes]);
+        formattedDuration += AdairFlutterLibLocalizations.of(
+          context,
+        ).minutesFormat(displayDuration.minutes);
       }
 
       if (isEmpty(formattedDuration)) {
-        formattedDuration += format(
-            Strings.of(context).secondsFormat, [displayDuration.seconds]);
+        formattedDuration += AdairFlutterLibLocalizations.of(
+          context,
+        ).secondsFormat(displayDuration.seconds);
       }
     }
 
-    return format(Strings.of(context).dateDurationFormat,
-            [formattedDate, formattedDuration]) +
+    return format(Strings.of(context).dateDurationFormat, [
+          formattedDate,
+          formattedDuration,
+        ]) +
         suffix;
   }
 }
@@ -324,11 +303,7 @@ class RunningDurationText extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       _format(),
-      style: TextStyle(
-        fontFeatures: [
-          FontFeature.tabularFigures(),
-        ],
-      ),
+      style: TextStyle(fontFeatures: [FontFeature.tabularFigures()]),
     );
   }
 
@@ -357,17 +332,11 @@ class TimeText extends StatelessWidget {
   final TimeOfDay time;
   final bool enabled;
 
-  const TimeText(
-    this.time, {
-    this.enabled = true,
-  });
+  const TimeText(this.time, {this.enabled = true});
 
   @override
   Widget build(BuildContext context) {
-    return EnabledText(
-      _format(context),
-      enabled: enabled,
-    );
+    return EnabledText(_format(context), enabled: enabled);
   }
 
   String _format(BuildContext context) {
@@ -395,7 +364,10 @@ class TimeRangeText extends StatelessWidget {
         TimeText(startTime, enabled: enabled),
         EnabledText(" - ", enabled: enabled),
         endTime == null
-            ? EnabledText(Strings.of(context).now, enabled: enabled)
+            ? EnabledText(
+                AdairFlutterLibLocalizations.of(context).now,
+                enabled: enabled,
+              )
             : TimeText(endTime!, enabled: enabled),
       ],
     );
@@ -410,10 +382,7 @@ class DateText extends StatelessWidget {
   final DateTime date;
   final bool enabled;
 
-  const DateText(
-    this.date, {
-    this.enabled = true,
-  });
+  const DateText(this.date, {this.enabled = true});
 
   @override
   Widget build(BuildContext context) {

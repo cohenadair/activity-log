@@ -1,7 +1,9 @@
+import 'package:adair_flutter_lib/managers/time_manager.dart';
+import 'package:adair_flutter_lib/res/dimen.dart';
+import 'package:adair_flutter_lib/widgets/empty.dart';
 import 'package:flutter/material.dart';
-import 'package:mobile/res/dimen.dart';
 import 'package:mobile/widgets/text.dart';
-import 'package:mobile/widgets/widget.dart';
+import 'package:timezone/timezone.dart';
 
 /// A container for separate date and time pickers. Renders a horizontal [Flex]
 /// widget with a 3:2 ratio for [DatePicker] and [TimePicker] respectively.
@@ -27,48 +29,36 @@ class DateTimePickerContainer extends StatelessWidget {
           children: <Widget>[
             Flexible(
               flex: 3,
-              child: Padding(
-                padding: insetsRightWidget,
-                child: datePicker,
-              ),
+              child: Padding(padding: insetsRightDefault, child: datePicker),
             ),
-            Flexible(
-              flex: 2,
-              child: timePicker,
-            ),
+            Flexible(flex: 2, child: timePicker),
           ],
         ),
         helper == null
-            ? Empty()
-            : Padding(
-                padding: insetsTopSmall,
-                child: helper,
-              ),
+            ? const Empty()
+            : Padding(padding: insetsTopSmall, child: helper),
       ],
     );
   }
 }
 
-class DatePicker extends FormField<DateTime> {
+class DatePicker extends FormField<TZDateTime> {
   DatePicker({
     required String label,
-    DateTime? initialDate,
-    void Function(DateTime)? onChange,
-    String? Function(DateTime?)? validator,
+    TZDateTime? initialDate,
+    void Function(TZDateTime)? onChange,
+    String? Function(TZDateTime?)? validator,
     bool enabled = true,
   }) : super(
           initialValue: initialDate,
           validator: validator,
-          builder: (FormFieldState<DateTime> state) {
+          builder: (FormFieldState<TZDateTime> state) {
             return _Picker(
               label: label,
               errorText: state.errorText,
               enabled: enabled,
               type: _PickerType(
-                getValue: () => DateText(
-                  state.value!,
-                  enabled: enabled,
-                ),
+                getValue: () => DateText(state.value!, enabled: enabled),
                 openPicker: () {
                   showDatePicker(
                     context: state.context,
@@ -77,13 +67,14 @@ class DatePicker extends FormField<DateTime> {
                     // essentially let the user pick any date in the past.
                     firstDate: DateTime(1900),
                     lastDate: DateTime.now(),
-                  ).then((DateTime? dateTime) {
+                  ).then((dateTime) {
                     if (dateTime == null) {
                       return;
                     }
-                    state.didChange(dateTime);
+                    var result = TimeManager.get.dateTimeToTz(dateTime);
+                    state.didChange(result);
                     if (onChange != null) {
-                      onChange(dateTime);
+                      onChange(result);
                     }
                   });
                 },

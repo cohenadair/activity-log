@@ -1,8 +1,8 @@
+import 'package:adair_flutter_lib/utils/duration.dart';
 import 'package:flutter/material.dart';
 
 import '../i18n/strings.dart';
-import '../utils/date_time_utils.dart';
-import '../utils/string_utils.dart';
+import '../utils/duration.dart';
 import 'list_item.dart';
 import 'summary.dart';
 
@@ -22,7 +22,7 @@ class AverageDurations {
 
 class AverageDurationsListItem extends StatelessWidget {
   final ScrollController? scrollController;
-  final DurationUnit largestDurationUnit;
+  final AppDurationUnit largestDurationUnit;
   final AverageDurations averageDurations;
 
   const AverageDurationsListItem({
@@ -42,34 +42,34 @@ class AverageDurationsListItem extends StatelessWidget {
           items: <SummaryItem>[
             SummaryItem(
               title: Strings.of(context).activitySummaryAverageOverall,
-              value: formatDuration(
-                context,
-                averageDurations.overall,
-                largestDurationUnit,
+              value: formatDurations(
+                context: context,
+                durations: [averageDurations.overall],
+                largestDurationUnit: toLibDurationUnit(largestDurationUnit),
               ),
             ),
             SummaryItem(
               title: Strings.of(context).activitySummaryAveragePerDay,
-              value: formatDuration(
-                context,
-                averageDurations.perDay,
-                largestDurationUnit,
+              value: formatDurations(
+                context: context,
+                durations: [averageDurations.perDay],
+                largestDurationUnit: toLibDurationUnit(largestDurationUnit),
               ),
             ),
             SummaryItem(
               title: Strings.of(context).activitySummaryAveragePerWeek,
-              value: formatDuration(
-                context,
-                averageDurations.perWeek,
-                largestDurationUnit,
+              value: formatDurations(
+                context: context,
+                durations: [averageDurations.perWeek],
+                largestDurationUnit: toLibDurationUnit(largestDurationUnit),
               ),
             ),
             SummaryItem(
               title: Strings.of(context).activitySummaryAveragePerMonth,
-              value: formatDuration(
-                context,
-                averageDurations.perMonth,
-                largestDurationUnit,
+              value: formatDurations(
+                context: context,
+                durations: [averageDurations.perMonth],
+                largestDurationUnit: toLibDurationUnit(largestDurationUnit),
               ),
             ),
           ],

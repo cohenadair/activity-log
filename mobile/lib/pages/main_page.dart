@@ -56,9 +56,7 @@ class MainPageState extends State<MainPage> {
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentItemIndex,
-        items: navItems.map((_BarItemData data) {
-          return data.item;
-        }).toList(),
+        items: navItems.map((_BarItemData data) => data.item).toList(),
         onTap: (int index) {
           setState(() {
             _currentItemIndex = index;
@@ -73,8 +71,5 @@ class _BarItemData {
   final Widget page;
   final BottomNavigationBarItem item;
 
-  _BarItemData({
-    required this.page,
-    required this.item,
-  });
+  _BarItemData({required this.page, required this.item});
 }

@@ -1,18 +1,17 @@
+import 'package:adair_flutter_lib/app_config.dart';
+import 'package:adair_flutter_lib/res/dimen.dart';
+import 'package:adair_flutter_lib/utils/duration.dart';
+import 'package:adair_flutter_lib/widgets/empty.dart';
 import 'package:community_charts_flutter/community_charts_flutter.dart'
     as f_charts;
 import 'package:flutter/material.dart';
-import 'package:mobile/app_manager.dart';
 import 'package:mobile/i18n/strings.dart';
 import 'package:mobile/model/session.dart';
 import 'package:mobile/preferences_manager.dart';
-import 'package:mobile/res/dimen.dart';
-import 'package:mobile/res/theme.dart';
-import 'package:mobile/utils/date_time_utils.dart';
-import 'package:mobile/utils/string_utils.dart';
 import 'package:mobile/widgets/text.dart';
-import 'package:mobile/widgets/widget.dart';
 
 import '../utils/chart_utils.dart';
+import '../utils/duration.dart';
 
 class SessionsLineChart extends StatefulWidget {
   final List<Session> sessions;
@@ -48,7 +47,7 @@ class SessionsLineChartState extends State<SessionsLineChart> {
           SafeArea(
             bottom: false,
             child: LargestDurationBuilder(
-              builder: (BuildContext context, DurationUnit unit) => Column(
+              builder: (BuildContext context, AppDurationUnit unit) => Column(
                 children: <Widget>[
                   _buildLineChart(unit),
                   _buildSessionSummary(context),
@@ -63,7 +62,7 @@ class SessionsLineChartState extends State<SessionsLineChart> {
 
   Widget _buildSessionSummary(BuildContext context) {
     if (_selectedSession == null) {
-      return Empty();
+      return const Empty();
     }
 
     return Column(
@@ -82,7 +81,7 @@ class SessionsLineChartState extends State<SessionsLineChart> {
     );
   }
 
-  Widget _buildLineChart(DurationUnit longestDurationUnit) {
+  Widget _buildLineChart(AppDurationUnit longestDurationUnit) {
     return Container(
       height: _height,
       padding: insetsLeftDefault,
@@ -93,8 +92,10 @@ class SessionsLineChartState extends State<SessionsLineChart> {
           renderSpec: f_charts.NoneRenderSpec(),
         ),
         primaryMeasureAxis: f_charts.NumericAxisSpec(
-          tickFormatterSpec:
-              _DurationAxisFormatter(context, longestDurationUnit),
+          tickFormatterSpec: _DurationAxisFormatter(
+            context,
+            longestDurationUnit,
+          ),
           renderSpec: defaultChartRenderSpec(context),
         ),
         selectionModels: [
@@ -115,7 +116,8 @@ class SessionsLineChartState extends State<SessionsLineChart> {
     return [
       f_charts.Series<Session, int>(
         id: _chartId,
-        colorFn: (_, __) => f_charts.ColorUtil.fromDartColor(colorAppTheme),
+        colorFn: (_, __) =>
+            f_charts.ColorUtil.fromDartColor(AppConfig.get.colorAppTheme),
         domainFn: (_, int? index) => index ?? 0,
         measureFn: (Session session, _) => session.millisecondsDuration,
         data: widget.sessions,
@@ -124,17 +126,19 @@ class SessionsLineChartState extends State<SessionsLineChart> {
   }
 
   List<f_charts.ChartBehavior<num>> get _behaviors {
-    List<f_charts.ChartBehavior<num>> result = [
-      f_charts.PanAndZoomBehavior(),
-    ];
+    List<f_charts.ChartBehavior<num>> result = [f_charts.PanAndZoomBehavior()];
 
     int? selectedIndex = _selectedSession == null
         ? null
         : widget.sessions.indexOf(_selectedSession!);
     if (selectedIndex != null) {
-      result.add(f_charts.InitialSelection(selectedDataConfig: [
-        f_charts.SeriesDatumConfig(_chartId, selectedIndex)
-      ]));
+      result.add(
+        f_charts.InitialSelection(
+          selectedDataConfig: [
+            f_charts.SeriesDatumConfig(_chartId, selectedIndex),
+          ],
+        ),
+      );
     } else {
       _selectedSession = null;
     }
@@ -148,18 +152,18 @@ class SessionsLineChartState extends State<SessionsLineChart> {
 class _DurationAxisFormatter extends f_charts.SimpleTickFormatterBase<num>
     implements f_charts.NumericTickFormatterSpec {
   final BuildContext context;
-  final DurationUnit largestDurationUnit;
+  final AppDurationUnit largestDurationUnit;
 
   _DurationAxisFormatter(this.context, this.largestDurationUnit);
 
   @override
   String formatValue(num value) {
-    return formatTotalDuration(
+    return formatDurations(
       context: context,
       durations: [Duration(milliseconds: value.toInt())],
       includesDays: false,
       includesSeconds: false,
-      largestDurationUnit: largestDurationUnit,
+      largestDurationUnit: toLibDurationUnit(largestDurationUnit),
     );
   }
 

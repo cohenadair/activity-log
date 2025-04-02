@@ -34,17 +34,10 @@ class Strings {
 
   String get appName => _getString("appName");
 
-  String get cancel => _getString("cancel");
   String get done => _getString("done");
   String get save => _getString("save");
-  String get delete => _getString("delete");
-  String get today => _getString("today");
-  String get yesterday => _getString("yesterday");
   String get none => _getString("none");
-  String get ok => _getString("ok");
   String get error => _getString("error");
-  String get warning => _getString("warning");
-  String get continueString => _getString("continue");
 
   String get navigationBarHome => _getString("navigationBar_home");
   String get navigationBarStats => _getString("navigationBar_stats");
@@ -203,42 +196,7 @@ class Strings {
   String get activityDropdownAllActivities =>
       _getString("activityDropdown_allActivities");
 
-  String get analysisDurationAllDates =>
-      _getString("analysisDuration_allDates");
-  String get analysisDurationToday => _getString("analysisDuration_today");
-  String get analysisDurationYesterday =>
-      _getString("analysisDuration_yesterday");
-  String get analysisDurationThisWeek =>
-      _getString("analysisDuration_thisWeek");
-  String get analysisDurationThisMonth =>
-      _getString("analysisDuration_thisMonth");
-  String get analysisDurationThisYear =>
-      _getString("analysisDuration_thisYear");
-  String get analysisDurationLastWeek =>
-      _getString("analysisDuration_lastWeek");
-  String get analysisDurationLastMonth =>
-      _getString("analysisDuration_lastMonth");
-  String get analysisDurationLastYear =>
-      _getString("analysisDuration_lastYear");
-  String get analysisDurationLast7Days =>
-      _getString("analysisDuration_last7Days");
-  String get analysisDurationLast14Days =>
-      _getString("analysisDuration_last14Days");
-  String get analysisDurationLast30Days =>
-      _getString("analysisDuration_last30Days");
-  String get analysisDurationLast60Days =>
-      _getString("analysisDuration_last60Days");
-  String get analysisDurationLast12Months =>
-      _getString("analysisDuration_last12Months");
-  String get analysisDurationCustom => _getString("analysisDuration_custom");
-
-  String get daysFormat => _getString("daysFormat");
-  String get hoursFormat => _getString("hoursFormat");
-  String get minutesFormat => _getString("minutesFormat");
-  String get secondsFormat => _getString("secondsFormat");
-  String get dateTimeFormat => _getString("dateTimeFormat");
   String get dateDurationFormat => _getString("dateDurationFormat");
-  String get now => _getString("now");
 
   String get feedbackPageTitle => _getString("feedbackPage_title");
   String get feedbackPageSend => _getString("feedbackPage_send");

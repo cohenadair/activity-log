@@ -1,80 +1,24 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mobile/i18n/strings.dart';
-import 'package:mobile/utils/date_time_utils.dart';
 
-/// A widget that wraps a child in default localizations.
+import '../../../adair-flutter-lib/test/test_utils/testable.dart' as t;
+
 class Testable extends StatelessWidget {
-  late final Widget Function(BuildContext) _builder;
+  final WidgetBuilder builder;
+  final MediaQueryData mediaQueryData;
 
-  Testable(Widget child) {
-    _builder = (_) => child;
-  }
-
-  // ignore: prefer_const_constructors_in_immutables
-  Testable.builder(this._builder);
+  const Testable(this.builder, {this.mediaQueryData = const MediaQueryData()});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      localizationsDelegates: [
-        StringsDelegate(),
-        DefaultMaterialLocalizations.delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-      ],
-      locale: const Locale("en", "CA"),
-      home: _builder(context),
+    return t.Testable(
+      builder,
+      mediaQueryData: mediaQueryData,
+      localizations: [StringsDelegate()],
     );
   }
 }
 
-Future<BuildContext> pumpContext(
-  WidgetTester tester,
-  Widget Function(BuildContext) builder, {
-  MediaQueryData mediaQueryData = const MediaQueryData(),
-  ThemeMode? themeMode,
-}) async {
-  late BuildContext context;
-  await tester.pumpWidget(
-    Testable.builder(
-      (buildContext) {
-        context = buildContext;
-        return builder(context);
-      },
-    ),
-  );
-  return context;
-}
-
-DisplayDateRange stubDateRange(DateRange dateRange) {
-  return DisplayDateRange.newCustom(
-    getValue: (_) => dateRange,
-    getTitle: (_) => "",
-  );
-}
-
-/// Different from [Finder.widgetWithText] in that it works for widgets with
-/// generic arguments.
-T findFirstWithText<T>(WidgetTester tester, String text) =>
-    tester.firstWidget(find.ancestor(
-      of: find.text(text),
-      matching: find.byWidgetPredicate((widget) => widget is T),
-    )) as T;
-
-Future<void> enterTextFieldAndSettle(
-    WidgetTester tester, String textFieldTitle, String text) async {
-  await tester.enterText(find.widgetWithText(TextField, textFieldTitle), text);
-  await tester.pumpAndSettle();
-}
-
-Future<void> tapAndSettle(WidgetTester tester, Finder finder,
-    [int? durationMillis]) async {
-  await tester.tap(finder);
-  if (durationMillis == null) {
-    await tester.pumpAndSettle();
-  } else {
-    await tester.pumpAndSettle(Duration(milliseconds: durationMillis));
-  }
-}
+Future<BuildContext> buildContext(WidgetTester tester) =>
+    t.buildContext(tester, localizations: [StringsDelegate()]);

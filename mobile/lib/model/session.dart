@@ -1,7 +1,8 @@
+import 'package:adair_flutter_lib/managers/time_manager.dart';
+import 'package:adair_flutter_lib/utils/date_range.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile/model/model.dart';
-import 'package:mobile/utils/date_time_utils.dart';
-import 'package:quiver/time.dart';
+import 'package:timezone/timezone.dart';
 
 class Session extends Model implements Comparable<Session> {
   static const keyActivityId = "activity_id";
@@ -13,19 +14,20 @@ class Session extends Model implements Comparable<Session> {
   final int _startTimestamp;
   final int? _endTimestamp;
   final bool? _isBanked;
-  final Clock _clock;
 
   String get activityId => _activityId;
+
   int get startTimestamp => _startTimestamp;
+
   int? get endTimestamp => _endTimestamp;
-  bool get isBanked => _isBanked != null && _isBanked!;
+
+  bool get isBanked => _isBanked != null && _isBanked;
 
   Session.fromMap(Map<String, dynamic> map)
       : _activityId = map[keyActivityId],
         _startTimestamp = map[keyStartTimestamp] ?? -1,
         _endTimestamp = map[keyEndTimestamp],
         _isBanked = map[keyIsBanked] == 1,
-        _clock = const Clock(),
         super.fromMap(map);
 
   Session.fromBuilder(SessionBuilder builder)
@@ -34,27 +36,25 @@ class Session extends Model implements Comparable<Session> {
         _startTimestamp = builder.startTimestamp!,
         _endTimestamp = builder.endTimestamp,
         _isBanked = builder.isBanked,
-        _clock = builder.clock ?? const Clock(),
         super.fromBuilder(builder);
 
   int get millisecondsDuration {
     if (_endTimestamp == null) {
       // Session isn't over yet.
-      return _clock.now().millisecondsSinceEpoch - _startTimestamp;
+      return TimeManager.get.currentTimestamp - _startTimestamp;
     }
-    return _endTimestamp! - _startTimestamp;
+    return _endTimestamp - _startTimestamp;
   }
 
   Duration get duration => Duration(milliseconds: millisecondsDuration);
 
-  DateTime get startDateTime =>
-      DateTime.fromMillisecondsSinceEpoch(startTimestamp);
+  TZDateTime get startDateTime => TimeManager.get.dateTime(startTimestamp);
 
-  DateTime? get endDateTime => endTimestamp == null
-      ? null
-      : DateTime.fromMillisecondsSinceEpoch(endTimestamp!);
+  TZDateTime? get endDateTime =>
+      endTimestamp == null ? null : TimeManager.get.dateTime(endTimestamp!);
 
   TimeOfDay get startTimeOfDay => TimeOfDay.fromDateTime(startDateTime);
+
   TimeOfDay? get endTimeOfDay =>
       endDateTime == null ? null : TimeOfDay.fromDateTime(endDateTime!);
 
@@ -68,7 +68,7 @@ class Session extends Model implements Comparable<Session> {
       keyActivityId: _activityId,
       keyStartTimestamp: _startTimestamp,
       keyEndTimestamp: _endTimestamp,
-      keyIsBanked: _isBanked != null && _isBanked! ? 1 : 0,
+      keyIsBanked: _isBanked != null && _isBanked ? 1 : 0,
     }..addAll(super.toMap());
   }
 
@@ -92,8 +92,9 @@ class Session extends Model implements Comparable<Session> {
 
   @override
   int compareTo(Session other) {
-    int durationCompare =
-        millisecondsDuration.compareTo(other.millisecondsDuration);
+    int durationCompare = millisecondsDuration.compareTo(
+      other.millisecondsDuration,
+    );
 
     if (durationCompare == 0) {
       // Fallback on session start time.
@@ -109,7 +110,6 @@ class SessionBuilder extends ModelBuilder {
   int? startTimestamp;
   int? endTimestamp;
   bool? isBanked;
-  Clock? clock;
 
   SessionBuilder(this.activityId);
 
@@ -121,11 +121,7 @@ class SessionBuilder extends ModelBuilder {
         super.fromModel(session);
 
   SessionBuilder endNow() {
-    if (clock == null) {
-      endTimestamp = DateTime.now().millisecondsSinceEpoch;
-    } else {
-      endTimestamp = clock!.now().millisecondsSinceEpoch;
-    }
+    endTimestamp = TimeManager.get.currentTimestamp;
     return this;
   }
 
@@ -149,8 +145,7 @@ class SessionBuilder extends ModelBuilder {
 
   @override
   Session get build {
-    clock ??= const Clock();
-    startTimestamp ??= clock!.now().millisecondsSinceEpoch;
+    startTimestamp ??= TimeManager.get.currentTimestamp;
     return Session.fromBuilder(this);
   }
 }

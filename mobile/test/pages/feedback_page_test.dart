@@ -1,16 +1,21 @@
 import 'dart:io';
 
+import 'package:adair_flutter_lib/managers/properties_manager.dart';
+import 'package:adair_flutter_lib/widgets/loading.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart';
 import 'package:mobile/pages/feedback_page.dart';
-import 'package:mobile/widgets/loading.dart';
 import 'package:mockito/mockito.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 import '../mocks/mocks.mocks.dart';
 import '../test_utils.dart';
+
+import '../../../../adair-flutter-lib/test/mocks/mocks.mocks.dart';
+import '../../../../adair-flutter-lib/test/test_utils/finder.dart';
+import '../../../../adair-flutter-lib/test/test_utils/widget.dart';
 
 void main() {
   late MockAppManager appManager;
@@ -42,31 +47,37 @@ void main() {
       Message: %s
     """);
     when(propertiesManager.sendGridApiKey).thenReturn("API KEY");
+    PropertiesManager.set(propertiesManager);
 
     deviceInfoWrapper = MockDeviceInfoWrapper();
 
     ioWrapper = MockIoWrapper();
-    when(ioWrapper.lookup(any))
-        .thenAnswer((_) => Future.value([InternetAddress("192.168.2.211")]));
+    when(
+      ioWrapper.lookup(any),
+    ).thenAnswer((_) => Future.value([InternetAddress("192.168.2.211")]));
     when(ioWrapper.isIOS).thenReturn(false);
     when(ioWrapper.isAndroid).thenReturn(false);
 
     packageInfoWrapper = MockPackageInfoWrapper();
     when(packageInfoWrapper.fromPlatform()).thenAnswer(
-      (_) => Future.value(PackageInfo(
-        appName: "Test App",
-        packageName: "app.test.com",
-        version: "1",
-        buildNumber: "1000",
-      )),
+      (_) => Future.value(
+        PackageInfo(
+          appName: "Test App",
+          packageName: "app.test.com",
+          version: "1",
+          buildNumber: "1000",
+        ),
+      ),
     );
 
     httpWrapper = MockHttpWrapper();
-    when(httpWrapper.post(
-      any,
-      headers: anyNamed("headers"),
-      body: anyNamed("body"),
-    )).thenAnswer(
+    when(
+      httpWrapper.post(
+        any,
+        headers: anyNamed("headers"),
+        body: anyNamed("body"),
+      ),
+    ).thenAnswer(
       (_) => Future.delayed(
         const Duration(milliseconds: 50),
         () => Response("", HttpStatus.accepted),
@@ -75,7 +86,6 @@ void main() {
 
     appManager = MockAppManager();
     when(appManager.preferencesManager).thenReturn(preferencesManager);
-    when(appManager.propertiesManager).thenReturn(propertiesManager);
     when(appManager.deviceInfoWrapper).thenReturn(deviceInfoWrapper);
     when(appManager.ioWrapper).thenReturn(ioWrapper);
     when(appManager.packageInfoWrapper).thenReturn(packageInfoWrapper);
@@ -86,31 +96,22 @@ void main() {
     when(preferencesManager.userName).thenReturn(null);
     when(preferencesManager.userEmail).thenReturn(null);
 
-    await pumpContext(tester, (_) => FeedbackPage(appManager));
+    await tester.pumpWidget(Testable((_) => FeedbackPage(appManager)));
 
-    expect(
-      findFirstWithText<TextFormField>(tester, "Name").controller?.text,
-      "",
-    );
-    expect(
-      findFirstWithText<TextField>(tester, "Name").autofocus,
-      isTrue,
-    );
+    expect(findFirstWithText<TextField>(tester, "Name").controller?.text, "");
+    expect(findFirstWithText<TextField>(tester, "Name").autofocus, isTrue);
     expect(
       findFirstWithText<TextFormField>(tester, "Email").controller?.text,
       "",
     );
-    expect(
-      findFirstWithText<TextField>(tester, "Message").autofocus,
-      isFalse,
-    );
+    expect(findFirstWithText<TextField>(tester, "Message").autofocus, isFalse);
   });
 
   testWidgets("Text fields are initially set from preferences", (tester) async {
     when(preferencesManager.userName).thenReturn("User Name");
     when(preferencesManager.userEmail).thenReturn("useremail@test.com");
 
-    await pumpContext(tester, (_) => FeedbackPage(appManager));
+    await tester.pumpWidget(Testable((_) => FeedbackPage(appManager)));
 
     expect(
       findFirstWithText<TextFormField>(tester, "Name").controller?.text,
@@ -120,17 +121,14 @@ void main() {
       findFirstWithText<TextFormField>(tester, "Email").controller?.text,
       "useremail@test.com",
     );
-    expect(
-      findFirstWithText<TextField>(tester, "Message").autofocus,
-      isTrue,
-    );
+    expect(findFirstWithText<TextField>(tester, "Message").autofocus, isTrue);
   });
 
   testWidgets("Email field is validated", (tester) async {
     when(preferencesManager.userName).thenReturn(null);
     when(preferencesManager.userEmail).thenReturn(null);
 
-    await pumpContext(tester, (_) => FeedbackPage(appManager));
+    await tester.pumpWidget(Testable((_) => FeedbackPage(appManager)));
 
     // Email and message fields are both required.
     expect(find.text("Required"), findsNWidgets(2));
@@ -144,12 +142,12 @@ void main() {
   });
 
   testWidgets("Send button is shown when not sending", (tester) async {
-    await pumpContext(tester, (_) => FeedbackPage(appManager));
+    await tester.pumpWidget(Testable((_) => FeedbackPage(appManager)));
     expect(find.text("SEND"), findsOneWidget);
   });
 
   testWidgets("Send button shows validation error SnackBar", (tester) async {
-    await pumpContext(tester, (_) => FeedbackPage(appManager));
+    await tester.pumpWidget(Testable((_) => FeedbackPage(appManager)));
     await tapAndSettle(tester, find.text("SEND"));
     expect(
       find.text("Please fix all form errors before sending your feedback."),
@@ -160,13 +158,14 @@ void main() {
   testWidgets("No network shows connection error SnackBar", (tester) async {
     when(ioWrapper.lookup(any)).thenAnswer((_) => Future.value([]));
 
-    await pumpContext(tester, (_) => FeedbackPage(appManager));
+    await tester.pumpWidget(Testable((_) => FeedbackPage(appManager)));
     await enterTextFieldAndSettle(tester, "Message", "Test");
     await tapAndSettle(tester, find.text("SEND"));
 
     expect(
       find.text(
-          "No internet connection. Please check your connection and try again."),
+        "No internet connection. Please check your connection and try again.",
+      ),
       findsOneWidget,
     );
   });
@@ -196,7 +195,7 @@ void main() {
       ),
     );
 
-    await pumpContext(tester, (_) => FeedbackPage(appManager));
+    await tester.pumpWidget(Testable((_) => FeedbackPage(appManager)));
     await enterTextFieldAndSettle(tester, "Message", "Test");
     await tapAndSettle(tester, find.text("SEND"));
 
@@ -228,10 +227,11 @@ void main() {
     when(deviceInfo.model).thenReturn("Pixel XL");
     when(deviceInfo.id).thenReturn("ABCD1234");
 
-    when(deviceInfoWrapper.androidInfo)
-        .thenAnswer((_) => Future.value(deviceInfo));
+    when(
+      deviceInfoWrapper.androidInfo,
+    ).thenAnswer((_) => Future.value(deviceInfo));
 
-    await pumpContext(tester, (_) => FeedbackPage(appManager));
+    await tester.pumpWidget(Testable((_) => FeedbackPage(appManager)));
     await enterTextFieldAndSettle(tester, "Message", "Test");
     await tapAndSettle(tester, find.text("SEND"));
 
@@ -251,11 +251,13 @@ void main() {
   });
 
   testWidgets("HTTP error shows error text", (tester) async {
-    when(httpWrapper.post(
-      any,
-      headers: anyNamed("headers"),
-      body: anyNamed("body"),
-    )).thenAnswer((_) => Future.value(Response("", HttpStatus.badGateway)));
+    when(
+      httpWrapper.post(
+        any,
+        headers: anyNamed("headers"),
+        body: anyNamed("body"),
+      ),
+    ).thenAnswer((_) => Future.value(Response("", HttpStatus.badGateway)));
 
     when(ioWrapper.isIOS).thenReturn(true);
     when(deviceInfoWrapper.iosInfo).thenAnswer(
@@ -281,13 +283,14 @@ void main() {
       ),
     );
 
-    await pumpContext(tester, (_) => FeedbackPage(appManager));
+    await tester.pumpWidget(Testable((_) => FeedbackPage(appManager)));
     await enterTextFieldAndSettle(tester, "Message", "Test");
     await tapAndSettle(tester, find.text("SEND"));
 
     expect(
       find.text(
-          "Error sending feedback. Please try again later, or email support@test.com directly."),
+        "Error sending feedback. Please try again later, or email support@test.com directly.",
+      ),
       findsOneWidget,
     );
   });
@@ -295,16 +298,19 @@ void main() {
   testWidgets("Successful send", (tester) async {
     when(preferencesManager.userName).thenReturn("User Name");
     when(preferencesManager.userEmail).thenReturn("useremail@test.com");
-    when(ioWrapper.lookup(any))
-        .thenAnswer((_) => Future.value([InternetAddress("192.168.2.211")]));
+    when(
+      ioWrapper.lookup(any),
+    ).thenAnswer((_) => Future.value([InternetAddress("192.168.2.211")]));
     when(ioWrapper.isIOS).thenReturn(true);
     when(packageInfoWrapper.fromPlatform()).thenAnswer(
-      (_) => Future.value(PackageInfo(
-        appName: "Test App",
-        packageName: "app.test.com",
-        version: "1",
-        buildNumber: "1000",
-      )),
+      (_) => Future.value(
+        PackageInfo(
+          appName: "Test App",
+          packageName: "app.test.com",
+          version: "1",
+          buildNumber: "1000",
+        ),
+      ),
     );
     when(deviceInfoWrapper.iosInfo).thenAnswer(
       (_) => Future.value(
@@ -329,7 +335,7 @@ void main() {
       ),
     );
 
-    await pumpContext(tester, (_) => FeedbackPage(appManager));
+    await tester.pumpWidget(Testable((_) => FeedbackPage(appManager)));
     await enterTextFieldAndSettle(tester, "Message", "Test");
 
     // Send the message and verify loading indicator.
@@ -342,12 +348,14 @@ void main() {
     await tester.pumpAndSettle(const Duration(milliseconds: 50));
     expect(find.byType(Loading), findsNothing);
     expect(find.text("SEND"), findsOneWidget);
-    verify(preferencesManager.setUserInfo("User Name", "useremail@test.com"))
-        .called(1);
+    verify(
+      preferencesManager.setUserInfo("User Name", "useremail@test.com"),
+    ).called(1);
 
     expect(
       find.text(
-          "Message successfully sent. Please allow 1-2 business days for a reply."),
+        "Message successfully sent. Please allow 1-2 business days for a reply.",
+      ),
       findsOneWidget,
     );
     await tapAndSettle(tester, find.text("OK"));

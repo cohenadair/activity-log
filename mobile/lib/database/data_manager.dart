@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:adair_flutter_lib/utils/date_range.dart';
+import 'package:adair_flutter_lib/utils/void_stream_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile/app_manager.dart';
 import 'package:mobile/database/sqlite_open_helper.dart';
@@ -7,8 +9,6 @@ import 'package:mobile/model/activity.dart';
 import 'package:mobile/model/model.dart';
 import 'package:mobile/model/session.dart';
 import 'package:mobile/model/summarized_activity.dart';
-import 'package:mobile/utils/date_time_utils.dart';
-import 'package:mobile/utils/void_stream_controller.dart';
 import 'package:mobile/widgets/activity_list_tile.dart';
 import 'package:mobile/widgets/future_listener.dart';
 import 'package:sqflite/sqflite.dart';
@@ -67,14 +67,8 @@ class DataManager {
   }
 
   void _update(String table, Model model, VoidCallback notify) {
-    _database.update(
-      table,
-      model.toMap(),
-      where: "id = ?",
-      whereArgs: [model.id],
-    ).then((int value) {
-      notify();
-    });
+    _database.update(table, model.toMap(),
+        where: "id = ?", whereArgs: [model.id]).then((_) => notify());
   }
 
   Future<int> _getRowCount(String tableName) async {
@@ -199,8 +193,10 @@ class DataManager {
 
     Batch batch = _database.batch();
     batch.insert("session", newSession.toMap());
-    batch.rawUpdate("UPDATE activity SET current_session_id = ? WHERE id = ?",
-        [newSession.id, activity.id]);
+    batch.rawUpdate("UPDATE activity SET current_session_id = ? WHERE id = ?", [
+      newSession.id,
+      activity.id,
+    ]);
 
     var _ = await batch.commit();
     _activitiesUpdated.notify();
@@ -220,8 +216,10 @@ class DataManager {
     Batch batch = _database.batch();
 
     // Update session's end time.
-    batch.rawUpdate("UPDATE session SET end_timestamp = ? WHERE id = ?",
-        [DateTime.now().millisecondsSinceEpoch, activity.currentSessionId]);
+    batch.rawUpdate("UPDATE session SET end_timestamp = ? WHERE id = ?", [
+      DateTime.now().millisecondsSinceEpoch,
+      activity.currentSessionId,
+    ]);
 
     // Set the associated activity's current session to null.
     batch.rawUpdate(
@@ -286,7 +284,8 @@ class DataManager {
       SELECT COUNT(*) FROM session WHERE activity_id = ?
     """;
     return Sqflite.firstIntValue(
-            await _database.rawQuery(query, [activityId])) ??
+          await _database.rawQuery(query, [activityId]),
+        ) ??
         0;
   }
 
@@ -307,11 +306,7 @@ class DataManager {
           AND ? <= start_timestamp
       """;
 
-      params = [
-        session.activityId,
-        session.id,
-        session.startTimestamp,
-      ];
+      params = [session.activityId, session.id, session.startTimestamp];
     } else {
       query = """
         SELECT * FROM session
@@ -423,12 +418,15 @@ class DataManager {
       List<Map<String, dynamic>> sessionMapList;
       if (dateRange == null) {
         // No date range was provided, get all sessions.
-        sessionMapList = await _database.rawQuery("""
+        sessionMapList = await _database.rawQuery(
+          """
           SELECT * FROM session
             WHERE activity_id = ?
             AND is_banked = 0
             ORDER BY start_timestamp
-          """, [activity.id]);
+          """,
+          [activity.id],
+        );
       } else {
         // Query for sessions that belong to this Activity and overlap the
         // desired date range.
@@ -441,27 +439,27 @@ class DataManager {
             AND is_banked = 0
             ORDER BY start_timestamp
           """,
-          [
-            activity.id,
-            dateRange.endMs,
-            dateRange.startMs,
-          ],
+          [activity.id, dateRange.endMs, dateRange.startMs],
         );
       }
 
       List<Session> sessionList = [];
 
       for (var map in sessionMapList) {
-        sessionList.add(SessionBuilder.fromSession(Session.fromMap(map))
-            .pinToDateRange(dateRange)
-            .build);
+        sessionList.add(
+          SessionBuilder.fromSession(
+            Session.fromMap(map),
+          ).pinToDateRange(dateRange).build,
+        );
       }
 
-      summarizedActivities.add(SummarizedActivity(
-        value: activity,
-        displayDateRange: displayDateRange,
-        sessions: sessionList,
-      ));
+      summarizedActivities.add(
+        SummarizedActivity(
+          value: activity,
+          displayDateRange: displayDateRange,
+          sessions: sessionList,
+        ),
+      );
     }
 
     summarizedActivities.sort((a, b) => a.value.name.compareTo(b.value.name));
@@ -531,8 +529,9 @@ class DataManager {
 
     // Total durations.
     mapList[2].forEach((durationMap) {
-      modelMap[durationMap["activity_id"]]!.duration =
-          Duration(milliseconds: durationMap["sum_value"] ?? 0);
+      modelMap[durationMap["activity_id"]]!.duration = Duration(
+        milliseconds: durationMap["sum_value"] ?? 0,
+      );
     });
 
     // Banked sessions.
@@ -563,10 +562,7 @@ class ActivitiesBuilder extends StatelessWidget {
   final AppManager app;
   final Widget Function(BuildContext, List<Activity>) builder;
 
-  const ActivitiesBuilder({
-    required this.app,
-    required this.builder,
-  });
+  const ActivitiesBuilder({required this.app, required this.builder});
 
   @override
   Widget build(BuildContext context) {
@@ -584,10 +580,7 @@ class ActivityListModelBuilder extends StatelessWidget {
   final AppManager app;
   final Widget Function(BuildContext, List<ActivityListTileModel>) builder;
 
-  const ActivityListModelBuilder({
-    required this.app,
-    required this.builder,
-  });
+  const ActivityListModelBuilder({required this.app, required this.builder});
 
   @override
   Widget build(BuildContext context) {
@@ -598,7 +591,8 @@ class ActivityListModelBuilder extends StatelessWidget {
           app.dataManager._initialActivityListTileModels = const [],
       futuresCallbacks: [
         () => app.dataManager.getActivityListModel(
-            dateRange: app.preferencesManager.homeDateRange.value),
+              dateRange: app.preferencesManager.homeDateRange.value,
+            ),
       ],
       streams: [
         app.preferencesManager.homeDateRangeStream,

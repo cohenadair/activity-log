@@ -1,8 +1,10 @@
 import 'dart:async';
 
+import 'package:adair_flutter_lib/res/dimen.dart';
+import 'package:adair_flutter_lib/widgets/empty.dart';
+import 'package:adair_flutter_lib/widgets/horizontal_space.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile/model/activity.dart';
-import 'package:mobile/res/dimen.dart';
 import 'package:mobile/utils/page_utils.dart';
 import 'package:mobile/widgets/button.dart';
 import 'package:mobile/widgets/list_item.dart';
@@ -122,7 +124,7 @@ class ListPicker<T> extends StatelessWidget {
         showsValueOnTrailing) {
       return SecondaryText(_getListPickerItem(initialValues.first).title ?? "");
     }
-    return Empty();
+    return const Empty();
   }
 
   void _popPickerPage(BuildContext context, Set<T> pickedItems) {
@@ -226,9 +228,11 @@ class _ListPickerPageState<T> extends State<_ListPickerPage<T>> {
         title: widget.pageTitle,
         actions: widget.allowsMultiSelect
             ? [
-                ActionButton.done(onPressed: () {
-                  widget.onDonePressed?.call(_selectedValues);
-                }),
+                ActionButton.done(
+                  onPressed: () {
+                    widget.onDonePressed?.call(_selectedValues);
+                  },
+                ),
               ]
             : [],
       ),
@@ -236,10 +240,7 @@ class _ListPickerPageState<T> extends State<_ListPickerPage<T>> {
         children: [
           widget.listHeader == null
               ? Empty()
-              : Padding(
-                  padding: insetsDefault,
-                  child: widget.listHeader,
-                ),
+              : Padding(padding: insetsDefault, child: widget.listHeader),
           ...items.map((ListPickerItem<T> item) {
             if (item.isDivider) {
               return const Divider();
@@ -269,7 +270,7 @@ class _ListPickerPageState<T> extends State<_ListPickerPage<T>> {
                 }
               },
             );
-          }).toList(),
+          }),
         ],
       ),
     );

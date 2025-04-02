@@ -24,10 +24,8 @@ class Activity extends Model {
 
   @override
   Map<String, dynamic> toMap() {
-    return {
-      keyName: name,
-      keyCurrentSessionId: _currentSessionId,
-    }..addAll(super.toMap());
+    return {keyName: name, keyCurrentSessionId: _currentSessionId}
+      ..addAll(super.toMap());
   }
 
   @override

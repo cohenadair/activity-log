@@ -1,12 +1,13 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:adair_flutter_lib/utils/date_range.dart';
 import 'package:mobile/app_manager.dart';
 import 'package:mobile/model/activity.dart';
 import 'package:mobile/model/session.dart';
-import 'package:mobile/utils/date_time_utils.dart';
 import 'package:quiver/strings.dart';
-import 'package:quiver/time.dart';
+
+import '../utils/duration.dart';
 
 enum ImportResult {
   success,
@@ -30,10 +31,7 @@ const _keyPreferencesHomeDateRange = "home_date_range";
 
 /// Returns a JSON [String] representation of the given [AppManager] database,
 /// or `null` if there was an error.
-Future<String> export(
-  AppManager app, {
-  Clock clock = const Clock(),
-}) async {
+Future<String> export(AppManager app) async {
   Map<String, dynamic> jsonMap = {};
 
   // Activities.
@@ -56,8 +54,7 @@ Future<String> export(
     if (session.inProgress) {
       // End any running sessions. This ensures that when the database
       // is imported, there isn't a potentially long session in progress.
-      session =
-          (SessionBuilder.fromSession(session)..clock = clock).endNow().build;
+      session = SessionBuilder.fromSession(session).endNow().build;
     }
     return session.toMap();
   }).toList();
@@ -160,8 +157,9 @@ Future<ImportResult> import(AppManager app, {String? json}) async {
     Map<String, dynamic> preferences = jsonMap[_keyPreferences];
 
     if (preferences[_keyPreferencesHomeDateRange] is String) {
-      var displayDateRange =
-          DisplayDateRange.of(preferences[_keyPreferencesHomeDateRange]);
+      var displayDateRange = DisplayDateRange.of(
+        preferences[_keyPreferencesHomeDateRange],
+      );
       if (displayDateRange != null) {
         app.preferencesManager.setHomeDateRange(displayDateRange);
       }
@@ -171,9 +169,10 @@ Future<ImportResult> import(AppManager app, {String? json}) async {
       int durationUnitIndex = preferences[_keyPreferencesLargestDurationUnit];
 
       if (durationUnitIndex >= 0 &&
-          durationUnitIndex < DurationUnit.values.length) {
-        app.preferencesManager
-            .setLargestDurationUnit(DurationUnit.values[durationUnitIndex]);
+          durationUnitIndex < AppDurationUnit.values.length) {
+        app.preferencesManager.setLargestDurationUnit(
+          AppDurationUnit.values[durationUnitIndex],
+        );
       }
     }
   }

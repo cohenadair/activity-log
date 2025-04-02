@@ -1,14 +1,21 @@
+import 'package:adair_flutter_lib/managers/time_manager.dart';
+import 'package:adair_flutter_lib/utils/date_range.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mobile/utils/date_time_utils.dart';
+
+import '../stubbed_managers.dart';
 
 void main() {
+  setUp(() async {
+    await StubbedManagers.create(); // Sets up TimeManager.
+  });
+
   assertStatsDateRange({
     required DisplayDateRange dateRange,
     required DateTime now,
     required DateTime expectedStart,
     DateTime? expectedEnd,
   }) {
-    DateRange range = dateRange.getValue(now);
+    DateRange range = dateRange.onValue(TimeManager.get.dateTimeToTz(now));
     expect(range.startDate, equals(expectedStart));
     expect(range.endDate, equals(expectedEnd ?? now));
   }

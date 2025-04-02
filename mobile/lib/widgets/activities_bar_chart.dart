@@ -1,3 +1,8 @@
+import 'package:adair_flutter_lib/app_config.dart';
+import 'package:adair_flutter_lib/res/dimen.dart';
+import 'package:adair_flutter_lib/res/theme.dart';
+import 'package:adair_flutter_lib/utils/duration.dart';
+import 'package:adair_flutter_lib/widgets/empty.dart';
 import 'package:community_charts_flutter/community_charts_flutter.dart'
     as f_charts;
 import 'package:flutter/material.dart';
@@ -5,15 +10,11 @@ import 'package:mobile/app_manager.dart';
 import 'package:mobile/i18n/strings.dart';
 import 'package:mobile/model/summarized_activity.dart';
 import 'package:mobile/preferences_manager.dart';
-import 'package:mobile/res/dimen.dart';
-import 'package:mobile/res/theme.dart';
-import 'package:mobile/utils/date_time_utils.dart';
-import 'package:mobile/utils/string_utils.dart';
 import 'package:mobile/widgets/text.dart';
-import 'package:mobile/widgets/widget.dart';
 import 'package:quiver/strings.dart';
 
 import '../utils/chart_utils.dart';
+import '../utils/duration.dart';
 
 typedef ActivitiesBarChartOnSelectCallback = Function(SummarizedActivity);
 
@@ -33,21 +34,23 @@ class ActivitiesDurationBarChart extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return LargestDurationBuilder(
-      builder: (BuildContext context, DurationUnit largestDurationUnit) {
+      builder: (BuildContext context, AppDurationUnit largestDurationUnit) {
         return _ActivitiesBarChart(
           chartId: "ActivitiesDurationBarChart",
           title: Strings.of(context).statsPageDurationTitle,
           padding: padding,
           activities: activities,
-          onBuildLabel: (SummarizedActivity activity) =>
-              "${activity.value.name} (${formatTotalDuration(
-            context: context,
-            durations: [activity.totalDuration],
-            includesSeconds: false,
-            condensed: true,
-            showHighestTwoOnly: true,
-            largestDurationUnit: largestDurationUnit,
-          )})",
+          onBuildLabel: (SummarizedActivity activity) {
+            var durationText = formatDurations(
+              context: context,
+              durations: [activity.totalDuration],
+              includesSeconds: false,
+              condensed: true,
+              numberOfQuantities: 2,
+              largestDurationUnit: toLibDurationUnit(largestDurationUnit),
+            );
+            return "${activity.value.name} ($durationText})";
+          },
           onMeasure: (activity) => activity.totalDuration.inSeconds,
           primaryAxisTickFormatterSpec: _DurationTickFormatter(
             context: context,
@@ -61,7 +64,7 @@ class ActivitiesDurationBarChart extends StatelessWidget {
 
   _DurationTickFormatCallback _getFormatCallback(
     BuildContext context,
-    DurationUnit largestDurationUnit,
+    AppDurationUnit largestDurationUnit,
   ) {
     Duration longestDuration = const Duration();
 
@@ -73,31 +76,31 @@ class ActivitiesDurationBarChart extends StatelessWidget {
 
     if (longestDuration.inDays > 0) {
       // 0d 0h
-      return (Duration duration) => formatTotalDuration(
+      return (Duration duration) => formatDurations(
             context: context,
             durations: [duration],
             includesSeconds: false,
             includesMinutes: false,
-            largestDurationUnit: largestDurationUnit,
+            largestDurationUnit: toLibDurationUnit(largestDurationUnit),
           );
     } else if (longestDuration.inHours > 0) {
       // 0h 0m
-      return (Duration duration) => formatTotalDuration(
+      return (Duration duration) => formatDurations(
             context: context,
             durations: [duration],
             includesDays: false,
             includesSeconds: false,
-            largestDurationUnit: largestDurationUnit,
+            largestDurationUnit: toLibDurationUnit(largestDurationUnit),
           );
     } else {
       // 0m
-      return (Duration duration) => formatTotalDuration(
+      return (Duration duration) => formatDurations(
             context: context,
             durations: [duration],
             includesDays: false,
             includesHours: false,
             includesSeconds: false,
-            largestDurationUnit: largestDurationUnit,
+            largestDurationUnit: toLibDurationUnit(largestDurationUnit),
           );
     }
   }
@@ -161,7 +164,7 @@ class _ActivitiesBarChart extends StatelessWidget {
       padding: padding,
       child: Column(
         children: <Widget>[
-          isEmpty(title) ? Empty() : LargeHeadingText(title),
+          isEmpty(title) ? const Empty() : LargeHeadingText(title),
           SizedBox(
             height: activities.length == 1
                 ? chartBarHeightSingle
@@ -203,11 +206,13 @@ class _ActivitiesBarChart extends StatelessWidget {
         data: activities,
         domainFn: (SummarizedActivity activity, _) => activity.value.name,
         measureFn: (SummarizedActivity activity, _) => onMeasure(activity),
-        colorFn: (_, __) => f_charts.ColorUtil.fromDartColor(colorAppTheme),
+        colorFn: (_, __) =>
+            f_charts.ColorUtil.fromDartColor(AppConfig.get.colorAppTheme),
         labelAccessorFn: (SummarizedActivity activity, _) =>
             onBuildLabel(activity),
         outsideLabelStyleAccessorFn: (_, __) => f_charts.TextStyleSpec(
-            color: f_charts.ColorUtil.fromDartColor(context.colorText)),
+          color: f_charts.ColorUtil.fromDartColor(context.colorText),
+        ),
       ),
     ];
   }
@@ -222,10 +227,7 @@ class _DurationTickFormatter extends f_charts.SimpleTickFormatterBase<num>
   final BuildContext context;
   final _DurationTickFormatCallback formatCallback;
 
-  _DurationTickFormatter({
-    required this.context,
-    required this.formatCallback,
-  });
+  _DurationTickFormatter({required this.context, required this.formatCallback});
 
   @override
   String formatValue(num value) {
@@ -234,7 +236,8 @@ class _DurationTickFormatter extends f_charts.SimpleTickFormatterBase<num>
 
   @override
   f_charts.TickFormatter<num> createTickFormatter(
-      f_charts.ChartContext context) {
+    f_charts.ChartContext context,
+  ) {
     return _DurationTickFormatter(
       context: this.context,
       formatCallback: formatCallback,

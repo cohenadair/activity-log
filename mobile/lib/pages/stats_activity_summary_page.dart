@@ -1,6 +1,6 @@
+import 'package:adair_flutter_lib/utils/date_range.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile/model/summarized_activity.dart';
-import 'package:mobile/utils/date_time_utils.dart';
 import 'package:mobile/widgets/activity_summary.dart';
 import 'package:mobile/widgets/my_page.dart' as p;
 
@@ -16,8 +16,8 @@ class StatsActivitySummaryPage extends StatelessWidget {
       appBarStyle: p.MyPageAppBarStyle(
         title: activity.value.name,
         subtitle: activity.displayDateRange == null
-            ? DisplayDateRange.allDates.getTitle(context)
-            : activity.displayDateRange!.getTitle(context),
+            ? DisplayDateRange.allDates.onTitle(context)
+            : activity.displayDateRange!.onTitle(context),
       ),
       child: SingleChildScrollView(
         controller: scrollController,

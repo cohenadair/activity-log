@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'dart:math';
 
+import 'package:adair_flutter_lib/res/anim.dart';
 import 'package:flutter/material.dart';
-import 'package:mobile/widgets/widget.dart';
 
 /// A [ListTile] wrapper with app default properties.
 class ListItem extends StatelessWidget {
@@ -95,9 +95,11 @@ class ExpansionListItemState extends State<ExpansionListItem> {
 
     RenderBox box = _key.currentContext!.findRenderObject() as RenderBox;
     widget.scrollController!.animateTo(
-      min(widget.scrollController!.position.maxScrollExtent,
-          _previousScrollOffset + box.size.height),
-      duration: defaultAnimationDuration,
+      min(
+        widget.scrollController!.position.maxScrollExtent,
+        _previousScrollOffset + box.size.height,
+      ),
+      duration: animDurationDefault,
       curve: Curves.linear,
     );
   }

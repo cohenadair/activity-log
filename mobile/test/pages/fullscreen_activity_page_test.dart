@@ -8,28 +8,36 @@ import 'package:mockito/mockito.dart';
 
 import '../mocks/mocks.mocks.dart';
 import '../stubbed_managers.dart';
+
+import '../../../../adair-flutter-lib/test/test_utils/widget.dart';
 import '../test_utils.dart';
 
 void main() {
   late StubbedManagers managers;
 
-  setUp(() {
-    managers = StubbedManagers();
-    when(managers.dataManager.activitiesUpdatedStream)
-        .thenAnswer((_) => const Stream.empty());
-    when(managers.dataManager.activity(any))
-        .thenAnswer((_) => Future.value(ActivityBuilder("Test").build));
-    when(managers.dataManager.inProgressSession(any))
-        .thenAnswer((_) => Future.value(null));
+  setUp(() async {
+    managers = await StubbedManagers.create();
+    when(
+      managers.dataManager.activitiesUpdatedStream,
+    ).thenAnswer((_) => const Stream.empty());
+    when(
+      managers.dataManager.activity(any),
+    ).thenAnswer((_) => Future.value(ActivityBuilder("Test").build));
+    when(
+      managers.dataManager.inProgressSession(any),
+    ).thenAnswer((_) => Future.value(null));
   });
 
   IconButton findStartStopButton(WidgetTester tester) {
-    return tester.widget<IconButton>(find.byWidgetPredicate(
-        (widget) => widget is IconButton && widget.iconSize == 120.0));
+    return tester.widget<IconButton>(
+      find.byWidgetPredicate(
+        (widget) => widget is IconButton && widget.iconSize == 120.0,
+      ),
+    );
   }
 
   testWidgets("Page loads with no in-progress session", (tester) async {
-    await pumpContext(tester, (context) => FullscreenActivityPage(""));
+    await tester.pumpWidget(Testable((_) => FullscreenActivityPage("")));
     await tester.pumpAndSettle();
 
     expect(find.text("Test"), findsOneWidget);
@@ -41,25 +49,29 @@ void main() {
 
   testWidgets("Page updates when session starts", (tester) async {
     var controller = StreamController<void>.broadcast();
-    when(managers.dataManager.activitiesUpdatedStream)
-        .thenAnswer((_) => controller.stream);
+    when(
+      managers.dataManager.activitiesUpdatedStream,
+    ).thenAnswer((_) => controller.stream);
 
-    await pumpContext(tester, (context) => FullscreenActivityPage(""));
+    await tester.pumpWidget(Testable((_) => FullscreenActivityPage("")));
     await tester.pumpAndSettle();
 
     var activity = MockActivity();
     when(activity.name).thenReturn("Test 2");
     when(activity.isRunning).thenReturn(true);
-    when(managers.dataManager.activity(any))
-        .thenAnswer((_) => Future.value(activity));
+    when(
+      managers.dataManager.activity(any),
+    ).thenAnswer((_) => Future.value(activity));
 
     var session = MockSession();
     when(session.duration).thenReturn(Duration(seconds: 10));
-    when(managers.dataManager.inProgressSession(any))
-        .thenAnswer((_) => Future.value(session));
+    when(
+      managers.dataManager.inProgressSession(any),
+    ).thenAnswer((_) => Future.value(session));
 
-    when(managers.dataManager.startSession(any))
-        .thenAnswer((_) => Future.value(""));
+    when(
+      managers.dataManager.startSession(any),
+    ).thenAnswer((_) => Future.value(""));
 
     await tapAndSettle(tester, find.byIcon(Icons.play_arrow));
     controller.add(null);
@@ -75,24 +87,28 @@ void main() {
 
   testWidgets("Page updates when session stops", (tester) async {
     var controller = StreamController<void>.broadcast();
-    when(managers.dataManager.activitiesUpdatedStream)
-        .thenAnswer((_) => controller.stream);
+    when(
+      managers.dataManager.activitiesUpdatedStream,
+    ).thenAnswer((_) => controller.stream);
 
     var activity = MockActivity();
     when(activity.name).thenReturn("Test 2");
     when(activity.isRunning).thenReturn(true);
-    when(managers.dataManager.activity(any))
-        .thenAnswer((_) => Future.value(activity));
+    when(
+      managers.dataManager.activity(any),
+    ).thenAnswer((_) => Future.value(activity));
 
     var session = MockSession();
     when(session.duration).thenReturn(Duration(seconds: 10));
-    when(managers.dataManager.inProgressSession(any))
-        .thenAnswer((_) => Future.value(session));
+    when(
+      managers.dataManager.inProgressSession(any),
+    ).thenAnswer((_) => Future.value(session));
 
-    when(managers.dataManager.startSession(any))
-        .thenAnswer((_) => Future.value(""));
+    when(
+      managers.dataManager.startSession(any),
+    ).thenAnswer((_) => Future.value(""));
 
-    await pumpContext(tester, (context) => FullscreenActivityPage(""));
+    await tester.pumpWidget(Testable((_) => FullscreenActivityPage("")));
     await tester.pumpAndSettle();
 
     when(activity.isRunning).thenReturn(false);
@@ -113,26 +129,30 @@ void main() {
   testWidgets("Portrait orientation", (tester) async {
     await tester.binding.setSurfaceSize(const Size(400, 800));
 
-    await pumpContext(tester, (context) => FullscreenActivityPage(""));
+    await tester.pumpWidget(Testable((_) => FullscreenActivityPage("")));
     await tester.pumpAndSettle();
 
-    var flex = tester.widget<Flex>(find.ancestor(
-      of: find.byIcon(Icons.play_arrow),
-      matching: find.byType(Flex),
-    ));
+    var flex = tester.widget<Flex>(
+      find.ancestor(
+        of: find.byIcon(Icons.play_arrow),
+        matching: find.byType(Flex),
+      ),
+    );
     expect(flex.direction, Axis.vertical);
   });
 
   testWidgets("Landscape orientation", (tester) async {
     await tester.binding.setSurfaceSize(const Size(800, 400));
 
-    await pumpContext(tester, (context) => FullscreenActivityPage(""));
+    await tester.pumpWidget(Testable((_) => FullscreenActivityPage("")));
     await tester.pumpAndSettle();
 
-    var flex = tester.widget<Flex>(find.ancestor(
-      of: find.byIcon(Icons.play_arrow),
-      matching: find.byType(Flex),
-    ));
+    var flex = tester.widget<Flex>(
+      find.ancestor(
+        of: find.byIcon(Icons.play_arrow),
+        matching: find.byType(Flex),
+      ),
+    );
     expect(flex.direction, Axis.horizontal);
   });
 
@@ -140,18 +160,21 @@ void main() {
     var activity = MockActivity();
     when(activity.name).thenReturn("Test 2");
     when(activity.isRunning).thenReturn(true);
-    when(managers.dataManager.activity(any))
-        .thenAnswer((_) => Future.value(activity));
+    when(
+      managers.dataManager.activity(any),
+    ).thenAnswer((_) => Future.value(activity));
 
     var session = MockSession();
     when(session.duration).thenReturn(Duration(seconds: 10));
-    when(managers.dataManager.inProgressSession(any))
-        .thenAnswer((_) => Future.value(session));
+    when(
+      managers.dataManager.inProgressSession(any),
+    ).thenAnswer((_) => Future.value(session));
 
-    when(managers.dataManager.startSession(any))
-        .thenAnswer((_) => Future.value(""));
+    when(
+      managers.dataManager.startSession(any),
+    ).thenAnswer((_) => Future.value(""));
 
-    await pumpContext(tester, (context) => FullscreenActivityPage(""));
+    await tester.pumpWidget(Testable((_) => FullscreenActivityPage("")));
     await tester.pumpAndSettle();
     expect(find.text("00:10"), findsOneWidget);
 

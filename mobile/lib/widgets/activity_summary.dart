@@ -1,16 +1,17 @@
+import 'package:adair_flutter_lib/res/dimen.dart';
+import 'package:adair_flutter_lib/utils/date_time.dart';
+import 'package:adair_flutter_lib/utils/duration.dart';
 import 'package:flutter/material.dart';
-import 'package:mobile/app_manager.dart';
 import 'package:mobile/i18n/strings.dart';
 import 'package:mobile/model/summarized_activity.dart';
 import 'package:mobile/preferences_manager.dart';
-import 'package:mobile/res/dimen.dart';
-import 'package:mobile/utils/date_time_utils.dart';
-import 'package:mobile/utils/string_utils.dart';
 import 'package:mobile/widgets/average_durations_list_item.dart';
 import 'package:mobile/widgets/list_item.dart';
 import 'package:mobile/widgets/sessions_line_chart.dart';
 import 'package:mobile/widgets/summary.dart';
 import 'package:mobile/widgets/widget.dart';
+
+import '../utils/duration.dart';
 
 /// A widget displays statistical information about a single [Activity].
 class ActivitySummary extends StatelessWidget {
@@ -25,7 +26,7 @@ class ActivitySummary extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return LargestDurationBuilder(
-      builder: (BuildContext context, DurationUnit largestDurationUnit) {
+      builder: (BuildContext context, AppDurationUnit largestDurationUnit) {
         return Column(
           children: <Widget>[
             _buildSessionsChart(),
@@ -69,15 +70,17 @@ class ActivitySummary extends StatelessWidget {
                   subtitle: activity.shortestSession == null
                       ? null
                       : formatDateTime(
-                          context: context,
-                          dateTime: activity.shortestSession!.startDateTime,
+                          context,
+                          activity.shortestSession!.startDateTime,
                         ),
                   value: activity.shortestSession == null
                       ? Strings.of(context).none
-                      : formatDuration(
-                          context,
-                          activity.shortestSession!.duration,
-                          largestDurationUnit,
+                      : formatDurations(
+                          context: context,
+                          durations: [activity.shortestSession!.duration],
+                          largestDurationUnit: toLibDurationUnit(
+                            largestDurationUnit,
+                          ),
                         ),
                 ),
                 SummaryItem(
@@ -85,15 +88,17 @@ class ActivitySummary extends StatelessWidget {
                   subtitle: activity.longestSession == null
                       ? null
                       : formatDateTime(
-                          context: context,
-                          dateTime: activity.longestSession!.startDateTime,
+                          context,
+                          activity.longestSession!.startDateTime,
                         ),
                   value: activity.longestSession == null
                       ? Strings.of(context).none
-                      : formatDuration(
-                          context,
-                          activity.longestSession!.duration,
-                          largestDurationUnit,
+                      : formatDurations(
+                          context: context,
+                          durations: [activity.longestSession!.duration],
+                          largestDurationUnit: toLibDurationUnit(
+                            largestDurationUnit,
+                          ),
                         ),
                 ),
                 SummaryItem(
@@ -114,10 +119,10 @@ class ActivitySummary extends StatelessWidget {
               items: <SummaryItem>[
                 SummaryItem(
                   title: Strings.of(context).activitySummaryTotalDuration,
-                  value: formatDuration(
-                    context,
-                    activity.totalDuration,
-                    largestDurationUnit,
+                  value: formatDurations(
+                    context: context,
+                    durations: [activity.totalDuration],
+                    largestDurationUnit: toLibDurationUnit(largestDurationUnit),
                   ),
                 ),
               ],
