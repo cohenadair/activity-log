@@ -1,7 +1,7 @@
 import 'dart:io';
 
+import 'package:adair_flutter_lib/res/dimen.dart';
 import 'package:flutter/material.dart';
-import 'package:mobile/res/dimen.dart';
 
 class MyPageAppBarStyle {
   final String? title;
@@ -9,22 +9,15 @@ class MyPageAppBarStyle {
   final List<Widget>? actions;
   final Widget? leading;
 
-  MyPageAppBarStyle({
-    this.title,
-    this.subtitle,
-    this.actions,
-    this.leading,
-  });
+  MyPageAppBarStyle({this.title, this.subtitle, this.actions, this.leading});
 }
 
 class MyPage extends StatelessWidget {
   final Widget _child;
   final MyPageAppBarStyle? _appBarStyle;
 
-  const MyPage({
-    required Widget child,
-    MyPageAppBarStyle? appBarStyle,
-  })  : _child = child,
+  const MyPage({required Widget child, MyPageAppBarStyle? appBarStyle})
+      : _child = child,
         _appBarStyle = appBarStyle;
 
   @override
@@ -33,12 +26,13 @@ class MyPage extends StatelessWidget {
       appBar: _appBarStyle == null
           ? null
           : AppBar(
-              title: _appBarStyle!.subtitle == null
+              title: _appBarStyle.subtitle == null
                   ? Text(
-                      _appBarStyle!.title == null ? "" : _appBarStyle!.title!)
+                      _appBarStyle.title == null ? "" : _appBarStyle.title!,
+                    )
                   : _buildTitleWithSubtitle(context),
-              actions: _appBarStyle!.actions,
-              leading: _appBarStyle!.leading,
+              actions: _appBarStyle.actions,
+              leading: _appBarStyle.leading,
               elevation: 0,
             ),
       body: SafeArea(child: _child),
@@ -55,11 +49,10 @@ class MyPage extends StatelessWidget {
         children: <Widget>[
           Text(_appBarStyle!.title ?? ""),
           Text(
-            _appBarStyle!.subtitle ?? "",
-            style: Theme.of(context)
-                .textTheme
-                .titleSmall!
-                .copyWith(color: Colors.white),
+            _appBarStyle.subtitle ?? "",
+            style: Theme.of(
+              context,
+            ).textTheme.titleSmall!.copyWith(color: Colors.white),
           ),
         ],
       ),

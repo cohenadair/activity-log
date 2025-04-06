@@ -1,8 +1,8 @@
+import 'package:adair_flutter_lib/res/dimen.dart';
+import 'package:adair_flutter_lib/widgets/empty.dart';
 import 'package:flutter/material.dart';
-import 'package:mobile/res/dimen.dart';
 import 'package:mobile/widgets/list_item.dart';
 import 'package:mobile/widgets/text.dart';
-import 'package:mobile/widgets/widget.dart';
 import 'package:quiver/strings.dart';
 
 /// A widget that displays a list of titles and values in a formatted list.
@@ -24,7 +24,7 @@ class Summary extends StatelessWidget {
       child: Column(
         children: <Widget>[
           isEmpty(title)
-              ? Empty()
+              ? const Empty()
               : Padding(
                   padding: insetsBottomDefault,
                   child: LargeHeadingText(title),
@@ -53,9 +53,5 @@ class SummaryItem {
   final String? subtitle;
   final dynamic value;
 
-  SummaryItem({
-    required this.title,
-    this.subtitle,
-    this.value,
-  });
+  SummaryItem({required this.title, this.subtitle, this.value});
 }

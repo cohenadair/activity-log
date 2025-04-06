@@ -1,10 +1,10 @@
+import 'package:adair_flutter_lib/l10n/gen/adair_flutter_lib_localizations.dart';
+import 'package:adair_flutter_lib/res/dimen.dart';
+import 'package:adair_flutter_lib/utils/dialog.dart';
+import 'package:adair_flutter_lib/widgets/empty.dart';
 import 'package:flutter/material.dart';
-import 'package:mobile/i18n/strings.dart';
-import 'package:mobile/res/dimen.dart';
-import 'package:mobile/utils/dialog_utils.dart';
 import 'package:mobile/widgets/button.dart';
 import 'package:mobile/widgets/my_page.dart' as p;
-import 'package:mobile/widgets/widget.dart';
 
 class EditPage extends StatelessWidget {
   final String _title;
@@ -37,11 +37,7 @@ class EditPage extends StatelessWidget {
     return p.MyPage(
       appBarStyle: p.MyPageAppBarStyle(
         title: _title,
-        actions: <Widget>[
-          ActionButton.save(
-            onPressed: _onPressedSaveButton,
-          ),
-        ],
+        actions: <Widget>[ActionButton.save(onPressed: _onPressedSaveButton)],
       ),
       child: SingleChildScrollView(
         child: SafeArea(
@@ -60,7 +56,7 @@ class EditPage extends StatelessWidget {
                         ),
                         child: _getDeleteButton(context),
                       )
-                    : Empty(),
+                    : const Empty(),
               ],
             ),
           ),
@@ -71,11 +67,8 @@ class EditPage extends StatelessWidget {
 
   Widget _getDeleteButton(BuildContext context) {
     return Button(
-      text: Strings.of(context).delete,
-      icon: const Icon(
-        Icons.delete,
-        color: Colors.white,
-      ),
+      text: AdairFlutterLibLocalizations.of(context).delete,
+      icon: const Icon(Icons.delete, color: Colors.white),
       color: Colors.red,
       onPressed: () {
         if (_deleteDescription == null) {

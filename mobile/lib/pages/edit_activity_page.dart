@@ -1,3 +1,6 @@
+import 'package:adair_flutter_lib/res/dimen.dart';
+import 'package:adair_flutter_lib/utils/string.dart';
+import 'package:adair_flutter_lib/widgets/empty.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile/app_manager.dart';
 import 'package:mobile/i18n/strings.dart';
@@ -6,13 +9,10 @@ import 'package:mobile/model/session.dart';
 import 'package:mobile/widgets/edit_page.dart';
 import 'package:mobile/pages/edit_session_page.dart';
 import 'package:mobile/pages/sessions_page.dart';
-import 'package:mobile/res/dimen.dart';
 import 'package:mobile/utils/page_utils.dart';
-import 'package:mobile/utils/string_utils.dart';
 import 'package:mobile/widgets/future_listener.dart';
 import 'package:mobile/widgets/session_list_tile.dart';
 import 'package:mobile/widgets/text.dart';
-import 'package:mobile/widgets/widget.dart';
 
 class EditActivityPage extends StatefulWidget {
   final AppManager app;
@@ -36,7 +36,8 @@ class EditActivityPageState extends State<EditActivityPage> {
   @override
   void initState() {
     _nameController = TextEditingController(
-        text: _isEditing ? widget.editingActivity!.name : null);
+      text: _isEditing ? widget.editingActivity!.name : null,
+    );
 
     super.initState();
   }
@@ -52,8 +53,9 @@ class EditActivityPageState extends State<EditActivityPage> {
       onDelete: () =>
           widget.app.dataManager.removeActivity(widget.editingActivity!.id),
       deleteDescription: _isEditing
-          ? format(Strings.of(context).editActivityPageDeleteMessage,
-              [widget.editingActivity!.name])
+          ? format(Strings.of(context).editActivityPageDeleteMessage, [
+              widget.editingActivity!.name,
+            ])
           : null,
       isEditingCallback: () => _isEditing,
       form: Form(
@@ -76,7 +78,7 @@ class EditActivityPageState extends State<EditActivityPage> {
                 validator: (value) => _nameValidatorValue,
               ),
             ),
-            _isEditing ? _buildRecentSessions() : Empty(),
+            _isEditing ? _buildRecentSessions() : const Empty(),
           ],
         ),
       ),
@@ -112,7 +114,7 @@ class EditActivityPageState extends State<EditActivityPage> {
                     );
                   })
                 : [Empty()],
-            sessions.isNotEmpty ? _buildViewAllButton(sessionCount) : Empty()
+            sessions.isNotEmpty ? _buildViewAllButton(sessionCount) : Empty(),
           ],
         );
       },
@@ -133,7 +135,9 @@ class EditActivityPageState extends State<EditActivityPage> {
               push(
                 context,
                 EditSessionPage(
-                    app: widget.app, activity: widget.editingActivity!),
+                  app: widget.app,
+                  activity: widget.editingActivity!,
+                ),
                 fullscreenDialog: true,
               );
             },
@@ -152,11 +156,15 @@ class EditActivityPageState extends State<EditActivityPage> {
               Padding(
                 padding: insetsHorizontalDefault,
                 child: TextButton(
-                  onPressed: () => push(context,
-                      SessionsPage(widget.app, widget.editingActivity!)),
-                  child: Text(Strings.of(context)
-                      .editActivityPageMoreSessions
-                      .toUpperCase()),
+                  onPressed: () => push(
+                    context,
+                    SessionsPage(widget.app, widget.editingActivity!),
+                  ),
+                  child: Text(
+                    Strings.of(
+                      context,
+                    ).editActivityPageMoreSessions.toUpperCase(),
+                  ),
                 ),
               ),
             ],
@@ -179,8 +187,9 @@ class EditActivityPageState extends State<EditActivityPage> {
           ..name = nameCandidate;
         widget.app.dataManager.updateActivity(builder.build);
       } else {
-        widget.app.dataManager
-            .addActivity(ActivityBuilder(nameCandidate).build);
+        widget.app.dataManager.addActivity(
+          ActivityBuilder(nameCandidate).build,
+        );
       }
 
       Navigator.pop(context);
@@ -190,7 +199,7 @@ class EditActivityPageState extends State<EditActivityPage> {
   void _validateNameField(String name, Function(String?) onFinish) {
     // The name hasn't changed, and therefore is still valid.
     if (_isEditing &&
-        isEqualTrimmedLowercase(widget.editingActivity!.name, name)) {
+        equalsTrimmedIgnoreCase(widget.editingActivity!.name, name)) {
       onFinish(null);
       return;
     }

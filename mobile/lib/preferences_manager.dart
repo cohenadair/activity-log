@@ -1,10 +1,11 @@
 import 'dart:async';
 
+import 'package:adair_flutter_lib/utils/date_range.dart';
+import 'package:adair_flutter_lib/utils/void_stream_controller.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile/app_manager.dart';
-import 'package:mobile/utils/date_time_utils.dart';
-import 'package:mobile/utils/void_stream_controller.dart';
+import 'package:mobile/utils/duration.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class PreferencesManager {
@@ -33,9 +34,10 @@ class PreferencesManager {
 
   Stream<void> get largestDurationUnitStream =>
       _largestDurationUnitUpdated.stream;
+
   Stream<void> get homeDateRangeStream => _homeDateRangeUpdated.stream;
 
-  late DurationUnit _largestDurationUnit;
+  late AppDurationUnit _largestDurationUnit;
   late DisplayDateRange _homeDateRange;
 
   late List<String> _statsSelectedActivityIds;
@@ -44,8 +46,8 @@ class PreferencesManager {
   late String? _userEmail;
 
   /// The largest unit used to display [Duration] objects. This value will never
-  /// be `null`. Defaults to [DurationUnit.days].
-  DurationUnit get largestDurationUnit => _largestDurationUnit;
+  /// be `null`. Defaults to [AppDurationUnit.days].
+  AppDurationUnit get largestDurationUnit => _largestDurationUnit;
 
   /// The date range used to display the total [Duration] of an [Activity] on
   /// the home page. This value will never be `null`. Defaults to
@@ -53,8 +55,11 @@ class PreferencesManager {
   DisplayDateRange get homeDateRange => _homeDateRange;
 
   List<String> get statsSelectedActivityIds => _statsSelectedActivityIds;
+
   DisplayDateRange get statsDateRange => _statsDateRange;
+
   String? get userName => _userName;
+
   String? get userEmail => _userEmail;
 
   /// Initializes preference properties. This method should be called on app
@@ -63,7 +68,7 @@ class PreferencesManager {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
     _largestDurationUnit =
-        DurationUnit.values[prefs.getInt(_keyLargestDurationUnit) ?? 0];
+        AppDurationUnit.values[prefs.getInt(_keyLargestDurationUnit) ?? 0];
     _homeDateRange = _getDisplayDateRange(prefs, _keyHomeDateRange);
 
     List<String> activityIds =
@@ -78,10 +83,11 @@ class PreferencesManager {
 
   DisplayDateRange _getDisplayDateRange(SharedPreferences prefs, String key) {
     return DisplayDateRange.of(
-        prefs.getString(key) ?? DisplayDateRange.allDates.id)!;
+      prefs.getString(key) ?? DisplayDateRange.allDates.id,
+    )!;
   }
 
-  void setLargestDurationUnit(DurationUnit unit) async {
+  void setLargestDurationUnit(AppDurationUnit unit) async {
     if (_largestDurationUnit == unit) {
       return;
     }
@@ -89,8 +95,10 @@ class PreferencesManager {
     _largestDurationUnit = unit;
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setInt(_keyLargestDurationUnit,
-        DurationUnit.values.indexOf(_largestDurationUnit));
+    await prefs.setInt(
+      _keyLargestDurationUnit,
+      AppDurationUnit.values.indexOf(_largestDurationUnit),
+    );
 
     _largestDurationUnitUpdated.notify();
   }
@@ -109,8 +117,10 @@ class PreferencesManager {
   }
 
   void setStatsSelectedActivityIds(List<String>? ids) async {
-    if (const DeepCollectionEquality.unordered()
-        .equals(_statsSelectedActivityIds, ids)) {
+    if (const DeepCollectionEquality.unordered().equals(
+      _statsSelectedActivityIds,
+      ids,
+    )) {
       return;
     }
 
@@ -118,7 +128,9 @@ class PreferencesManager {
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setStringList(
-        _keyStatsSelectedActivityIds, _statsSelectedActivityIds);
+      _keyStatsSelectedActivityIds,
+      _statsSelectedActivityIds,
+    );
   }
 
   void setStatsDateRange(DisplayDateRange range) async {
@@ -147,23 +159,19 @@ class PreferencesManager {
   }
 }
 
-class LargestDurationBuilder extends _SimpleStreamBuilder<DurationUnit> {
-  LargestDurationBuilder({
-    required super.builder,
-  }) : super(
+class LargestDurationBuilder extends _SimpleStreamBuilder<AppDurationUnit> {
+  LargestDurationBuilder({required super.builder})
+      : super(
           stream: PreferencesManager.get.largestDurationUnitStream,
           valueCallback: () => PreferencesManager.get.largestDurationUnit,
         );
 }
 
 class HomeDateRangeBuilder extends _SimpleStreamBuilder<DisplayDateRange> {
-  HomeDateRangeBuilder({
-    required AppManager app,
-    required Widget Function(BuildContext, DisplayDateRange) builder,
-  }) : super(
+  HomeDateRangeBuilder({required AppManager app, required super.builder})
+      : super(
           stream: app.preferencesManager._homeDateRangeUpdated.stream,
           valueCallback: () => app.preferencesManager.homeDateRange,
-          builder: builder,
         );
 }
 

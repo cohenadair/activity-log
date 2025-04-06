@@ -1,5 +1,11 @@
 import 'dart:async';
 
+import 'package:adair_flutter_lib/res/dimen.dart';
+import 'package:adair_flutter_lib/utils/date_range.dart';
+import 'package:adair_flutter_lib/utils/duration.dart';
+import 'package:adair_flutter_lib/utils/string.dart';
+import 'package:adair_flutter_lib/widgets/empty.dart';
+import 'package:adair_flutter_lib/widgets/loading.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile/app_manager.dart';
 import 'package:mobile/i18n/strings.dart';
@@ -7,20 +13,18 @@ import 'package:mobile/model/activity.dart';
 import 'package:mobile/model/summarized_activity.dart';
 import 'package:mobile/pages/stats_activity_summary_page.dart';
 import 'package:mobile/preferences_manager.dart';
-import 'package:mobile/res/dimen.dart';
-import 'package:mobile/utils/date_time_utils.dart';
 import 'package:mobile/utils/page_utils.dart';
-import 'package:mobile/utils/string_utils.dart';
 import 'package:mobile/widgets/activities_bar_chart.dart';
 import 'package:mobile/widgets/activity_picker.dart';
 import 'package:mobile/widgets/activity_summary.dart';
 import 'package:mobile/widgets/average_durations_list_item.dart';
-import 'package:mobile/widgets/loading.dart';
 import 'package:mobile/widgets/stats_date_range_picker.dart';
-import 'package:mobile/widgets/my_page.dart' as p;
+import 'package:mobile/widgets/my_page.dart';
 import 'package:mobile/widgets/summary.dart';
 import 'package:mobile/widgets/text.dart';
 import 'package:mobile/widgets/widget.dart';
+
+import '../utils/duration.dart';
 
 class StatsPage extends StatefulWidget {
   final AppManager app;
@@ -73,10 +77,8 @@ class StatsPageState extends State<StatsPage> {
 
   @override
   Widget build(BuildContext context) {
-    return p.MyPage(
-      appBarStyle: p.MyPageAppBarStyle(
-        title: Strings.of(context).statsPageTitle,
-      ),
+    return MyPage(
+      appBarStyle: MyPageAppBarStyle(title: Strings.of(context).statsPageTitle),
       child: FutureBuilder<int>(
         future: _activityCountFuture,
         builder: (BuildContext context, AsyncSnapshot<int> snapshot) {
@@ -119,10 +121,12 @@ class StatsPageState extends State<StatsPage> {
                 MinDivider(),
                 FutureBuilder<SummarizedActivityList>(
                   future: _summarizedActivityListFuture,
-                  builder: (BuildContext context,
-                      AsyncSnapshot<SummarizedActivityList> snapshot) {
+                  builder: (
+                    BuildContext context,
+                    AsyncSnapshot<SummarizedActivityList> snapshot,
+                  ) {
                     if (!snapshot.hasData) {
-                      return Loading.centered();
+                      return Loading(isCentered: true);
                     }
 
                     List<SummarizedActivity> activities =
@@ -131,7 +135,8 @@ class StatsPageState extends State<StatsPage> {
                       return Padding(
                         padding: insetsDefault,
                         child: ErrorText(
-                            Strings.of(context).statsPageNoDataMessage),
+                          Strings.of(context).statsPageNoDataMessage,
+                        ),
                       );
                     }
 
@@ -179,12 +184,7 @@ class StatsPageState extends State<StatsPage> {
   }
 
   void _onSelectChartActivity(SummarizedActivity activity) {
-    push(
-      context,
-      StatsActivitySummaryPage(
-        activity: activity,
-      ),
-    );
+    push(context, StatsActivitySummaryPage(activity: activity));
   }
 
   Widget _buildSummary(SummarizedActivityList summary) {
@@ -194,7 +194,7 @@ class StatsPageState extends State<StatsPage> {
     }
 
     return LargestDurationBuilder(
-      builder: (BuildContext context, DurationUnit largestDurationUnit) {
+      builder: (BuildContext context, AppDurationUnit largestDurationUnit) {
         return Column(
           children: [
             Summary(
@@ -209,13 +209,13 @@ class StatsPageState extends State<StatsPage> {
               items: [
                 SummaryItem(
                   title: Strings.of(context).statsPageTotalDuration,
-                  value: formatTotalDuration(
+                  value: formatDurations(
                     context: context,
                     durations: [Duration(milliseconds: summary.totalDuration)],
                     includesSeconds: false,
                     condensed: true,
-                    showHighestTwoOnly: true,
-                    largestDurationUnit: largestDurationUnit,
+                    numberOfQuantities: 2,
+                    largestDurationUnit: toLibDurationUnit(largestDurationUnit),
                   ),
                 ),
                 SummaryItem(
@@ -229,13 +229,13 @@ class StatsPageState extends State<StatsPage> {
                 SummaryItem(
                   title: Strings.of(context).statsPageLongestSessionLabel,
                   subtitle: summary.longestSession!.first.name,
-                  value: formatTotalDuration(
+                  value: formatDurations(
                     context: context,
                     durations: [summary.longestSession!.second.duration],
                     includesSeconds: false,
                     condensed: true,
-                    showHighestTwoOnly: true,
-                    largestDurationUnit: largestDurationUnit,
+                    numberOfQuantities: 2,
+                    largestDurationUnit: toLibDurationUnit(largestDurationUnit),
                   ),
                 ),
               ],
@@ -257,7 +257,8 @@ class StatsPageState extends State<StatsPage> {
     // Update preferences.
     widget.app.preferencesManager.setStatsDateRange(_currentDateRange);
     widget.app.preferencesManager.setStatsSelectedActivityIds(
-        _currentActivities.map((activity) => activity.id).toList());
+      _currentActivities.map((activity) => activity.id).toList(),
+    );
 
     List<Activity> activities = List.of(_currentActivities);
 

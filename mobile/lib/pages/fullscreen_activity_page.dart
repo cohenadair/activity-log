@@ -1,7 +1,7 @@
+import 'package:adair_flutter_lib/res/dimen.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile/database/data_manager.dart';
 import 'package:mobile/model/activity.dart';
-import 'package:mobile/res/dimen.dart';
 import 'package:mobile/widgets/future_listener.dart';
 import 'package:mobile/widgets/my_page.dart';
 
@@ -29,9 +29,7 @@ class _FullscreenActivityPageState extends State<FullscreenActivityPage> {
     return MyPage(
       child: OrientationBuilder(
         builder: (context, orientation) => FutureListener(
-          streams: [
-            DataManager.get.activitiesUpdatedStream,
-          ],
+          streams: [DataManager.get.activitiesUpdatedStream],
           futuresCallbacks: [
             () => DataManager.get.activity(_activityId),
             () => DataManager.get.inProgressSession(_activityId),
@@ -42,10 +40,7 @@ class _FullscreenActivityPageState extends State<FullscreenActivityPage> {
 
             return Stack(
               children: [
-                Align(
-                  alignment: Alignment.topLeft,
-                  child: CloseButton(),
-                ),
+                Align(alignment: Alignment.topLeft, child: CloseButton()),
                 Center(
                   child: Column(
                     mainAxisSize: MainAxisSize.max,
@@ -76,7 +71,10 @@ class _FullscreenActivityPageState extends State<FullscreenActivityPage> {
   }
 
   Widget _buildSessionContainer(
-      Activity activity, Session? session, Orientation orientation) {
+    Activity activity,
+    Session? session,
+    Orientation orientation,
+  ) {
     return Flex(
       direction: orientation == Orientation.landscape
           ? Axis.horizontal

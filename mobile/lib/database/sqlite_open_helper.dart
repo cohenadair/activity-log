@@ -1,9 +1,8 @@
 import 'dart:async';
 
+import 'package:adair_flutter_lib/utils/log.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
-
-import '../log.dart';
 
 class SQLiteOpenHelper {
   static const String _name = "activitylog.db";
@@ -24,7 +23,7 @@ class SQLiteOpenHelper {
       start_timestamp INTEGER NOT NULL,
       end_timestamp INTEGER
     );
-    """
+    """,
   ];
 
   static const List<String> _schema1 = [
@@ -33,10 +32,7 @@ class SQLiteOpenHelper {
     """,
   ];
 
-  static const List<List<String>> _schema = [
-    _schema0,
-    _schema1,
-  ];
+  static const List<List<String>> _schema = [_schema0, _schema1];
 
   static const _log = Log("SQLiteOpenHelper");
 

@@ -1,29 +1,29 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:adair_flutter_lib/managers/properties_manager.dart';
+import 'package:adair_flutter_lib/res/dimen.dart';
+import 'package:adair_flutter_lib/utils/dialog.dart';
+import 'package:adair_flutter_lib/utils/io.dart';
+import 'package:adair_flutter_lib/utils/log.dart';
+import 'package:adair_flutter_lib/utils/string.dart';
+import 'package:adair_flutter_lib/utils/widget.dart';
+import 'package:adair_flutter_lib/widgets/empty.dart';
+import 'package:adair_flutter_lib/widgets/loading.dart';
+import 'package:adair_flutter_lib/widgets/vertical_space.dart';
+import 'package:adair_flutter_lib/wrappers/io_wrapper.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile/app_manager.dart';
 import 'package:mobile/device_info_wrapper.dart';
 import 'package:mobile/http_wrapper.dart';
-import 'package:mobile/io_wrapper.dart';
 import 'package:mobile/package_info_wrapper.dart';
 import 'package:mobile/preferences_manager.dart';
-import 'package:mobile/properties_manager.dart';
-import 'package:mobile/res/dimen.dart';
-import 'package:mobile/res/theme.dart';
-import 'package:mobile/utils/dialog_utils.dart';
-import 'package:mobile/utils/widget_utils.dart';
 import 'package:mobile/widgets/button.dart';
 import 'package:mobile/widgets/my_page.dart';
 import 'package:mobile/widgets/text.dart';
 import 'package:quiver/strings.dart';
 
 import '../i18n/strings.dart';
-import '../log.dart';
-import '../utils/io_utils.dart';
-import '../utils/string_utils.dart';
-import '../widgets/loading.dart';
-import '../widgets/widget.dart';
 
 class FeedbackPage extends StatefulWidget {
   final AppManager app;
@@ -55,11 +55,7 @@ class _FeedbackPageState extends State<FeedbackPage> {
 
   HttpWrapper get _http => widget.app.httpWrapper;
 
-  IoWrapper get _io => widget.app.ioWrapper;
-
   PreferencesManager get _preferences => widget.app.preferencesManager;
-
-  PropertiesManager get _propertiesManager => widget.app.propertiesManager;
 
   PackageInfoWrapper get _packageInfo => widget.app.packageInfoWrapper;
 
@@ -72,7 +68,7 @@ class _FeedbackPageState extends State<FeedbackPage> {
 
   @override
   Widget build(BuildContext context) {
-    Widget action = Loading.centered(color: context.colorTextActionBar);
+    Widget action = Loading.appBar();
     if (!_isSending) {
       action = ActionButton(
         text: Strings.of(context).feedbackPageSend,
@@ -134,10 +130,12 @@ class _FeedbackPageState extends State<FeedbackPage> {
               ),
               const VerticalSpace(paddingDefault),
               _showSendError
-                  ? ErrorText(format(
-                      Strings.of(context).feedbackPageErrorSending,
-                      [_propertiesManager.supportEmail]))
-                  : Empty(),
+                  ? ErrorText(
+                      format(Strings.of(context).feedbackPageErrorSending, [
+                        PropertiesManager.get.supportEmail,
+                      ]),
+                    )
+                  : const Empty(),
             ],
           ),
         ),
@@ -149,16 +147,20 @@ class _FeedbackPageState extends State<FeedbackPage> {
     // Check for valid input.
     if (!_formKey.currentState!.validate()) {
       showErrorSnackBar(
-          context, Strings.of(context).feedbackPageRequiredFields);
+        context,
+        Strings.of(context).feedbackPageRequiredFields,
+      );
       return;
     }
 
     // Check internet connection.
-    if (!await isConnected(_io)) {
+    if (!await isConnected()) {
       safeUseContext(
         this,
         () => showErrorSnackBar(
-            context, Strings.of(context).feedbackPageConnectionError),
+          context,
+          Strings.of(context).feedbackPageConnectionError,
+        ),
       );
       return;
     }
@@ -171,12 +173,12 @@ class _FeedbackPageState extends State<FeedbackPage> {
     String? deviceModel;
     String? deviceId;
 
-    if (_io.isIOS) {
+    if (IoWrapper.get.isIOS) {
       var info = await _deviceInfo.iosInfo;
       osVersion = "${info.systemName} (${info.systemVersion})";
       deviceModel = info.utsname.machine;
       deviceId = info.identifierForVendor;
-    } else if (_io.isAndroid) {
+    } else if (IoWrapper.get.isAndroid) {
       var info = await _deviceInfo.androidInfo;
       osVersion = "Android (${info.version.sdkInt})";
       deviceModel = info.model;
@@ -192,25 +194,21 @@ class _FeedbackPageState extends State<FeedbackPage> {
       "personalizations": [
         {
           "to": [
-            {
-              "email": _propertiesManager.supportEmail,
-            },
+            {"email": PropertiesManager.get.supportEmail},
           ],
-        }
+        },
       ],
       "from": {
-        "name": "Activity Log ${_io.isAndroid ? "Android" : "iOS"} App",
-        "email": _propertiesManager.clientSenderEmail,
+        "name":
+            "Activity Log ${IoWrapper.get.isAndroid ? "Android" : "iOS"} App",
+        "email": PropertiesManager.get.clientSenderEmail,
       },
-      "reply_to": {
-        "email": email,
-        "name": name,
-      },
+      "reply_to": {"email": email, "name": name},
       "subject": "User Feedback",
       "content": [
         {
           "type": "text/plain",
-          "value": format(_propertiesManager.feedbackTemplate, [
+          "value": format(PropertiesManager.get.feedbackTemplate, [
             appVersion,
             isNotEmpty(osVersion) ? osVersion : "Unknown",
             isNotEmpty(deviceModel) ? deviceModel : "Unknown",
@@ -219,7 +217,7 @@ class _FeedbackPageState extends State<FeedbackPage> {
             email,
             message,
           ]),
-        }
+        },
       ],
     };
 
@@ -227,14 +225,16 @@ class _FeedbackPageState extends State<FeedbackPage> {
       Uri.parse(_urlSendGrid),
       headers: <String, String>{
         "Content-Type": "application/json; charset=UTF-8",
-        "Authorization": "Bearer ${_propertiesManager.sendGridApiKey}",
+        "Authorization": "Bearer ${PropertiesManager.get.sendGridApiKey}",
       },
       body: jsonEncode(body),
     );
 
     if (response.statusCode != HttpStatus.accepted) {
       _log.e(
-          StackTrace.current, "Error sending feedback: ${response.statusCode}");
+        StackTrace.current,
+        "Error sending feedback: ${response.statusCode}",
+      );
 
       setState(() {
         _isSending = false;
@@ -253,7 +253,7 @@ class _FeedbackPageState extends State<FeedbackPage> {
     // Confirm feedback has been sent.
     safeUseContext(
       this,
-      () => showOk(
+      () => showOkDialog(
         context: context,
         description: Strings.of(context).feedbackPageConfirmation,
         onTapOk: () => Navigator.of(context).pop(),
@@ -267,8 +267,8 @@ class _FeedbackPageState extends State<FeedbackPage> {
     }
 
     if (!RegExp(
-            r'^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\])|(([a-zA-Z\-\d]+\.)+[a-zA-Z]{2,}))$')
-        .hasMatch(email!)) {
+      r'^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\])|(([a-zA-Z\-\d]+\.)+[a-zA-Z]{2,}))$',
+    ).hasMatch(email!)) {
       return Strings.of(context).feedbackPageInvalidEmail;
     }
 

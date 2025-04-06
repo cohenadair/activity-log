@@ -1,16 +1,17 @@
+import 'package:adair_flutter_lib/app_config.dart';
+import 'package:adair_flutter_lib/res/dimen.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile/model/activity.dart';
 import 'package:mobile/model/session.dart';
 import 'package:mobile/pages/fullscreen_activity_page.dart';
 import 'package:mobile/preferences_manager.dart';
-import 'package:mobile/res/dimen.dart';
-import 'package:mobile/res/theme.dart';
-import 'package:mobile/utils/date_time_utils.dart';
 import 'package:mobile/utils/page_utils.dart';
 import 'package:mobile/widgets/future_timer.dart';
 import 'package:mobile/widgets/list_item.dart';
 import 'package:mobile/widgets/text.dart';
 import 'package:mobile/widgets/widget.dart';
+
+import '../utils/duration.dart';
 
 class ActivityListTileModel {
   final Activity activity;
@@ -36,14 +37,16 @@ class ActivityListTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return LargestDurationBuilder(
-      builder: (BuildContext context, DurationUnit largestDurationUnit) {
+      builder: (BuildContext context, AppDurationUnit largestDurationUnit) {
         return ListItem(
-          contentPadding:
-              const EdgeInsets.only(right: paddingTiny, left: paddingDefault),
+          contentPadding: const EdgeInsets.only(
+            right: paddingTiny,
+            left: paddingDefault,
+          ),
           title: Text(model.activity.name),
           subtitle: TotalDurationText(
             model.duration == null ? [] : [model.duration!],
-            largestDurationUnit: largestDurationUnit,
+            largestDurationUnit: toLibDurationUnit(largestDurationUnit),
           ),
           onTap: () => onTap.call(model.activity),
           trailing: Row(
@@ -74,13 +77,20 @@ class ActivityListTile extends StatelessWidget {
   }
 
   Widget _buildExpandButton(BuildContext context) {
-    return _buildButton(Icons.fullscreen, colorAppTheme, insetsZero, () {
-      present(context, FullscreenActivityPage(model.activity.id));
-    });
+    return _buildButton(
+      Icons.fullscreen,
+      AppConfig.get.colorAppTheme,
+      insetsZero,
+      () => present(context, FullscreenActivityPage(model.activity.id)),
+    );
   }
 
   Widget _buildButton(
-      IconData icon, Color color, EdgeInsets padding, VoidCallback onPressed) {
+    IconData icon,
+    Color color,
+    EdgeInsets padding,
+    VoidCallback onPressed,
+  ) {
     return IconButton(
       icon: Icon(icon),
       color: color,
@@ -91,8 +101,10 @@ class ActivityListTile extends StatelessWidget {
 
   Widget _buildRunningDuration(Session? session) {
     return Padding(
-      padding:
-          const EdgeInsets.only(left: paddingDefault, right: paddingMedium),
+      padding: const EdgeInsets.only(
+        left: paddingDefault,
+        right: paddingMedium,
+      ),
       child: Timer(
         shouldUpdateCallback: () => model.activity.isRunning,
         childBuilder: () {

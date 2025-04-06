@@ -1,22 +1,22 @@
+import 'package:adair_flutter_lib/managers/time_manager.dart';
+import 'package:adair_flutter_lib/utils/date_range.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mobile/model/activity.dart';
 import 'package:mobile/model/session.dart';
 import 'package:mobile/model/summarized_activity.dart';
-import 'package:mobile/utils/date_time_utils.dart';
-import 'package:quiver/time.dart';
 
-import '../test_utils.dart';
+import '../stubbed_managers.dart';
 
 void main() {
-  Session buildSession(
-    String activityId,
-    DateTime start,
-    DateTime? end, {
-    Clock clock = const Clock(),
-  }) {
+  late StubbedManagers managers;
+
+  setUp(() async {
+    managers = await StubbedManagers.create();
+  });
+
+  Session buildSession(String activityId, DateTime start, DateTime? end) {
     SessionBuilder builder = SessionBuilder(activityId)
-      ..startTimestamp = start.millisecondsSinceEpoch
-      ..clock = clock;
+      ..startTimestamp = start.millisecondsSinceEpoch;
 
     if (end != null) {
       builder.endTimestamp = end.millisecondsSinceEpoch;
@@ -29,10 +29,12 @@ void main() {
     test("Empty sessions", () {
       SummarizedActivity activity = SummarizedActivity(
         value: ActivityBuilder("").build,
-        displayDateRange: stubDateRange(DateRange(
-          startDate: DateTime.now(),
-          endDate: DateTime.now(),
-        )),
+        displayDateRange: DisplayDateRange.dateRange(
+          DateRange(
+            startDate: TimeManager.get.now(),
+            endDate: TimeManager.get.now(),
+          ),
+        ),
         sessions: [],
       );
 
@@ -50,10 +52,12 @@ void main() {
     test("Null sessions", () {
       SummarizedActivity activity = SummarizedActivity(
         value: ActivityBuilder("").build,
-        displayDateRange: stubDateRange(DateRange(
-          startDate: DateTime.now(),
-          endDate: DateTime.now(),
-        )),
+        displayDateRange: DisplayDateRange.dateRange(
+          DateRange(
+            startDate: TimeManager.get.now(),
+            endDate: TimeManager.get.now(),
+          ),
+        ),
       );
 
       expect(activity.totalDuration, equals(const Duration()));
@@ -83,12 +87,12 @@ void main() {
 
       SummarizedActivity activity = SummarizedActivity(
         value: ActivityBuilder("").build,
-        displayDateRange: stubDateRange(DateRange(
-          startDate: DateTime.fromMillisecondsSinceEpoch(0),
-          endDate: DateTime.fromMillisecondsSinceEpoch(
-            Duration.millisecondsPerDay * 5,
+        displayDateRange: DisplayDateRange.dateRange(
+          DateRange(
+            startDate: TimeManager.get.dateTime(0),
+            endDate: TimeManager.get.dateTime(Duration.millisecondsPerDay * 5),
           ),
-        )),
+        ),
         sessions: sessions,
       );
 
@@ -97,7 +101,9 @@ void main() {
       expect(activity.averageDurationPerDay.inMilliseconds, equals(8640000));
       expect(activity.averageDurationPerWeek.inMilliseconds, equals(60480000));
       expect(
-          activity.averageDurationPerMonth.inMilliseconds, equals(259200000));
+        activity.averageDurationPerMonth.inMilliseconds,
+        equals(259200000),
+      );
       expect(activity.longestStreak, equals(2));
       expect(activity.sessionsPerDay, equals(2 / 5));
       expect(activity.sessionsPerWeek, equals(2.8));
@@ -169,23 +175,29 @@ void main() {
       ), // 19 hours
     ];
 
-    SummarizedActivity activity = SummarizedActivity(
-      value: ActivityBuilder("").build,
-      displayDateRange: stubDateRange(DateRange(
-        startDate: DateTime(2018, 11, 15, 7),
-        endDate: DateTime(2019, 10, 25, 20),
-      )),
-      sessions: sessions,
-    );
+    SummarizedActivity activity() => SummarizedActivity(
+          value: ActivityBuilder("").build,
+          displayDateRange: DisplayDateRange.dateRange(
+            DateRange(
+              startDate: TimeManager.get.dateTimeFromValues(2018, 11, 15, 7),
+              endDate: TimeManager.get.dateTimeFromValues(2019, 10, 25, 20),
+            ),
+          ),
+          sessions: sessions,
+        );
 
     test("Max", () {
-      expect(activity.longestSession!.millisecondsDuration,
-          sessions[3].millisecondsDuration);
+      expect(
+        activity().longestSession!.millisecondsDuration,
+        sessions[3].millisecondsDuration,
+      );
     });
 
     test("Min", () {
-      expect(activity.shortestSession!.millisecondsDuration,
-          sessions[1].millisecondsDuration);
+      expect(
+        activity().shortestSession!.millisecondsDuration,
+        sessions[1].millisecondsDuration,
+      );
     });
   });
 
@@ -194,10 +206,12 @@ void main() {
       Activity activity = ActivityBuilder("Activity").build;
       SummarizedActivity summarizedActivity = SummarizedActivity(
         value: activity,
-        displayDateRange: stubDateRange(DateRange(
-          startDate: DateTime(2018, 1, 5, 12),
-          endDate: DateTime(2018, 1, 25, 21),
-        )),
+        displayDateRange: DisplayDateRange.dateRange(
+          DateRange(
+            startDate: TimeManager.get.dateTimeFromValues(2018, 1, 5, 12),
+            endDate: TimeManager.get.dateTimeFromValues(2018, 1, 25, 21),
+          ),
+        ),
         sessions: [
           buildSession(
             activity.id,
@@ -271,10 +285,12 @@ void main() {
 
       SummarizedActivity summarizedActivity = SummarizedActivity(
         value: activity,
-        displayDateRange: stubDateRange(DateRange(
-          startDate: DateTime(2018, 1, 1),
-          endDate: DateTime(2023, 1, 1),
-        )),
+        displayDateRange: DisplayDateRange.dateRange(
+          DateRange(
+            startDate: TimeManager.get.dateTimeFromValues(2018, 1, 1),
+            endDate: TimeManager.get.dateTimeFromValues(2023, 1, 1),
+          ),
+        ),
         sessions: [
           buildSession(
             activity.id,
@@ -292,10 +308,12 @@ void main() {
 
       SummarizedActivity summarizedActivity = SummarizedActivity(
         value: activity,
-        displayDateRange: stubDateRange(DateRange(
-          startDate: DateTime(2018, 1, 1),
-          endDate: DateTime(2023, 1, 1),
-        )),
+        displayDateRange: DisplayDateRange.dateRange(
+          DateRange(
+            startDate: TimeManager.get.dateTimeFromValues(2018, 1, 1),
+            endDate: TimeManager.get.dateTimeFromValues(2023, 1, 1),
+          ),
+        ),
         sessions: [
           buildSession(
             activity.id,
@@ -313,10 +331,12 @@ void main() {
 
       SummarizedActivity summarizedActivity = SummarizedActivity(
         value: activity,
-        displayDateRange: stubDateRange(DateRange(
-          startDate: DateTime(2018, 1, 1),
-          endDate: DateTime(2023, 1, 1),
-        )),
+        displayDateRange: DisplayDateRange.dateRange(
+          DateRange(
+            startDate: TimeManager.get.dateTimeFromValues(2018, 1, 1),
+            endDate: TimeManager.get.dateTimeFromValues(2023, 1, 1),
+          ),
+        ),
         sessions: [
           buildSession(
             activity.id,
@@ -335,52 +355,73 @@ void main() {
     });
 
     test("User has current streak", () {
-      var now = DateTime(2023, 1, 1);
+      managers.timeManager.overrideNow(2023, 1, 1);
 
       Activity activity = ActivityBuilder("Activity").build;
 
       SummarizedActivity summarizedActivity = SummarizedActivity(
-        clock: Clock.fixed(now),
         value: activity,
-        displayDateRange: stubDateRange(DateRange(
-          startDate: DateTime(2018, 1, 1),
-          endDate: DateTime(2023, 1, 1),
-        )),
+        displayDateRange: DisplayDateRange.dateRange(
+          DateRange(
+            startDate: managers.timeManager.dateTimeFromValues(2018, 1, 1),
+            endDate: managers.timeManager.dateTimeFromValues(2023, 1, 1),
+          ),
+        ),
         sessions: [
           buildSession(
             activity.id,
             DateTime.fromMillisecondsSinceEpoch(
-                now.millisecondsSinceEpoch - Duration.millisecondsPerDay * 8),
+              managers.timeManager.now().millisecondsSinceEpoch -
+                  Duration.millisecondsPerDay * 8,
+            ),
             DateTime.fromMillisecondsSinceEpoch(
-                now.millisecondsSinceEpoch - Duration.millisecondsPerDay * 8),
+              managers.timeManager.now().millisecondsSinceEpoch -
+                  Duration.millisecondsPerDay * 8,
+            ),
           ),
           buildSession(
             activity.id,
             DateTime.fromMillisecondsSinceEpoch(
-                now.millisecondsSinceEpoch - Duration.millisecondsPerDay * 5),
+              managers.timeManager.now().millisecondsSinceEpoch -
+                  Duration.millisecondsPerDay * 5,
+            ),
             DateTime.fromMillisecondsSinceEpoch(
-                now.millisecondsSinceEpoch - Duration.millisecondsPerDay * 5),
+              managers.timeManager.now().millisecondsSinceEpoch -
+                  Duration.millisecondsPerDay * 5,
+            ),
           ),
           buildSession(
             activity.id,
             DateTime.fromMillisecondsSinceEpoch(
-                now.millisecondsSinceEpoch - Duration.millisecondsPerDay * 3),
+              managers.timeManager.now().millisecondsSinceEpoch -
+                  Duration.millisecondsPerDay * 3,
+            ),
             DateTime.fromMillisecondsSinceEpoch(
-                now.millisecondsSinceEpoch - Duration.millisecondsPerDay * 3),
+              managers.timeManager.now().millisecondsSinceEpoch -
+                  Duration.millisecondsPerDay * 3,
+            ),
           ),
           buildSession(
             activity.id,
             DateTime.fromMillisecondsSinceEpoch(
-                now.millisecondsSinceEpoch - Duration.millisecondsPerDay * 2),
+              managers.timeManager.now().millisecondsSinceEpoch -
+                  Duration.millisecondsPerDay * 2,
+            ),
             DateTime.fromMillisecondsSinceEpoch(
-                now.millisecondsSinceEpoch - Duration.millisecondsPerDay * 2),
+              managers.timeManager.now().millisecondsSinceEpoch -
+                  Duration.millisecondsPerDay * 2,
+            ),
           ),
           buildSession(
             activity.id,
             DateTime.fromMillisecondsSinceEpoch(
-                now.millisecondsSinceEpoch - Duration.millisecondsPerDay),
+              managers.timeManager.now().millisecondsSinceEpoch -
+                  Duration.millisecondsPerDay,
+            ),
             DateTime.fromMillisecondsSinceEpoch(
-                now.millisecondsSinceEpoch - Duration.millisecondsPerDay),
+              managers.timeManager.now().millisecondsSinceEpoch -
+                  Duration.millisecondsPerDay,
+            ),
           ),
         ],
       );
@@ -389,31 +430,40 @@ void main() {
     });
 
     test("User does not have a current streak", () {
-      var now = DateTime(2023, 1, 1);
+      managers.timeManager.overrideNow(2023, 1, 1);
 
       Activity activity = ActivityBuilder("Activity").build;
 
       SummarizedActivity summarizedActivity = SummarizedActivity(
-        clock: Clock.fixed(now),
         value: activity,
-        displayDateRange: stubDateRange(DateRange(
-          startDate: DateTime(2018, 1, 1),
-          endDate: DateTime(2023, 1, 1),
-        )),
+        displayDateRange: DisplayDateRange.dateRange(
+          DateRange(
+            startDate: managers.timeManager.dateTimeFromValues(2018, 1, 1),
+            endDate: managers.timeManager.dateTimeFromValues(2023, 1, 1),
+          ),
+        ),
         sessions: [
           buildSession(
             activity.id,
             DateTime.fromMillisecondsSinceEpoch(
-                now.millisecondsSinceEpoch - Duration.millisecondsPerDay * 3),
+              managers.timeManager.now().millisecondsSinceEpoch -
+                  Duration.millisecondsPerDay * 3,
+            ),
             DateTime.fromMillisecondsSinceEpoch(
-                now.millisecondsSinceEpoch - Duration.millisecondsPerDay * 3),
+              managers.timeManager.now().millisecondsSinceEpoch -
+                  Duration.millisecondsPerDay * 3,
+            ),
           ),
           buildSession(
             activity.id,
             DateTime.fromMillisecondsSinceEpoch(
-                now.millisecondsSinceEpoch - Duration.millisecondsPerDay * 2),
+              managers.timeManager.now().millisecondsSinceEpoch -
+                  Duration.millisecondsPerDay * 2,
+            ),
             DateTime.fromMillisecondsSinceEpoch(
-                now.millisecondsSinceEpoch - Duration.millisecondsPerDay * 2),
+              managers.timeManager.now().millisecondsSinceEpoch -
+                  Duration.millisecondsPerDay * 2,
+            ),
           ),
         ],
       );
@@ -423,41 +473,54 @@ void main() {
 
     test("Current streak with a daylight savings behind change", () {
       // DST happened on Mar. 11, 2023.
-      var now = DateTime(2023, 3, 14);
+      managers.timeManager.overrideNow(2023, 3, 14);
 
       Activity activity = ActivityBuilder("Activity").build;
 
       SummarizedActivity summarizedActivity = SummarizedActivity(
-        clock: Clock.fixed(now),
         value: activity,
-        displayDateRange: stubDateRange(DateRange(
-          startDate: DateTime(2018, 1, 1),
-          endDate: now,
-        )),
+        displayDateRange: DisplayDateRange.dateRange(
+          DateRange(
+            startDate: managers.timeManager.dateTimeFromValues(2018, 1, 1),
+            endDate: managers.timeManager.now(),
+          ),
+        ),
         sessions: [
           // DST causes day rounding to of this to be a day early.
           buildSession(
             activity.id,
             DateTime.fromMillisecondsSinceEpoch(
-                now.millisecondsSinceEpoch - Duration.millisecondsPerDay * 4),
+              managers.timeManager.now().millisecondsSinceEpoch -
+                  Duration.millisecondsPerDay * 4,
+            ),
             DateTime.fromMillisecondsSinceEpoch(
-                now.millisecondsSinceEpoch - Duration.millisecondsPerDay * 4),
+              managers.timeManager.now().millisecondsSinceEpoch -
+                  Duration.millisecondsPerDay * 4,
+            ),
           ),
           // DST causes day rounding to of this to be a day early.
           buildSession(
             activity.id,
             DateTime.fromMillisecondsSinceEpoch(
-                now.millisecondsSinceEpoch - Duration.millisecondsPerDay * 3),
+              managers.timeManager.now().millisecondsSinceEpoch -
+                  Duration.millisecondsPerDay * 3,
+            ),
             DateTime.fromMillisecondsSinceEpoch(
-                now.millisecondsSinceEpoch - Duration.millisecondsPerDay * 3),
+              managers.timeManager.now().millisecondsSinceEpoch -
+                  Duration.millisecondsPerDay * 3,
+            ),
           ),
           // DST causes day rounding to of this to be a day early.
           buildSession(
             activity.id,
             DateTime.fromMillisecondsSinceEpoch(
-                now.millisecondsSinceEpoch - Duration.millisecondsPerDay * 2),
+              managers.timeManager.now().millisecondsSinceEpoch -
+                  Duration.millisecondsPerDay * 2,
+            ),
             DateTime.fromMillisecondsSinceEpoch(
-                now.millisecondsSinceEpoch - Duration.millisecondsPerDay * 2),
+              managers.timeManager.now().millisecondsSinceEpoch -
+                  Duration.millisecondsPerDay * 2,
+            ),
           ),
           // Note that due to the rounding (note above), there is actually
           // a day gap in the resulting "allDateTimes" list in
@@ -465,14 +528,22 @@ void main() {
           buildSession(
             activity.id,
             DateTime.fromMillisecondsSinceEpoch(
-                now.millisecondsSinceEpoch - Duration.millisecondsPerDay),
+              managers.timeManager.now().millisecondsSinceEpoch -
+                  Duration.millisecondsPerDay,
+            ),
             DateTime.fromMillisecondsSinceEpoch(
-                now.millisecondsSinceEpoch - Duration.millisecondsPerDay),
+              managers.timeManager.now().millisecondsSinceEpoch -
+                  Duration.millisecondsPerDay,
+            ),
           ),
           buildSession(
             activity.id,
-            DateTime.fromMillisecondsSinceEpoch(now.millisecondsSinceEpoch),
-            DateTime.fromMillisecondsSinceEpoch(now.millisecondsSinceEpoch),
+            DateTime.fromMillisecondsSinceEpoch(
+              managers.timeManager.now().millisecondsSinceEpoch,
+            ),
+            DateTime.fromMillisecondsSinceEpoch(
+              managers.timeManager.now().millisecondsSinceEpoch,
+            ),
           ),
         ],
       );
@@ -525,10 +596,12 @@ void main() {
 
       SummarizedActivity summarizedActivity1 = SummarizedActivity(
         value: activity1,
-        displayDateRange: stubDateRange(DateRange(
-          startDate: DateTime(2018, 1, 10, 5),
-          endDate: DateTime(2018, 1, 20, 10),
-        )),
+        displayDateRange: DisplayDateRange.dateRange(
+          DateRange(
+            startDate: TimeManager.get.dateTimeFromValues(2018, 1, 10, 5),
+            endDate: TimeManager.get.dateTimeFromValues(2018, 1, 20, 10),
+          ),
+        ),
         sessions: [
           buildSession(
             activity1.id,
@@ -545,10 +618,12 @@ void main() {
 
       SummarizedActivity summarizedActivity2 = SummarizedActivity(
         value: activity2,
-        displayDateRange: stubDateRange(DateRange(
-          startDate: DateTime(2018, 1, 5, 12),
-          endDate: DateTime(2018, 1, 25, 21),
-        )),
+        displayDateRange: DisplayDateRange.dateRange(
+          DateRange(
+            startDate: TimeManager.get.dateTimeFromValues(2018, 1, 5, 12),
+            endDate: TimeManager.get.dateTimeFromValues(2018, 1, 25, 21),
+          ),
+        ),
         sessions: [
           buildSession(
             activity2.id,
@@ -576,21 +651,20 @@ void main() {
 
       SummarizedActivity summarizedActivity3 = SummarizedActivity(
         value: activity3,
-        displayDateRange: stubDateRange(DateRange(
-          startDate: DateTime(2018, 1, 20, 1),
-          endDate: DateTime(2018, 1, 29, 7),
-        )),
+        displayDateRange: DisplayDateRange.dateRange(
+          DateRange(
+            startDate: TimeManager.get.dateTimeFromValues(2018, 1, 20, 1),
+            endDate: TimeManager.get.dateTimeFromValues(2018, 1, 29, 7),
+          ),
+        ),
         sessions: [longestSession],
       );
 
-      SummarizedActivityList result = SummarizedActivityList(
-        [
-          summarizedActivity1,
-          summarizedActivity2,
-          summarizedActivity3,
-        ],
-        null,
-      );
+      SummarizedActivityList result = SummarizedActivityList([
+        summarizedActivity1,
+        summarizedActivity2,
+        summarizedActivity3,
+      ], null);
 
       expect(result.activities, isNotNull);
       expect(result.activities.length, equals(3));
@@ -599,23 +673,16 @@ void main() {
       expect(result.mostFrequentActivity!.second, equals(3));
 
       expect(result.longestSession!.first, equals(activity3));
-      expect(result.longestSession!.second.millisecondsDuration,
-          equals(longestSession.millisecondsDuration));
+      expect(
+        result.longestSession!.second.millisecondsDuration,
+        equals(longestSession.millisecondsDuration),
+      );
       expect(result.totalDuration, const Duration(hours: 18).inMilliseconds);
 
       var averageDurations = result.averageDurations;
-      expect(
-        averageDurations.overall,
-        const Duration(milliseconds: 10800000),
-      );
-      expect(
-        averageDurations.perDay,
-        const Duration(milliseconds: 4380845),
-      );
-      expect(
-        averageDurations.perWeek,
-        const Duration(milliseconds: 30665915),
-      );
+      expect(averageDurations.overall, const Duration(milliseconds: 10800000));
+      expect(averageDurations.perDay, const Duration(milliseconds: 4380845));
+      expect(averageDurations.perWeek, const Duration(milliseconds: 30665915));
       expect(
         averageDurations.perMonth,
         const Duration(milliseconds: 131425352),
@@ -625,7 +692,7 @@ void main() {
 
   group("In-progress sessions", () {
     test("Single in-progress session", () {
-      Clock clock = Clock.fixed(DateTime(2019, 11, 1));
+      managers.timeManager.overrideNow(2019, 11, 1);
 
       List<Session> sessions = [
         buildSession(
@@ -638,12 +705,7 @@ void main() {
           DateTime(2018, 11, 24, 7),
           DateTime(2018, 11, 24, 12),
         ), // 5 hours
-        buildSession(
-          "",
-          DateTime(2019, 10, 31, 23),
-          null,
-          clock: clock,
-        ), // 1 hours
+        buildSession("", DateTime(2019, 10, 31, 23), null), // 1 hour
         buildSession(
           "",
           DateTime(2019, 10, 10, 1),
@@ -655,7 +717,6 @@ void main() {
         value: ActivityBuilder("").build,
         displayDateRange: null,
         sessions: sessions,
-        clock: clock,
       );
 
       // Average is over 13 months.
@@ -663,7 +724,7 @@ void main() {
     });
 
     test("Multiple in-progress session", () {
-      Clock clock = Clock.fixed(DateTime(2019, 11, 1));
+      managers.timeManager.overrideNow(2019, 11, 1);
 
       List<Session> sessions = [
         buildSession(
@@ -676,30 +737,19 @@ void main() {
           DateTime(2018, 11, 24, 7),
           DateTime(2018, 11, 24, 12),
         ), // 5 hours
-        buildSession(
-          "",
-          DateTime(2019, 10, 31, 23),
-          null,
-          clock: clock,
-        ), // 1 hour
+        buildSession("", DateTime(2019, 10, 31, 23), null), // 1 hour
         buildSession(
           "",
           DateTime(2019, 10, 10, 1),
           DateTime(2019, 10, 10, 20),
         ), // 19 hours
-        buildSession(
-          "",
-          DateTime(2019, 10, 31, 22),
-          null,
-          clock: clock,
-        ), // 2 hours
+        buildSession("", DateTime(2019, 10, 31, 22), null), // 2 hours
       ];
 
       SummarizedActivity activity = SummarizedActivity(
         value: ActivityBuilder("").build,
         displayDateRange: null,
         sessions: sessions,
-        clock: clock,
       );
 
       // Average is over 13 months.

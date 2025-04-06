@@ -1,5 +1,10 @@
 import 'dart:async';
 import 'dart:ui';
+import 'package:adair_flutter_lib/app_config.dart';
+import 'package:adair_flutter_lib/l10n/gen/adair_flutter_lib_localizations.dart';
+import 'package:adair_flutter_lib/managers/properties_manager.dart';
+import 'package:adair_flutter_lib/managers/time_manager.dart';
+import 'package:adair_flutter_lib/res/theme.dart';
 import 'package:flutter/foundation.dart';
 
 import 'package:firebase_analytics/firebase_analytics.dart';
@@ -11,8 +16,6 @@ import 'package:mobile/app_manager.dart';
 import 'package:mobile/i18n/strings.dart';
 import 'package:mobile/pages/main_page.dart';
 
-import 'res/theme.dart';
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -23,8 +26,9 @@ void main() async {
 
   // Crashlytics. See https://firebase.flutter.dev/docs/crashlytics/usage for
   // error handling guidelines.
-  await FirebaseCrashlytics.instance
-      .setCrashlyticsCollectionEnabled(kReleaseMode);
+  await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(
+    kReleaseMode,
+  );
 
   // Pass all uncaught "fatal" errors from the framework to Crashlytics.
   FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
@@ -52,11 +56,17 @@ class ActivityLogState extends State<ActivityLog> {
   void initState() {
     super.initState();
 
+    AppConfig.get.init(
+      appName: (context) => Strings.of(context).appName,
+      colorAppTheme: Colors.green,
+    );
+
     // Wait for all app initializations before showing the app as "ready".
     _appInitializedFuture = Future.wait([
       _app.preferencesManager.initialize(),
       _app.dataManager.init(_app),
-      _app.propertiesManager.initialize(),
+      PropertiesManager.get.init(),
+      TimeManager.get.init(),
     ]).then((_) => true);
   }
 
@@ -66,16 +76,14 @@ class ActivityLogState extends State<ActivityLog> {
       onGenerateTitle: (context) => Strings.of(context).appName,
       theme: ThemeData(
         useMaterial3: false,
-        primarySwatch: colorAppTheme,
-        buttonTheme: const ButtonThemeData(
-          textTheme: ButtonTextTheme.primary,
-        ),
-        iconTheme: const IconThemeData(color: colorAppTheme),
+        primarySwatch: AppConfig.get.colorAppTheme,
+        buttonTheme: const ButtonThemeData(textTheme: ButtonTextTheme.primary),
+        iconTheme: IconThemeData(color: AppConfig.get.colorAppTheme),
         listTileTheme: ListTileThemeData(
-          iconColor: colorAppTheme,
+          iconColor: AppConfig.get.colorAppTheme,
         ),
-        progressIndicatorTheme: const ProgressIndicatorThemeData(
-          color: colorAppTheme,
+        progressIndicatorTheme: ProgressIndicatorThemeData(
+          color: AppConfig.get.colorAppTheme,
         ),
         checkboxTheme: _checkboxThemeData(),
       ),
@@ -85,36 +93,34 @@ class ActivityLogState extends State<ActivityLog> {
             return TextStyle(
               color: (states.contains(MaterialState.focused) &&
                       !states.contains(MaterialState.error))
-                  ? colorAppTheme
+                  ? AppConfig.get.colorAppTheme
                   : null,
             );
           }),
-          focusedBorder: const UnderlineInputBorder(
+          focusedBorder: UnderlineInputBorder(
             borderSide: BorderSide(
-              color: colorAppTheme,
+              color: AppConfig.get.colorAppTheme,
               width: 2.0,
             ),
           ),
         ),
         textButtonTheme: TextButtonThemeData(
-          style: ButtonStyle(
-            foregroundColor: _appThemeColor(),
-          ),
+          style: ButtonStyle(foregroundColor: _appThemeColor()),
         ),
-        iconTheme: const IconThemeData(color: colorAppTheme),
+        iconTheme: IconThemeData(color: AppConfig.get.colorAppTheme),
         checkboxTheme: _checkboxThemeData(),
-        expansionTileTheme: const ExpansionTileThemeData(
-          textColor: colorAppTheme,
-          iconColor: colorAppTheme,
+        expansionTileTheme: ExpansionTileThemeData(
+          textColor: AppConfig.get.colorAppTheme,
+          iconColor: AppConfig.get.colorAppTheme,
         ),
-        bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-          selectedItemColor: colorAppTheme,
+        bottomNavigationBarTheme: BottomNavigationBarThemeData(
+          selectedItemColor: AppConfig.get.colorAppTheme,
         ),
-        progressIndicatorTheme: const ProgressIndicatorThemeData(
-          color: colorAppTheme,
+        progressIndicatorTheme: ProgressIndicatorThemeData(
+          color: AppConfig.get.colorAppTheme,
         ),
         timePickerTheme: TimePickerThemeData(
-          dialHandColor: colorAppTheme,
+          dialHandColor: AppConfig.get.colorAppTheme,
           hourMinuteTextColor: _timePickerTextColor(),
           hourMinuteColor: _timePickerTimeColor(),
           dayPeriodTextColor: _timePickerTextColor(),
@@ -123,10 +129,11 @@ class ActivityLogState extends State<ActivityLog> {
         datePickerTheme: DatePickerThemeData(
           dayOverlayColor: _appThemeColor(),
           dayBackgroundColor: _selectedBackgroundColor(),
-          todayForegroundColor: MaterialStateColor.resolveWith((states) =>
-              states.contains(MaterialState.selected)
-                  ? Colors.white
-                  : colorAppTheme),
+          todayForegroundColor: MaterialStateColor.resolveWith(
+            (states) => states.contains(MaterialState.selected)
+                ? Colors.white
+                : AppConfig.get.colorAppTheme,
+          ),
           todayBackgroundColor: _selectedBackgroundColor(),
         ),
       ),
@@ -135,7 +142,7 @@ class ActivityLogState extends State<ActivityLog> {
         future: _appInitializedFuture,
         builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
           if (snapshot.hasError || !snapshot.hasData) {
-            return const Scaffold(backgroundColor: colorAppTheme);
+            return Scaffold(backgroundColor: AppConfig.get.colorAppTheme);
           }
           return MainPage(_app);
         },
@@ -143,44 +150,47 @@ class ActivityLogState extends State<ActivityLog> {
       debugShowCheckedModeBanner: false,
       localizationsDelegates: [
         StringsDelegate(),
+        AdairFlutterLibLocalizations.delegate,
         DefaultMaterialLocalizations.delegate,
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
       ],
-      supportedLocales: const [
-        Locale('en', 'US'),
-        Locale('en', 'CA'),
-      ],
+      supportedLocales: const [Locale('en', 'US'), Locale('en', 'CA')],
     );
   }
 
   MaterialStateColor _timePickerTextColor() {
-    return MaterialStateColor.resolveWith((states) =>
-        states.contains(MaterialState.selected) ? colorAppTheme : Colors.white);
+    return MaterialStateColor.resolveWith(
+      (states) => states.contains(MaterialState.selected)
+          ? AppConfig.get.colorAppTheme
+          : Colors.white,
+    );
   }
 
   MaterialStateColor _timePickerTimeColor() {
-    return MaterialStateColor.resolveWith((states) =>
-        states.contains(MaterialState.selected)
-            ? colorAppTheme.withOpacity(0.24)
-            : ThemeData.dark().colorScheme.onSurface.withOpacity(0.12));
+    return MaterialStateColor.resolveWith(
+      (states) => states.contains(MaterialState.selected)
+          ? AppConfig.get.colorAppTheme.withOpacity(0.24)
+          : ThemeData.dark().colorScheme.onSurface.withOpacity(0.12),
+    );
   }
 
   MaterialStateColor _appThemeColor() {
-    return MaterialStateColor.resolveWith((_) => colorAppTheme);
+    return MaterialStateColor.resolveWith((_) => AppConfig.get.colorAppTheme);
   }
 
   MaterialStateColor _selectedBackgroundColor() {
-    return MaterialStateColor.resolveWith((states) =>
-        states.contains(MaterialState.selected)
-            ? colorAppTheme
-            : Colors.transparent);
+    return MaterialStateColor.resolveWith(
+      (states) => states.contains(MaterialState.selected)
+          ? AppConfig.get.colorAppTheme
+          : Colors.transparent,
+    );
   }
 
   CheckboxThemeData _checkboxThemeData() {
     return CheckboxThemeData(
       fillColor: _selectedBackgroundColor(),
-      side: BorderSide(color: colorAppTheme, width: 2.0),
+      side: BorderSide(color: AppConfig.get.colorAppTheme, width: 2.0),
     );
   }
 }

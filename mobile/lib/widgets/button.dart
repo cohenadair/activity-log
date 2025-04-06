@@ -30,7 +30,7 @@ class Button extends StatelessWidget {
           )
         : ElevatedButton.icon(
             onPressed: _onPressed,
-            icon: _icon!,
+            icon: _icon,
             label: _textWidget,
             style: ElevatedButton.styleFrom(
               backgroundColor: _color,
@@ -49,10 +49,8 @@ class ActionButton extends StatelessWidget {
 
   final String? _stringId;
 
-  const ActionButton({
-    required this.text,
-    required this.onPressed,
-  }) : _stringId = null;
+  const ActionButton({required this.text, required this.onPressed})
+      : _stringId = null;
 
   const ActionButton.done({required this.onPressed})
       : _stringId = "done",
@@ -66,11 +64,10 @@ class ActionButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextButton(
       onPressed: onPressed,
-      style: TextButton.styleFrom(
-        foregroundColor: Colors.white,
+      style: TextButton.styleFrom(foregroundColor: Colors.white),
+      child: Text(
+        (text ?? Strings.of(context).fromId(_stringId!)).toUpperCase(),
       ),
-      child:
-          Text((text ?? Strings.of(context).fromId(_stringId!)).toUpperCase()),
     );
   }
 }

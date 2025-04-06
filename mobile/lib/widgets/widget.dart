@@ -1,16 +1,8 @@
 import 'dart:math';
 
+import 'package:adair_flutter_lib/res/anim.dart';
+import 'package:adair_flutter_lib/res/dimen.dart';
 import 'package:flutter/material.dart';
-import 'package:mobile/res/dimen.dart';
-
-const defaultAnimationDuration = Duration(milliseconds: 200);
-
-class Empty extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return const SizedBox();
-  }
-}
 
 class MinDivider extends StatelessWidget {
   @override
@@ -46,7 +38,7 @@ class FadeInState<T> extends State<FadeIn<T>> {
 
     return AnimatedOpacity(
       opacity: widget.visible ? 1.0 : 0.0,
-      duration: widget.duration ?? defaultAnimationDuration,
+      duration: widget.duration ?? animDurationDefault,
       child: widget.childBuilder(_lastValue),
     );
   }
@@ -62,10 +54,7 @@ class EmptyPageHelp extends StatelessWidget {
   final IconData icon;
   final String message;
 
-  const EmptyPageHelp({
-    required this.icon,
-    required this.message,
-  });
+  const EmptyPageHelp({required this.icon, required this.message});
 
   @override
   Widget build(BuildContext context) {
@@ -92,9 +81,7 @@ class EmptyPageHelp extends StatelessWidget {
                     style: Theme.of(context).textTheme.titleMedium,
                   ),
                   // Offset centering to account for icon padding.
-                  SizedBox.fromSize(
-                    size: Size.square(_verticalCenterOffset),
-                  ),
+                  SizedBox.fromSize(size: Size.square(_verticalCenterOffset)),
                 ],
               ),
             );
@@ -105,32 +92,11 @@ class EmptyPageHelp extends StatelessWidget {
   }
 }
 
-class VerticalSpace extends StatelessWidget {
-  final double size;
-
-  const VerticalSpace(this.size);
-
-  @override
-  Widget build(BuildContext context) => Container(height: size);
-}
-
-class HorizontalSpace extends StatelessWidget {
-  final double size;
-
-  const HorizontalSpace(this.size);
-
-  @override
-  Widget build(BuildContext context) => Container(width: size);
-}
-
 class RightChevronIcon extends StatelessWidget {
   const RightChevronIcon();
 
   @override
   Widget build(BuildContext context) {
-    return const Icon(
-      Icons.chevron_right,
-      color: Colors.grey,
-    );
+    return const Icon(Icons.chevron_right, color: Colors.grey);
   }
 }

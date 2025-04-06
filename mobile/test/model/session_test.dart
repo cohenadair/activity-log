@@ -1,9 +1,17 @@
+import 'package:adair_flutter_lib/managers/time_manager.dart';
+import 'package:adair_flutter_lib/utils/date_range.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mobile/model/session.dart';
-import 'package:mobile/utils/date_time_utils.dart';
-import 'package:quiver/time.dart';
+
+import '../stubbed_managers.dart';
 
 void main() {
+  late StubbedManagers managers;
+
+  setUp(() async {
+    managers = await StubbedManagers.create();
+  });
+
   group("Session builder", () {
     test("Pin to date range start", () {
       SessionBuilder builder = SessionBuilder("0")
@@ -13,21 +21,22 @@ void main() {
       Session session = builder.pinToDateRange(null).build;
       expect(session.startDateTime, equals(session.startDateTime));
 
-      DateRange dateRange = DateRange(
-        startDate: DateTime(2018, 2, 1),
-        endDate: DateTime(2018, 2, 15),
+      var dateRange = DateRange(
+        startDate: TimeManager.get.dateTimeFromValues(2018, 2, 1),
+        endDate: TimeManager.get.dateTimeFromValues(2018, 2, 15),
       );
 
       session = builder.pinToDateRange(dateRange).build;
       expect(session.startDateTime, equals(dateRange.startDate));
       expect(session.endDateTime, equals(dateRange.endDate));
 
-      var clock = Clock.fixed(DateTime(2019, 1, 1));
+      managers.timeManager.overrideNow(2019, 1, 2);
       builder
         ..endTimestamp = null
-        ..clock = clock
         ..endNow();
-      expect(builder.build.endDateTime, equals(clock.now()));
+      expect(builder.build.endDateTime!.year, 2019);
+      expect(builder.build.endDateTime!.month, 1);
+      expect(builder.build.endDateTime!.day, 2);
     });
   });
 

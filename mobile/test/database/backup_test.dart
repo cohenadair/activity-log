@@ -1,19 +1,23 @@
+import 'package:adair_flutter_lib/utils/date_range.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mobile/database/backup.dart';
 import 'package:mobile/model/activity.dart';
 import 'package:mobile/model/session.dart';
-import 'package:mobile/utils/date_time_utils.dart';
+import 'package:mobile/utils/duration.dart';
 import 'package:mockito/mockito.dart';
-import 'package:quiver/time.dart';
 
 import '../mocks/mocks.mocks.dart';
+import '../stubbed_managers.dart';
 
 void main() {
+  late StubbedManagers managers;
   late MockAppManager app;
   late MockDataManager dataManager;
   late MockPreferencesManager preferencesManager;
 
-  setUp(() {
+  setUp(() async {
+    managers = await StubbedManagers.create();
+
     app = MockAppManager();
     dataManager = MockDataManager();
     preferencesManager = MockPreferencesManager();
@@ -21,9 +25,12 @@ void main() {
     when(app.dataManager).thenReturn(dataManager);
     when(app.preferencesManager).thenReturn(preferencesManager);
 
-    when(preferencesManager.largestDurationUnit).thenReturn(DurationUnit.days);
-    when(preferencesManager.homeDateRange)
-        .thenReturn(DisplayDateRange.last7Days);
+    when(
+      preferencesManager.largestDurationUnit,
+    ).thenReturn(AppDurationUnit.days);
+    when(
+      preferencesManager.homeDateRange,
+    ).thenReturn(DisplayDateRange.last7Days);
   });
 
   Session buildSession(String id, int startMs, int? endMs) =>
@@ -44,10 +51,12 @@ void main() {
       when(dataManager.activities).thenAnswer((_) async => []);
       when(dataManager.sessions).thenAnswer((_) async => []);
 
-      when(preferencesManager.largestDurationUnit)
-          .thenReturn(DurationUnit.days);
-      when(preferencesManager.homeDateRange)
-          .thenReturn(DisplayDateRange.last7Days);
+      when(
+        preferencesManager.largestDurationUnit,
+      ).thenReturn(AppDurationUnit.days);
+      when(
+        preferencesManager.homeDateRange,
+      ).thenReturn(DisplayDateRange.last7Days);
 
       String json = await export(app);
       expect(
@@ -80,13 +89,15 @@ void main() {
       ];
       when(dataManager.sessions).thenAnswer((_) async => sessionList);
 
-      when(preferencesManager.largestDurationUnit)
-          .thenReturn(DurationUnit.days);
-      when(preferencesManager.homeDateRange)
-          .thenReturn(DisplayDateRange.last7Days);
+      when(
+        preferencesManager.largestDurationUnit,
+      ).thenReturn(AppDurationUnit.days);
+      when(
+        preferencesManager.homeDateRange,
+      ).thenReturn(DisplayDateRange.last7Days);
 
-      var clock = Clock.fixed(DateTime(2019, 1, 1));
-      String json = await export(app, clock: clock);
+      managers.timeManager.overrideNow(2019, 1, 1);
+      String json = await export(app);
 
       expect(
         json,
@@ -233,10 +244,16 @@ void main() {
       String json =
           '{"activities":[],"sessions":[],"preferences":{"largest_duration_unit":0,"home_date_range":"last7Days"}}';
       await import(app, json: json);
-      verify(preferencesManager
-          .setHomeDateRange(argThat(equals(DisplayDateRange.last7Days))));
-      verify(preferencesManager
-          .setLargestDurationUnit(argThat(equals(DurationUnit.days))));
+      verify(
+        preferencesManager.setHomeDateRange(
+          argThat(equals(DisplayDateRange.last7Days)),
+        ),
+      );
+      verify(
+        preferencesManager.setLargestDurationUnit(
+          argThat(equals(AppDurationUnit.days)),
+        ),
+      );
     });
 
     test("success", () async {
@@ -246,15 +263,19 @@ void main() {
           '{"activities":[{"name":"Test1","current_session_id":null,"id":"AID1"},{"name":"Test2","current_session_id":null,"id":"AID2"},{"name":"Test3","current_session_id":null,"id":"AID3"},{"name":"Test4","current_session_id":null,"id":"AID4"}],"sessions":[{"activity_id":"ID0","start_timestamp":5000,"end_timestamp":10000,"id":"SID5000"},{"activity_id":"ID1","start_timestamp":15000,"end_timestamp":20000,"id":"SID15000"},{"activity_id":"ID2","start_timestamp":25000,"end_timestamp":30000,"id":"SID25000"},{"activity_id":"ID3","start_timestamp":35000,"end_timestamp":40000,"id":"SID35000"},{"activity_id":"ID4","start_timestamp":45000,"end_timestamp":1546318800000,"id":"SID45000"}],"preferences":{"largest_duration_unit":1,"home_date_range":"last14Days"}}';
       expect(await import(app, json: json), equals(ImportResult.success));
 
-      List<Activity> activityList = verify(dataManager.addActivities(
-        captureThat(isInstanceOf<List<Activity>>()),
-        notify: false,
-      )).captured.single;
+      List<Activity> activityList = verify(
+        dataManager.addActivities(
+          captureThat(isInstanceOf<List<Activity>>()),
+          notify: false,
+        ),
+      ).captured.single;
 
-      List<Session> sessionList = verify(dataManager.addSessions(
-        captureThat(isInstanceOf<List<Session>>()),
-        notify: true,
-      )).captured.single;
+      List<Session> sessionList = verify(
+        dataManager.addSessions(
+          captureThat(isInstanceOf<List<Session>>()),
+          notify: true,
+        ),
+      ).captured.single;
 
       expect(activityList.length, equals(4));
       expect(sessionList.length, equals(5));
@@ -272,10 +293,16 @@ void main() {
         expect(session.endTimestamp, isNotNull);
       }
 
-      verify(preferencesManager
-          .setHomeDateRange(argThat(equals(DisplayDateRange.last14Days))));
-      verify(preferencesManager
-          .setLargestDurationUnit(argThat(equals(DurationUnit.hours))));
+      verify(
+        preferencesManager.setHomeDateRange(
+          argThat(equals(DisplayDateRange.last14Days)),
+        ),
+      );
+      verify(
+        preferencesManager.setLargestDurationUnit(
+          argThat(equals(AppDurationUnit.hours)),
+        ),
+      );
     });
   });
 }

@@ -1,12 +1,16 @@
 import 'dart:collection';
 
+import 'package:adair_flutter_lib/managers/time_manager.dart';
+import 'package:adair_flutter_lib/utils/date_range.dart';
+import 'package:adair_flutter_lib/utils/date_time.dart';
+import 'package:adair_flutter_lib/utils/duration.dart';
 import 'package:mobile/model/activity.dart';
 import 'package:mobile/model/session.dart';
-import 'package:mobile/utils/date_time_utils.dart';
 import 'package:mobile/utils/tuple.dart';
 import 'package:mobile/widgets/average_durations_list_item.dart';
 import 'package:quiver/iterables.dart';
 import 'package:quiver/time.dart';
+import 'package:timezone/timezone.dart';
 
 /// A class that stores summarized data for an [Activity].
 class SummarizedActivity {
@@ -16,7 +20,6 @@ class SummarizedActivity {
   final DisplayDateRange? displayDateRange;
 
   final List<Session> sessions;
-  final Clock clock;
 
   Session? _cachedShortestSession;
   Session? _cachedLongestSession;
@@ -37,7 +40,6 @@ class SummarizedActivity {
     required this.value,
     required this.displayDateRange,
     this.sessions = const [],
-    this.clock = const Clock(),
   });
 
   int get numberOfSessions => sessions.length;
@@ -142,7 +144,7 @@ class SummarizedActivity {
     }
 
     sessions.sort((a, b) => a.startTimestamp.compareTo(b.startTimestamp));
-    Set<DateTime> allDateTimes = SplayTreeSet();
+    var allDateTimes = SplayTreeSet<TZDateTime>();
 
     int totalMs = 0;
     for (var session in sessions) {
@@ -161,36 +163,45 @@ class SummarizedActivity {
     DateRange range = displayDateRange == null
         ? DateRange(
             startDate: sessions.first.startDateTime,
-            endDate: sessions.last.endDateTime ?? clock.now(),
+            endDate: sessions.last.endDateTime ?? TimeManager.get.now(),
           )
-        : displayDateRange!.getValue(clock.now());
+        : displayDateRange!.onValue(TimeManager.get.now());
 
-    _cachedDurationPerDay =
-        averageDuration(totalDuration.inMilliseconds, range.days);
-    _cachedDurationPerWeek =
-        averageDuration(totalDuration.inMilliseconds, range.weeks);
-    _cachedDurationPerMonth =
-        averageDuration(totalDuration.inMilliseconds, range.months);
+    _cachedDurationPerDay = averageDuration(
+      totalDuration.inMilliseconds,
+      range.days,
+    );
+    _cachedDurationPerWeek = averageDuration(
+      totalDuration.inMilliseconds,
+      range.weeks,
+    );
+    _cachedDurationPerMonth = averageDuration(
+      totalDuration.inMilliseconds,
+      range.months,
+    );
 
     // Iterate all days, keeping track of the longest streak.
     int currentStreak = 1;
     bool didResetStreak = false;
     _cachedLongestStreak = currentStreak;
 
-    List<DateTime> dateTimeList = List.from(allDateTimes);
+    var dateTimeList = List.from(allDateTimes);
     dateTimeList.sort((lhs, rhs) => rhs.compareTo(lhs));
-    DateTime last = dateTimeList.first;
-    _cachedCurrentStreak = _cachedLongestStreak =
-        isSameDate(clock.now(), last) || isSameDate(clock.daysAgo(1), last)
-            ? 1
-            : 0;
+    var last = dateTimeList.first;
+    var now = TimeManager.get.now();
+    _cachedCurrentStreak = _cachedLongestStreak = isSameDate(now, last) ||
+            isSameDate(now.subtract(Duration(days: 1)), last)
+        ? 1
+        : 0;
     var hasCurrentStreak = _cachedCurrentStreak == 1;
 
     for (int i = 1; i < dateTimeList.length; i++) {
-      DateTime current = _adjustDateTimeForDst(dateTimeList[i]);
-      DateTime lastsYesterday = _adjustDateTimeForDst(
-          DateTime.fromMillisecondsSinceEpoch(
-              last.millisecondsSinceEpoch - Duration.millisecondsPerDay));
+      var current = _adjustDateTimeForDst(dateTimeList[i]);
+      var lastsYesterday = _adjustDateTimeForDst(
+        TimeManager.get.dateTime(
+          last.millisecondsSinceEpoch - Duration.millisecondsPerDay,
+        ),
+      );
 
       if (isSameYear(current, lastsYesterday) &&
           isSameMonth(current, lastsYesterday) &&
@@ -221,9 +232,13 @@ class SummarizedActivity {
   /// actual time (just the date), we can safely round the day up if a DateTime's
   /// hour is not equal to 0. Note that there's no need to round the day down
   /// in the opposite DST case, since the date will already be correct.
-  DateTime _adjustDateTimeForDst(DateTime dateTime) {
+  TZDateTime _adjustDateTimeForDst(TZDateTime dateTime) {
     if (dateTime.hour == 23) {
-      return DateTime(dateTime.year, dateTime.month, dateTime.day + 1);
+      return TimeManager.get.dateTimeFromValues(
+        dateTime.year,
+        dateTime.month,
+        dateTime.day + 1,
+      );
     }
     return dateTime;
   }
@@ -334,8 +349,7 @@ class SummarizedActivityList {
   List<SummarizedActivity>? get activitiesSortedByDuration {
     if (_cachedActivitiesSortedByDuration == null) {
       List<SummarizedActivity> copy = List.of(activities);
-      copy.sort((SummarizedActivity a, SummarizedActivity b) =>
-          b.totalDuration.compareTo(a.totalDuration));
+      copy.sort((a, b) => b.totalDuration.compareTo(a.totalDuration));
       _cachedActivitiesSortedByDuration = copy;
     }
     return _cachedActivitiesSortedByDuration;
@@ -345,8 +359,7 @@ class SummarizedActivityList {
   List<SummarizedActivity>? get activitiesSortedByNumberOfSessions {
     if (_cachedActivitiesSortedByNumberOfSessions == null) {
       List<SummarizedActivity> copy = List.of(activities);
-      copy.sort((SummarizedActivity a, SummarizedActivity b) =>
-          b.numberOfSessions.compareTo(a.numberOfSessions));
+      copy.sort((a, b) => b.numberOfSessions.compareTo(a.numberOfSessions));
       _cachedActivitiesSortedByNumberOfSessions = copy;
     }
     return _cachedActivitiesSortedByNumberOfSessions;
@@ -362,8 +375,10 @@ class SummarizedActivityList {
     for (var activity in activities) {
       if (_cachedMostFrequentActivity == null ||
           activity.sessions.length > _cachedMostFrequentActivity!.second) {
-        _cachedMostFrequentActivity =
-            Tuple(activity.value, activity.sessions.length);
+        _cachedMostFrequentActivity = Tuple(
+          activity.value,
+          activity.sessions.length,
+        );
       }
 
       for (var session in activity.sessions) {
@@ -391,10 +406,11 @@ class SummarizedActivityList {
 
     // If the date range is null, restrict the range to the earliest
     // and latest sessions.
-    var range = displayDateRange?.getValue(clock.now()) ??
+    var now = TimeManager.get.now();
+    var range = displayDateRange?.onValue(now) ??
         DateRange(
-          startDate: earliestSession?.startDateTime ?? clock.now(),
-          endDate: latestSession?.endDateTime ?? clock.now(),
+          startDate: earliestSession?.startDateTime ?? now,
+          endDate: latestSession?.endDateTime ?? now,
         );
 
     _cachedDurationPerDay = averageDuration(totalDuration, range.days);

@@ -1,6 +1,13 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:adair_flutter_lib/res/dimen.dart';
+import 'package:adair_flutter_lib/utils/date_range.dart';
+import 'package:adair_flutter_lib/utils/dialog.dart';
+import 'package:adair_flutter_lib/utils/duration.dart';
+import 'package:adair_flutter_lib/utils/log.dart';
+import 'package:adair_flutter_lib/widgets/empty.dart';
+import 'package:adair_flutter_lib/widgets/loading.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:flutter/material.dart';
@@ -15,19 +22,15 @@ import 'package:share_plus/share_plus.dart';
 import 'package:mobile/app_manager.dart';
 import 'package:mobile/i18n/strings.dart';
 import 'package:mobile/preferences_manager.dart';
-import 'package:mobile/res/dimen.dart';
-import 'package:mobile/utils/date_time_utils.dart';
-import 'package:mobile/utils/dialog_utils.dart';
-import 'package:mobile/utils/string_utils.dart';
 import 'package:mobile/widgets/list_item.dart';
 import 'package:mobile/widgets/list_picker.dart';
-import 'package:mobile/widgets/loading.dart';
-import 'package:mobile/widgets/my_page.dart' as p;
+import 'package:mobile/widgets/my_page.dart';
 import 'package:mobile/widgets/text.dart';
 import 'package:mobile/widgets/widget.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
-import '../log.dart';
+import '../utils/duration.dart';
 
 class SettingsPage extends StatefulWidget {
   final AppManager app;
@@ -55,8 +58,8 @@ class SettingsPageState extends State<SettingsPage> {
 
   @override
   Widget build(BuildContext context) {
-    return p.MyPage(
-      appBarStyle: p.MyPageAppBarStyle(
+    return MyPage(
+      appBarStyle: MyPageAppBarStyle(
         title: Strings.of(context).settingsPageTitle,
       ),
       child: ListView(
@@ -89,40 +92,41 @@ class SettingsPageState extends State<SettingsPage> {
         left: paddingDefault,
         right: paddingDefault,
       ),
-      child: SafeArea(
-        child: HeadingText(title),
-      ),
+      child: SafeArea(child: HeadingText(title)),
     );
   }
 
   Widget _buildLargestDurationPicker() {
     return LargestDurationBuilder(
-      builder: (BuildContext context, DurationUnit durationUnit) {
-        return ListPicker<DurationUnit>(
+      builder: (BuildContext context, AppDurationUnit durationUnit) {
+        return ListPicker<AppDurationUnit>(
           pageTitle: Strings.of(context).settingsPageLargestDurationLabel,
           initialValues: {durationUnit},
           showsValueOnTrailing: true,
           onChanged: (selectedValues) {
-            widget.app.preferencesManager
-                .setLargestDurationUnit(selectedValues.first);
+            widget.app.preferencesManager.setLargestDurationUnit(
+              selectedValues.first,
+            );
           },
           titleBuilder: (_) =>
               Text(Strings.of(context).settingsPageLargestDurationLabel),
           items: [
-            ListPickerItem<DurationUnit>(
+            ListPickerItem<AppDurationUnit>(
               title: Strings.of(context).settingsPageLargestDurationDays,
-              subtitle: _getLargestDurationUnitSubtitle(DurationUnit.days),
-              value: DurationUnit.days,
+              subtitle: _getLargestDurationUnitSubtitle(AppDurationUnit.days),
+              value: AppDurationUnit.days,
             ),
-            ListPickerItem<DurationUnit>(
+            ListPickerItem<AppDurationUnit>(
               title: Strings.of(context).settingsPageLargestDurationHours,
-              subtitle: _getLargestDurationUnitSubtitle(DurationUnit.hours),
-              value: DurationUnit.hours,
+              subtitle: _getLargestDurationUnitSubtitle(AppDurationUnit.hours),
+              value: AppDurationUnit.hours,
             ),
-            ListPickerItem<DurationUnit>(
+            ListPickerItem<AppDurationUnit>(
               title: Strings.of(context).settingsPageLargestDurationMinutes,
-              subtitle: _getLargestDurationUnitSubtitle(DurationUnit.minutes),
-              value: DurationUnit.minutes,
+              subtitle: _getLargestDurationUnitSubtitle(
+                AppDurationUnit.minutes,
+              ),
+              value: AppDurationUnit.minutes,
             ),
           ],
         );
@@ -130,13 +134,11 @@ class SettingsPageState extends State<SettingsPage> {
     );
   }
 
-  String _getLargestDurationUnitSubtitle(DurationUnit unit) {
-    return formatTotalDuration(
-      largestDurationUnit: unit,
+  String _getLargestDurationUnitSubtitle(AppDurationUnit unit) {
+    return formatDurations(
+      largestDurationUnit: toLibDurationUnit(unit),
       context: context,
-      durations: [
-        const Duration(days: 3, hours: 15, minutes: 30, seconds: 55),
-      ],
+      durations: [const Duration(days: 3, hours: 15, minutes: 30, seconds: 55)],
     );
   }
 
@@ -149,13 +151,15 @@ class SettingsPageState extends State<SettingsPage> {
           initialValues: {dateRange},
           showsValueOnTrailing: true,
           onChanged: (selectedValues) {
-            widget.app.preferencesManager
-                .setHomeDateRange(selectedValues.first);
+            widget.app.preferencesManager.setHomeDateRange(
+              selectedValues.first,
+            );
           },
           titleBuilder: (_) =>
               Text(Strings.of(context).settingsPageHomeDateRangeLabel),
-          listHeader:
-              Text(Strings.of(context).settingsPageHomeDateRangeDescription),
+          listHeader: Text(
+            Strings.of(context).settingsPageHomeDateRangeDescription,
+          ),
           items: [
             _buildDisplayDateRangeItem(DisplayDateRange.allDates),
             ListPickerItem.divider(),
@@ -175,9 +179,10 @@ class SettingsPageState extends State<SettingsPage> {
   }
 
   ListPickerItem<DisplayDateRange> _buildDisplayDateRangeItem(
-      DisplayDateRange dateRange) {
+    DisplayDateRange dateRange,
+  ) {
     return ListPickerItem<DisplayDateRange>(
-      title: dateRange.getTitle(context),
+      title: dateRange.onTitle(context),
       value: dateRange,
     );
   }
@@ -209,7 +214,7 @@ class SettingsPageState extends State<SettingsPage> {
         if (await canLaunchUrlString(url)) {
           await launchUrlString(url);
         } else if (context.mounted) {
-          showError(context: context, description: errorMessage);
+          showErrorDialog(context: context, description: errorMessage);
         }
       },
     );
@@ -220,14 +225,9 @@ class SettingsPageState extends State<SettingsPage> {
       title: Text(Strings.of(context).settingsPageVersion),
       trailing: FutureBuilder<PackageInfo>(
         future: PackageInfo.fromPlatform(),
-        builder: (_, AsyncSnapshot<PackageInfo> snapshot) {
-          if (snapshot.hasData) {
-            return SecondaryText(
-                "${snapshot.data!.version} (${snapshot.data!.buildNumber})");
-          } else {
-            return const Loading();
-          }
-        },
+        builder: (_, snap) => snap.hasData
+            ? SecondaryText("${snap.data!.version} (${snap.data!.buildNumber})")
+            : const Empty(),
       ),
     );
   }
@@ -235,7 +235,10 @@ class SettingsPageState extends State<SettingsPage> {
   Widget _buildPrivacy() {
     return ListItem(
       title: Text(Strings.of(context).settingsPagePrivacyPolicy),
-      onTap: () => launchUrlString(_privacyUrl),
+      onTap: () => launchUrl(
+        Uri.parse(_privacyUrl),
+        mode: LaunchMode.externalApplication,
+      ),
     );
   }
 
@@ -243,7 +246,7 @@ class SettingsPageState extends State<SettingsPage> {
     return ListItem(
       title: Text(Strings.of(context).settingsPageExportLabel),
       subtitle: Text(Strings.of(context).settingsPageExportDescription),
-      trailing: _isCreatingBackup ? const Loading() : Empty(),
+      trailing: _isCreatingBackup ? const Loading.listItem() : const Empty(),
       onTap: () {
         setState(() => _isCreatingBackup = true);
         _startExport(context.findRenderObject() as RenderBox);
@@ -255,7 +258,7 @@ class SettingsPageState extends State<SettingsPage> {
     return ListItem(
       title: Text(Strings.of(context).settingsPageImportLabel),
       subtitle: Text(Strings.of(context).settingsPageImportDescription),
-      trailing: _isImporting ? const Loading() : Empty(),
+      trailing: _isImporting ? const Loading.listItem() : const Empty(),
       onTap: _startImport,
     );
   }
@@ -293,7 +296,7 @@ class SettingsPageState extends State<SettingsPage> {
     }
 
     if (context.mounted) {
-      showWarning(
+      showWarningDialog(
         context: context,
         description: Strings.of(context).settingsPageImportWarning,
         onContinue: () {
@@ -315,7 +318,7 @@ class SettingsPageState extends State<SettingsPage> {
       // an image or archive.
       jsonString = file.readAsStringSync();
     } on Exception {
-      showError(
+      showErrorDialog(
         context: context,
         description: Strings.of(context).settingsPageImportBadFile,
       );
@@ -326,7 +329,7 @@ class SettingsPageState extends State<SettingsPage> {
 
       if (context.mounted) {
         if (result == ImportResult.success) {
-          showOk(
+          showOkDialog(
             context: context,
             description: Strings.of(context).settingsPageImportSuccess,
           );
@@ -346,9 +349,8 @@ class SettingsPageState extends State<SettingsPage> {
         title: Text(Strings.of(context).error),
         content: Text(Strings.of(context).settingsPageImportFailed),
         actions: <Widget>[
-          buildDialogButton(
-            context: context,
-            name: Strings.of(context).settingsPageImportSendLogs,
+          DialogButton(
+            label: Strings.of(context).settingsPageImportSendLogs,
             onTap: () async {
               await _sendEmail(
                 subject: "Activity Log Import Error",
@@ -357,10 +359,7 @@ class SettingsPageState extends State<SettingsPage> {
               );
             },
           ),
-          buildDialogButton(
-            context: context,
-            name: Strings.of(context).done,
-          ),
+          DialogButton(label: Strings.of(context).done),
         ],
       ),
     );
@@ -373,14 +372,16 @@ class SettingsPageState extends State<SettingsPage> {
   }) async {
     try {
       String osName = Platform.isAndroid ? "Android" : "iOS";
-      await FlutterEmailSender.send(Email(
-        subject: "$subject ($osName)",
-        body: body ?? "",
-        recipients: [_supportEmail],
-        attachmentPaths: isEmpty(attachmentPath) ? [] : [attachmentPath!],
-      ));
+      await FlutterEmailSender.send(
+        Email(
+          subject: "$subject ($osName)",
+          body: body ?? "",
+          recipients: [_supportEmail],
+          attachmentPaths: isEmpty(attachmentPath) ? [] : [attachmentPath!],
+        ),
+      );
     } on PlatformException {
-      showError(
+      showErrorDialog(
         context: context,
         description: Strings.of(context).settingsPageFailedEmailMessage,
       );
