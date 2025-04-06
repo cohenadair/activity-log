@@ -49,7 +49,7 @@ class ActivitiesDurationBarChart extends StatelessWidget {
               numberOfQuantities: 2,
               largestDurationUnit: toLibDurationUnit(largestDurationUnit),
             );
-            return "${activity.value.name} ($durationText})";
+            return "${activity.value.name} ($durationText)";
           },
           onMeasure: (activity) => activity.totalDuration.inSeconds,
           primaryAxisTickFormatterSpec: _DurationTickFormatter(
@@ -132,7 +132,7 @@ class ActivitiesNumberOfSessionsBarChart extends StatelessWidget {
   }
 }
 
-class _ActivitiesBarChart extends StatelessWidget {
+class _ActivitiesBarChart extends StatefulWidget {
   final String chartId;
   final String title;
   final EdgeInsets padding;
@@ -159,16 +159,23 @@ class _ActivitiesBarChart extends StatelessWidget {
         assert(activities.isNotEmpty);
 
   @override
+  State<_ActivitiesBarChart> createState() => _ActivitiesBarChartState();
+}
+
+class _ActivitiesBarChartState extends State<_ActivitiesBarChart> {
+  @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: padding,
+      padding: widget.padding,
       child: Column(
         children: <Widget>[
-          isEmpty(title) ? const Empty() : LargeHeadingText(title),
+          isEmpty(widget.title)
+              ? const Empty()
+              : LargeHeadingText(widget.title),
           SizedBox(
-            height: activities.length == 1
+            height: widget.activities.length == 1
                 ? chartBarHeightSingle
-                : (activities.length * chartBarHeightDefault).toDouble(),
+                : (widget.activities.length * chartBarHeightDefault).toDouble(),
             child: SafeArea(
               child: f_charts.BarChart(
                 _getSeriesList(context),
@@ -179,16 +186,20 @@ class _ActivitiesBarChart extends StatelessWidget {
                   renderSpec: f_charts.NoneRenderSpec(),
                 ),
                 primaryMeasureAxis: f_charts.NumericAxisSpec(
-                  tickFormatterSpec: primaryAxisTickFormatterSpec,
+                  tickFormatterSpec: widget.primaryAxisTickFormatterSpec,
                   renderSpec: defaultChartRenderSpec(context),
                 ),
                 selectionModels: [
                   f_charts.SelectionModelConfig(
                     changedListener: (f_charts.SelectionModel model) {
-                      onSelect(model.selectedDatum.first.datum);
+                      widget.onSelect(model.selectedDatum.first.datum);
+                      // Reload to ensure bar is deselected.
+                      setState(() {});
                     },
                   ),
                 ],
+                userManagedState: f_charts.UserManagedState()
+                  ..selectionModels.addAll({}),
               ),
             ),
           ),
@@ -202,14 +213,15 @@ class _ActivitiesBarChart extends StatelessWidget {
   ) {
     return [
       f_charts.Series<SummarizedActivity, String>(
-        id: chartId,
-        data: activities,
+        id: widget.chartId,
+        data: widget.activities,
         domainFn: (SummarizedActivity activity, _) => activity.value.name,
-        measureFn: (SummarizedActivity activity, _) => onMeasure(activity),
+        measureFn: (SummarizedActivity activity, _) =>
+            widget.onMeasure(activity),
         colorFn: (_, __) =>
             f_charts.ColorUtil.fromDartColor(AppConfig.get.colorAppTheme),
         labelAccessorFn: (SummarizedActivity activity, _) =>
-            onBuildLabel(activity),
+            widget.onBuildLabel(activity),
         outsideLabelStyleAccessorFn: (_, __) => f_charts.TextStyleSpec(
           color: f_charts.ColorUtil.fromDartColor(context.colorText),
         ),

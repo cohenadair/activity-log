@@ -27,6 +27,7 @@ import 'package:mobile/widgets/list_picker.dart';
 import 'package:mobile/widgets/my_page.dart';
 import 'package:mobile/widgets/text.dart';
 import 'package:mobile/widgets/widget.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 import '../utils/duration.dart';
@@ -224,15 +225,9 @@ class SettingsPageState extends State<SettingsPage> {
       title: Text(Strings.of(context).settingsPageVersion),
       trailing: FutureBuilder<PackageInfo>(
         future: PackageInfo.fromPlatform(),
-        builder: (_, AsyncSnapshot<PackageInfo> snapshot) {
-          if (snapshot.hasData) {
-            return SecondaryText(
-              "${snapshot.data!.version} (${snapshot.data!.buildNumber})",
-            );
-          } else {
-            return const Loading();
-          }
-        },
+        builder: (_, snap) => snap.hasData
+            ? SecondaryText("${snap.data!.version} (${snap.data!.buildNumber})")
+            : const Empty(),
       ),
     );
   }
@@ -240,7 +235,10 @@ class SettingsPageState extends State<SettingsPage> {
   Widget _buildPrivacy() {
     return ListItem(
       title: Text(Strings.of(context).settingsPagePrivacyPolicy),
-      onTap: () => launchUrlString(_privacyUrl),
+      onTap: () => launchUrl(
+        Uri.parse(_privacyUrl),
+        mode: LaunchMode.externalApplication,
+      ),
     );
   }
 
@@ -248,7 +246,7 @@ class SettingsPageState extends State<SettingsPage> {
     return ListItem(
       title: Text(Strings.of(context).settingsPageExportLabel),
       subtitle: Text(Strings.of(context).settingsPageExportDescription),
-      trailing: _isCreatingBackup ? const Loading() : const Empty(),
+      trailing: _isCreatingBackup ? const Loading.listItem() : const Empty(),
       onTap: () {
         setState(() => _isCreatingBackup = true);
         _startExport(context.findRenderObject() as RenderBox);
@@ -260,7 +258,7 @@ class SettingsPageState extends State<SettingsPage> {
     return ListItem(
       title: Text(Strings.of(context).settingsPageImportLabel),
       subtitle: Text(Strings.of(context).settingsPageImportDescription),
-      trailing: _isImporting ? const Loading() : const Empty(),
+      trailing: _isImporting ? const Loading.listItem() : const Empty(),
       onTap: _startImport,
     );
   }
