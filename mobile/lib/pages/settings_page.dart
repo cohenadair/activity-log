@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:adair_flutter_lib/pages/pro_page.dart';
 import 'package:adair_flutter_lib/res/dimen.dart';
 import 'package:adair_flutter_lib/utils/date_range.dart';
 import 'package:adair_flutter_lib/utils/dialog.dart';
@@ -64,6 +65,9 @@ class SettingsPageState extends State<SettingsPage> {
       ),
       child: ListView(
         children: <Widget>[
+          _buildHeading(Strings.of(context).settingsPageHeadingSupportUs),
+          _buildPro(),
+          MinDivider(),
           _buildHeading(Strings.of(context).settingsPageHeadingOther),
           _buildLargestDurationPicker(),
           _buildHomeDateRangePicker(),
@@ -96,6 +100,13 @@ class SettingsPageState extends State<SettingsPage> {
     );
   }
 
+  Widget _buildPro() {
+    return ListItem(
+      title: Text(Strings.of(context).settingsPagePro),
+      onTap: () => present(context, ProPage(features: [])),
+    );
+  }
+
   Widget _buildLargestDurationPicker() {
     return LargestDurationBuilder(
       builder: (BuildContext context, AppDurationUnit durationUnit) {
@@ -104,7 +115,7 @@ class SettingsPageState extends State<SettingsPage> {
           initialValues: {durationUnit},
           showsValueOnTrailing: true,
           onChanged: (selectedValues) {
-            widget.app.preferencesManager.setLargestDurationUnit(
+            PreferencesManager.get.setLargestDurationUnit(
               selectedValues.first,
             );
           },
@@ -151,7 +162,7 @@ class SettingsPageState extends State<SettingsPage> {
           initialValues: {dateRange},
           showsValueOnTrailing: true,
           onChanged: (selectedValues) {
-            widget.app.preferencesManager.setHomeDateRange(
+            PreferencesManager.get.setHomeDateRange(
               selectedValues.first,
             );
           },
@@ -288,7 +299,7 @@ class SettingsPageState extends State<SettingsPage> {
       // TODO: Crashes on old Android devices when picking from downloads folder.
       result = await FilePicker.platform.pickFiles(allowMultiple: false);
     } catch (e) {
-      _log.e(StackTrace.current, e.toString());
+      _log.e(e.toString());
     }
 
     if (result == null || result.files.isEmpty) {

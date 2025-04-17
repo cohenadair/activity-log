@@ -170,7 +170,7 @@ class LargestDurationBuilder extends _SimpleStreamBuilder<AppDurationUnit> {
 class HomeDateRangeBuilder extends _SimpleStreamBuilder<DisplayDateRange> {
   HomeDateRangeBuilder({required AppManager app, required super.builder})
       : super(
-          stream: app.preferencesManager._homeDateRangeUpdated.stream,
+          stream: app.preferencesManager.homeDateRangeStream,
           valueCallback: () => app.preferencesManager.homeDateRange,
         );
 }

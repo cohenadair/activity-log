@@ -1,5 +1,6 @@
 import 'package:mobile/database/data_manager.dart';
 import 'package:mobile/preferences_manager.dart';
+import 'package:mockito/mockito.dart';
 
 import 'mocks/mocks.mocks.dart';
 
@@ -22,6 +23,8 @@ class StubbedManagers {
 
   MockPropertiesManager get propertiesManager => _lib.propertiesManager;
 
+  MockSubscriptionManager get subscriptionManager => _lib.subscriptionManager;
+
   TestTimeManager get timeManager => _lib.timeManager;
 
   StubbedManagers._(this._lib) {
@@ -29,6 +32,10 @@ class StubbedManagers {
     DataManager.set(dataManager);
 
     preferencesManager = MockPreferencesManager();
+    when(preferencesManager.largestDurationUnitStream)
+        .thenAnswer((_) => Stream.empty());
+    when(preferencesManager.homeDateRangeStream)
+        .thenAnswer((_) => Stream.empty());
     PreferencesManager.set(preferencesManager);
   }
 }

@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:adair_flutter_lib/app_config.dart';
 import 'package:adair_flutter_lib/l10n/gen/adair_flutter_lib_localizations.dart';
 import 'package:adair_flutter_lib/managers/properties_manager.dart';
+import 'package:adair_flutter_lib/managers/subscription_manager.dart';
 import 'package:adair_flutter_lib/managers/time_manager.dart';
 import 'package:adair_flutter_lib/res/theme.dart';
 import 'package:flutter/foundation.dart';
@@ -15,6 +16,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:mobile/app_manager.dart';
 import 'package:mobile/i18n/strings.dart';
 import 'package:mobile/pages/main_page.dart';
+import 'package:mobile/res/gen/custom_icons.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -58,25 +60,21 @@ class ActivityLogState extends State<ActivityLog> {
 
     AppConfig.get.init(
       appName: (context) => Strings.of(context).appName,
+      appIcon: CustomIcons.app,
       colorAppTheme: Colors.green,
     );
 
     // Wait for all app initializations before showing the app as "ready".
     _appInitializedFuture = Future.wait([
-      _app.preferencesManager.initialize(),
-      _app.dataManager.init(_app),
-      PropertiesManager.get.init(),
-      TimeManager.get.init(),
+      _initManagers(),
     ]).then((_) => true);
   }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      onGenerateTitle: (context) => Strings.of(context).appName,
-      theme: ThemeData(
-        useMaterial3: false,
-        primarySwatch: AppConfig.get.colorAppTheme,
+      onGenerateTitle: AppConfig.get.appName,
+      theme: AdairFlutterLibTheme.light().copyWith(
         buttonTheme: const ButtonThemeData(textTheme: ButtonTextTheme.primary),
         iconTheme: IconThemeData(color: AppConfig.get.colorAppTheme),
         listTileTheme: ListTileThemeData(
@@ -87,7 +85,7 @@ class ActivityLogState extends State<ActivityLog> {
         ),
         checkboxTheme: _checkboxThemeData(),
       ),
-      darkTheme: ThemeData.dark(useMaterial3: false).copyWith(
+      darkTheme: AdairFlutterLibTheme.dark().copyWith(
         inputDecorationTheme: InputDecorationTheme(
           floatingLabelStyle: MaterialStateTextStyle.resolveWith((states) {
             return TextStyle(
@@ -192,5 +190,16 @@ class ActivityLogState extends State<ActivityLog> {
       fillColor: _selectedBackgroundColor(),
       side: BorderSide(color: AppConfig.get.colorAppTheme, width: 2.0),
     );
+  }
+
+  Future<void> _initManagers() async {
+    // Lib managers.
+    await TimeManager.get.init();
+    await PropertiesManager.get.init();
+    await SubscriptionManager.get.init();
+
+    // App managers.
+    await _app.preferencesManager.initialize();
+    await _app.dataManager.init(_app);
   }
 }

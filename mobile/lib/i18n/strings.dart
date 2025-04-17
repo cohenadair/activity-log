@@ -102,6 +102,8 @@ class Strings {
   String get settingsPageVersion => _getString("settingsPage_version");
   String get settingsPagePrivacyPolicy =>
       _getString("settingsPage_privacyPolicy");
+  String get settingsPageHeadingSupportUs =>
+      _getString("settingsPage_headingSupportUs");
   String get settingsPageHeadingAbout =>
       _getString("settingsPage_headingAbout");
   String get settingsPageHeadingOther =>
@@ -147,6 +149,7 @@ class Strings {
       _getString("settingsPage_importFailed");
   String get settingsPageImportSendLogs =>
       _getString("settingsPage_importSendLogs");
+  String get settingsPagePro => _getString("settingsPage_pro");
 
   String get statsPageTitle => _getString("statsPage_title");
   String get statsPageNoActivitiesMessage =>

@@ -46,6 +46,7 @@ Map<String, Map<String, String>> englishStrings = {
     "settingsPage_title": "Settings",
     "settingsPage_version": "Version",
     "settingsPage_privacyPolicy": "Privacy Policy",
+    "settingsPage_headingSupportUs": "Support Us",
     "settingsPage_headingAbout": "About",
     "settingsPage_headingOther": "Preferences",
     "settingsPage_headingHelpAndFeedback": "Help & Feedback",
@@ -77,6 +78,7 @@ Map<String, Map<String, String>> englishStrings = {
     "settingsPage_importFailed":
         "Something went wrong. Please try again with a different file, or send the logs to Activity Log support.",
     "settingsPage_importSendLogs": "Send Logs",
+    "settingsPage_pro": "Activity Log Pro",
     "statsPage_title": "Stats",
     "statsPage_noActivitiesMessage":
         "No activities to display. Visit the \"Home\" page to begin.",

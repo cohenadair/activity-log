@@ -231,10 +231,7 @@ class _FeedbackPageState extends State<FeedbackPage> {
     );
 
     if (response.statusCode != HttpStatus.accepted) {
-      _log.e(
-        StackTrace.current,
-        "Error sending feedback: ${response.statusCode}",
-      );
+      _log.e("Error sending feedback: ${response.statusCode}");
 
       setState(() {
         _isSending = false;

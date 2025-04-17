@@ -34,6 +34,7 @@ class MyPage extends StatelessWidget {
               actions: _appBarStyle.actions,
               leading: _appBarStyle.leading,
               elevation: 0,
+              centerTitle: true,
             ),
       body: SafeArea(child: _child),
     );
