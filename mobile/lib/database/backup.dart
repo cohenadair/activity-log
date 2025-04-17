@@ -2,9 +2,10 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:adair_flutter_lib/utils/date_range.dart';
-import 'package:mobile/app_manager.dart';
+import 'package:mobile/database/data_manager.dart';
 import 'package:mobile/model/activity.dart';
 import 'package:mobile/model/session.dart';
+import 'package:mobile/preferences_manager.dart';
 import 'package:quiver/strings.dart';
 
 import '../utils/duration.dart';
@@ -29,13 +30,13 @@ const _keyPreferences = "preferences";
 const _keyPreferencesLargestDurationUnit = "largest_duration_unit";
 const _keyPreferencesHomeDateRange = "home_date_range";
 
-/// Returns a JSON [String] representation of the given [AppManager] database,
+/// Returns a JSON [String] representation of the database,
 /// or `null` if there was an error.
-Future<String> export(AppManager app) async {
+Future<String> export() async {
   Map<String, dynamic> jsonMap = {};
 
   // Activities.
-  List<Activity> activityList = await app.dataManager.activities;
+  List<Activity> activityList = await DataManager.get.activities;
   jsonMap[_keyActivities] = activityList.map((activity) {
     if (activity.isRunning) {
       // End any running activities. This ensures that when the database
@@ -49,7 +50,7 @@ Future<String> export(AppManager app) async {
   }).toList();
 
   // Sessions.
-  List<Session> sessionList = await app.dataManager.sessions;
+  List<Session> sessionList = await DataManager.get.sessions;
   jsonMap[_keySessions] = sessionList.map((session) {
     if (session.inProgress) {
       // End any running sessions. This ensures that when the database
@@ -62,9 +63,9 @@ Future<String> export(AppManager app) async {
   // Preferences.
   jsonMap[_keyPreferences] = <String, dynamic>{};
   jsonMap[_keyPreferences][_keyPreferencesLargestDurationUnit] =
-      app.preferencesManager.largestDurationUnit.index;
+      PreferencesManager.get.largestDurationUnit.index;
   jsonMap[_keyPreferences][_keyPreferencesHomeDateRange] =
-      app.preferencesManager.homeDateRange.id;
+      PreferencesManager.get.homeDateRange.id;
 
   return jsonEncode(jsonMap);
 }
@@ -79,7 +80,7 @@ Future<String> export(AppManager app) async {
 /// file is just a JSON file that can be modified by anyone. We can't
 /// guarantee that the user didn't modify the file after it was exported, or
 /// that they even selected the correct JSON file.
-Future<ImportResult> import(AppManager app, {String? json}) async {
+Future<ImportResult> import({String? json}) async {
   if (isEmpty(json)) {
     return ImportResult.errorNullInput;
   }
@@ -141,15 +142,15 @@ Future<ImportResult> import(AppManager app, {String? json}) async {
 
   // Clear the database. This is done _after_ checking the input data for
   // errors so the current database isn't cleared if there was an error.
-  if (!(await app.dataManager.clearDatabase())) {
+  if (!(await DataManager.get.clearDatabase())) {
     return ImportResult.errorClearingDatabase;
   }
 
   // Update the database.
-  await app.dataManager.addActivities(activitiesToAdd, notify: false);
+  await DataManager.get.addActivities(activitiesToAdd, notify: false);
 
   // Notify listeners after everything has been added.
-  await app.dataManager.addSessions(sessionsToAdd, notify: true);
+  await DataManager.get.addSessions(sessionsToAdd, notify: true);
 
   // Update preferences. We have less strict error handling here since we can
   // just default to the current preferences.
@@ -161,7 +162,7 @@ Future<ImportResult> import(AppManager app, {String? json}) async {
         preferences[_keyPreferencesHomeDateRange],
       );
       if (displayDateRange != null) {
-        app.preferencesManager.setHomeDateRange(displayDateRange);
+        PreferencesManager.get.setHomeDateRange(displayDateRange);
       }
     }
 
@@ -170,7 +171,7 @@ Future<ImportResult> import(AppManager app, {String? json}) async {
 
       if (durationUnitIndex >= 0 &&
           durationUnitIndex < AppDurationUnit.values.length) {
-        app.preferencesManager.setLargestDurationUnit(
+        PreferencesManager.get.setLargestDurationUnit(
           AppDurationUnit.values[durationUnitIndex],
         );
       }

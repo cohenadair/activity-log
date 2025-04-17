@@ -13,10 +13,12 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:mobile/app_manager.dart';
 import 'package:mobile/i18n/strings.dart';
 import 'package:mobile/pages/main_page.dart';
+import 'package:mobile/preferences_manager.dart';
 import 'package:mobile/res/gen/custom_icons.dart';
+
+import 'database/data_manager.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -51,7 +53,6 @@ class ActivityLog extends StatefulWidget {
 }
 
 class ActivityLogState extends State<ActivityLog> {
-  final AppManager _app = AppManager();
   late Future<bool> _appInitializedFuture;
 
   @override
@@ -142,7 +143,7 @@ class ActivityLogState extends State<ActivityLog> {
           if (snapshot.hasError || !snapshot.hasData) {
             return Scaffold(backgroundColor: AppConfig.get.colorAppTheme);
           }
-          return MainPage(_app);
+          return MainPage();
         },
       ),
       debugShowCheckedModeBanner: false,
@@ -199,7 +200,7 @@ class ActivityLogState extends State<ActivityLog> {
     await SubscriptionManager.get.init();
 
     // App managers.
-    await _app.preferencesManager.initialize();
-    await _app.dataManager.init(_app);
+    await PreferencesManager.get.init();
+    await DataManager.get.init();
   }
 }

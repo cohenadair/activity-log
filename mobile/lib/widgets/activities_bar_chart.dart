@@ -6,7 +6,6 @@ import 'package:adair_flutter_lib/widgets/empty.dart';
 import 'package:community_charts_flutter/community_charts_flutter.dart'
     as f_charts;
 import 'package:flutter/material.dart';
-import 'package:mobile/app_manager.dart';
 import 'package:mobile/i18n/strings.dart';
 import 'package:mobile/model/summarized_activity.dart';
 import 'package:mobile/preferences_manager.dart';
@@ -19,13 +18,11 @@ import '../utils/duration.dart';
 typedef ActivitiesBarChartOnSelectCallback = Function(SummarizedActivity);
 
 class ActivitiesDurationBarChart extends StatelessWidget {
-  final AppManager app;
   final EdgeInsets padding;
   final List<SummarizedActivity> activities;
   final ActivitiesBarChartOnSelectCallback onSelect;
 
   const ActivitiesDurationBarChart({
-    required this.app,
     required this.activities,
     required this.padding,
     required this.onSelect,

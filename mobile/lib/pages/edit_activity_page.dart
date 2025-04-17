@@ -2,7 +2,6 @@ import 'package:adair_flutter_lib/res/dimen.dart';
 import 'package:adair_flutter_lib/utils/string.dart';
 import 'package:adair_flutter_lib/widgets/empty.dart';
 import 'package:flutter/material.dart';
-import 'package:mobile/app_manager.dart';
 import 'package:mobile/i18n/strings.dart';
 import 'package:mobile/model/activity.dart';
 import 'package:mobile/model/session.dart';
@@ -14,11 +13,12 @@ import 'package:mobile/widgets/future_listener.dart';
 import 'package:mobile/widgets/session_list_tile.dart';
 import 'package:mobile/widgets/text.dart';
 
+import '../database/data_manager.dart';
+
 class EditActivityPage extends StatefulWidget {
-  final AppManager app;
   final Activity? editingActivity;
 
-  const EditActivityPage(this.app, [this.editingActivity]);
+  const EditActivityPage([this.editingActivity]);
 
   @override
   EditActivityPageState createState() => EditActivityPageState();
@@ -51,7 +51,7 @@ class EditActivityPageState extends State<EditActivityPage> {
       padding: insetsVerticalSmall,
       onSave: () => _onPressedSaveButton(),
       onDelete: () =>
-          widget.app.dataManager.removeActivity(widget.editingActivity!.id),
+          DataManager.get.removeActivity(widget.editingActivity!.id),
       deleteDescription: _isEditing
           ? format(Strings.of(context).editActivityPageDeleteMessage, [
               widget.editingActivity!.name,
@@ -87,7 +87,6 @@ class EditActivityPageState extends State<EditActivityPage> {
 
   Widget _buildRecentSessions() {
     return RecentSessionsBuilder(
-      app: widget.app,
       activityId: widget.editingActivity!.id,
       limit: _recentSessionLimit,
       builder: (context, sessions, sessionCount) {
@@ -98,14 +97,12 @@ class EditActivityPageState extends State<EditActivityPage> {
             ...sessions.isNotEmpty
                 ? sessions.map((session) {
                     return SessionListTile(
-                      app: widget.app,
                       session: session,
                       hasDivider: session != sessions.last,
                       onTap: (Session session) {
                         push(
                           context,
                           EditSessionPage(
-                            app: widget.app,
                             activity: widget.editingActivity!,
                             editingSession: session,
                           ),
@@ -135,7 +132,6 @@ class EditActivityPageState extends State<EditActivityPage> {
               push(
                 context,
                 EditSessionPage(
-                  app: widget.app,
                   activity: widget.editingActivity!,
                 ),
                 fullscreenDialog: true,
@@ -158,7 +154,7 @@ class EditActivityPageState extends State<EditActivityPage> {
                 child: TextButton(
                   onPressed: () => push(
                     context,
-                    SessionsPage(widget.app, widget.editingActivity!),
+                    SessionsPage(widget.editingActivity!),
                   ),
                   child: Text(
                     Strings.of(
@@ -185,9 +181,9 @@ class EditActivityPageState extends State<EditActivityPage> {
       if (_isEditing) {
         var builder = ActivityBuilder.fromActivity(widget.editingActivity!)
           ..name = nameCandidate;
-        widget.app.dataManager.updateActivity(builder.build);
+        DataManager.get.updateActivity(builder.build);
       } else {
-        widget.app.dataManager.addActivity(
+        DataManager.get.addActivity(
           ActivityBuilder(nameCandidate).build,
         );
       }
@@ -209,7 +205,7 @@ class EditActivityPageState extends State<EditActivityPage> {
       return;
     }
 
-    widget.app.dataManager.activityNameExists(name).then((bool exists) {
+    DataManager.get.activityNameExists(name).then((bool exists) {
       onFinish(exists ? Strings.of(context).editActivityPageNameExists : null);
     });
   }
@@ -218,13 +214,11 @@ class EditActivityPageState extends State<EditActivityPage> {
 /// A [FutureListener] wrapper for listening for the necessary [Session]
 /// updates for a the [EditActivityPage].
 class RecentSessionsBuilder extends StatelessWidget {
-  final AppManager app;
   final String activityId;
   final int? limit;
   final Widget Function(BuildContext, List<Session>, int) builder;
 
   const RecentSessionsBuilder({
-    required this.app,
     required this.activityId,
     this.limit,
     required this.builder,
@@ -234,10 +228,10 @@ class RecentSessionsBuilder extends StatelessWidget {
   Widget build(BuildContext context) {
     return FutureListener(
       futuresCallbacks: [
-        () => app.dataManager.getRecentSessions(activityId, limit),
-        () => app.dataManager.getSessionCount(activityId),
+        () => DataManager.get.getRecentSessions(activityId, limit),
+        () => DataManager.get.getSessionCount(activityId),
       ],
-      streams: [app.dataManager.getSessionsUpdatedStream(activityId)],
+      streams: [DataManager.get.getSessionsUpdatedStream(activityId)],
       builder: (context, values) =>
           builder(context, values?[0] as List<Session>, values?[1] as int),
     );

@@ -7,7 +7,6 @@ import 'package:adair_flutter_lib/utils/string.dart';
 import 'package:adair_flutter_lib/widgets/empty.dart';
 import 'package:adair_flutter_lib/widgets/loading.dart';
 import 'package:flutter/material.dart';
-import 'package:mobile/app_manager.dart';
 import 'package:mobile/i18n/strings.dart';
 import 'package:mobile/model/activity.dart';
 import 'package:mobile/model/summarized_activity.dart';
@@ -24,12 +23,11 @@ import 'package:mobile/widgets/summary.dart';
 import 'package:mobile/widgets/text.dart';
 import 'package:mobile/widgets/widget.dart';
 
+import '../database/data_manager.dart';
 import '../utils/duration.dart';
 
 class StatsPage extends StatefulWidget {
-  final AppManager app;
-
-  const StatsPage(this.app);
+  const StatsPage();
 
   @override
   StatsPageState createState() => StatsPageState();
@@ -49,16 +47,15 @@ class StatsPageState extends State<StatsPage> {
   void initState() {
     super.initState();
 
-    _currentDateRange = widget.app.preferencesManager.statsDateRange;
+    _currentDateRange = PreferencesManager.get.statsDateRange;
 
-    _onActivitiesUpdated = widget.app.dataManager.activitiesUpdatedStream
-        .listen((_) => _updateFutures());
+    _onActivitiesUpdated =
+        DataManager.get.activitiesUpdatedStream.listen((_) => _updateFutures());
 
     // Retrieve initial activities if needed.
-    List<String> selectedIds =
-        widget.app.preferencesManager.statsSelectedActivityIds;
+    List<String> selectedIds = PreferencesManager.get.statsSelectedActivityIds;
     if (selectedIds.isNotEmpty) {
-      widget.app.dataManager.getActivities(selectedIds).then((activities) {
+      DataManager.get.getActivities(selectedIds).then((activities) {
         if (activities.isNotEmpty) {
           _currentActivities = Set.of(activities);
         }
@@ -100,7 +97,6 @@ class StatsPageState extends State<StatsPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 ActivityPicker(
-                  app: widget.app,
                   initialActivities: _currentActivities,
                   onPickedActivitiesChanged: (Set<Activity> pickedActivities) {
                     setState(() {
@@ -168,7 +164,6 @@ class StatsPageState extends State<StatsPage> {
         _buildSummary(summary),
         MinDivider(),
         ActivitiesDurationBarChart(
-          app: widget.app,
           activities: summary.activitiesSortedByDuration!,
           padding: insetsVerticalDefaultHorizontalSmall,
           onSelect: _onSelectChartActivity,
@@ -255,8 +250,8 @@ class StatsPageState extends State<StatsPage> {
 
   void _updateFutures() {
     // Update preferences.
-    widget.app.preferencesManager.setStatsDateRange(_currentDateRange);
-    widget.app.preferencesManager.setStatsSelectedActivityIds(
+    PreferencesManager.get.setStatsDateRange(_currentDateRange);
+    PreferencesManager.get.setStatsSelectedActivityIds(
       _currentActivities.map((activity) => activity.id).toList(),
     );
 
@@ -268,8 +263,8 @@ class StatsPageState extends State<StatsPage> {
         ? null
         : _currentDateRange;
     _summarizedActivityListFuture =
-        widget.app.dataManager.getSummarizedActivities(dateRange, activities);
+        DataManager.get.getSummarizedActivities(dateRange, activities);
 
-    _activityCountFuture = widget.app.dataManager.activityCount;
+    _activityCountFuture = DataManager.get.activityCount;
   }
 }

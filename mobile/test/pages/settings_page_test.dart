@@ -6,7 +6,6 @@ import 'package:mobile/pages/settings_page.dart';
 import 'package:mobile/utils/duration.dart';
 import 'package:mockito/mockito.dart';
 
-import '../mocks/mocks.mocks.dart';
 import '../stubbed_managers.dart';
 import '../test_utils.dart';
 
@@ -14,8 +13,6 @@ import '../../../../adair-flutter-lib/test/test_utils/widget.dart';
 
 void main() {
   late StubbedManagers managers;
-
-  late MockAppManager appManager;
 
   setUp(() async {
     managers = await StubbedManagers.create();
@@ -31,13 +28,10 @@ void main() {
     when(managers.subscriptionManager.subscriptions())
         .thenAnswer((_) => Future.value(null));
     when(managers.subscriptionManager.isPro).thenReturn(false);
-
-    appManager = MockAppManager();
-    when(appManager.preferencesManager).thenReturn(managers.preferencesManager);
   });
 
   testWidgets("ProPage is shown", (tester) async {
-    await tester.pumpWidget(Testable((_) => SettingsPage(appManager)));
+    await tester.pumpWidget(Testable((_) => SettingsPage()));
 
     await tapAndSettle(tester, find.text("Activity Log Pro"));
     expect(find.byType(ProPage), findsOneWidget);

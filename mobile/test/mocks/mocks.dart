@@ -1,5 +1,4 @@
 import 'package:device_info_plus/device_info_plus.dart';
-import 'package:mobile/app_manager.dart';
 import 'package:mobile/database/data_manager.dart';
 import 'package:mobile/device_info_wrapper.dart';
 import 'package:mobile/http_wrapper.dart';
@@ -11,7 +10,6 @@ import 'package:mockito/annotations.dart';
 import 'package:sqflite/sqflite.dart';
 
 @GenerateMocks([Activity])
-@GenerateMocks([AppManager])
 @GenerateMocks([DataManager])
 @GenerateMocks([PreferencesManager])
 @GenerateMocks([DeviceInfoWrapper])

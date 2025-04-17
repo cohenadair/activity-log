@@ -19,20 +19,12 @@ import '../../../../adair-flutter-lib/test/test_utils/widget.dart';
 void main() {
   late StubbedManagers managers;
 
-  late MockAppManager appManager;
-
-  late MockPreferencesManager preferencesManager;
-  late MockDeviceInfoWrapper deviceInfoWrapper;
-  late MockPackageInfoWrapper packageInfoWrapper;
-  late MockHttpWrapper httpWrapper;
-
   setUp(() async {
     managers = await StubbedManagers.create();
 
-    preferencesManager = MockPreferencesManager();
-    when(preferencesManager.userName).thenReturn("Cohen");
-    when(preferencesManager.userEmail).thenReturn("test@test.com");
-    when(preferencesManager.setUserInfo(any, any)).thenAnswer((_) {});
+    when(managers.preferencesManager.userName).thenReturn("Cohen");
+    when(managers.preferencesManager.userEmail).thenReturn("test@test.com");
+    when(managers.preferencesManager.setUserInfo(any, any)).thenAnswer((_) {});
 
     when(managers.propertiesManager.supportEmail)
         .thenReturn("support@test.com");
@@ -50,16 +42,13 @@ void main() {
     """);
     when(managers.propertiesManager.sendGridApiKey).thenReturn("API KEY");
 
-    deviceInfoWrapper = MockDeviceInfoWrapper();
-
     when(
       managers.ioWrapper.lookup(any),
     ).thenAnswer((_) => Future.value([InternetAddress("192.168.2.211")]));
     when(managers.ioWrapper.isIOS).thenReturn(false);
     when(managers.ioWrapper.isAndroid).thenReturn(false);
 
-    packageInfoWrapper = MockPackageInfoWrapper();
-    when(packageInfoWrapper.fromPlatform()).thenAnswer(
+    when(managers.packageInfoWrapper.fromPlatform()).thenAnswer(
       (_) => Future.value(
         PackageInfo(
           appName: "Test App",
@@ -70,9 +59,8 @@ void main() {
       ),
     );
 
-    httpWrapper = MockHttpWrapper();
     when(
-      httpWrapper.post(
+      managers.httpWrapper.post(
         any,
         headers: anyNamed("headers"),
         body: anyNamed("body"),
@@ -83,19 +71,13 @@ void main() {
         () => Response("", HttpStatus.accepted),
       ),
     );
-
-    appManager = MockAppManager();
-    when(appManager.preferencesManager).thenReturn(preferencesManager);
-    when(appManager.deviceInfoWrapper).thenReturn(deviceInfoWrapper);
-    when(appManager.packageInfoWrapper).thenReturn(packageInfoWrapper);
-    when(appManager.httpWrapper).thenReturn(httpWrapper);
   });
 
   testWidgets("Text fields are initially empty", (tester) async {
-    when(preferencesManager.userName).thenReturn(null);
-    when(preferencesManager.userEmail).thenReturn(null);
+    when(managers.preferencesManager.userName).thenReturn(null);
+    when(managers.preferencesManager.userEmail).thenReturn(null);
 
-    await tester.pumpWidget(Testable((_) => FeedbackPage(appManager)));
+    await tester.pumpWidget(Testable((_) => FeedbackPage()));
 
     expect(findFirstWithText<TextField>(tester, "Name").controller?.text, "");
     expect(findFirstWithText<TextField>(tester, "Name").autofocus, isTrue);
@@ -107,10 +89,11 @@ void main() {
   });
 
   testWidgets("Text fields are initially set from preferences", (tester) async {
-    when(preferencesManager.userName).thenReturn("User Name");
-    when(preferencesManager.userEmail).thenReturn("useremail@test.com");
+    when(managers.preferencesManager.userName).thenReturn("User Name");
+    when(managers.preferencesManager.userEmail)
+        .thenReturn("useremail@test.com");
 
-    await tester.pumpWidget(Testable((_) => FeedbackPage(appManager)));
+    await tester.pumpWidget(Testable((_) => FeedbackPage()));
 
     expect(
       findFirstWithText<TextFormField>(tester, "Name").controller?.text,
@@ -124,10 +107,10 @@ void main() {
   });
 
   testWidgets("Email field is validated", (tester) async {
-    when(preferencesManager.userName).thenReturn(null);
-    when(preferencesManager.userEmail).thenReturn(null);
+    when(managers.preferencesManager.userName).thenReturn(null);
+    when(managers.preferencesManager.userEmail).thenReturn(null);
 
-    await tester.pumpWidget(Testable((_) => FeedbackPage(appManager)));
+    await tester.pumpWidget(Testable((_) => FeedbackPage()));
 
     // Email and message fields are both required.
     expect(find.text("Required"), findsNWidgets(2));
@@ -141,12 +124,12 @@ void main() {
   });
 
   testWidgets("Send button is shown when not sending", (tester) async {
-    await tester.pumpWidget(Testable((_) => FeedbackPage(appManager)));
+    await tester.pumpWidget(Testable((_) => FeedbackPage()));
     expect(find.text("SEND"), findsOneWidget);
   });
 
   testWidgets("Send button shows validation error SnackBar", (tester) async {
-    await tester.pumpWidget(Testable((_) => FeedbackPage(appManager)));
+    await tester.pumpWidget(Testable((_) => FeedbackPage()));
     await tapAndSettle(tester, find.text("SEND"));
     expect(
       find.text("Please fix all form errors before sending your feedback."),
@@ -157,7 +140,7 @@ void main() {
   testWidgets("No network shows connection error SnackBar", (tester) async {
     when(managers.ioWrapper.lookup(any)).thenAnswer((_) => Future.value([]));
 
-    await tester.pumpWidget(Testable((_) => FeedbackPage(appManager)));
+    await tester.pumpWidget(Testable((_) => FeedbackPage()));
     await enterTextFieldAndSettle(tester, "Message", "Test");
     await tapAndSettle(tester, find.text("SEND"));
 
@@ -171,7 +154,7 @@ void main() {
 
   testWidgets("iOS data is valid", (tester) async {
     when(managers.ioWrapper.isIOS).thenReturn(true);
-    when(deviceInfoWrapper.iosInfo).thenAnswer(
+    when(managers.deviceInfoWrapper.iosInfo).thenAnswer(
       (_) => Future.value(
         IosDeviceInfo.fromMap({
           "name": "iOS Device Info",
@@ -194,12 +177,12 @@ void main() {
       ),
     );
 
-    await tester.pumpWidget(Testable((_) => FeedbackPage(appManager)));
+    await tester.pumpWidget(Testable((_) => FeedbackPage()));
     await enterTextFieldAndSettle(tester, "Message", "Test");
     await tapAndSettle(tester, find.text("SEND"));
 
     var result = verify(
-      httpWrapper.post(
+      managers.httpWrapper.post(
         any,
         headers: anyNamed("headers"),
         body: captureAnyNamed("body"),
@@ -227,15 +210,15 @@ void main() {
     when(deviceInfo.id).thenReturn("ABCD1234");
 
     when(
-      deviceInfoWrapper.androidInfo,
+      managers.deviceInfoWrapper.androidInfo,
     ).thenAnswer((_) => Future.value(deviceInfo));
 
-    await tester.pumpWidget(Testable((_) => FeedbackPage(appManager)));
+    await tester.pumpWidget(Testable((_) => FeedbackPage()));
     await enterTextFieldAndSettle(tester, "Message", "Test");
     await tapAndSettle(tester, find.text("SEND"));
 
     var result = verify(
-      httpWrapper.post(
+      managers.httpWrapper.post(
         any,
         headers: anyNamed("headers"),
         body: captureAnyNamed("body"),
@@ -251,7 +234,7 @@ void main() {
 
   testWidgets("HTTP error shows error text", (tester) async {
     when(
-      httpWrapper.post(
+      managers.httpWrapper.post(
         any,
         headers: anyNamed("headers"),
         body: anyNamed("body"),
@@ -259,7 +242,7 @@ void main() {
     ).thenAnswer((_) => Future.value(Response("", HttpStatus.badGateway)));
 
     when(managers.ioWrapper.isIOS).thenReturn(true);
-    when(deviceInfoWrapper.iosInfo).thenAnswer(
+    when(managers.deviceInfoWrapper.iosInfo).thenAnswer(
       (_) => Future.value(
         IosDeviceInfo.fromMap({
           "name": "iOS Device Info",
@@ -282,7 +265,7 @@ void main() {
       ),
     );
 
-    await tester.pumpWidget(Testable((_) => FeedbackPage(appManager)));
+    await tester.pumpWidget(Testable((_) => FeedbackPage()));
     await enterTextFieldAndSettle(tester, "Message", "Test");
     await tapAndSettle(tester, find.text("SEND"));
 
@@ -295,13 +278,14 @@ void main() {
   });
 
   testWidgets("Successful send", (tester) async {
-    when(preferencesManager.userName).thenReturn("User Name");
-    when(preferencesManager.userEmail).thenReturn("useremail@test.com");
+    when(managers.preferencesManager.userName).thenReturn("User Name");
+    when(managers.preferencesManager.userEmail)
+        .thenReturn("useremail@test.com");
     when(
       managers.ioWrapper.lookup(any),
     ).thenAnswer((_) => Future.value([InternetAddress("192.168.2.211")]));
     when(managers.ioWrapper.isIOS).thenReturn(true);
-    when(packageInfoWrapper.fromPlatform()).thenAnswer(
+    when(managers.packageInfoWrapper.fromPlatform()).thenAnswer(
       (_) => Future.value(
         PackageInfo(
           appName: "Test App",
@@ -311,7 +295,7 @@ void main() {
         ),
       ),
     );
-    when(deviceInfoWrapper.iosInfo).thenAnswer(
+    when(managers.deviceInfoWrapper.iosInfo).thenAnswer(
       (_) => Future.value(
         IosDeviceInfo.fromMap({
           "name": "iOS Device Info",
@@ -334,7 +318,7 @@ void main() {
       ),
     );
 
-    await tester.pumpWidget(Testable((_) => FeedbackPage(appManager)));
+    await tester.pumpWidget(Testable((_) => FeedbackPage()));
     await enterTextFieldAndSettle(tester, "Message", "Test");
 
     // Send the message and verify loading indicator.
@@ -348,7 +332,8 @@ void main() {
     expect(find.byType(Loading), findsNothing);
     expect(find.text("SEND"), findsOneWidget);
     verify(
-      preferencesManager.setUserInfo("User Name", "useremail@test.com"),
+      managers.preferencesManager
+          .setUserInfo("User Name", "useremail@test.com"),
     ).called(1);
 
     expect(

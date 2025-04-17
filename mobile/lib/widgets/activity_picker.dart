@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:mobile/app_manager.dart';
 import 'package:mobile/database/data_manager.dart';
 import 'package:mobile/i18n/strings.dart';
 import 'package:mobile/model/activity.dart';
@@ -10,14 +9,12 @@ typedef OnActivityDropdownItemSelected = void Function(Activity);
 /// A [ListPicker] wrapper for selecting a single [Activity], or
 /// "All activities".
 class ActivityPicker extends StatefulWidget {
-  final AppManager app;
   final Set<Activity> initialActivities;
 
   /// This function is invoked with `null` if "All activities" is selected.
   final OnListPickerChanged<Set<Activity>> onPickedActivitiesChanged;
 
   const ActivityPicker({
-    required this.app,
     required this.initialActivities,
     required this.onPickedActivitiesChanged,
   });
@@ -32,7 +29,6 @@ class ActivityPickerState extends State<ActivityPicker> {
   @override
   Widget build(BuildContext context) {
     return ActivitiesBuilder(
-      app: widget.app,
       builder: (BuildContext context, List<Activity> activities) {
         _allActivitiesActivity = ActivityBuilder(
           Strings.of(context).activityDropdownAllActivities,

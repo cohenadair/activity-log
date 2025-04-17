@@ -1,4 +1,7 @@
 import 'package:mobile/database/data_manager.dart';
+import 'package:mobile/device_info_wrapper.dart';
+import 'package:mobile/http_wrapper.dart';
+import 'package:mobile/package_info_wrapper.dart';
 import 'package:mobile/preferences_manager.dart';
 import 'package:mockito/mockito.dart';
 
@@ -13,6 +16,9 @@ class StubbedManagers {
 
   late final MockDataManager dataManager;
   late final MockPreferencesManager preferencesManager;
+  late final MockDeviceInfoWrapper deviceInfoWrapper;
+  late final MockPackageInfoWrapper packageInfoWrapper;
+  late final MockHttpWrapper httpWrapper;
 
   static Future<StubbedManagers> create() async =>
       StubbedManagers._(await s.StubbedManagers.create());
@@ -37,5 +43,14 @@ class StubbedManagers {
     when(preferencesManager.homeDateRangeStream)
         .thenAnswer((_) => Stream.empty());
     PreferencesManager.set(preferencesManager);
+
+    deviceInfoWrapper = MockDeviceInfoWrapper();
+    DeviceInfoWrapper.set(deviceInfoWrapper);
+
+    packageInfoWrapper = MockPackageInfoWrapper();
+    PackageInfoWrapper.set(packageInfoWrapper);
+
+    httpWrapper = MockHttpWrapper();
+    HttpWrapper.set(httpWrapper);
   }
 }

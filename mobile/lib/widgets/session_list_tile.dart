@@ -2,27 +2,25 @@ import 'package:adair_flutter_lib/res/dimen.dart';
 import 'package:adair_flutter_lib/utils/dialog.dart';
 import 'package:adair_flutter_lib/widgets/empty.dart';
 import 'package:flutter/material.dart';
-import 'package:mobile/app_manager.dart';
 import 'package:mobile/i18n/strings.dart';
 import 'package:mobile/model/session.dart';
 import 'package:mobile/widgets/list_item.dart';
 import 'package:mobile/widgets/text.dart';
 
+import '../database/data_manager.dart';
+
 typedef OnTapSessionListTile = Function(Session);
 
 class SessionListTile extends StatelessWidget {
-  final AppManager _app;
   final Session _session;
   final bool _hasDivider;
   final OnTapSessionListTile? _onTap;
 
   const SessionListTile({
-    required AppManager app,
     required Session session,
     bool hasDivider = false,
     OnTapSessionListTile? onTap,
-  })  : _app = app,
-        _session = session,
+  })  : _session = session,
         _hasDivider = hasDivider,
         _onTap = onTap;
 
@@ -51,7 +49,7 @@ class SessionListTile extends StatelessWidget {
                 context: context,
                 description: Strings.of(context).sessionListDeleteMessage,
                 onDelete: () {
-                  _app.dataManager.removeSession(_session);
+                  DataManager.get.removeSession(_session);
                 },
               );
             },

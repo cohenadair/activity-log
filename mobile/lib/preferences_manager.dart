@@ -4,7 +4,6 @@ import 'package:adair_flutter_lib/utils/date_range.dart';
 import 'package:adair_flutter_lib/utils/void_stream_controller.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
-import 'package:mobile/app_manager.dart';
 import 'package:mobile/utils/duration.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -64,7 +63,7 @@ class PreferencesManager {
 
   /// Initializes preference properties. This method should be called on app
   /// start.
-  Future<void> initialize() async {
+  Future<void> init() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
     _largestDurationUnit =
@@ -168,10 +167,10 @@ class LargestDurationBuilder extends _SimpleStreamBuilder<AppDurationUnit> {
 }
 
 class HomeDateRangeBuilder extends _SimpleStreamBuilder<DisplayDateRange> {
-  HomeDateRangeBuilder({required AppManager app, required super.builder})
+  HomeDateRangeBuilder({required super.builder})
       : super(
-          stream: app.preferencesManager.homeDateRangeStream,
-          valueCallback: () => app.preferencesManager.homeDateRange,
+          stream: PreferencesManager.get.homeDateRangeStream,
+          valueCallback: () => PreferencesManager.get.homeDateRange,
         );
 }
 

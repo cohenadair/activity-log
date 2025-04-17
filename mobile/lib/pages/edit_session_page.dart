@@ -5,7 +5,6 @@ import 'package:adair_flutter_lib/utils/dialog.dart';
 import 'package:adair_flutter_lib/utils/string.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:mobile/app_manager.dart';
 import 'package:mobile/i18n/strings.dart';
 import 'package:mobile/model/activity.dart';
 import 'package:mobile/model/session.dart';
@@ -15,17 +14,16 @@ import 'package:mobile/widgets/list_item.dart';
 import 'package:mobile/widgets/text.dart';
 import 'package:timezone/timezone.dart';
 
+import '../database/data_manager.dart';
+
 class EditSessionPage extends StatefulWidget {
-  final AppManager _app;
   final Activity _activity;
   final Session? _editingSession;
 
   const EditSessionPage({
-    required AppManager app,
     required Activity activity,
     Session? editingSession,
-  })  : _app = app,
-        _activity = activity,
+  })  : _activity = activity,
         _editingSession = editingSession;
 
   @override
@@ -34,8 +32,6 @@ class EditSessionPage extends StatefulWidget {
 
 class EditSessionPageState extends State<EditSessionPage> {
   final _formKey = GlobalKey<FormState>();
-
-  AppManager get _app => widget._app;
 
   Activity get _activity => widget._activity;
 
@@ -85,7 +81,7 @@ class EditSessionPageState extends State<EditSessionPage> {
             ]),
       padding: insetsVerticalSmall,
       onSave: _onPressedSaveButton,
-      onDelete: () => _app.dataManager.removeSession(_editingSession!),
+      onDelete: () => DataManager.get.removeSession(_editingSession!),
       deleteDescription: Strings.of(context).sessionListDeleteMessage,
       isEditingCallback: () => _isEditing,
       form: Form(
@@ -203,7 +199,7 @@ class EditSessionPageState extends State<EditSessionPage> {
       ..isBanked = _isBanked;
     var session = builder.build;
 
-    _app.dataManager.getOverlappingSession(session).then((
+    DataManager.get.getOverlappingSession(session).then((
       Session? overlappingSession,
     ) {
       if (overlappingSession != null) {
@@ -229,9 +225,9 @@ class EditSessionPageState extends State<EditSessionPage> {
       }
 
       if (_isEditing) {
-        _app.dataManager.updateSession(session);
+        DataManager.get.updateSession(session);
       } else {
-        _app.dataManager.addSession(session);
+        DataManager.get.addSession(session);
       }
 
       Navigator.pop(context);

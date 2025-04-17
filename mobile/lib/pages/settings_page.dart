@@ -20,7 +20,6 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:quiver/strings.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:mobile/app_manager.dart';
 import 'package:mobile/i18n/strings.dart';
 import 'package:mobile/preferences_manager.dart';
 import 'package:mobile/widgets/list_item.dart';
@@ -34,9 +33,7 @@ import 'package:url_launcher/url_launcher_string.dart';
 import '../utils/duration.dart';
 
 class SettingsPage extends StatefulWidget {
-  final AppManager app;
-
-  const SettingsPage(this.app);
+  const SettingsPage();
 
   @override
   SettingsPageState createState() => SettingsPageState();
@@ -155,7 +152,6 @@ class SettingsPageState extends State<SettingsPage> {
 
   Widget _buildHomeDateRangePicker() {
     return HomeDateRangeBuilder(
-      app: widget.app,
       builder: (BuildContext context, DisplayDateRange dateRange) {
         return ListPicker<DisplayDateRange>(
           pageTitle: Strings.of(context).settingsPageHomeDateRangeLabel,
@@ -202,7 +198,7 @@ class SettingsPageState extends State<SettingsPage> {
     return ListItem(
       title: Text(Strings.of(context).settingsPageContactLabel),
       trailing: const RightChevronIcon(),
-      onTap: () => push(context, FeedbackPage(widget.app)),
+      onTap: () => push(context, FeedbackPage()),
     );
   }
 
@@ -280,7 +276,7 @@ class SettingsPageState extends State<SettingsPage> {
     var tempDir = await getTemporaryDirectory();
     var path = "${tempDir.path}/$_backupFileName";
     var backupFile = File(path);
-    backupFile.writeAsStringSync(await export(widget.app));
+    backupFile.writeAsStringSync(await export());
 
     await Share.shareXFiles(
       [XFile(path, mimeType: "text/plain")],
@@ -336,7 +332,7 @@ class SettingsPageState extends State<SettingsPage> {
     }
 
     if (jsonString != null) {
-      ImportResult result = await import(widget.app, json: jsonString);
+      ImportResult result = await import(json: jsonString);
 
       if (context.mounted) {
         if (result == ImportResult.success) {

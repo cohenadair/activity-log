@@ -11,13 +11,11 @@ import '../mocks/mocks.mocks.dart';
 import '../stubbed_managers.dart';
 
 void main() {
-  late MockAppManager appManager;
+  late StubbedManagers managers;
   late MockDatabase database;
-  late MockPreferencesManager preferencesManager;
 
   setUp(() async {
-    await StubbedManagers.create(); // Initializes TimeManager.
-    appManager = MockAppManager();
+    managers = await StubbedManagers.create(); // Initializes TimeManager.
 
     var batch = MockBatch();
     when(batch.commit()).thenAnswer((_) => Future.value([]));
@@ -25,17 +23,15 @@ void main() {
     database = MockDatabase();
     when(database.batch()).thenReturn(batch);
 
-    preferencesManager = MockPreferencesManager();
-    when(appManager.preferencesManager).thenReturn(preferencesManager);
     when(
-      preferencesManager.largestDurationUnit,
+      managers.preferencesManager.largestDurationUnit,
     ).thenReturn(AppDurationUnit.days);
     when(
-      preferencesManager.homeDateRange,
+      managers.preferencesManager.homeDateRange,
     ).thenReturn(DisplayDateRange.allDates);
 
     DataManager.suicide();
-    await DataManager.get.init(appManager, database);
+    await DataManager.get.init(database);
   });
 
   stubActivities(List<Map<String, dynamic>> result) {

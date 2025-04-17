@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:mobile/app_manager.dart';
 import 'package:mobile/i18n/strings.dart';
 import 'package:mobile/pages/activities_page.dart';
 import 'package:mobile/pages/settings_page.dart';
 import 'package:mobile/pages/stats_page.dart';
 
 class MainPage extends StatefulWidget {
-  final AppManager _app;
-
-  const MainPage(this._app);
+  const MainPage();
 
   @override
   MainPageState createState() => MainPageState();
@@ -20,21 +17,21 @@ class MainPageState extends State<MainPage> {
   List<_BarItemData> get _navItems {
     return [
       _BarItemData(
-        page: ActivitiesPage(widget._app),
+        page: ActivitiesPage(),
         item: BottomNavigationBarItem(
           icon: const Icon(Icons.home),
           label: Strings.of(context).navigationBarHome,
         ),
       ),
       _BarItemData(
-        page: StatsPage(widget._app),
+        page: StatsPage(),
         item: BottomNavigationBarItem(
           icon: const Icon(Icons.show_chart),
           label: Strings.of(context).navigationBarStats,
         ),
       ),
       _BarItemData(
-        page: SettingsPage(widget._app),
+        page: SettingsPage(),
         item: BottomNavigationBarItem(
           icon: const Icon(Icons.settings),
           label: Strings.of(context).navigationBarSettings,

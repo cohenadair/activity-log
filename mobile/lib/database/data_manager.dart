@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:adair_flutter_lib/utils/date_range.dart';
 import 'package:adair_flutter_lib/utils/void_stream_controller.dart';
 import 'package:flutter/material.dart';
-import 'package:mobile/app_manager.dart';
 import 'package:mobile/database/sqlite_open_helper.dart';
 import 'package:mobile/model/activity.dart';
 import 'package:mobile/model/model.dart';
@@ -12,6 +11,8 @@ import 'package:mobile/model/summarized_activity.dart';
 import 'package:mobile/widgets/activity_list_tile.dart';
 import 'package:mobile/widgets/future_listener.dart';
 import 'package:sqflite/sqflite.dart';
+
+import '../preferences_manager.dart';
 
 class DataManager {
   static var _instance = DataManager._();
@@ -42,7 +43,7 @@ class DataManager {
   /// or modified.
   Stream<void> get activitiesUpdatedStream => _activitiesUpdated.stream;
 
-  Future<void> init(AppManager app, [Database? database]) async {
+  Future<void> init([Database? database]) async {
     if (database == null) {
       _database = await SQLiteOpenHelper.open();
     } else {
@@ -50,7 +51,7 @@ class DataManager {
     }
 
     _initialActivityListTileModels = await getActivityListModel(
-      dateRange: app.preferencesManager.homeDateRange.value,
+      dateRange: PreferencesManager.get.homeDateRange.value,
     );
   }
 
@@ -559,16 +560,15 @@ class DataManager {
 
 /// A [FutureListener] wrapper for listening for [Activity] updates.
 class ActivitiesBuilder extends StatelessWidget {
-  final AppManager app;
   final Widget Function(BuildContext, List<Activity>) builder;
 
-  const ActivitiesBuilder({required this.app, required this.builder});
+  const ActivitiesBuilder({required this.builder});
 
   @override
   Widget build(BuildContext context) {
     return FutureListener.single(
-      getFutureCallback: () => app.dataManager.activities,
-      stream: app.dataManager._activitiesUpdated.stream,
+      getFutureCallback: () => DataManager.get.activities,
+      stream: DataManager.get._activitiesUpdated.stream,
       builder: (context, value) => builder(context, value as List<Activity>),
     );
   }
@@ -577,26 +577,25 @@ class ActivitiesBuilder extends StatelessWidget {
 /// A [FutureListener] wrapper for listening for [ActivityListTileModel]
 /// updates.
 class ActivityListModelBuilder extends StatelessWidget {
-  final AppManager app;
   final Widget Function(BuildContext, List<ActivityListTileModel>) builder;
 
-  const ActivityListModelBuilder({required this.app, required this.builder});
+  const ActivityListModelBuilder({required this.builder});
 
   @override
   Widget build(BuildContext context) {
     return FutureListener(
-      initialValues: [app.dataManager._initialActivityListTileModels],
+      initialValues: [DataManager.get._initialActivityListTileModels],
       onFuturesFinished: () =>
           // Cleanup now unused data.
-          app.dataManager._initialActivityListTileModels = const [],
+          DataManager.get._initialActivityListTileModels = const [],
       futuresCallbacks: [
-        () => app.dataManager.getActivityListModel(
-              dateRange: app.preferencesManager.homeDateRange.value,
+        () => DataManager.get.getActivityListModel(
+              dateRange: PreferencesManager.get.homeDateRange.value,
             ),
       ],
       streams: [
-        app.preferencesManager.homeDateRangeStream,
-        app.dataManager._activitiesUpdated.stream,
+        PreferencesManager.get.homeDateRangeStream,
+        DataManager.get._activitiesUpdated.stream,
       ],
       builder: (context, result) => builder(context, result?.first),
     );
@@ -606,12 +605,10 @@ class ActivityListModelBuilder extends StatelessWidget {
 /// A [FutureListener] wrapper for listening for [Session] updates for a given
 /// [Activity].
 class SessionsBuilder extends StatelessWidget {
-  final AppManager app;
   final String activityId;
   final Widget Function(BuildContext, List<Session>) builder;
 
   const SessionsBuilder({
-    required this.app,
     required this.activityId,
     required this.builder,
   });
@@ -619,8 +616,8 @@ class SessionsBuilder extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FutureListener.single(
-      getFutureCallback: () => app.dataManager.getSessions(activityId),
-      stream: app.dataManager.getSessionsUpdatedStream(activityId),
+      getFutureCallback: () => DataManager.get.getSessions(activityId),
+      stream: DataManager.get.getSessionsUpdatedStream(activityId),
       builder: (context, value) => builder(context, value as List<Session>),
     );
   }

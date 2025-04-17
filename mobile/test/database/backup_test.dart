@@ -6,30 +6,19 @@ import 'package:mobile/model/session.dart';
 import 'package:mobile/utils/duration.dart';
 import 'package:mockito/mockito.dart';
 
-import '../mocks/mocks.mocks.dart';
 import '../stubbed_managers.dart';
 
 void main() {
   late StubbedManagers managers;
-  late MockAppManager app;
-  late MockDataManager dataManager;
-  late MockPreferencesManager preferencesManager;
 
   setUp(() async {
     managers = await StubbedManagers.create();
 
-    app = MockAppManager();
-    dataManager = MockDataManager();
-    preferencesManager = MockPreferencesManager();
-
-    when(app.dataManager).thenReturn(dataManager);
-    when(app.preferencesManager).thenReturn(preferencesManager);
-
     when(
-      preferencesManager.largestDurationUnit,
+      managers.preferencesManager.largestDurationUnit,
     ).thenReturn(AppDurationUnit.days);
     when(
-      preferencesManager.homeDateRange,
+      managers.preferencesManager.homeDateRange,
     ).thenReturn(DisplayDateRange.last7Days);
   });
 
@@ -48,17 +37,17 @@ void main() {
 
   group("Export", () {
     test("toJsonString with empty database", () async {
-      when(dataManager.activities).thenAnswer((_) async => []);
-      when(dataManager.sessions).thenAnswer((_) async => []);
+      when(managers.dataManager.activities).thenAnswer((_) async => []);
+      when(managers.dataManager.sessions).thenAnswer((_) async => []);
 
       when(
-        preferencesManager.largestDurationUnit,
+        managers.preferencesManager.largestDurationUnit,
       ).thenReturn(AppDurationUnit.days);
       when(
-        preferencesManager.homeDateRange,
+        managers.preferencesManager.homeDateRange,
       ).thenReturn(DisplayDateRange.last7Days);
 
-      String json = await export(app);
+      String json = await export();
       expect(
         json,
         equals(
@@ -76,7 +65,8 @@ void main() {
         // In progress sessions should be ended.
         buildActivity("AID4", "Test4", "SID1"),
       ];
-      when(dataManager.activities).thenAnswer((_) async => activityList);
+      when(managers.dataManager.activities)
+          .thenAnswer((_) async => activityList);
 
       List<Session> sessionList = [
         // For the purposes of testing, it doesn't actually matter what the
@@ -87,17 +77,17 @@ void main() {
         buildSession("ID3", 35000, 40000),
         buildSession("ID4", 45000, null),
       ];
-      when(dataManager.sessions).thenAnswer((_) async => sessionList);
+      when(managers.dataManager.sessions).thenAnswer((_) async => sessionList);
 
       when(
-        preferencesManager.largestDurationUnit,
+        managers.preferencesManager.largestDurationUnit,
       ).thenReturn(AppDurationUnit.days);
       when(
-        preferencesManager.homeDateRange,
+        managers.preferencesManager.homeDateRange,
       ).thenReturn(DisplayDateRange.last7Days);
 
       managers.timeManager.overrideNow(2019, 1, 1);
-      String json = await export(app);
+      String json = await export();
 
       expect(
         json,
@@ -110,168 +100,176 @@ void main() {
 
   group("Import", () {
     test("errorNullInput", () async {
-      ImportResult result = await import(app, json: "");
+      ImportResult result = await import(json: "");
       expect(result, equals(ImportResult.errorNullInput));
 
-      result = await import(app, json: null);
+      result = await import(json: null);
       expect(result, equals(ImportResult.errorNullInput));
     });
 
     test("errorDecodingJson", () async {
       String json = "Some invalid JSON";
-      ImportResult result = await import(app, json: json);
+      ImportResult result = await import(json: json);
       expect(result, equals(ImportResult.errorDecodingJson));
     });
 
     test("errorActivitiesNotList", () async {
       String json = "{}";
-      ImportResult result = await import(app, json: json);
+      ImportResult result = await import(json: json);
       expect(result, equals(ImportResult.errorActivitiesNotList));
 
       json = '{"activities" : {}}';
-      result = await import(app, json: json);
+      result = await import(json: json);
       expect(result, equals(ImportResult.errorActivitiesNotList));
     });
 
     test("errorActivityNotMap", () async {
       String json = '{"activities":[5]}';
-      ImportResult result = await import(app, json: json);
+      ImportResult result = await import(json: json);
       expect(result, equals(ImportResult.errorActivityNotMap));
     });
 
     test("errorActivityInvalid", () async {
       String json =
           '{"activities":[{"name":"","current_session_id":null,"id":"AID1"}]}';
-      ImportResult result = await import(app, json: json);
+      ImportResult result = await import(json: json);
       expect(result, equals(ImportResult.errorActivityInvalid));
 
       json =
           '{"activities":[{"name":"Test1","current_session_id":null,"id":""}]}';
-      result = await import(app, json: json);
+      result = await import(json: json);
       expect(result, equals(ImportResult.errorActivityInvalid));
 
       json =
           '{"activities":[{"name":"Test1","current_session_id":"ID","id":"AID1"}]}';
-      result = await import(app, json: json);
+      result = await import(json: json);
       expect(result, equals(ImportResult.errorActivityInvalid));
     });
 
     test("errorSessionsNotList", () async {
       String json = '{"activities":[]}';
-      ImportResult result = await import(app, json: json);
+      ImportResult result = await import(json: json);
       expect(result, equals(ImportResult.errorSessionsNotList));
 
       json = '{"activities":[],"sessions":{}}';
-      result = await import(app, json: json);
+      result = await import(json: json);
       expect(result, equals(ImportResult.errorSessionsNotList));
     });
 
     test("errorSessionNotMap", () async {
       String json = '{"activities":[],"sessions":[5]}';
-      ImportResult result = await import(app, json: json);
+      ImportResult result = await import(json: json);
       expect(result, equals(ImportResult.errorSessionNotMap));
     });
 
     test("errorSessionInvalid", () async {
       String json =
           '{"activities":[],"sessions":[{"activity_id":"","start_timestamp":5000,"end_timestamp":10000,"id":"SID5000"}]}';
-      ImportResult result = await import(app, json: json);
+      ImportResult result = await import(json: json);
       expect(result, equals(ImportResult.errorSessionInvalid));
 
       json =
           '{"activities":[],"sessions":[{"activity_id":"ID0","start_timestamp":null,"end_timestamp":10000,"id":"SID5000"}]}';
-      result = await import(app, json: json);
+      result = await import(json: json);
       expect(result, equals(ImportResult.errorSessionInvalid));
 
       json =
           '{"activities":[],"sessions":[{"activity_id":"ID0","start_timestamp":5000,"end_timestamp":null,"id":"SID5000"}]}';
-      result = await import(app, json: json);
+      result = await import(json: json);
       expect(result, equals(ImportResult.errorSessionInvalid));
 
       json =
           '{"activities":[],"sessions":[{"activity_id":"ID0","start_timestamp":5000,"end_timestamp":10000,"id":""}]}';
-      result = await import(app, json: json);
+      result = await import(json: json);
       expect(result, equals(ImportResult.errorSessionInvalid));
     });
 
     test("errorClearingDatabase", () async {
-      when(dataManager.clearDatabase()).thenAnswer((_) async => false);
+      when(managers.dataManager.clearDatabase()).thenAnswer((_) async => false);
       String json = '{"activities":[],"sessions":[]}';
-      ImportResult result = await import(app, json: json);
+      ImportResult result = await import(json: json);
       expect(result, equals(ImportResult.errorClearingDatabase));
     });
 
     test("Preferences key doesn't exist", () async {
-      when(dataManager.clearDatabase()).thenAnswer((_) async => true);
+      when(managers.dataManager.clearDatabase()).thenAnswer((_) async => true);
 
       String json = '{"activities":[],"sessions":[]}';
-      await import(app, json: json);
-      verifyNever(preferencesManager.setHomeDateRange(argThat(anything)));
-      verifyNever(preferencesManager.setLargestDurationUnit(argThat(anything)));
+      await import(json: json);
+      verifyNever(
+          managers.preferencesManager.setHomeDateRange(argThat(anything)));
+      verifyNever(managers.preferencesManager
+          .setLargestDurationUnit(argThat(anything)));
     });
 
     test("Preferences not a map", () async {
-      when(dataManager.clearDatabase()).thenAnswer((_) async => true);
+      when(managers.dataManager.clearDatabase()).thenAnswer((_) async => true);
 
       String json = '{"activities":[],"sessions":[],"preferences":[]}';
-      await import(app, json: json);
-      verifyNever(preferencesManager.setHomeDateRange(argThat(anything)));
-      verifyNever(preferencesManager.setLargestDurationUnit(argThat(anything)));
+      await import(json: json);
+      verifyNever(
+          managers.preferencesManager.setHomeDateRange(argThat(anything)));
+      verifyNever(managers.preferencesManager
+          .setLargestDurationUnit(argThat(anything)));
     });
 
     test("Preferences map is empty", () async {
-      when(dataManager.clearDatabase()).thenAnswer((_) async => true);
+      when(managers.dataManager.clearDatabase()).thenAnswer((_) async => true);
 
       String json = '{"activities":[],"sessions":[],"preferences":{}}';
-      await import(app, json: json);
-      verifyNever(preferencesManager.setHomeDateRange(argThat(anything)));
-      verifyNever(preferencesManager.setLargestDurationUnit(argThat(anything)));
+      await import(json: json);
+      verifyNever(
+          managers.preferencesManager.setHomeDateRange(argThat(anything)));
+      verifyNever(managers.preferencesManager
+          .setLargestDurationUnit(argThat(anything)));
     });
 
     test("Preferences values have wrong type", () async {
-      when(dataManager.clearDatabase()).thenAnswer((_) async => true);
+      when(managers.dataManager.clearDatabase()).thenAnswer((_) async => true);
 
       String json =
           '{"activities":[],"sessions":[],"preferences":{"largest_duration_unit":"non-int","home_date_range":0}}';
-      await import(app, json: json);
-      verifyNever(preferencesManager.setHomeDateRange(argThat(anything)));
-      verifyNever(preferencesManager.setLargestDurationUnit(argThat(anything)));
+      await import(json: json);
+      verifyNever(
+          managers.preferencesManager.setHomeDateRange(argThat(anything)));
+      verifyNever(managers.preferencesManager
+          .setLargestDurationUnit(argThat(anything)));
     });
 
     test("Preferences are correctly set", () async {
-      when(dataManager.clearDatabase()).thenAnswer((_) async => true);
+      when(managers.dataManager.clearDatabase()).thenAnswer((_) async => true);
 
       String json =
           '{"activities":[],"sessions":[],"preferences":{"largest_duration_unit":0,"home_date_range":"last7Days"}}';
-      await import(app, json: json);
+      await import(json: json);
       verify(
-        preferencesManager.setHomeDateRange(
+        managers.preferencesManager.setHomeDateRange(
           argThat(equals(DisplayDateRange.last7Days)),
         ),
       );
       verify(
-        preferencesManager.setLargestDurationUnit(
+        managers.preferencesManager.setLargestDurationUnit(
           argThat(equals(AppDurationUnit.days)),
         ),
       );
     });
 
     test("success", () async {
-      when(dataManager.clearDatabase()).thenAnswer((_) async => true);
+      when(managers.dataManager.clearDatabase()).thenAnswer((_) async => true);
 
       String json =
           '{"activities":[{"name":"Test1","current_session_id":null,"id":"AID1"},{"name":"Test2","current_session_id":null,"id":"AID2"},{"name":"Test3","current_session_id":null,"id":"AID3"},{"name":"Test4","current_session_id":null,"id":"AID4"}],"sessions":[{"activity_id":"ID0","start_timestamp":5000,"end_timestamp":10000,"id":"SID5000"},{"activity_id":"ID1","start_timestamp":15000,"end_timestamp":20000,"id":"SID15000"},{"activity_id":"ID2","start_timestamp":25000,"end_timestamp":30000,"id":"SID25000"},{"activity_id":"ID3","start_timestamp":35000,"end_timestamp":40000,"id":"SID35000"},{"activity_id":"ID4","start_timestamp":45000,"end_timestamp":1546318800000,"id":"SID45000"}],"preferences":{"largest_duration_unit":1,"home_date_range":"last14Days"}}';
-      expect(await import(app, json: json), equals(ImportResult.success));
+      expect(await import(json: json), equals(ImportResult.success));
 
       List<Activity> activityList = verify(
-        dataManager.addActivities(
+        managers.dataManager.addActivities(
           captureThat(isInstanceOf<List<Activity>>()),
           notify: false,
         ),
       ).captured.single;
 
       List<Session> sessionList = verify(
-        dataManager.addSessions(
+        managers.dataManager.addSessions(
           captureThat(isInstanceOf<List<Session>>()),
           notify: true,
         ),
@@ -294,12 +292,12 @@ void main() {
       }
 
       verify(
-        preferencesManager.setHomeDateRange(
+        managers.preferencesManager.setHomeDateRange(
           argThat(equals(DisplayDateRange.last14Days)),
         ),
       );
       verify(
-        preferencesManager.setLargestDurationUnit(
+        managers.preferencesManager.setLargestDurationUnit(
           argThat(equals(AppDurationUnit.hours)),
         ),
       );

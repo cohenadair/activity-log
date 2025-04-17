@@ -13,7 +13,6 @@ import 'package:adair_flutter_lib/widgets/loading.dart';
 import 'package:adair_flutter_lib/widgets/vertical_space.dart';
 import 'package:adair_flutter_lib/wrappers/io_wrapper.dart';
 import 'package:flutter/material.dart';
-import 'package:mobile/app_manager.dart';
 import 'package:mobile/device_info_wrapper.dart';
 import 'package:mobile/http_wrapper.dart';
 import 'package:mobile/package_info_wrapper.dart';
@@ -26,9 +25,7 @@ import 'package:quiver/strings.dart';
 import '../i18n/strings.dart';
 
 class FeedbackPage extends StatefulWidget {
-  final AppManager app;
-
-  const FeedbackPage(this.app);
+  const FeedbackPage();
 
   @override
   State<FeedbackPage> createState() => _FeedbackPageState();
@@ -51,19 +48,11 @@ class _FeedbackPageState extends State<FeedbackPage> {
   var _isSending = false;
   var _showSendError = false;
 
-  DeviceInfoWrapper get _deviceInfo => widget.app.deviceInfoWrapper;
-
-  HttpWrapper get _http => widget.app.httpWrapper;
-
-  PreferencesManager get _preferences => widget.app.preferencesManager;
-
-  PackageInfoWrapper get _packageInfo => widget.app.packageInfoWrapper;
-
   @override
   void initState() {
     super.initState();
-    _nameController.text = _preferences.userName ?? "";
-    _emailController.text = _preferences.userEmail ?? "";
+    _nameController.text = PreferencesManager.get.userName ?? "";
+    _emailController.text = PreferencesManager.get.userEmail ?? "";
   }
 
   @override
@@ -168,18 +157,18 @@ class _FeedbackPageState extends State<FeedbackPage> {
     setState(() => _isSending = true);
 
     // Gather app and device info.
-    var appVersion = (await _packageInfo.fromPlatform()).version;
+    var appVersion = (await PackageInfoWrapper.get.fromPlatform()).version;
     String? osVersion;
     String? deviceModel;
     String? deviceId;
 
     if (IoWrapper.get.isIOS) {
-      var info = await _deviceInfo.iosInfo;
+      var info = await DeviceInfoWrapper.get.iosInfo;
       osVersion = "${info.systemName} (${info.systemVersion})";
       deviceModel = info.utsname.machine;
       deviceId = info.identifierForVendor;
     } else if (IoWrapper.get.isAndroid) {
-      var info = await _deviceInfo.androidInfo;
+      var info = await DeviceInfoWrapper.get.androidInfo;
       osVersion = "Android (${info.version.sdkInt})";
       deviceModel = info.model;
       deviceId = info.id;
@@ -221,7 +210,7 @@ class _FeedbackPageState extends State<FeedbackPage> {
       ],
     };
 
-    var response = await _http.post(
+    var response = await HttpWrapper.get.post(
       Uri.parse(_urlSendGrid),
       headers: <String, String>{
         "Content-Type": "application/json; charset=UTF-8",
@@ -241,7 +230,8 @@ class _FeedbackPageState extends State<FeedbackPage> {
       return;
     }
 
-    _preferences.setUserInfo(_nameController.text, _emailController.text);
+    PreferencesManager.get
+        .setUserInfo(_nameController.text, _emailController.text);
     setState(() {
       _isSending = false;
       _showSendError = false;
