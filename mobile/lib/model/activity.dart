@@ -10,15 +10,15 @@ class Activity extends Model {
   String get name => _name;
   String? get currentSessionId => _currentSessionId;
 
-  Activity.fromMap(Map<String, dynamic> map)
+  Activity.fromMap(super.map)
       : _name = map[keyName],
         _currentSessionId = map[keyCurrentSessionId],
-        super.fromMap(map);
+        super.fromMap();
 
-  Activity.fromBuilder(ActivityBuilder builder)
+  Activity.fromBuilder(ActivityBuilder super.builder)
       : _name = builder.name,
         _currentSessionId = builder.currentSessionId,
-        super.fromBuilder(builder);
+        super.fromBuilder();
 
   bool get isRunning => _currentSessionId != null;
 
@@ -43,10 +43,10 @@ class ActivityBuilder extends ModelBuilder {
 
   ActivityBuilder(this.name);
 
-  ActivityBuilder.fromActivity(Activity activity)
+  ActivityBuilder.fromActivity(Activity super.activity)
       : name = activity._name,
         currentSessionId = activity._currentSessionId,
-        super.fromModel(activity);
+        super.fromModel();
 
   @override
   Activity get build {

@@ -220,7 +220,7 @@ class SettingsPageState extends State<SettingsPage> {
 
         if (await canLaunchUrlString(url)) {
           await launchUrlString(url);
-        } else if (context.mounted) {
+        } else if (mounted) {
           showErrorDialog(context: context, description: errorMessage);
         }
       },
@@ -302,7 +302,7 @@ class SettingsPageState extends State<SettingsPage> {
       return;
     }
 
-    if (context.mounted) {
+    if (mounted) {
       showWarningDialog(
         context: context,
         description: Strings.of(context).settingsPageImportWarning,
@@ -334,7 +334,7 @@ class SettingsPageState extends State<SettingsPage> {
     if (jsonString != null) {
       ImportResult result = await import(json: jsonString);
 
-      if (context.mounted) {
+      if (mounted) {
         if (result == ImportResult.success) {
           showOkDialog(
             context: context,
@@ -388,10 +388,12 @@ class SettingsPageState extends State<SettingsPage> {
         ),
       );
     } on PlatformException {
-      showErrorDialog(
-        context: context,
-        description: Strings.of(context).settingsPageFailedEmailMessage,
-      );
+      if (mounted) {
+        showErrorDialog(
+          context: context,
+          description: Strings.of(context).settingsPageFailedEmailMessage,
+        );
+      }
     }
   }
 }

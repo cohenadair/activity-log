@@ -47,11 +47,10 @@ class DatePicker extends FormField<TZDateTime> {
     required String label,
     TZDateTime? initialDate,
     void Function(TZDateTime)? onChange,
-    String? Function(TZDateTime?)? validator,
+    super.validator,
     bool enabled = true,
   }) : super(
           initialValue: initialDate,
-          validator: validator,
           builder: (FormFieldState<TZDateTime> state) {
             return _Picker(
               label: label,
@@ -89,11 +88,10 @@ class TimePicker extends FormField<TimeOfDay> {
     required String label,
     TimeOfDay? initialTime,
     Function(TimeOfDay)? onChange,
-    String? Function(TimeOfDay?)? validator,
+    super.validator,
     bool enabled = true,
   }) : super(
           initialValue: initialTime,
-          validator: validator,
           builder: (FormFieldState<TimeOfDay> state) {
             return _Picker(
               label: label,

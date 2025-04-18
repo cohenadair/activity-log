@@ -199,6 +199,8 @@ class EditSessionPageState extends State<EditSessionPage> {
       ..isBanked = _isBanked;
     var session = builder.build;
 
+    var navigator = Navigator.of(context);
+
     DataManager.get.getOverlappingSession(session).then((
       Session? overlappingSession,
     ) {
@@ -230,7 +232,7 @@ class EditSessionPageState extends State<EditSessionPage> {
         DataManager.get.addSession(session);
       }
 
-      Navigator.pop(context);
+      navigator.pop();
     });
   }
 

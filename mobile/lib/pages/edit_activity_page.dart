@@ -205,9 +205,10 @@ class EditActivityPageState extends State<EditActivityPage> {
       return;
     }
 
-    DataManager.get.activityNameExists(name).then((bool exists) {
-      onFinish(exists ? Strings.of(context).editActivityPageNameExists : null);
-    });
+    var nameExistsMessage = Strings.of(context).editActivityPageNameExists;
+    DataManager.get
+        .activityNameExists(name)
+        .then((exists) => onFinish(exists ? nameExistsMessage : null));
   }
 }
 

@@ -88,10 +88,10 @@ class ActivityLogState extends State<ActivityLog> {
       ),
       darkTheme: AdairFlutterLibTheme.dark().copyWith(
         inputDecorationTheme: InputDecorationTheme(
-          floatingLabelStyle: MaterialStateTextStyle.resolveWith((states) {
+          floatingLabelStyle: WidgetStateTextStyle.resolveWith((states) {
             return TextStyle(
-              color: (states.contains(MaterialState.focused) &&
-                      !states.contains(MaterialState.error))
+              color: (states.contains(WidgetState.focused) &&
+                      !states.contains(WidgetState.error))
                   ? AppConfig.get.colorAppTheme
                   : null,
             );
@@ -128,8 +128,8 @@ class ActivityLogState extends State<ActivityLog> {
         datePickerTheme: DatePickerThemeData(
           dayOverlayColor: _appThemeColor(),
           dayBackgroundColor: _selectedBackgroundColor(),
-          todayForegroundColor: MaterialStateColor.resolveWith(
-            (states) => states.contains(MaterialState.selected)
+          todayForegroundColor: WidgetStateColor.resolveWith(
+            (states) => states.contains(WidgetState.selected)
                 ? Colors.white
                 : AppConfig.get.colorAppTheme,
           ),
@@ -158,29 +158,29 @@ class ActivityLogState extends State<ActivityLog> {
     );
   }
 
-  MaterialStateColor _timePickerTextColor() {
-    return MaterialStateColor.resolveWith(
-      (states) => states.contains(MaterialState.selected)
+  WidgetStateColor _timePickerTextColor() {
+    return WidgetStateColor.resolveWith(
+      (states) => states.contains(WidgetState.selected)
           ? AppConfig.get.colorAppTheme
           : Colors.white,
     );
   }
 
-  MaterialStateColor _timePickerTimeColor() {
-    return MaterialStateColor.resolveWith(
-      (states) => states.contains(MaterialState.selected)
-          ? AppConfig.get.colorAppTheme.withOpacity(0.24)
-          : ThemeData.dark().colorScheme.onSurface.withOpacity(0.12),
+  WidgetStateColor _timePickerTimeColor() {
+    return WidgetStateColor.resolveWith(
+      (states) => states.contains(WidgetState.selected)
+          ? AppConfig.get.colorAppTheme.withValues(alpha: 0.24)
+          : ThemeData.dark().colorScheme.onSurface.withValues(alpha: 0.12),
     );
   }
 
-  MaterialStateColor _appThemeColor() {
-    return MaterialStateColor.resolveWith((_) => AppConfig.get.colorAppTheme);
+  WidgetStateColor _appThemeColor() {
+    return WidgetStateColor.resolveWith((_) => AppConfig.get.colorAppTheme);
   }
 
-  MaterialStateColor _selectedBackgroundColor() {
-    return MaterialStateColor.resolveWith(
-      (states) => states.contains(MaterialState.selected)
+  WidgetStateColor _selectedBackgroundColor() {
+    return WidgetStateColor.resolveWith(
+      (states) => states.contains(WidgetState.selected)
           ? AppConfig.get.colorAppTheme
           : Colors.transparent,
     );
