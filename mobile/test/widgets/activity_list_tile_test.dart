@@ -6,9 +6,8 @@ import 'package:mobile/utils/duration.dart';
 import 'package:mobile/widgets/activity_list_tile.dart';
 import 'package:mockito/mockito.dart';
 
-import '../stubbed_managers.dart';
-
 import '../../../../adair-flutter-lib/test/test_utils/widget.dart';
+import '../stubbed_managers.dart';
 import '../test_utils.dart';
 
 void main() {

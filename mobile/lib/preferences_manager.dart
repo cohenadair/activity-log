@@ -1,9 +1,10 @@
 import 'dart:async';
 
-import 'package:adair_flutter_lib/utils/date_range.dart';
+import 'package:adair_flutter_lib/model/gen/adair_flutter_lib.pb.dart';
 import 'package:adair_flutter_lib/utils/void_stream_controller.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:mobile/utils/date_range.dart';
 import 'package:mobile/utils/duration.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -37,10 +38,10 @@ class PreferencesManager {
   Stream<void> get homeDateRangeStream => _homeDateRangeUpdated.stream;
 
   late AppDurationUnit _largestDurationUnit;
-  late DisplayDateRange _homeDateRange;
+  late DateRange _homeDateRange;
 
   late List<String> _statsSelectedActivityIds;
-  late DisplayDateRange _statsDateRange;
+  late DateRange _statsDateRange;
   late String? _userName;
   late String? _userEmail;
 
@@ -49,13 +50,12 @@ class PreferencesManager {
   AppDurationUnit get largestDurationUnit => _largestDurationUnit;
 
   /// The date range used to display the total [Duration] of an [Activity] on
-  /// the home page. This value will never be `null`. Defaults to
-  /// [DisplayDateRange.allDates].
-  DisplayDateRange get homeDateRange => _homeDateRange;
+  /// the home page. This value will never be `null`. Defaults to all dates.
+  DateRange get homeDateRange => _homeDateRange;
 
   List<String> get statsSelectedActivityIds => _statsSelectedActivityIds;
 
-  DisplayDateRange get statsDateRange => _statsDateRange;
+  DateRange get statsDateRange => _statsDateRange;
 
   String? get userName => _userName;
 
@@ -68,22 +68,21 @@ class PreferencesManager {
 
     _largestDurationUnit =
         AppDurationUnit.values[prefs.getInt(_keyLargestDurationUnit) ?? 0];
-    _homeDateRange = _getDisplayDateRange(prefs, _keyHomeDateRange);
+    _homeDateRange = _dateRange(prefs, _keyHomeDateRange);
 
     List<String> activityIds =
         prefs.getStringList(_keyStatsSelectedActivityIds) ?? [];
     _statsSelectedActivityIds = activityIds.isEmpty ? [] : activityIds;
 
-    _statsDateRange = _getDisplayDateRange(prefs, _keyStatsDateRange);
+    _statsDateRange = _dateRange(prefs, _keyStatsDateRange);
 
     _userName = prefs.getString(_keyUserName);
     _userEmail = prefs.getString(_keyUserEmail);
   }
 
-  DisplayDateRange _getDisplayDateRange(SharedPreferences prefs, String key) {
-    return DisplayDateRange.of(
-      prefs.getString(key) ?? DisplayDateRange.allDates.id,
-    )!;
+  DateRange _dateRange(SharedPreferences prefs, String key) {
+    return DateRanges.fromLegacyDisplayDateRangeId(
+        prefs.getString(key) ?? "allDates");
   }
 
   void setLargestDurationUnit(AppDurationUnit unit) async {
@@ -102,7 +101,7 @@ class PreferencesManager {
     _largestDurationUnitUpdated.notify();
   }
 
-  void setHomeDateRange(DisplayDateRange range) async {
+  void setHomeDateRange(DateRange range) async {
     if (_homeDateRange == range) {
       return;
     }
@@ -110,7 +109,8 @@ class PreferencesManager {
     _homeDateRange = range;
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString(_keyHomeDateRange, _homeDateRange.id);
+    await prefs.setString(
+        _keyHomeDateRange, _homeDateRange.legacyDisplayDateRangeId);
 
     _homeDateRangeUpdated.notify();
   }
@@ -132,7 +132,7 @@ class PreferencesManager {
     );
   }
 
-  void setStatsDateRange(DisplayDateRange range) async {
+  void setStatsDateRange(DateRange range) async {
     if (_statsDateRange == range) {
       return;
     }
@@ -140,7 +140,8 @@ class PreferencesManager {
     _statsDateRange = range;
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString(_keyStatsDateRange, _statsDateRange.id);
+    await prefs.setString(
+        _keyStatsDateRange, _statsDateRange.legacyDisplayDateRangeId);
   }
 
   void setUserInfo(String name, String email) async {
@@ -166,7 +167,7 @@ class LargestDurationBuilder extends _SimpleStreamBuilder<AppDurationUnit> {
         );
 }
 
-class HomeDateRangeBuilder extends _SimpleStreamBuilder<DisplayDateRange> {
+class HomeDateRangeBuilder extends _SimpleStreamBuilder<DateRange> {
   HomeDateRangeBuilder({required super.builder})
       : super(
           stream: PreferencesManager.get.homeDateRangeStream,

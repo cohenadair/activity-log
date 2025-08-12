@@ -1,14 +1,13 @@
 import 'package:adair_flutter_lib/res/dimen.dart';
 import 'package:adair_flutter_lib/utils/string.dart';
-import 'package:adair_flutter_lib/widgets/empty.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile/i18n/strings.dart';
 import 'package:mobile/model/activity.dart';
 import 'package:mobile/model/session.dart';
-import 'package:mobile/widgets/edit_page.dart';
 import 'package:mobile/pages/edit_session_page.dart';
 import 'package:mobile/pages/sessions_page.dart';
 import 'package:mobile/utils/page_utils.dart';
+import 'package:mobile/widgets/edit_page.dart';
 import 'package:mobile/widgets/future_listener.dart';
 import 'package:mobile/widgets/session_list_tile.dart';
 import 'package:mobile/widgets/text.dart';
@@ -78,7 +77,7 @@ class EditActivityPageState extends State<EditActivityPage> {
                 validator: (value) => _nameValidatorValue,
               ),
             ),
-            _isEditing ? _buildRecentSessions() : const Empty(),
+            _isEditing ? _buildRecentSessions() : const SizedBox(),
           ],
         ),
       ),
@@ -110,8 +109,10 @@ class EditActivityPageState extends State<EditActivityPage> {
                       },
                     );
                   })
-                : [Empty()],
-            sessions.isNotEmpty ? _buildViewAllButton(sessionCount) : Empty(),
+                : [SizedBox()],
+            sessions.isNotEmpty
+                ? _buildViewAllButton(sessionCount)
+                : SizedBox(),
           ],
         );
       },
@@ -145,7 +146,7 @@ class EditActivityPageState extends State<EditActivityPage> {
 
   Widget _buildViewAllButton(int sessionCount) {
     return sessionCount <= _recentSessionLimit
-        ? Empty()
+        ? SizedBox()
         : Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: <Widget>[

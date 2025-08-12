@@ -1,4 +1,4 @@
-import 'package:adair_flutter_lib/utils/date_range.dart';
+import 'package:adair_flutter_lib/model/gen/adair_flutter_lib.pb.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mobile/database/backup.dart';
 import 'package:mobile/model/activity.dart';
@@ -19,7 +19,7 @@ void main() {
     ).thenReturn(AppDurationUnit.days);
     when(
       managers.preferencesManager.homeDateRange,
-    ).thenReturn(DisplayDateRange.last7Days);
+    ).thenReturn(DateRange(period: DateRange_Period.last7Days));
   });
 
   Session buildSession(String id, int startMs, int? endMs) =>
@@ -45,7 +45,7 @@ void main() {
       ).thenReturn(AppDurationUnit.days);
       when(
         managers.preferencesManager.homeDateRange,
-      ).thenReturn(DisplayDateRange.last7Days);
+      ).thenReturn(DateRange(period: DateRange_Period.last7Days));
 
       String json = await export();
       expect(
@@ -84,9 +84,9 @@ void main() {
       ).thenReturn(AppDurationUnit.days);
       when(
         managers.preferencesManager.homeDateRange,
-      ).thenReturn(DisplayDateRange.last7Days);
+      ).thenReturn(DateRange(period: DateRange_Period.last7Days));
 
-      managers.timeManager.overrideNow(2019, 1, 1);
+      managers.lib.stubCurrentTime(DateTime(2019, 1, 1));
       String json = await export();
 
       expect(
@@ -244,7 +244,7 @@ void main() {
       await import(json: json);
       verify(
         managers.preferencesManager.setHomeDateRange(
-          argThat(equals(DisplayDateRange.last7Days)),
+          argThat(equals(DateRange(period: DateRange_Period.last7Days))),
         ),
       );
       verify(
@@ -293,7 +293,7 @@ void main() {
 
       verify(
         managers.preferencesManager.setHomeDateRange(
-          argThat(equals(DisplayDateRange.last14Days)),
+          argThat(equals(DateRange(period: DateRange_Period.last14Days))),
         ),
       );
       verify(

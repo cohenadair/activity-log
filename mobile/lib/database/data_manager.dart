@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:adair_flutter_lib/model/gen/adair_flutter_lib.pb.dart';
 import 'package:adair_flutter_lib/utils/date_range.dart';
 import 'package:adair_flutter_lib/utils/void_stream_controller.dart';
 import 'package:flutter/material.dart';
@@ -23,7 +24,7 @@ class DataManager {
   static void set(DataManager manager) => _instance = manager;
 
   @visibleForTesting
-  static void suicide() => _instance = DataManager._();
+  static void reset() => _instance = DataManager._();
 
   DataManager._();
 
@@ -51,7 +52,7 @@ class DataManager {
     }
 
     _initialActivityListTileModels = await getActivityListModel(
-      dateRange: PreferencesManager.get.homeDateRange.value,
+      dateRange: PreferencesManager.get.homeDateRange,
     );
   }
 
@@ -392,16 +393,14 @@ class DataManager {
   ///
   /// Note that this will return a [SummarizedActivityList], even if there
   /// were no sessions for the associated [Activity] objects within the given
-  /// [DisplayDateRange].
+  /// [DateRange].
   ///
-  /// If the given [DisplayDateRange] is `null`, the result will include all
+  /// If the given [DateRange] is `null`, the result will include all
   /// [Session] objects associated with each given [Activity].
   Future<SummarizedActivityList> getSummarizedActivities(
-    DisplayDateRange? displayDateRange, [
+    DateRange? dateRange, [
     List<Activity> activities = const [],
   ]) async {
-    DateRange? dateRange = displayDateRange?.value;
-
     var activityList = List.of(activities);
     // Get all activities if none were provided.
     if (activityList.isEmpty) {
@@ -457,14 +456,14 @@ class DataManager {
       summarizedActivities.add(
         SummarizedActivity(
           value: activity,
-          displayDateRange: displayDateRange,
+          dateRange: dateRange,
           sessions: sessionList,
         ),
       );
     }
 
     summarizedActivities.sort((a, b) => a.value.name.compareTo(b.value.name));
-    return SummarizedActivityList(summarizedActivities, displayDateRange);
+    return SummarizedActivityList(summarizedActivities, dateRange);
   }
 
   /// Returns a list of [ActivityListTileModel] objects meant to be used in
@@ -590,7 +589,7 @@ class ActivityListModelBuilder extends StatelessWidget {
           DataManager.get._initialActivityListTileModels = const [],
       futuresCallbacks: [
         () => DataManager.get.getActivityListModel(
-              dateRange: PreferencesManager.get.homeDateRange.value,
+              dateRange: PreferencesManager.get.homeDateRange,
             ),
       ],
       streams: [

@@ -1,3 +1,4 @@
+import 'package:adair_flutter_lib/l10n/l10n.dart';
 import 'package:adair_flutter_lib/managers/time_manager.dart';
 import 'package:adair_flutter_lib/res/dimen.dart';
 import 'package:adair_flutter_lib/utils/date_time.dart';
@@ -159,9 +160,9 @@ class EditSessionPageState extends State<EditSessionPage> {
                     visualDensity: VisualDensity.compact,
                     onPressed: () => showOkDialog(
                       context: context,
-                      description: Strings.of(
+                      description: Text(Strings.of(
                         context,
-                      ).editSessionPageBankedSessionDescription,
+                      ).editSessionPageBankedSessionDescription),
                     ),
                   ),
                 ],
@@ -207,7 +208,7 @@ class EditSessionPageState extends State<EditSessionPage> {
       if (overlappingSession != null) {
         setState(() {
           String conflictingString =
-              "${DateFormat(monthDayFormat).format(overlappingSession.startDateTime)}, "
+              "${DateFormat(L10n.get.lib.dateFormatMonthDay).format(overlappingSession.startDateTime)}, "
               "${formatTimeOfDay(context, overlappingSession.startTimeOfDay)}";
 
           if (overlappingSession.inProgress) {

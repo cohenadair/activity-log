@@ -6,11 +6,10 @@ import 'package:adair_flutter_lib/res/dimen.dart';
 import 'package:adair_flutter_lib/utils/dialog.dart';
 import 'package:adair_flutter_lib/utils/io.dart';
 import 'package:adair_flutter_lib/utils/log.dart';
+import 'package:adair_flutter_lib/utils/snack_bar.dart';
 import 'package:adair_flutter_lib/utils/string.dart';
 import 'package:adair_flutter_lib/utils/widget.dart';
-import 'package:adair_flutter_lib/widgets/empty.dart';
 import 'package:adair_flutter_lib/widgets/loading.dart';
-import 'package:adair_flutter_lib/widgets/vertical_space.dart';
 import 'package:adair_flutter_lib/wrappers/io_wrapper.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile/device_info_wrapper.dart';
@@ -86,7 +85,7 @@ class _FeedbackPageState extends State<FeedbackPage> {
                 autofocus: isEmpty(_nameController.text),
                 textInputAction: TextInputAction.next,
               ),
-              const VerticalSpace(paddingDefault),
+              Container(height: paddingDefault),
               TextFormField(
                 controller: _emailController,
                 maxLength: _maxLengthEmail,
@@ -98,7 +97,7 @@ class _FeedbackPageState extends State<FeedbackPage> {
                 validator: _validateEmail,
                 textInputAction: TextInputAction.next,
               ),
-              const VerticalSpace(paddingDefault),
+              Container(height: paddingDefault),
               TextFormField(
                 controller: _messageController,
                 maxLength: _maxLengthMessage,
@@ -117,14 +116,14 @@ class _FeedbackPageState extends State<FeedbackPage> {
                 autofocus: isNotEmpty(_nameController.text) &&
                     isNotEmpty(_emailController.text),
               ),
-              const VerticalSpace(paddingDefault),
+              Container(height: paddingDefault),
               _showSendError
                   ? ErrorText(
                       format(Strings.of(context).feedbackPageErrorSending, [
                         PropertiesManager.get.supportEmail,
                       ]),
                     )
-                  : const Empty(),
+                  : const SizedBox(),
             ],
           ),
         ),
@@ -242,7 +241,7 @@ class _FeedbackPageState extends State<FeedbackPage> {
       this,
       () => showOkDialog(
         context: context,
-        description: Strings.of(context).feedbackPageConfirmation,
+        description: Text(Strings.of(context).feedbackPageConfirmation),
         onTapOk: () => Navigator.of(context).pop(),
       ),
     );

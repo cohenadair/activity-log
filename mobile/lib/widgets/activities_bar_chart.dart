@@ -2,7 +2,6 @@ import 'package:adair_flutter_lib/app_config.dart';
 import 'package:adair_flutter_lib/res/dimen.dart';
 import 'package:adair_flutter_lib/res/theme.dart';
 import 'package:adair_flutter_lib/utils/duration.dart';
-import 'package:adair_flutter_lib/widgets/empty.dart';
 import 'package:community_charts_flutter/community_charts_flutter.dart'
     as f_charts;
 import 'package:flutter/material.dart';
@@ -167,7 +166,7 @@ class _ActivitiesBarChartState extends State<_ActivitiesBarChart> {
       child: Column(
         children: <Widget>[
           isEmpty(widget.title)
-              ? const Empty()
+              ? const SizedBox()
               : LargeHeadingText(widget.title),
           SizedBox(
             height: widget.activities.length == 1

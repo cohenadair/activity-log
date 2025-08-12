@@ -1,8 +1,6 @@
 import 'dart:async';
 
 import 'package:adair_flutter_lib/res/dimen.dart';
-import 'package:adair_flutter_lib/widgets/empty.dart';
-import 'package:adair_flutter_lib/widgets/horizontal_space.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile/model/activity.dart';
 import 'package:mobile/utils/page_utils.dart';
@@ -79,7 +77,7 @@ class ListPicker<T> extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           _buildSingleDetail(),
-          const HorizontalSpace(paddingDefault),
+          Container(width: paddingDefault),
           const RightChevronIcon(),
         ],
       ),
@@ -124,7 +122,7 @@ class ListPicker<T> extends StatelessWidget {
         showsValueOnTrailing) {
       return SecondaryText(_getListPickerItem(initialValues.first).title ?? "");
     }
-    return const Empty();
+    return const SizedBox();
   }
 
   void _popPickerPage(BuildContext context, Set<T> pickedItems) {
@@ -239,7 +237,7 @@ class _ListPickerPageState<T> extends State<_ListPickerPage<T>> {
       child: ListView(
         children: [
           widget.listHeader == null
-              ? Empty()
+              ? SizedBox()
               : Padding(padding: insetsDefault, child: widget.listHeader),
           ...items.map((ListPickerItem<T> item) {
             if (item.isDivider) {

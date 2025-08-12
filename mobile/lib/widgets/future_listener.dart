@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:adair_flutter_lib/widgets/empty.dart';
 import 'package:flutter/material.dart';
 
 /// A utility [Widget] capable of listening to multiple [Stream]s.
@@ -91,7 +90,7 @@ class FutureListenerState extends State<FutureListener> {
       builder: (BuildContext context, AsyncSnapshot snapshot) {
         if (!snapshot.hasData) {
           if (widget.initialValues.isEmpty) {
-            return const Empty();
+            return const SizedBox();
           }
 
           return _build(

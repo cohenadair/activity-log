@@ -1,7 +1,9 @@
 import 'dart:async';
 
 import 'package:adair_flutter_lib/managers/time_manager.dart';
+import 'package:adair_flutter_lib/model/gen/adair_flutter_lib.pb.dart';
 import 'package:adair_flutter_lib/utils/date_range.dart';
+import 'package:fixnum/fixnum.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile/widgets/list_picker.dart';
 import 'package:timezone/timezone.dart';
@@ -9,8 +11,8 @@ import 'package:timezone/timezone.dart';
 /// A [ListPicker] wrapper widget for selecting a date range, such as the
 /// "Last 7 days" or "This week" from a list.
 class StatsDateRangePicker extends StatefulWidget {
-  final DisplayDateRange initialValue;
-  final OnListPickerChanged<DisplayDateRange> onDurationPicked;
+  final DateRange initialValue;
+  final OnListPickerChanged<DateRange> onDurationPicked;
 
   const StatsDateRangePicker({
     required this.initialValue,
@@ -22,46 +24,47 @@ class StatsDateRangePicker extends StatefulWidget {
 }
 
 class StatsDateRangePickerState extends State<StatsDateRangePicker> {
-  DisplayDateRange _customDateRange = DisplayDateRange.custom;
+  DateRange _customDateRange = DateRange(period: DateRange_Period.custom);
 
   @override
   Widget build(BuildContext context) {
-    return ListPicker<DisplayDateRange>(
+    return ListPicker<DateRange>(
       initialValues: {widget.initialValue},
-      onChanged: (Set<DisplayDateRange> pickedDurations) {
+      onChanged: (Set<DateRange> pickedDurations) {
         widget.onDurationPicked(pickedDurations.first);
 
         if (pickedDurations.first != _customDateRange) {
           // If anything other than the custom option is picked, reset the
           // custom text back to the default.
           setState(() {
-            _customDateRange = DisplayDateRange.custom;
+            _customDateRange = DateRange(period: DateRange_Period.custom);
           });
         }
       },
-      allItem: _buildItem(context, DisplayDateRange.allDates),
+      allItem:
+          _buildItem(context, DateRange(period: DateRange_Period.allDates)),
       items: [
         ListPickerItem.divider(),
-        _buildItem(context, DisplayDateRange.today),
-        _buildItem(context, DisplayDateRange.yesterday),
+        _buildItem(context, DateRange(period: DateRange_Period.today)),
+        _buildItem(context, DateRange(period: DateRange_Period.yesterday)),
         ListPickerItem.divider(),
-        _buildItem(context, DisplayDateRange.thisWeek),
-        _buildItem(context, DisplayDateRange.thisMonth),
-        _buildItem(context, DisplayDateRange.thisYear),
+        _buildItem(context, DateRange(period: DateRange_Period.thisWeek)),
+        _buildItem(context, DateRange(period: DateRange_Period.thisMonth)),
+        _buildItem(context, DateRange(period: DateRange_Period.thisYear)),
         ListPickerItem.divider(),
-        _buildItem(context, DisplayDateRange.lastWeek),
-        _buildItem(context, DisplayDateRange.lastMonth),
-        _buildItem(context, DisplayDateRange.lastYear),
+        _buildItem(context, DateRange(period: DateRange_Period.lastWeek)),
+        _buildItem(context, DateRange(period: DateRange_Period.lastMonth)),
+        _buildItem(context, DateRange(period: DateRange_Period.lastYear)),
         ListPickerItem.divider(),
-        _buildItem(context, DisplayDateRange.last7Days),
-        _buildItem(context, DisplayDateRange.last14Days),
-        _buildItem(context, DisplayDateRange.last30Days),
-        _buildItem(context, DisplayDateRange.last60Days),
-        _buildItem(context, DisplayDateRange.last12Months),
+        _buildItem(context, DateRange(period: DateRange_Period.last7Days)),
+        _buildItem(context, DateRange(period: DateRange_Period.last14Days)),
+        _buildItem(context, DateRange(period: DateRange_Period.last30Days)),
+        _buildItem(context, DateRange(period: DateRange_Period.last60Days)),
+        _buildItem(context, DateRange(period: DateRange_Period.last12Months)),
         ListPickerItem.divider(),
-        ListPickerItem<DisplayDateRange>(
+        ListPickerItem<DateRange>(
           popsListOnPicked: false,
-          title: _customDateRange.onTitle(context),
+          title: _customDateRange.displayName,
           onTap: () => _onTapCustom(context),
           value: _customDateRange,
         ),
@@ -69,28 +72,25 @@ class StatsDateRangePickerState extends State<StatsDateRangePicker> {
     );
   }
 
-  ListPickerItem<DisplayDateRange> _buildItem(
+  ListPickerItem<DateRange> _buildItem(
     BuildContext context,
-    DisplayDateRange duration,
+    DateRange duration,
   ) {
-    return ListPickerItem<DisplayDateRange>(
-      title: duration.onTitle(context),
+    return ListPickerItem<DateRange>(
+      title: duration.displayName,
       value: duration,
     );
   }
 
-  Future<DisplayDateRange?> _onTapCustom(BuildContext context) async {
-    var now = TimeManager.get.now();
-    DateRange customValue = _customDateRange.onValue(now);
-
+  Future<DateRange?> _onTapCustom(BuildContext context) async {
     var pickedRange = await showDateRangePicker(
       context: context,
       initialDateRange: DateTimeRange(
-        start: customValue.startDate,
-        end: customValue.endDate,
+        start: _customDateRange.startDate,
+        end: _customDateRange.endDate,
       ),
       firstDate: TimeManager.get.dateTime(0),
-      lastDate: now,
+      lastDate: TimeManager.get.now(),
     );
 
     if (pickedRange == null) {
@@ -107,12 +107,16 @@ class StatsDateRangePickerState extends State<StatsDateRangePicker> {
     }
 
     var dateRange = DateRange(
-      startDate: TimeManager.get.dateTimeToTz(pickedRange.start),
-      endDate: TimeManager.get.dateTimeToTz(endDate ?? pickedRange.end),
+      startTimestamp: Int64(TimeManager.get
+          .dateTimeToTz(pickedRange.start)
+          .millisecondsSinceEpoch),
+      endTimestamp: Int64(TimeManager.get
+          .dateTimeToTz(endDate ?? pickedRange.end)
+          .millisecondsSinceEpoch),
     );
 
     // Reset StatsDateRange.custom properties to return the picked DateRange.
-    setState(() => _customDateRange = DisplayDateRange.dateRange(dateRange));
+    setState(() => _customDateRange = dateRange.deepCopy());
 
     return _customDateRange;
   }

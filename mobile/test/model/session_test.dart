@@ -1,5 +1,7 @@
 import 'package:adair_flutter_lib/managers/time_manager.dart';
+import 'package:adair_flutter_lib/model/gen/adair_flutter_lib.pb.dart';
 import 'package:adair_flutter_lib/utils/date_range.dart';
+import 'package:fixnum/fixnum.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mobile/model/session.dart';
 
@@ -22,15 +24,19 @@ void main() {
       expect(session.startDateTime, equals(session.startDateTime));
 
       var dateRange = DateRange(
-        startDate: TimeManager.get.dateTimeFromValues(2018, 2, 1),
-        endDate: TimeManager.get.dateTimeFromValues(2018, 2, 15),
+        startTimestamp: Int64(TimeManager.get
+            .dateTimeFromValues(2018, 2, 1)
+            .millisecondsSinceEpoch),
+        endTimestamp: Int64(TimeManager.get
+            .dateTimeFromValues(2018, 2, 15)
+            .millisecondsSinceEpoch),
       );
 
       session = builder.pinToDateRange(dateRange).build;
       expect(session.startDateTime, equals(dateRange.startDate));
       expect(session.endDateTime, equals(dateRange.endDate));
 
-      managers.timeManager.overrideNow(2019, 1, 2);
+      managers.lib.stubCurrentTime(DateTime(2019, 1, 2));
       builder
         ..endTimestamp = null
         ..endNow();

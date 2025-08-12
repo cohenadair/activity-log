@@ -1,5 +1,6 @@
 import 'package:adair_flutter_lib/managers/time_manager.dart';
-import 'package:adair_flutter_lib/utils/date_range.dart';
+import 'package:adair_flutter_lib/model/gen/adair_flutter_lib.pb.dart';
+import 'package:fixnum/fixnum.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mobile/model/activity.dart';
 import 'package:mobile/model/session.dart';
@@ -29,11 +30,9 @@ void main() {
     test("Empty sessions", () {
       SummarizedActivity activity = SummarizedActivity(
         value: ActivityBuilder("").build,
-        displayDateRange: DisplayDateRange.dateRange(
-          DateRange(
-            startDate: TimeManager.get.now(),
-            endDate: TimeManager.get.now(),
-          ),
+        dateRange: DateRange(
+          startTimestamp: Int64(TimeManager.get.currentTimestamp),
+          endTimestamp: Int64(TimeManager.get.currentTimestamp),
         ),
         sessions: [],
       );
@@ -52,11 +51,9 @@ void main() {
     test("Null sessions", () {
       SummarizedActivity activity = SummarizedActivity(
         value: ActivityBuilder("").build,
-        displayDateRange: DisplayDateRange.dateRange(
-          DateRange(
-            startDate: TimeManager.get.now(),
-            endDate: TimeManager.get.now(),
-          ),
+        dateRange: DateRange(
+          startTimestamp: Int64(TimeManager.get.currentTimestamp),
+          endTimestamp: Int64(TimeManager.get.currentTimestamp),
         ),
       );
 
@@ -87,11 +84,12 @@ void main() {
 
       SummarizedActivity activity = SummarizedActivity(
         value: ActivityBuilder("").build,
-        displayDateRange: DisplayDateRange.dateRange(
-          DateRange(
-            startDate: TimeManager.get.dateTime(0),
-            endDate: TimeManager.get.dateTime(Duration.millisecondsPerDay * 5),
-          ),
+        dateRange: DateRange(
+          startTimestamp:
+              Int64(TimeManager.get.dateTime(0).millisecondsSinceEpoch),
+          endTimestamp: Int64(TimeManager.get
+              .dateTime(Duration.millisecondsPerDay * 5)
+              .millisecondsSinceEpoch),
         ),
         sessions: sessions,
       );
@@ -141,7 +139,7 @@ void main() {
 
       SummarizedActivity activity = SummarizedActivity(
         value: ActivityBuilder("").build,
-        displayDateRange: null,
+        dateRange: null,
         sessions: sessions,
       );
 
@@ -177,11 +175,13 @@ void main() {
 
     SummarizedActivity activity() => SummarizedActivity(
           value: ActivityBuilder("").build,
-          displayDateRange: DisplayDateRange.dateRange(
-            DateRange(
-              startDate: TimeManager.get.dateTimeFromValues(2018, 11, 15, 7),
-              endDate: TimeManager.get.dateTimeFromValues(2019, 10, 25, 20),
-            ),
+          dateRange: DateRange(
+            startTimestamp: Int64(TimeManager.get
+                .dateTimeFromValues(2018, 11, 15, 7)
+                .millisecondsSinceEpoch),
+            endTimestamp: Int64(TimeManager.get
+                .dateTimeFromValues(2019, 10, 25, 20)
+                .millisecondsSinceEpoch),
           ),
           sessions: sessions,
         );
@@ -206,11 +206,13 @@ void main() {
       Activity activity = ActivityBuilder("Activity").build;
       SummarizedActivity summarizedActivity = SummarizedActivity(
         value: activity,
-        displayDateRange: DisplayDateRange.dateRange(
-          DateRange(
-            startDate: TimeManager.get.dateTimeFromValues(2018, 1, 5, 12),
-            endDate: TimeManager.get.dateTimeFromValues(2018, 1, 25, 21),
-          ),
+        dateRange: DateRange(
+          startTimestamp: Int64(TimeManager.get
+              .dateTimeFromValues(2018, 1, 5, 12)
+              .millisecondsSinceEpoch),
+          endTimestamp: Int64(TimeManager.get
+              .dateTimeFromValues(2019, 1, 25, 21)
+              .millisecondsSinceEpoch),
         ),
         sessions: [
           buildSession(
@@ -285,11 +287,13 @@ void main() {
 
       SummarizedActivity summarizedActivity = SummarizedActivity(
         value: activity,
-        displayDateRange: DisplayDateRange.dateRange(
-          DateRange(
-            startDate: TimeManager.get.dateTimeFromValues(2018, 1, 1),
-            endDate: TimeManager.get.dateTimeFromValues(2023, 1, 1),
-          ),
+        dateRange: DateRange(
+          startTimestamp: Int64(TimeManager.get
+              .dateTimeFromValues(2018, 1, 1)
+              .millisecondsSinceEpoch),
+          endTimestamp: Int64(TimeManager.get
+              .dateTimeFromValues(2019, 1, 1)
+              .millisecondsSinceEpoch),
         ),
         sessions: [
           buildSession(
@@ -308,11 +312,13 @@ void main() {
 
       SummarizedActivity summarizedActivity = SummarizedActivity(
         value: activity,
-        displayDateRange: DisplayDateRange.dateRange(
-          DateRange(
-            startDate: TimeManager.get.dateTimeFromValues(2018, 1, 1),
-            endDate: TimeManager.get.dateTimeFromValues(2023, 1, 1),
-          ),
+        dateRange: DateRange(
+          startTimestamp: Int64(TimeManager.get
+              .dateTimeFromValues(2018, 1, 1)
+              .millisecondsSinceEpoch),
+          endTimestamp: Int64(TimeManager.get
+              .dateTimeFromValues(2023, 1, 1)
+              .millisecondsSinceEpoch),
         ),
         sessions: [
           buildSession(
@@ -331,11 +337,13 @@ void main() {
 
       SummarizedActivity summarizedActivity = SummarizedActivity(
         value: activity,
-        displayDateRange: DisplayDateRange.dateRange(
-          DateRange(
-            startDate: TimeManager.get.dateTimeFromValues(2018, 1, 1),
-            endDate: TimeManager.get.dateTimeFromValues(2023, 1, 1),
-          ),
+        dateRange: DateRange(
+          startTimestamp: Int64(TimeManager.get
+              .dateTimeFromValues(2018, 1, 1)
+              .millisecondsSinceEpoch),
+          endTimestamp: Int64(TimeManager.get
+              .dateTimeFromValues(2023, 1, 1)
+              .millisecondsSinceEpoch),
         ),
         sessions: [
           buildSession(
@@ -355,17 +363,19 @@ void main() {
     });
 
     test("User has current streak", () {
-      managers.timeManager.overrideNow(2023, 1, 1);
+      managers.lib.stubCurrentTime(DateTime(2023, 1, 1));
 
       Activity activity = ActivityBuilder("Activity").build;
 
       SummarizedActivity summarizedActivity = SummarizedActivity(
         value: activity,
-        displayDateRange: DisplayDateRange.dateRange(
-          DateRange(
-            startDate: managers.timeManager.dateTimeFromValues(2018, 1, 1),
-            endDate: managers.timeManager.dateTimeFromValues(2023, 1, 1),
-          ),
+        dateRange: DateRange(
+          startTimestamp: Int64(TimeManager.get
+              .dateTimeFromValues(2018, 1, 1)
+              .millisecondsSinceEpoch),
+          endTimestamp: Int64(TimeManager.get
+              .dateTimeFromValues(2023, 1, 1)
+              .millisecondsSinceEpoch),
         ),
         sessions: [
           buildSession(
@@ -430,17 +440,19 @@ void main() {
     });
 
     test("User does not have a current streak", () {
-      managers.timeManager.overrideNow(2023, 1, 1);
+      managers.lib.stubCurrentTime(DateTime(2023, 1, 1));
 
       Activity activity = ActivityBuilder("Activity").build;
 
       SummarizedActivity summarizedActivity = SummarizedActivity(
         value: activity,
-        displayDateRange: DisplayDateRange.dateRange(
-          DateRange(
-            startDate: managers.timeManager.dateTimeFromValues(2018, 1, 1),
-            endDate: managers.timeManager.dateTimeFromValues(2023, 1, 1),
-          ),
+        dateRange: DateRange(
+          startTimestamp: Int64(TimeManager.get
+              .dateTimeFromValues(2018, 1, 1)
+              .millisecondsSinceEpoch),
+          endTimestamp: Int64(TimeManager.get
+              .dateTimeFromValues(2023, 1, 1)
+              .millisecondsSinceEpoch),
         ),
         sessions: [
           buildSession(
@@ -473,17 +485,17 @@ void main() {
 
     test("Current streak with a daylight savings behind change", () {
       // DST happened on Mar. 11, 2023.
-      managers.timeManager.overrideNow(2023, 3, 14);
+      managers.lib.stubCurrentTime(DateTime(2023, 3, 14));
 
       Activity activity = ActivityBuilder("Activity").build;
 
       SummarizedActivity summarizedActivity = SummarizedActivity(
         value: activity,
-        displayDateRange: DisplayDateRange.dateRange(
-          DateRange(
-            startDate: managers.timeManager.dateTimeFromValues(2018, 1, 1),
-            endDate: managers.timeManager.now(),
-          ),
+        dateRange: DateRange(
+          startTimestamp: Int64(TimeManager.get
+              .dateTimeFromValues(2018, 1, 1)
+              .millisecondsSinceEpoch),
+          endTimestamp: Int64(TimeManager.get.currentTimestamp),
         ),
         sessions: [
           // DST causes day rounding to of this to be a day early.
@@ -579,7 +591,7 @@ void main() {
 
       SummarizedActivity activity = SummarizedActivity(
         value: ActivityBuilder("").build,
-        displayDateRange: null,
+        dateRange: null,
         sessions: sessions,
       );
 
@@ -596,11 +608,13 @@ void main() {
 
       SummarizedActivity summarizedActivity1 = SummarizedActivity(
         value: activity1,
-        displayDateRange: DisplayDateRange.dateRange(
-          DateRange(
-            startDate: TimeManager.get.dateTimeFromValues(2018, 1, 10, 5),
-            endDate: TimeManager.get.dateTimeFromValues(2018, 1, 20, 10),
-          ),
+        dateRange: DateRange(
+          startTimestamp: Int64(TimeManager.get
+              .dateTimeFromValues(2018, 1, 10, 5)
+              .millisecondsSinceEpoch),
+          endTimestamp: Int64(TimeManager.get
+              .dateTimeFromValues(2023, 1, 20, 10)
+              .millisecondsSinceEpoch),
         ),
         sessions: [
           buildSession(
@@ -618,11 +632,13 @@ void main() {
 
       SummarizedActivity summarizedActivity2 = SummarizedActivity(
         value: activity2,
-        displayDateRange: DisplayDateRange.dateRange(
-          DateRange(
-            startDate: TimeManager.get.dateTimeFromValues(2018, 1, 5, 12),
-            endDate: TimeManager.get.dateTimeFromValues(2018, 1, 25, 21),
-          ),
+        dateRange: DateRange(
+          startTimestamp: Int64(TimeManager.get
+              .dateTimeFromValues(2018, 1, 5, 12)
+              .millisecondsSinceEpoch),
+          endTimestamp: Int64(TimeManager.get
+              .dateTimeFromValues(2023, 1, 25, 21)
+              .millisecondsSinceEpoch),
         ),
         sessions: [
           buildSession(
@@ -651,11 +667,13 @@ void main() {
 
       SummarizedActivity summarizedActivity3 = SummarizedActivity(
         value: activity3,
-        displayDateRange: DisplayDateRange.dateRange(
-          DateRange(
-            startDate: TimeManager.get.dateTimeFromValues(2018, 1, 20, 1),
-            endDate: TimeManager.get.dateTimeFromValues(2018, 1, 29, 7),
-          ),
+        dateRange: DateRange(
+          startTimestamp: Int64(TimeManager.get
+              .dateTimeFromValues(2018, 1, 20, 1)
+              .millisecondsSinceEpoch),
+          endTimestamp: Int64(TimeManager.get
+              .dateTimeFromValues(2023, 1, 29, 7)
+              .millisecondsSinceEpoch),
         ),
         sessions: [longestSession],
       );
@@ -692,7 +710,7 @@ void main() {
 
   group("In-progress sessions", () {
     test("Single in-progress session", () {
-      managers.timeManager.overrideNow(2019, 11, 1);
+      managers.lib.stubCurrentTime(DateTime(2019, 11, 1));
 
       List<Session> sessions = [
         buildSession(
@@ -715,7 +733,7 @@ void main() {
 
       SummarizedActivity activity = SummarizedActivity(
         value: ActivityBuilder("").build,
-        displayDateRange: null,
+        dateRange: null,
         sessions: sessions,
       );
 
@@ -724,7 +742,7 @@ void main() {
     });
 
     test("Multiple in-progress session", () {
-      managers.timeManager.overrideNow(2019, 11, 1);
+      managers.lib.stubCurrentTime(DateTime(2019, 11, 1));
 
       List<Session> sessions = [
         buildSession(
@@ -748,7 +766,7 @@ void main() {
 
       SummarizedActivity activity = SummarizedActivity(
         value: ActivityBuilder("").build,
-        displayDateRange: null,
+        dateRange: null,
         sessions: sessions,
       );
 

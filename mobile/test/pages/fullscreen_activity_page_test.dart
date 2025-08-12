@@ -6,10 +6,9 @@ import 'package:mobile/model/activity.dart';
 import 'package:mobile/pages/fullscreen_activity_page.dart';
 import 'package:mockito/mockito.dart';
 
+import '../../../../adair-flutter-lib/test/test_utils/widget.dart';
 import '../mocks/mocks.mocks.dart';
 import '../stubbed_managers.dart';
-
-import '../../../../adair-flutter-lib/test/test_utils/widget.dart';
 import '../test_utils.dart';
 
 void main() {

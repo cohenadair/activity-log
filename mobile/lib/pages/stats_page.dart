@@ -1,10 +1,9 @@
 import 'dart:async';
 
+import 'package:adair_flutter_lib/model/gen/adair_flutter_lib.pb.dart';
 import 'package:adair_flutter_lib/res/dimen.dart';
-import 'package:adair_flutter_lib/utils/date_range.dart';
 import 'package:adair_flutter_lib/utils/duration.dart';
 import 'package:adair_flutter_lib/utils/string.dart';
-import 'package:adair_flutter_lib/widgets/empty.dart';
 import 'package:adair_flutter_lib/widgets/loading.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile/i18n/strings.dart';
@@ -17,8 +16,8 @@ import 'package:mobile/widgets/activities_bar_chart.dart';
 import 'package:mobile/widgets/activity_picker.dart';
 import 'package:mobile/widgets/activity_summary.dart';
 import 'package:mobile/widgets/average_durations_list_item.dart';
-import 'package:mobile/widgets/stats_date_range_picker.dart';
 import 'package:mobile/widgets/my_page.dart';
+import 'package:mobile/widgets/stats_date_range_picker.dart';
 import 'package:mobile/widgets/summary.dart';
 import 'package:mobile/widgets/text.dart';
 import 'package:mobile/widgets/widget.dart';
@@ -37,7 +36,7 @@ class StatsPageState extends State<StatsPage> {
   final scrollController = ScrollController();
 
   Set<Activity> _currentActivities = {};
-  late DisplayDateRange _currentDateRange;
+  late DateRange _currentDateRange;
 
   late Future<SummarizedActivityList> _summarizedActivityListFuture;
   late StreamSubscription<void> _onActivitiesUpdated;
@@ -80,7 +79,7 @@ class StatsPageState extends State<StatsPage> {
         future: _activityCountFuture,
         builder: (BuildContext context, AsyncSnapshot<int> snapshot) {
           if (!snapshot.hasData) {
-            return Empty();
+            return SizedBox();
           }
 
           int activityCount = snapshot.data!;
@@ -107,7 +106,7 @@ class StatsPageState extends State<StatsPage> {
                 ),
                 StatsDateRangePicker(
                   initialValue: _currentDateRange,
-                  onDurationPicked: (DisplayDateRange pickedDateRange) {
+                  onDurationPicked: (DateRange pickedDateRange) {
                     setState(() {
                       _currentDateRange = pickedDateRange;
                       _updateFutures();
@@ -137,8 +136,9 @@ class StatsPageState extends State<StatsPage> {
                     }
 
                     if (activities.length == 1 &&
-                        activities.first.displayDateRange !=
-                            DisplayDateRange.allDates) {
+                            activities.first.dateRange == null ||
+                        activities.first.dateRange!.period !=
+                            DateRange_Period.allDates) {
                       return _buildForSingleActivity(activities.first);
                     } else {
                       return _buildForMultipleActivities(snapshot.data!);
@@ -156,7 +156,7 @@ class StatsPageState extends State<StatsPage> {
   Widget _buildForMultipleActivities(SummarizedActivityList summary) {
     if (summary.activitiesSortedByDuration == null ||
         summary.activitiesSortedByNumberOfSessions == null) {
-      return Empty();
+      return SizedBox();
     }
 
     return Column(
@@ -165,13 +165,13 @@ class StatsPageState extends State<StatsPage> {
         MinDivider(),
         ActivitiesDurationBarChart(
           activities: summary.activitiesSortedByDuration!,
-          padding: insetsVerticalDefaultHorizontalSmall,
+          padding: insetsHorizontalSmallVerticalDefault,
           onSelect: _onSelectChartActivity,
         ),
         MinDivider(),
         ActivitiesNumberOfSessionsBarChart(
           summary.activitiesSortedByNumberOfSessions!,
-          padding: insetsVerticalDefaultHorizontalSmall,
+          padding: insetsHorizontalSmallVerticalDefault,
           onSelect: _onSelectChartActivity,
         ),
       ],
@@ -185,7 +185,7 @@ class StatsPageState extends State<StatsPage> {
   Widget _buildSummary(SummarizedActivityList summary) {
     if (summary.mostFrequentActivity == null ||
         summary.longestSession == null) {
-      return Empty();
+      return SizedBox();
     }
 
     return LargestDurationBuilder(
@@ -259,7 +259,7 @@ class StatsPageState extends State<StatsPage> {
 
     // Pass null for "All dates" so the stats are restricted to the existing
     // sessions, rather than whatever the "All dates" start date is.
-    DisplayDateRange? dateRange = _currentDateRange == DisplayDateRange.allDates
+    var dateRange = _currentDateRange.period == DateRange_Period.allDates
         ? null
         : _currentDateRange;
     _summarizedActivityListFuture =

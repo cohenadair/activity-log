@@ -1,16 +1,18 @@
 import 'dart:async';
+import 'dart:isolate';
 import 'dart:ui';
+
 import 'package:adair_flutter_lib/app_config.dart';
 import 'package:adair_flutter_lib/l10n/gen/adair_flutter_lib_localizations.dart';
+import 'package:adair_flutter_lib/l10n/l10n.dart';
 import 'package:adair_flutter_lib/managers/properties_manager.dart';
 import 'package:adair_flutter_lib/managers/subscription_manager.dart';
 import 'package:adair_flutter_lib/managers/time_manager.dart';
 import 'package:adair_flutter_lib/res/theme.dart';
-import 'package:flutter/foundation.dart';
-
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:mobile/i18n/strings.dart';
@@ -26,12 +28,16 @@ void main() async {
   await Firebase.initializeApp();
 
   // Analytics.
-  await FirebaseAnalytics.instance.setAnalyticsCollectionEnabled(true);
+  await FirebaseAnalytics.instance.setAnalyticsCollectionEnabled(kReleaseMode);
 
   // Crashlytics. See https://firebase.flutter.dev/docs/crashlytics/usage for
   // error handling guidelines.
   await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(
     kReleaseMode,
+  );
+  await FirebaseCrashlytics.instance.setCustomKey(
+    "Locale",
+    PlatformDispatcher.instance.locale.toString(),
   );
 
   // Pass all uncaught "fatal" errors from the framework to Crashlytics.
@@ -43,6 +49,17 @@ void main() async {
     FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
     return true;
   };
+
+  // Catch non-Flutter errors.
+  Isolate.current.addErrorListener(
+    RawReceivePort((pair) async {
+      await FirebaseCrashlytics.instance.recordError(
+        pair.first,
+        pair.last,
+        fatal: true,
+      );
+    }).sendPort,
+  );
 
   runApp(ActivityLog());
 }
@@ -60,7 +77,7 @@ class ActivityLogState extends State<ActivityLog> {
     super.initState();
 
     AppConfig.get.init(
-      appName: (context) => Strings.of(context).appName,
+      appName: () => Strings.of(context).appName,
       appIcon: CustomIcons.app,
       colorAppTheme: Colors.green,
     );
@@ -74,7 +91,10 @@ class ActivityLogState extends State<ActivityLog> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      onGenerateTitle: AppConfig.get.appName,
+      onGenerateTitle: (context) {
+        L10n.get.context = context;
+        return Strings.of(context).appName;
+      },
       theme: AdairFlutterLibTheme.light().copyWith(
         buttonTheme: const ButtonThemeData(textTheme: ButtonTextTheme.primary),
         iconTheme: IconThemeData(color: AppConfig.get.colorAppTheme),
@@ -136,7 +156,7 @@ class ActivityLogState extends State<ActivityLog> {
           todayBackgroundColor: _selectedBackgroundColor(),
         ),
       ),
-      themeMode: themeMode,
+      themeMode: AppConfig.get.themeMode(),
       home: FutureBuilder<bool>(
         future: _appInitializedFuture,
         builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {

@@ -9,12 +9,11 @@ import 'package:mobile/pages/feedback_page.dart';
 import 'package:mockito/mockito.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
+import '../../../../adair-flutter-lib/test/test_utils/finder.dart';
+import '../../../../adair-flutter-lib/test/test_utils/widget.dart';
 import '../mocks/mocks.mocks.dart';
 import '../stubbed_managers.dart';
 import '../test_utils.dart';
-
-import '../../../../adair-flutter-lib/test/test_utils/finder.dart';
-import '../../../../adair-flutter-lib/test/test_utils/widget.dart';
 
 void main() {
   late StubbedManagers managers;

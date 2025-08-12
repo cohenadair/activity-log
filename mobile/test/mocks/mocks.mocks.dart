@@ -7,7 +7,7 @@
 import 'dart:async' as _i8;
 import 'dart:convert' as _i21;
 
-import 'package:adair_flutter_lib/utils/date_range.dart' as _i3;
+import 'package:adair_flutter_lib/model/gen/adair_flutter_lib.pb.dart' as _i3;
 import 'package:device_info_plus/device_info_plus.dart' as _i4;
 import 'package:flutter/material.dart' as _i10;
 import 'package:http/http.dart' as _i6;
@@ -47,9 +47,8 @@ class _FakeSummarizedActivityList_0 extends _i1.SmartFake
       : super(parent, parentInvocation);
 }
 
-class _FakeDisplayDateRange_1 extends _i1.SmartFake
-    implements _i3.DisplayDateRange {
-  _FakeDisplayDateRange_1(Object parent, Invocation parentInvocation)
+class _FakeDateRange_1 extends _i1.SmartFake implements _i3.DateRange {
+  _FakeDateRange_1(Object parent, Invocation parentInvocation)
       : super(parent, parentInvocation);
 }
 
@@ -368,19 +367,19 @@ class MockDataManager extends _i1.Mock implements _i13.DataManager {
 
   @override
   _i8.Future<_i2.SummarizedActivityList> getSummarizedActivities(
-    _i3.DisplayDateRange? displayDateRange, [
+    _i3.DateRange? dateRange, [
     List<_i11.Activity>? activities = const [],
   ]) =>
       (super.noSuchMethod(
         Invocation.method(#getSummarizedActivities, [
-          displayDateRange,
+          dateRange,
           activities,
         ]),
         returnValue: _i8.Future<_i2.SummarizedActivityList>.value(
           _FakeSummarizedActivityList_0(
             this,
             Invocation.method(#getSummarizedActivities, [
-              displayDateRange,
+              dateRange,
               activities,
             ]),
           ),
@@ -429,13 +428,13 @@ class MockPreferencesManager extends _i1.Mock
       ) as _i17.AppDurationUnit);
 
   @override
-  _i3.DisplayDateRange get homeDateRange => (super.noSuchMethod(
+  _i3.DateRange get homeDateRange => (super.noSuchMethod(
         Invocation.getter(#homeDateRange),
-        returnValue: _FakeDisplayDateRange_1(
+        returnValue: _FakeDateRange_1(
           this,
           Invocation.getter(#homeDateRange),
         ),
-      ) as _i3.DisplayDateRange);
+      ) as _i3.DateRange);
 
   @override
   List<String> get statsSelectedActivityIds => (super.noSuchMethod(
@@ -444,13 +443,13 @@ class MockPreferencesManager extends _i1.Mock
       ) as List<String>);
 
   @override
-  _i3.DisplayDateRange get statsDateRange => (super.noSuchMethod(
+  _i3.DateRange get statsDateRange => (super.noSuchMethod(
         Invocation.getter(#statsDateRange),
-        returnValue: _FakeDisplayDateRange_1(
+        returnValue: _FakeDateRange_1(
           this,
           Invocation.getter(#statsDateRange),
         ),
-      ) as _i3.DisplayDateRange);
+      ) as _i3.DateRange);
 
   @override
   _i8.Future<void> init() => (super.noSuchMethod(
@@ -466,7 +465,7 @@ class MockPreferencesManager extends _i1.Mock
       );
 
   @override
-  void setHomeDateRange(_i3.DisplayDateRange? range) => super.noSuchMethod(
+  void setHomeDateRange(_i3.DateRange? range) => super.noSuchMethod(
         Invocation.method(#setHomeDateRange, [range]),
         returnValueForMissingStub: null,
       );
@@ -478,7 +477,7 @@ class MockPreferencesManager extends _i1.Mock
       );
 
   @override
-  void setStatsDateRange(_i3.DisplayDateRange? range) => super.noSuchMethod(
+  void setStatsDateRange(_i3.DateRange? range) => super.noSuchMethod(
         Invocation.method(#setStatsDateRange, [range]),
         returnValueForMissingStub: null,
       );

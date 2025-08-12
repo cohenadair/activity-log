@@ -1,5 +1,4 @@
 import 'package:adair_flutter_lib/res/dimen.dart';
-import 'package:adair_flutter_lib/widgets/empty.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile/widgets/list_item.dart';
 import 'package:mobile/widgets/text.dart';
@@ -24,7 +23,7 @@ class Summary extends StatelessWidget {
       child: Column(
         children: <Widget>[
           isEmpty(title)
-              ? const Empty()
+              ? const SizedBox()
               : Padding(
                   padding: insetsBottomDefault,
                   child: LargeHeadingText(title),

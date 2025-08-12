@@ -1,6 +1,5 @@
 import 'package:adair_flutter_lib/res/dimen.dart';
 import 'package:adair_flutter_lib/utils/dialog.dart';
-import 'package:adair_flutter_lib/widgets/empty.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile/i18n/strings.dart';
 import 'package:mobile/model/session.dart';
@@ -47,7 +46,7 @@ class SessionListTile extends StatelessWidget {
             onPressed: () {
               showDeleteDialog(
                 context: context,
-                description: Strings.of(context).sessionListDeleteMessage,
+                description: Text(Strings.of(context).sessionListDeleteMessage),
                 onDelete: () {
                   DataManager.get.removeSession(_session);
                 },
@@ -55,7 +54,7 @@ class SessionListTile extends StatelessWidget {
             },
           ),
         ),
-        _hasDivider ? const Divider(height: 1) : const Empty(),
+        _hasDivider ? const Divider(height: 1) : const SizedBox(),
       ],
     );
   }

@@ -1,32 +1,32 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:adair_flutter_lib/model/gen/adair_flutter_lib.pb.dart';
 import 'package:adair_flutter_lib/pages/pro_page.dart';
 import 'package:adair_flutter_lib/res/dimen.dart';
 import 'package:adair_flutter_lib/utils/date_range.dart';
 import 'package:adair_flutter_lib/utils/dialog.dart';
 import 'package:adair_flutter_lib/utils/duration.dart';
 import 'package:adair_flutter_lib/utils/log.dart';
-import 'package:adair_flutter_lib/widgets/empty.dart';
 import 'package:adair_flutter_lib/widgets/loading.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:mobile/database/backup.dart';
-import 'package:mobile/pages/feedback_page.dart';
-import 'package:mobile/utils/page_utils.dart';
-import 'package:package_info_plus/package_info_plus.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:quiver/strings.dart';
-import 'package:share_plus/share_plus.dart';
 import 'package:mobile/i18n/strings.dart';
+import 'package:mobile/pages/feedback_page.dart';
 import 'package:mobile/preferences_manager.dart';
+import 'package:mobile/utils/page_utils.dart';
 import 'package:mobile/widgets/list_item.dart';
 import 'package:mobile/widgets/list_picker.dart';
 import 'package:mobile/widgets/my_page.dart';
 import 'package:mobile/widgets/text.dart';
 import 'package:mobile/widgets/widget.dart';
+import 'package:package_info_plus/package_info_plus.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:quiver/strings.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
@@ -152,8 +152,8 @@ class SettingsPageState extends State<SettingsPage> {
 
   Widget _buildHomeDateRangePicker() {
     return HomeDateRangeBuilder(
-      builder: (BuildContext context, DisplayDateRange dateRange) {
-        return ListPicker<DisplayDateRange>(
+      builder: (BuildContext context, DateRange dateRange) {
+        return ListPicker<DateRange>(
           pageTitle: Strings.of(context).settingsPageHomeDateRangeLabel,
           initialValues: {dateRange},
           showsValueOnTrailing: true,
@@ -168,28 +168,36 @@ class SettingsPageState extends State<SettingsPage> {
             Strings.of(context).settingsPageHomeDateRangeDescription,
           ),
           items: [
-            _buildDisplayDateRangeItem(DisplayDateRange.allDates),
+            _buildDisplayDateRangeItem(
+                DateRange(period: DateRange_Period.allDates)),
             ListPickerItem.divider(),
-            _buildDisplayDateRangeItem(DisplayDateRange.today),
+            _buildDisplayDateRangeItem(
+                DateRange(period: DateRange_Period.today)),
             ListPickerItem.divider(),
-            _buildDisplayDateRangeItem(DisplayDateRange.thisWeek),
-            _buildDisplayDateRangeItem(DisplayDateRange.thisMonth),
-            _buildDisplayDateRangeItem(DisplayDateRange.thisYear),
+            _buildDisplayDateRangeItem(
+                DateRange(period: DateRange_Period.thisWeek)),
+            _buildDisplayDateRangeItem(
+                DateRange(period: DateRange_Period.thisMonth)),
+            _buildDisplayDateRangeItem(
+                DateRange(period: DateRange_Period.thisYear)),
             ListPickerItem.divider(),
-            _buildDisplayDateRangeItem(DisplayDateRange.last7Days),
-            _buildDisplayDateRangeItem(DisplayDateRange.last30Days),
-            _buildDisplayDateRangeItem(DisplayDateRange.last12Months),
+            _buildDisplayDateRangeItem(
+                DateRange(period: DateRange_Period.last7Days)),
+            _buildDisplayDateRangeItem(
+                DateRange(period: DateRange_Period.last30Days)),
+            _buildDisplayDateRangeItem(
+                DateRange(period: DateRange_Period.last12Months)),
           ],
         );
       },
     );
   }
 
-  ListPickerItem<DisplayDateRange> _buildDisplayDateRangeItem(
-    DisplayDateRange dateRange,
+  ListPickerItem<DateRange> _buildDisplayDateRangeItem(
+    DateRange dateRange,
   ) {
-    return ListPickerItem<DisplayDateRange>(
-      title: dateRange.onTitle(context),
+    return ListPickerItem<DateRange>(
+      title: dateRange.displayName,
       value: dateRange,
     );
   }
@@ -221,7 +229,7 @@ class SettingsPageState extends State<SettingsPage> {
         if (await canLaunchUrlString(url)) {
           await launchUrlString(url);
         } else if (mounted) {
-          showErrorDialog(context: context, description: errorMessage);
+          showErrorDialog(context: context, description: Text(errorMessage));
         }
       },
     );
@@ -234,7 +242,7 @@ class SettingsPageState extends State<SettingsPage> {
         future: PackageInfo.fromPlatform(),
         builder: (_, snap) => snap.hasData
             ? SecondaryText("${snap.data!.version} (${snap.data!.buildNumber})")
-            : const Empty(),
+            : const SizedBox(),
       ),
     );
   }
@@ -253,7 +261,7 @@ class SettingsPageState extends State<SettingsPage> {
     return ListItem(
       title: Text(Strings.of(context).settingsPageExportLabel),
       subtitle: Text(Strings.of(context).settingsPageExportDescription),
-      trailing: _isCreatingBackup ? const Loading.listItem() : const Empty(),
+      trailing: _isCreatingBackup ? const Loading.listItem() : const SizedBox(),
       onTap: () {
         setState(() => _isCreatingBackup = true);
         _startExport(context.findRenderObject() as RenderBox);
@@ -265,7 +273,7 @@ class SettingsPageState extends State<SettingsPage> {
     return ListItem(
       title: Text(Strings.of(context).settingsPageImportLabel),
       subtitle: Text(Strings.of(context).settingsPageImportDescription),
-      trailing: _isImporting ? const Loading.listItem() : const Empty(),
+      trailing: _isImporting ? const Loading.listItem() : const SizedBox(),
       onTap: _startImport,
     );
   }
@@ -305,7 +313,7 @@ class SettingsPageState extends State<SettingsPage> {
     if (mounted) {
       showWarningDialog(
         context: context,
-        description: Strings.of(context).settingsPageImportWarning,
+        description: Text(Strings.of(context).settingsPageImportWarning),
         onContinue: () {
           setState(() {
             _isImporting = true;
@@ -327,7 +335,7 @@ class SettingsPageState extends State<SettingsPage> {
     } on Exception {
       showErrorDialog(
         context: context,
-        description: Strings.of(context).settingsPageImportBadFile,
+        description: Text(Strings.of(context).settingsPageImportBadFile),
       );
     }
 
@@ -338,7 +346,7 @@ class SettingsPageState extends State<SettingsPage> {
         if (result == ImportResult.success) {
           showOkDialog(
             context: context,
-            description: Strings.of(context).settingsPageImportSuccess,
+            description: Text(Strings.of(context).settingsPageImportSuccess),
           );
         } else {
           _showImportError(result, file);
@@ -391,7 +399,7 @@ class SettingsPageState extends State<SettingsPage> {
       if (mounted) {
         showErrorDialog(
           context: context,
-          description: Strings.of(context).settingsPageFailedEmailMessage,
+          description: Text(Strings.of(context).settingsPageFailedEmailMessage),
         );
       }
     }

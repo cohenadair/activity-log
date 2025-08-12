@@ -1,5 +1,6 @@
 import 'package:adair_flutter_lib/app_config.dart';
 import 'package:adair_flutter_lib/l10n/gen/adair_flutter_lib_localizations.dart';
+import 'package:adair_flutter_lib/l10n/l10n.dart';
 import 'package:adair_flutter_lib/res/anim.dart';
 import 'package:adair_flutter_lib/res/dimen.dart';
 import 'package:adair_flutter_lib/res/style.dart';
@@ -7,7 +8,6 @@ import 'package:adair_flutter_lib/res/theme.dart';
 import 'package:adair_flutter_lib/utils/date_time.dart';
 import 'package:adair_flutter_lib/utils/duration.dart';
 import 'package:adair_flutter_lib/utils/string.dart';
-import 'package:adair_flutter_lib/widgets/empty.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:mobile/i18n/strings.dart';
@@ -71,7 +71,7 @@ class AnimatedErrorTextState extends State<AnimatedErrorText>
   @override
   Widget build(BuildContext context) {
     if (isEmpty(widget.text)) {
-      return const Empty();
+      return const SizedBox();
     } else {
       return _buildText();
     }
@@ -244,7 +244,7 @@ class DateDurationText extends StatelessWidget {
 
   String _format(BuildContext context) {
     // Format the date.
-    String formattedDate = formatDateAsRecent(context, startDateTime);
+    String formattedDate = formatDateAsRecent(startDateTime);
 
     // Format the duration.
     DisplayDuration displayDuration = DisplayDuration(
@@ -387,7 +387,7 @@ class DateText extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return EnabledText(
-      DateFormat(monthDayYearFormat).format(date),
+      DateFormat(L10n.get.lib.dateFormatMonthDayYear).format(date),
       enabled: enabled,
     );
   }

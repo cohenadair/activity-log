@@ -12,7 +12,7 @@ void main() {
 
   setUp(() async {
     managers = await StubbedManagers.create();
-    managers.timeManager.overrideNow(2019, 1, 15, 10, 5, 0);
+    managers.lib.stubCurrentTime(DateTime(2019, 1, 15, 10, 5, 0));
   });
 
   group("TotalDurationText", () {

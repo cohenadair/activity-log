@@ -1,13 +1,13 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:adair_flutter_lib/utils/date_range.dart';
 import 'package:mobile/database/data_manager.dart';
 import 'package:mobile/model/activity.dart';
 import 'package:mobile/model/session.dart';
 import 'package:mobile/preferences_manager.dart';
 import 'package:quiver/strings.dart';
 
+import '../utils/date_range.dart';
 import '../utils/duration.dart';
 
 enum ImportResult {
@@ -65,7 +65,7 @@ Future<String> export() async {
   jsonMap[_keyPreferences][_keyPreferencesLargestDurationUnit] =
       PreferencesManager.get.largestDurationUnit.index;
   jsonMap[_keyPreferences][_keyPreferencesHomeDateRange] =
-      PreferencesManager.get.homeDateRange.id;
+      PreferencesManager.get.homeDateRange.legacyDisplayDateRangeId;
 
   return jsonEncode(jsonMap);
 }
@@ -158,12 +158,10 @@ Future<ImportResult> import({String? json}) async {
     Map<String, dynamic> preferences = jsonMap[_keyPreferences];
 
     if (preferences[_keyPreferencesHomeDateRange] is String) {
-      var displayDateRange = DisplayDateRange.of(
+      PreferencesManager.get
+          .setHomeDateRange(DateRanges.fromLegacyDisplayDateRangeId(
         preferences[_keyPreferencesHomeDateRange],
-      );
-      if (displayDateRange != null) {
-        PreferencesManager.get.setHomeDateRange(displayDateRange);
-      }
+      ));
     }
 
     if (preferences[_keyPreferencesLargestDurationUnit] is int) {

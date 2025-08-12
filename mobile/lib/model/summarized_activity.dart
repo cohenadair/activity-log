@@ -1,9 +1,11 @@
 import 'dart:collection';
 
 import 'package:adair_flutter_lib/managers/time_manager.dart';
+import 'package:adair_flutter_lib/model/gen/adair_flutter_lib.pb.dart';
 import 'package:adair_flutter_lib/utils/date_range.dart';
 import 'package:adair_flutter_lib/utils/date_time.dart';
 import 'package:adair_flutter_lib/utils/duration.dart';
+import 'package:fixnum/fixnum.dart';
 import 'package:mobile/model/activity.dart';
 import 'package:mobile/model/session.dart';
 import 'package:mobile/utils/tuple.dart';
@@ -16,8 +18,8 @@ import 'package:timezone/timezone.dart';
 class SummarizedActivity {
   final Activity value;
 
-  /// The [DisplayDateRange] for the summary. Set to `null` for "all dates".
-  final DisplayDateRange? displayDateRange;
+  /// The [DateRange] for the summary. Set to `null` for "all dates".
+  final DateRange? dateRange;
 
   final List<Session> sessions;
 
@@ -38,7 +40,7 @@ class SummarizedActivity {
 
   SummarizedActivity({
     required this.value,
-    required this.displayDateRange,
+    required this.dateRange,
     this.sessions = const [],
   });
 
@@ -160,12 +162,13 @@ class SummarizedActivity {
 
     // If the date range is null, restrict the range to the earliest
     // and latest sessions.
-    DateRange range = displayDateRange == null
-        ? DateRange(
-            startDate: sessions.first.startDateTime,
-            endDate: sessions.last.endDateTime ?? TimeManager.get.now(),
-          )
-        : displayDateRange!.onValue(TimeManager.get.now());
+    var range = dateRange ??
+        DateRange(
+          period: DateRange_Period.custom,
+          startTimestamp: Int64(sessions.first.startTimestamp),
+          endTimestamp: Int64(sessions.last.endTimestamp ??
+              TimeManager.get.now().millisecondsSinceEpoch),
+        );
 
     _cachedDurationPerDay = averageDuration(
       totalDuration.inMilliseconds,
@@ -261,7 +264,7 @@ class SummarizedActivity {
 /// including summary data across all of its activities.
 class SummarizedActivityList {
   final List<SummarizedActivity> activities;
-  final DisplayDateRange? displayDateRange;
+  final DateRange? dateRange;
   final Clock clock;
 
   Tuple<Activity, Session>? _cachedLongestSession;
@@ -278,7 +281,7 @@ class SummarizedActivityList {
 
   SummarizedActivityList(
     this.activities,
-    this.displayDateRange, {
+    this.dateRange, {
     this.clock = const Clock(),
   });
 
@@ -406,11 +409,12 @@ class SummarizedActivityList {
 
     // If the date range is null, restrict the range to the earliest
     // and latest sessions.
-    var now = TimeManager.get.now();
-    var range = displayDateRange?.onValue(now) ??
+    var now = TimeManager.get.currentTimestamp;
+    var range = dateRange ??
         DateRange(
-          startDate: earliestSession?.startDateTime ?? now,
-          endDate: latestSession?.endDateTime ?? now,
+          period: DateRange_Period.custom,
+          startTimestamp: Int64(earliestSession?.startTimestamp ?? now),
+          endTimestamp: Int64(latestSession?.endTimestamp ?? now),
         );
 
     _cachedDurationPerDay = averageDuration(totalDuration, range.days);
