@@ -9,6 +9,7 @@ import 'package:adair_flutter_lib/managers/properties_manager.dart';
 import 'package:adair_flutter_lib/managers/subscription_manager.dart';
 import 'package:adair_flutter_lib/managers/time_manager.dart';
 import 'package:adair_flutter_lib/res/theme.dart';
+import 'package:adair_flutter_lib/utils/log.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
@@ -16,6 +17,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:mobile/i18n/strings.dart';
+import 'package:mobile/l10n/l10n_extension.dart';
 import 'package:mobile/pages/main_page.dart';
 import 'package:mobile/preferences_manager.dart';
 import 'package:mobile/res/gen/custom_icons.dart';
@@ -70,22 +72,22 @@ class ActivityLog extends StatefulWidget {
 }
 
 class ActivityLogState extends State<ActivityLog> {
-  late Future<bool> _appInitializedFuture;
+  final _log = Log("ActivityLogState");
+
+  late Future<void> _appInitializedFuture;
 
   @override
   void initState() {
     super.initState();
 
     AppConfig.get.init(
-      appName: () => Strings.of(context).appName,
+      appName: () => L10n.get.app.appName,
       appIcon: CustomIcons.app,
       colorAppTheme: Colors.green,
     );
 
     // Wait for all app initializations before showing the app as "ready".
-    _appInitializedFuture = Future.wait([
-      _initManagers(),
-    ]).then((_) => true);
+    _appInitializedFuture = _initManagers();
   }
 
   @override
@@ -93,7 +95,7 @@ class ActivityLogState extends State<ActivityLog> {
     return MaterialApp(
       onGenerateTitle: (context) {
         L10n.get.context = context;
-        return Strings.of(context).appName;
+        return L10n.get.app.appName;
       },
       theme: AdairFlutterLibTheme.light().copyWith(
         buttonTheme: const ButtonThemeData(textTheme: ButtonTextTheme.primary),
@@ -157,10 +159,14 @@ class ActivityLogState extends State<ActivityLog> {
         ),
       ),
       themeMode: AppConfig.get.themeMode(),
-      home: FutureBuilder<bool>(
+      home: FutureBuilder(
         future: _appInitializedFuture,
-        builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
-          if (snapshot.hasError || !snapshot.hasData) {
+        builder: (_, snapshot) {
+          if (snapshot.hasError ||
+              snapshot.connectionState != ConnectionState.done) {
+            if (snapshot.hasError) {
+              _log.e(snapshot.error!.toString());
+            }
             return Scaffold(backgroundColor: AppConfig.get.colorAppTheme);
           }
           return MainPage();
@@ -170,9 +176,9 @@ class ActivityLogState extends State<ActivityLog> {
       localizationsDelegates: [
         StringsDelegate(),
         AdairFlutterLibLocalizations.delegate,
-        DefaultMaterialLocalizations.delegate,
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
       ],
       supportedLocales: const [Locale('en', 'US'), Locale('en', 'CA')],
     );

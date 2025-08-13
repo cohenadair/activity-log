@@ -106,7 +106,7 @@ class StatsPageState extends State<StatsPage> {
                 ),
                 StatsDateRangePicker(
                   initialValue: _currentDateRange,
-                  onDurationPicked: (DateRange pickedDateRange) {
+                  onDurationPicked: (pickedDateRange) {
                     setState(() {
                       _currentDateRange = pickedDateRange;
                       _updateFutures();
@@ -136,9 +136,9 @@ class StatsPageState extends State<StatsPage> {
                     }
 
                     if (activities.length == 1 &&
-                            activities.first.dateRange == null ||
+                            (activities.first.dateRange == null ||
                         activities.first.dateRange!.period !=
-                            DateRange_Period.allDates) {
+                            DateRange_Period.allDates)) {
                       return _buildForSingleActivity(activities.first);
                     } else {
                       return _buildForMultipleActivities(snapshot.data!);

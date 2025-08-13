@@ -107,6 +107,7 @@ class StatsDateRangePickerState extends State<StatsDateRangePicker> {
     }
 
     var dateRange = DateRange(
+      period: DateRange_Period.custom,
       startTimestamp: Int64(TimeManager.get
           .dateTimeToTz(pickedRange.start)
           .millisecondsSinceEpoch),
