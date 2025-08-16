@@ -68,21 +68,18 @@ class PreferencesManager {
 
     _largestDurationUnit =
         AppDurationUnit.values[prefs.getInt(_keyLargestDurationUnit) ?? 0];
-    _homeDateRange = _dateRange(prefs, _keyHomeDateRange);
+    _homeDateRange =
+        DateRanges.fromPreference(prefs.getString(_keyHomeDateRange));
 
     List<String> activityIds =
         prefs.getStringList(_keyStatsSelectedActivityIds) ?? [];
     _statsSelectedActivityIds = activityIds.isEmpty ? [] : activityIds;
 
-    _statsDateRange = _dateRange(prefs, _keyStatsDateRange);
+    _statsDateRange =
+        DateRanges.fromPreference(prefs.getString(_keyStatsDateRange));
 
     _userName = prefs.getString(_keyUserName);
     _userEmail = prefs.getString(_keyUserEmail);
-  }
-
-  DateRange _dateRange(SharedPreferences prefs, String key) {
-    return DateRanges.fromLegacyDisplayDateRangeId(
-        prefs.getString(key) ?? "allDates");
   }
 
   void setLargestDurationUnit(AppDurationUnit unit) async {
@@ -109,8 +106,7 @@ class PreferencesManager {
     _homeDateRange = range;
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString(
-        _keyHomeDateRange, _homeDateRange.legacyDisplayDateRangeId);
+    await prefs.setString(_keyHomeDateRange, _homeDateRange.writeToJson());
 
     _homeDateRangeUpdated.notify();
   }
@@ -140,8 +136,7 @@ class PreferencesManager {
     _statsDateRange = range;
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString(
-        _keyStatsDateRange, _statsDateRange.legacyDisplayDateRangeId);
+    await prefs.setString(_keyStatsDateRange, _statsDateRange.writeToJson());
   }
 
   void setUserInfo(String name, String email) async {

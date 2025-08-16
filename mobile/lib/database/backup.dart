@@ -65,7 +65,7 @@ Future<String> export() async {
   jsonMap[_keyPreferences][_keyPreferencesLargestDurationUnit] =
       PreferencesManager.get.largestDurationUnit.index;
   jsonMap[_keyPreferences][_keyPreferencesHomeDateRange] =
-      PreferencesManager.get.homeDateRange.legacyDisplayDateRangeId;
+      PreferencesManager.get.homeDateRange.writeToJson();
 
   return jsonEncode(jsonMap);
 }
@@ -158,10 +158,8 @@ Future<ImportResult> import({String? json}) async {
     Map<String, dynamic> preferences = jsonMap[_keyPreferences];
 
     if (preferences[_keyPreferencesHomeDateRange] is String) {
-      PreferencesManager.get
-          .setHomeDateRange(DateRanges.fromLegacyDisplayDateRangeId(
-        preferences[_keyPreferencesHomeDateRange],
-      ));
+      PreferencesManager.get.setHomeDateRange(
+          DateRanges.fromPreference(preferences[_keyPreferencesHomeDateRange]));
     }
 
     if (preferences[_keyPreferencesLargestDurationUnit] is int) {

@@ -24,7 +24,16 @@ class StatsDateRangePicker extends StatefulWidget {
 }
 
 class StatsDateRangePickerState extends State<StatsDateRangePicker> {
-  DateRange _customDateRange = DateRange(period: DateRange_Period.custom);
+  var _customDateRange = DateRange(period: DateRange_Period.custom);
+
+  @override
+  void initState() {
+    super.initState();
+
+    if (widget.initialValue.period == DateRange_Period.custom) {
+      _customDateRange = widget.initialValue;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {

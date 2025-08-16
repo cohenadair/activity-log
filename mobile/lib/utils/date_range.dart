@@ -1,11 +1,28 @@
 import 'package:adair_flutter_lib/model/gen/adair_flutter_lib.pb.dart';
-import 'package:adair_flutter_lib/utils/log.dart';
-
-const _log = Log("DateRanges");
+import 'package:quiver/strings.dart';
 
 extension DateRanges on DateRange {
-  // TODO: Properly migrate to storing DateRange_Period rather than legacy IDs.
-  static DateRange fromLegacyDisplayDateRangeId(String displayDateRangeId) {
+  static DateRange get _default => DateRange(period: DateRange_Period.allDates);
+
+  // TODO: Remove when there are no more 1.x users.
+  static DateRange fromPreference(String? pref) {
+    return DateRanges._fromLegacyDisplayDateRangeId(pref) ??
+        (isEmpty(pref) ? _default : _safeFromJson(pref!));
+  }
+
+  static DateRange _safeFromJson(String json) {
+    try {
+      return DateRange.fromJson(json);
+    } catch (ex) {
+      return _default;
+    }
+  }
+
+  static DateRange? _fromLegacyDisplayDateRangeId(String? displayDateRangeId) {
+    if (isEmpty(displayDateRangeId)) {
+      return null;
+    }
+
     switch (displayDateRangeId) {
       case "allDates":
         return DateRange(period: DateRange_Period.allDates);
@@ -36,48 +53,8 @@ extension DateRanges on DateRange {
       case "last12Months":
         return DateRange(period: DateRange_Period.last12Months);
       case "custom":
-        return DateRange(period: DateRange_Period.custom);
       default:
-        _log.w("Unknown legacy ID: $displayDateRangeId");
-        return DateRange(period: DateRange_Period.allDates);
-    }
-  }
-
-  String get legacyDisplayDateRangeId {
-    switch (period) {
-      case DateRange_Period.allDates:
-        return "allDates";
-      case DateRange_Period.custom:
-        return "custom";
-      case DateRange_Period.last12Months:
-        return "last12Months";
-      case DateRange_Period.last14Days:
-        return "last14Days";
-      case DateRange_Period.last30Days:
-        return "last30Days";
-      case DateRange_Period.last60Days:
-        return "last60Days";
-      case DateRange_Period.last7Days:
-        return "last7Days";
-      case DateRange_Period.lastMonth:
-        return "lastMonth";
-      case DateRange_Period.lastWeek:
-        return "lastWeek";
-      case DateRange_Period.lastYear:
-        return "lastYear";
-      case DateRange_Period.thisMonth:
-        return "thisMonth";
-      case DateRange_Period.thisWeek:
-        return "thisWeek";
-      case DateRange_Period.thisYear:
-        return "thisYear";
-      case DateRange_Period.today:
-        return "today";
-      case DateRange_Period.yesterday:
-        return "yesterday";
-      default:
-        _log.w("Unknown DateRange_Period: $period");
-        return "allDates";
+        return null;
     }
   }
 }
