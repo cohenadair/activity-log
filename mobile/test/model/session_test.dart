@@ -24,12 +24,14 @@ void main() {
       expect(session.startDateTime, equals(session.startDateTime));
 
       var dateRange = DateRange(
-        startTimestamp: Int64(TimeManager.get
-            .dateTimeFromValues(2018, 2, 1)
-            .millisecondsSinceEpoch),
-        endTimestamp: Int64(TimeManager.get
-            .dateTimeFromValues(2018, 2, 15)
-            .millisecondsSinceEpoch),
+        startTimestamp: Int64(
+          TimeManager.get.dateTimeFromValues(2018, 2, 1).millisecondsSinceEpoch,
+        ),
+        endTimestamp: Int64(
+          TimeManager.get
+              .dateTimeFromValues(2018, 2, 15)
+              .millisecondsSinceEpoch,
+        ),
       );
 
       session = builder.pinToDateRange(dateRange).build;

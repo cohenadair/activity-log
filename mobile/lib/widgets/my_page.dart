@@ -17,8 +17,8 @@ class MyPage extends StatelessWidget {
   final MyPageAppBarStyle? _appBarStyle;
 
   const MyPage({required Widget child, MyPageAppBarStyle? appBarStyle})
-      : _child = child,
-        _appBarStyle = appBarStyle;
+    : _child = child,
+      _appBarStyle = appBarStyle;
 
   @override
   Widget build(BuildContext context) {
@@ -27,9 +27,7 @@ class MyPage extends StatelessWidget {
           ? null
           : AppBar(
               title: _appBarStyle.subtitle == null
-                  ? Text(
-                      _appBarStyle.title == null ? "" : _appBarStyle.title!,
-                    )
+                  ? Text(_appBarStyle.title == null ? "" : _appBarStyle.title!)
                   : _buildTitleWithSubtitle(context),
               actions: _appBarStyle.actions,
               leading: _appBarStyle.leading,

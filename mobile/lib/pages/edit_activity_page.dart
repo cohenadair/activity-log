@@ -132,9 +132,7 @@ class EditActivityPageState extends State<EditActivityPage> {
             onPressed: () {
               push(
                 context,
-                EditSessionPage(
-                  activity: widget.editingActivity!,
-                ),
+                EditSessionPage(activity: widget.editingActivity!),
                 fullscreenDialog: true,
               );
             },
@@ -153,10 +151,8 @@ class EditActivityPageState extends State<EditActivityPage> {
               Padding(
                 padding: insetsHorizontalDefault,
                 child: TextButton(
-                  onPressed: () => push(
-                    context,
-                    SessionsPage(widget.editingActivity!),
-                  ),
+                  onPressed: () =>
+                      push(context, SessionsPage(widget.editingActivity!)),
                   child: Text(
                     Strings.of(
                       context,
@@ -184,9 +180,7 @@ class EditActivityPageState extends State<EditActivityPage> {
           ..name = nameCandidate;
         DataManager.get.updateActivity(builder.build);
       } else {
-        DataManager.get.addActivity(
-          ActivityBuilder(nameCandidate).build,
-        );
+        DataManager.get.addActivity(ActivityBuilder(nameCandidate).build);
       }
 
       Navigator.pop(context);

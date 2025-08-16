@@ -41,9 +41,9 @@ Future<String> export() async {
     if (activity.isRunning) {
       // End any running activities. This ensures that when the database
       // is imported, there isn't a potentially long session in progress.
-      activity = (ActivityBuilder.fromActivity(activity)
-            ..currentSessionId = null)
-          .build;
+      activity = (ActivityBuilder.fromActivity(
+        activity,
+      )..currentSessionId = null).build;
     }
 
     return activity.toMap();
@@ -64,8 +64,10 @@ Future<String> export() async {
   jsonMap[_keyPreferences] = <String, dynamic>{};
   jsonMap[_keyPreferences][_keyPreferencesLargestDurationUnit] =
       PreferencesManager.get.largestDurationUnit.index;
-  jsonMap[_keyPreferences][_keyPreferencesHomeDateRange] =
-      PreferencesManager.get.homeDateRange.writeToJson();
+  jsonMap[_keyPreferences][_keyPreferencesHomeDateRange] = PreferencesManager
+      .get
+      .homeDateRange
+      .writeToJson();
 
   return jsonEncode(jsonMap);
 }
@@ -159,7 +161,8 @@ Future<ImportResult> import({String? json}) async {
 
     if (preferences[_keyPreferencesHomeDateRange] is String) {
       PreferencesManager.get.setHomeDateRange(
-          DateRanges.fromPreference(preferences[_keyPreferencesHomeDateRange]));
+        DateRanges.fromPreference(preferences[_keyPreferencesHomeDateRange]),
+      );
     }
 
     if (preferences[_keyPreferencesLargestDurationUnit] is int) {

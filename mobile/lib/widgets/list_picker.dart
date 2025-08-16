@@ -71,8 +71,9 @@ class ListPicker<T> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListItem(
-      title:
-          titleBuilder == null ? _buildTitle() : titleBuilder!(initialValues),
+      title: titleBuilder == null
+          ? _buildTitle()
+          : titleBuilder!(initialValues),
       trailing: Row(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
@@ -160,12 +161,12 @@ class ListPickerItem<T> {
   final bool popsListOnPicked;
 
   ListPickerItem.divider()
-      : value = null,
-        title = null,
-        subtitle = null,
-        isDivider = true,
-        popsListOnPicked = false,
-        onTap = null;
+    : value = null,
+      title = null,
+      subtitle = null,
+      isDivider = true,
+      popsListOnPicked = false,
+      onTap = null;
 
   ListPickerItem({
     required this.title,
@@ -173,9 +174,9 @@ class ListPickerItem<T> {
     this.value,
     this.onTap,
     this.popsListOnPicked = true,
-  })  : assert(value != null || (value == null && onTap != null)),
-        assert(title != null),
-        isDivider = false;
+  }) : assert(value != null || (value == null && onTap != null)),
+       assert(title != null),
+       isDivider = false;
 }
 
 /// A helper page for [ListPicker] that renders a list of options.

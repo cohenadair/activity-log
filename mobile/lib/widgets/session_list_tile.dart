@@ -19,9 +19,9 @@ class SessionListTile extends StatelessWidget {
     required Session session,
     bool hasDivider = false,
     OnTapSessionListTile? onTap,
-  })  : _session = session,
-        _hasDivider = hasDivider,
-        _onTap = onTap;
+  }) : _session = session,
+       _hasDivider = hasDivider,
+       _onTap = onTap;
 
   @override
   Widget build(BuildContext context) {

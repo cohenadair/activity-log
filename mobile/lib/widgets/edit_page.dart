@@ -22,14 +22,14 @@ class EditPage extends StatelessWidget {
     required isEditingCallback,
     required form,
     required EdgeInsets padding,
-  })  : assert(form != null),
-        _title = title,
-        _onPressedSaveButton = onSave,
-        _onPressedDeleteButton = onDelete,
-        _deleteDescription = deleteDescription,
-        _isEditingCallback = isEditingCallback,
-        _form = form,
-        _padding = padding;
+  }) : assert(form != null),
+       _title = title,
+       _onPressedSaveButton = onSave,
+       _onPressedDeleteButton = onDelete,
+       _deleteDescription = deleteDescription,
+       _isEditingCallback = isEditingCallback,
+       _form = form,
+       _padding = padding;
 
   @override
   Widget build(BuildContext context) {

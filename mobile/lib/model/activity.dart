@@ -11,14 +11,14 @@ class Activity extends Model {
   String? get currentSessionId => _currentSessionId;
 
   Activity.fromMap(super.map)
-      : _name = map[keyName],
-        _currentSessionId = map[keyCurrentSessionId],
-        super.fromMap();
+    : _name = map[keyName],
+      _currentSessionId = map[keyCurrentSessionId],
+      super.fromMap();
 
   Activity.fromBuilder(ActivityBuilder super.builder)
-      : _name = builder.name,
-        _currentSessionId = builder.currentSessionId,
-        super.fromBuilder();
+    : _name = builder.name,
+      _currentSessionId = builder.currentSessionId,
+      super.fromBuilder();
 
   bool get isRunning => _currentSessionId != null;
 
@@ -44,9 +44,9 @@ class ActivityBuilder extends ModelBuilder {
   ActivityBuilder(this.name);
 
   ActivityBuilder.fromActivity(Activity super.activity)
-      : name = activity._name,
-        currentSessionId = activity._currentSessionId,
-        super.fromModel();
+    : name = activity._name,
+      currentSessionId = activity._currentSessionId,
+      super.fromModel();
 
   @override
   Activity get build {

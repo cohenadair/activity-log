@@ -25,10 +25,12 @@ void main() {
     when(managers.preferencesManager.userEmail).thenReturn("test@test.com");
     when(managers.preferencesManager.setUserInfo(any, any)).thenAnswer((_) {});
 
-    when(managers.propertiesManager.supportEmail)
-        .thenReturn("support@test.com");
-    when(managers.propertiesManager.clientSenderEmail)
-        .thenReturn("sender@test.com");
+    when(
+      managers.propertiesManager.supportEmail,
+    ).thenReturn("support@test.com");
+    when(
+      managers.propertiesManager.clientSenderEmail,
+    ).thenReturn("sender@test.com");
     when(managers.propertiesManager.feedbackTemplate).thenReturn("""
       App version: %s
       OS version: %s
@@ -89,8 +91,9 @@ void main() {
 
   testWidgets("Text fields are initially set from preferences", (tester) async {
     when(managers.preferencesManager.userName).thenReturn("User Name");
-    when(managers.preferencesManager.userEmail)
-        .thenReturn("useremail@test.com");
+    when(
+      managers.preferencesManager.userEmail,
+    ).thenReturn("useremail@test.com");
 
     await tester.pumpWidget(Testable((_) => FeedbackPage()));
 
@@ -278,8 +281,9 @@ void main() {
 
   testWidgets("Successful send", (tester) async {
     when(managers.preferencesManager.userName).thenReturn("User Name");
-    when(managers.preferencesManager.userEmail)
-        .thenReturn("useremail@test.com");
+    when(
+      managers.preferencesManager.userEmail,
+    ).thenReturn("useremail@test.com");
     when(
       managers.ioWrapper.lookup(any),
     ).thenAnswer((_) => Future.value([InternetAddress("192.168.2.211")]));
@@ -331,8 +335,10 @@ void main() {
     expect(find.byType(Loading), findsNothing);
     expect(find.text("SEND"), findsOneWidget);
     verify(
-      managers.preferencesManager
-          .setUserInfo("User Name", "useremail@test.com"),
+      managers.preferencesManager.setUserInfo(
+        "User Name",
+        "useremail@test.com",
+      ),
     ).called(1);
 
     expect(

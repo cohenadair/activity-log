@@ -85,11 +85,14 @@ void main() {
       SummarizedActivity activity = SummarizedActivity(
         value: ActivityBuilder("").build,
         dateRange: DateRange(
-          startTimestamp:
-              Int64(TimeManager.get.dateTime(0).millisecondsSinceEpoch),
-          endTimestamp: Int64(TimeManager.get
-              .dateTime(Duration.millisecondsPerDay * 5)
-              .millisecondsSinceEpoch),
+          startTimestamp: Int64(
+            TimeManager.get.dateTime(0).millisecondsSinceEpoch,
+          ),
+          endTimestamp: Int64(
+            TimeManager.get
+                .dateTime(Duration.millisecondsPerDay * 5)
+                .millisecondsSinceEpoch,
+          ),
         ),
         sessions: sessions,
       );
@@ -174,17 +177,21 @@ void main() {
     ];
 
     SummarizedActivity activity() => SummarizedActivity(
-          value: ActivityBuilder("").build,
-          dateRange: DateRange(
-            startTimestamp: Int64(TimeManager.get
-                .dateTimeFromValues(2018, 11, 15, 7)
-                .millisecondsSinceEpoch),
-            endTimestamp: Int64(TimeManager.get
-                .dateTimeFromValues(2019, 10, 25, 20)
-                .millisecondsSinceEpoch),
-          ),
-          sessions: sessions,
-        );
+      value: ActivityBuilder("").build,
+      dateRange: DateRange(
+        startTimestamp: Int64(
+          TimeManager.get
+              .dateTimeFromValues(2018, 11, 15, 7)
+              .millisecondsSinceEpoch,
+        ),
+        endTimestamp: Int64(
+          TimeManager.get
+              .dateTimeFromValues(2019, 10, 25, 20)
+              .millisecondsSinceEpoch,
+        ),
+      ),
+      sessions: sessions,
+    );
 
     test("Max", () {
       expect(
@@ -207,12 +214,16 @@ void main() {
       SummarizedActivity summarizedActivity = SummarizedActivity(
         value: activity,
         dateRange: DateRange(
-          startTimestamp: Int64(TimeManager.get
-              .dateTimeFromValues(2018, 1, 5, 12)
-              .millisecondsSinceEpoch),
-          endTimestamp: Int64(TimeManager.get
-              .dateTimeFromValues(2019, 1, 25, 21)
-              .millisecondsSinceEpoch),
+          startTimestamp: Int64(
+            TimeManager.get
+                .dateTimeFromValues(2018, 1, 5, 12)
+                .millisecondsSinceEpoch,
+          ),
+          endTimestamp: Int64(
+            TimeManager.get
+                .dateTimeFromValues(2019, 1, 25, 21)
+                .millisecondsSinceEpoch,
+          ),
         ),
         sessions: [
           buildSession(
@@ -288,12 +299,16 @@ void main() {
       SummarizedActivity summarizedActivity = SummarizedActivity(
         value: activity,
         dateRange: DateRange(
-          startTimestamp: Int64(TimeManager.get
-              .dateTimeFromValues(2018, 1, 1)
-              .millisecondsSinceEpoch),
-          endTimestamp: Int64(TimeManager.get
-              .dateTimeFromValues(2019, 1, 1)
-              .millisecondsSinceEpoch),
+          startTimestamp: Int64(
+            TimeManager.get
+                .dateTimeFromValues(2018, 1, 1)
+                .millisecondsSinceEpoch,
+          ),
+          endTimestamp: Int64(
+            TimeManager.get
+                .dateTimeFromValues(2019, 1, 1)
+                .millisecondsSinceEpoch,
+          ),
         ),
         sessions: [
           buildSession(
@@ -313,12 +328,16 @@ void main() {
       SummarizedActivity summarizedActivity = SummarizedActivity(
         value: activity,
         dateRange: DateRange(
-          startTimestamp: Int64(TimeManager.get
-              .dateTimeFromValues(2018, 1, 1)
-              .millisecondsSinceEpoch),
-          endTimestamp: Int64(TimeManager.get
-              .dateTimeFromValues(2023, 1, 1)
-              .millisecondsSinceEpoch),
+          startTimestamp: Int64(
+            TimeManager.get
+                .dateTimeFromValues(2018, 1, 1)
+                .millisecondsSinceEpoch,
+          ),
+          endTimestamp: Int64(
+            TimeManager.get
+                .dateTimeFromValues(2023, 1, 1)
+                .millisecondsSinceEpoch,
+          ),
         ),
         sessions: [
           buildSession(
@@ -338,12 +357,16 @@ void main() {
       SummarizedActivity summarizedActivity = SummarizedActivity(
         value: activity,
         dateRange: DateRange(
-          startTimestamp: Int64(TimeManager.get
-              .dateTimeFromValues(2018, 1, 1)
-              .millisecondsSinceEpoch),
-          endTimestamp: Int64(TimeManager.get
-              .dateTimeFromValues(2023, 1, 1)
-              .millisecondsSinceEpoch),
+          startTimestamp: Int64(
+            TimeManager.get
+                .dateTimeFromValues(2018, 1, 1)
+                .millisecondsSinceEpoch,
+          ),
+          endTimestamp: Int64(
+            TimeManager.get
+                .dateTimeFromValues(2023, 1, 1)
+                .millisecondsSinceEpoch,
+          ),
         ),
         sessions: [
           buildSession(
@@ -370,12 +393,16 @@ void main() {
       SummarizedActivity summarizedActivity = SummarizedActivity(
         value: activity,
         dateRange: DateRange(
-          startTimestamp: Int64(TimeManager.get
-              .dateTimeFromValues(2018, 1, 1)
-              .millisecondsSinceEpoch),
-          endTimestamp: Int64(TimeManager.get
-              .dateTimeFromValues(2023, 1, 1)
-              .millisecondsSinceEpoch),
+          startTimestamp: Int64(
+            TimeManager.get
+                .dateTimeFromValues(2018, 1, 1)
+                .millisecondsSinceEpoch,
+          ),
+          endTimestamp: Int64(
+            TimeManager.get
+                .dateTimeFromValues(2023, 1, 1)
+                .millisecondsSinceEpoch,
+          ),
         ),
         sessions: [
           buildSession(
@@ -447,12 +474,16 @@ void main() {
       SummarizedActivity summarizedActivity = SummarizedActivity(
         value: activity,
         dateRange: DateRange(
-          startTimestamp: Int64(TimeManager.get
-              .dateTimeFromValues(2018, 1, 1)
-              .millisecondsSinceEpoch),
-          endTimestamp: Int64(TimeManager.get
-              .dateTimeFromValues(2023, 1, 1)
-              .millisecondsSinceEpoch),
+          startTimestamp: Int64(
+            TimeManager.get
+                .dateTimeFromValues(2018, 1, 1)
+                .millisecondsSinceEpoch,
+          ),
+          endTimestamp: Int64(
+            TimeManager.get
+                .dateTimeFromValues(2023, 1, 1)
+                .millisecondsSinceEpoch,
+          ),
         ),
         sessions: [
           buildSession(
@@ -492,9 +523,11 @@ void main() {
       SummarizedActivity summarizedActivity = SummarizedActivity(
         value: activity,
         dateRange: DateRange(
-          startTimestamp: Int64(TimeManager.get
-              .dateTimeFromValues(2018, 1, 1)
-              .millisecondsSinceEpoch),
+          startTimestamp: Int64(
+            TimeManager.get
+                .dateTimeFromValues(2018, 1, 1)
+                .millisecondsSinceEpoch,
+          ),
           endTimestamp: Int64(TimeManager.get.currentTimestamp),
         ),
         sessions: [
@@ -609,12 +642,16 @@ void main() {
       SummarizedActivity summarizedActivity1 = SummarizedActivity(
         value: activity1,
         dateRange: DateRange(
-          startTimestamp: Int64(TimeManager.get
-              .dateTimeFromValues(2018, 1, 10, 5)
-              .millisecondsSinceEpoch),
-          endTimestamp: Int64(TimeManager.get
-              .dateTimeFromValues(2023, 1, 20, 10)
-              .millisecondsSinceEpoch),
+          startTimestamp: Int64(
+            TimeManager.get
+                .dateTimeFromValues(2018, 1, 10, 5)
+                .millisecondsSinceEpoch,
+          ),
+          endTimestamp: Int64(
+            TimeManager.get
+                .dateTimeFromValues(2023, 1, 20, 10)
+                .millisecondsSinceEpoch,
+          ),
         ),
         sessions: [
           buildSession(
@@ -633,12 +670,16 @@ void main() {
       SummarizedActivity summarizedActivity2 = SummarizedActivity(
         value: activity2,
         dateRange: DateRange(
-          startTimestamp: Int64(TimeManager.get
-              .dateTimeFromValues(2018, 1, 5, 12)
-              .millisecondsSinceEpoch),
-          endTimestamp: Int64(TimeManager.get
-              .dateTimeFromValues(2023, 1, 25, 21)
-              .millisecondsSinceEpoch),
+          startTimestamp: Int64(
+            TimeManager.get
+                .dateTimeFromValues(2018, 1, 5, 12)
+                .millisecondsSinceEpoch,
+          ),
+          endTimestamp: Int64(
+            TimeManager.get
+                .dateTimeFromValues(2023, 1, 25, 21)
+                .millisecondsSinceEpoch,
+          ),
         ),
         sessions: [
           buildSession(
@@ -668,12 +709,16 @@ void main() {
       SummarizedActivity summarizedActivity3 = SummarizedActivity(
         value: activity3,
         dateRange: DateRange(
-          startTimestamp: Int64(TimeManager.get
-              .dateTimeFromValues(2018, 1, 20, 1)
-              .millisecondsSinceEpoch),
-          endTimestamp: Int64(TimeManager.get
-              .dateTimeFromValues(2023, 1, 29, 7)
-              .millisecondsSinceEpoch),
+          startTimestamp: Int64(
+            TimeManager.get
+                .dateTimeFromValues(2018, 1, 20, 1)
+                .millisecondsSinceEpoch,
+          ),
+          endTimestamp: Int64(
+            TimeManager.get
+                .dateTimeFromValues(2023, 1, 29, 7)
+                .millisecondsSinceEpoch,
+          ),
         ),
         sessions: [longestSession],
       );

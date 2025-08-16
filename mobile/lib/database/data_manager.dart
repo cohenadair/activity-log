@@ -69,8 +69,9 @@ class DataManager {
   }
 
   void _update(String table, Model model, VoidCallback notify) {
-    _database.update(table, model.toMap(),
-        where: "id = ?", whereArgs: [model.id]).then((_) => notify());
+    _database
+        .update(table, model.toMap(), where: "id = ?", whereArgs: [model.id])
+        .then((_) => notify());
   }
 
   Future<int> _getRowCount(String tableName) async {
@@ -98,7 +99,8 @@ class DataManager {
       (await getActivities([id])).firstOrNull;
 
   Future<List<Activity>> getActivities(List<String> ids) async {
-    String query = '''
+    String query =
+        '''
       SELECT * FROM activity 
       WHERE id IN ("${ids.join('","')}") 
       ORDER BY name
@@ -373,8 +375,9 @@ class DataManager {
     }
 
     String query = "SELECT * FROM session WHERE id = ?";
-    Map<String, dynamic> map =
-        (await _database.rawQuery(query, [sessionId])).first;
+    Map<String, dynamic> map = (await _database.rawQuery(query, [
+      sessionId,
+    ])).first;
 
     return Session.fromMap(map);
   }
@@ -538,7 +541,8 @@ class DataManager {
     mapList[3].forEach((sessionMap) {
       var model = modelMap[sessionMap["activity_id"]]!;
       model.duration ??= const Duration();
-      model.duration = model.duration! -
+      model.duration =
+          model.duration! -
           Duration(milliseconds: sessionMap["sum_value"] ?? 0);
     });
 
@@ -589,8 +593,8 @@ class ActivityListModelBuilder extends StatelessWidget {
           DataManager.get._initialActivityListTileModels = const [],
       futuresCallbacks: [
         () => DataManager.get.getActivityListModel(
-              dateRange: PreferencesManager.get.homeDateRange,
-            ),
+          dateRange: PreferencesManager.get.homeDateRange,
+        ),
       ],
       streams: [
         PreferencesManager.get.homeDateRangeStream,
@@ -607,10 +611,7 @@ class SessionsBuilder extends StatelessWidget {
   final String activityId;
   final Widget Function(BuildContext, List<Session>) builder;
 
-  const SessionsBuilder({
-    required this.activityId,
-    required this.builder,
-  });
+  const SessionsBuilder({required this.activityId, required this.builder});
 
   @override
   Widget build(BuildContext context) {

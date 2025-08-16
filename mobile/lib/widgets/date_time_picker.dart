@@ -49,37 +49,37 @@ class DatePicker extends FormField<TZDateTime> {
     super.validator,
     bool enabled = true,
   }) : super(
-          initialValue: initialDate,
-          builder: (FormFieldState<TZDateTime> state) {
-            return _Picker(
-              label: label,
-              errorText: state.errorText,
-              enabled: enabled,
-              type: _PickerType(
-                getValue: () => DateText(state.value!, enabled: enabled),
-                openPicker: () {
-                  showDatePicker(
-                    context: state.context,
-                    initialDate: state.value!,
-                    // Weird requirement of showDatePicker, but
-                    // essentially let the user pick any date in the past.
-                    firstDate: DateTime(1900),
-                    lastDate: DateTime.now(),
-                  ).then((dateTime) {
-                    if (dateTime == null) {
-                      return;
-                    }
-                    var result = TimeManager.get.dateTimeToTz(dateTime);
-                    state.didChange(result);
-                    if (onChange != null) {
-                      onChange(result);
-                    }
-                  });
-                },
-              ),
-            );
-          },
-        );
+         initialValue: initialDate,
+         builder: (FormFieldState<TZDateTime> state) {
+           return _Picker(
+             label: label,
+             errorText: state.errorText,
+             enabled: enabled,
+             type: _PickerType(
+               getValue: () => DateText(state.value!, enabled: enabled),
+               openPicker: () {
+                 showDatePicker(
+                   context: state.context,
+                   initialDate: state.value!,
+                   // Weird requirement of showDatePicker, but
+                   // essentially let the user pick any date in the past.
+                   firstDate: DateTime(1900),
+                   lastDate: DateTime.now(),
+                 ).then((dateTime) {
+                   if (dateTime == null) {
+                     return;
+                   }
+                   var result = TimeManager.get.dateTimeToTz(dateTime);
+                   state.didChange(result);
+                   if (onChange != null) {
+                     onChange(result);
+                   }
+                 });
+               },
+             ),
+           );
+         },
+       );
 }
 
 class TimePicker extends FormField<TimeOfDay> {
@@ -90,32 +90,32 @@ class TimePicker extends FormField<TimeOfDay> {
     super.validator,
     bool enabled = true,
   }) : super(
-          initialValue: initialTime,
-          builder: (FormFieldState<TimeOfDay> state) {
-            return _Picker(
-              label: label,
-              errorText: state.errorText,
-              enabled: enabled,
-              type: _PickerType(
-                getValue: () => TimeText(state.value!, enabled: enabled),
-                openPicker: () {
-                  showTimePicker(
-                    context: state.context,
-                    initialTime: state.value!,
-                  ).then((TimeOfDay? time) {
-                    if (time == null) {
-                      return;
-                    }
-                    state.didChange(time);
-                    if (onChange != null) {
-                      onChange(time);
-                    }
-                  });
-                },
-              ),
-            );
-          },
-        );
+         initialValue: initialTime,
+         builder: (FormFieldState<TimeOfDay> state) {
+           return _Picker(
+             label: label,
+             errorText: state.errorText,
+             enabled: enabled,
+             type: _PickerType(
+               getValue: () => TimeText(state.value!, enabled: enabled),
+               openPicker: () {
+                 showTimePicker(
+                   context: state.context,
+                   initialTime: state.value!,
+                 ).then((TimeOfDay? time) {
+                   if (time == null) {
+                     return;
+                   }
+                   state.didChange(time);
+                   if (onChange != null) {
+                     onChange(time);
+                   }
+                 });
+               },
+             ),
+           );
+         },
+       );
 }
 
 class _PickerType {

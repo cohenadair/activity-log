@@ -37,10 +37,12 @@ class StubbedManagers {
     DataManager.set(dataManager);
 
     preferencesManager = MockPreferencesManager();
-    when(preferencesManager.largestDurationUnitStream)
-        .thenAnswer((_) => Stream.empty());
-    when(preferencesManager.homeDateRangeStream)
-        .thenAnswer((_) => Stream.empty());
+    when(
+      preferencesManager.largestDurationUnitStream,
+    ).thenAnswer((_) => Stream.empty());
+    when(
+      preferencesManager.homeDateRangeStream,
+    ).thenAnswer((_) => Stream.empty());
     PreferencesManager.set(preferencesManager);
 
     deviceInfoWrapper = MockDeviceInfoWrapper();

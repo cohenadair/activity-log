@@ -10,9 +10,7 @@ description: A simple mobile app for tracking activities.
 version: 1.2.1+20230814
 
 environment:
-  # TODO: Update to 3.7.0 when https://github.com/dart-lang/dart_style/commit/71421b328391a6ed9c1a9e7229c394d9ed613d77 is released.
-  sdk: ^3.6.0
-  flutter: ">=1.17.0"
+  sdk: ^3.8.1
 
 dependencies:
   flutter:

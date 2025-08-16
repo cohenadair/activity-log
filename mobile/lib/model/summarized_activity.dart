@@ -162,12 +162,15 @@ class SummarizedActivity {
 
     // If the date range is null, restrict the range to the earliest
     // and latest sessions.
-    var range = dateRange ??
+    var range =
+        dateRange ??
         DateRange(
           period: DateRange_Period.custom,
           startTimestamp: Int64(sessions.first.startTimestamp),
-          endTimestamp: Int64(sessions.last.endTimestamp ??
-              TimeManager.get.now().millisecondsSinceEpoch),
+          endTimestamp: Int64(
+            sessions.last.endTimestamp ??
+                TimeManager.get.now().millisecondsSinceEpoch,
+          ),
         );
 
     _cachedDurationPerDay = averageDuration(
@@ -192,7 +195,8 @@ class SummarizedActivity {
     dateTimeList.sort((lhs, rhs) => rhs.compareTo(lhs));
     var last = dateTimeList.first;
     var now = TimeManager.get.now();
-    _cachedCurrentStreak = _cachedLongestStreak = isSameDate(now, last) ||
+    _cachedCurrentStreak = _cachedLongestStreak =
+        isSameDate(now, last) ||
             isSameDate(now.subtract(Duration(days: 1)), last)
         ? 1
         : 0;
@@ -410,7 +414,8 @@ class SummarizedActivityList {
     // If the date range is null, restrict the range to the earliest
     // and latest sessions.
     var now = TimeManager.get.currentTimestamp;
-    var range = dateRange ??
+    var range =
+        dateRange ??
         DateRange(
           period: DateRange_Period.custom,
           startTimestamp: Int64(earliestSession?.startTimestamp ?? now),

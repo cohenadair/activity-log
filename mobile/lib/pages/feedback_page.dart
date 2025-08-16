@@ -113,7 +113,8 @@ class _FeedbackPageState extends State<FeedbackPage> {
                     : null,
                 textInputAction: TextInputAction.send,
                 onFieldSubmitted: (_) => _send(),
-                autofocus: isNotEmpty(_nameController.text) &&
+                autofocus:
+                    isNotEmpty(_nameController.text) &&
                     isNotEmpty(_emailController.text),
               ),
               Container(height: paddingDefault),
@@ -229,8 +230,10 @@ class _FeedbackPageState extends State<FeedbackPage> {
       return;
     }
 
-    PreferencesManager.get
-        .setUserInfo(_nameController.text, _emailController.text);
+    PreferencesManager.get.setUserInfo(
+      _nameController.text,
+      _emailController.text,
+    );
     setState(() {
       _isSending = false;
       _showSendError = false;

@@ -112,9 +112,7 @@ class SettingsPageState extends State<SettingsPage> {
           initialValues: {durationUnit},
           showsValueOnTrailing: true,
           onChanged: (selectedValues) {
-            PreferencesManager.get.setLargestDurationUnit(
-              selectedValues.first,
-            );
+            PreferencesManager.get.setLargestDurationUnit(selectedValues.first);
           },
           titleBuilder: (_) =>
               Text(Strings.of(context).settingsPageLargestDurationLabel),
@@ -158,9 +156,7 @@ class SettingsPageState extends State<SettingsPage> {
           initialValues: {dateRange},
           showsValueOnTrailing: true,
           onChanged: (selectedValues) {
-            PreferencesManager.get.setHomeDateRange(
-              selectedValues.first,
-            );
+            PreferencesManager.get.setHomeDateRange(selectedValues.first);
           },
           titleBuilder: (_) =>
               Text(Strings.of(context).settingsPageHomeDateRangeLabel),
@@ -169,33 +165,39 @@ class SettingsPageState extends State<SettingsPage> {
           ),
           items: [
             _buildDisplayDateRangeItem(
-                DateRange(period: DateRange_Period.allDates)),
+              DateRange(period: DateRange_Period.allDates),
+            ),
             ListPickerItem.divider(),
             _buildDisplayDateRangeItem(
-                DateRange(period: DateRange_Period.today)),
+              DateRange(period: DateRange_Period.today),
+            ),
             ListPickerItem.divider(),
             _buildDisplayDateRangeItem(
-                DateRange(period: DateRange_Period.thisWeek)),
+              DateRange(period: DateRange_Period.thisWeek),
+            ),
             _buildDisplayDateRangeItem(
-                DateRange(period: DateRange_Period.thisMonth)),
+              DateRange(period: DateRange_Period.thisMonth),
+            ),
             _buildDisplayDateRangeItem(
-                DateRange(period: DateRange_Period.thisYear)),
+              DateRange(period: DateRange_Period.thisYear),
+            ),
             ListPickerItem.divider(),
             _buildDisplayDateRangeItem(
-                DateRange(period: DateRange_Period.last7Days)),
+              DateRange(period: DateRange_Period.last7Days),
+            ),
             _buildDisplayDateRangeItem(
-                DateRange(period: DateRange_Period.last30Days)),
+              DateRange(period: DateRange_Period.last30Days),
+            ),
             _buildDisplayDateRangeItem(
-                DateRange(period: DateRange_Period.last12Months)),
+              DateRange(period: DateRange_Period.last12Months),
+            ),
           ],
         );
       },
     );
   }
 
-  ListPickerItem<DateRange> _buildDisplayDateRangeItem(
-    DateRange dateRange,
-  ) {
+  ListPickerItem<DateRange> _buildDisplayDateRangeItem(DateRange dateRange) {
     return ListPickerItem<DateRange>(
       title: dateRange.displayName,
       value: dateRange,
@@ -219,8 +221,9 @@ class SettingsPageState extends State<SettingsPage> {
 
         if (Platform.isAndroid) {
           url = _playStoreUrl;
-          errorMessage =
-              Strings.of(context).settingsPageAndroidErrorRateMessage;
+          errorMessage = Strings.of(
+            context,
+          ).settingsPageAndroidErrorRateMessage;
         } else {
           url = _rateAppStoreUrl;
           errorMessage = Strings.of(context).settingsPageIosErrorRateMessage;

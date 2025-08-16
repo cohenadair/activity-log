@@ -65,8 +65,9 @@ void main() {
         // In progress sessions should be ended.
         buildActivity("AID4", "Test4", "SID1"),
       ];
-      when(managers.dataManager.activities)
-          .thenAnswer((_) async => activityList);
+      when(
+        managers.dataManager.activities,
+      ).thenAnswer((_) async => activityList);
 
       List<Session> sessionList = [
         // For the purposes of testing, it doesn't actually matter what the
@@ -197,9 +198,11 @@ void main() {
       String json = '{"activities":[],"sessions":[]}';
       await import(json: json);
       verifyNever(
-          managers.preferencesManager.setHomeDateRange(argThat(anything)));
-      verifyNever(managers.preferencesManager
-          .setLargestDurationUnit(argThat(anything)));
+        managers.preferencesManager.setHomeDateRange(argThat(anything)),
+      );
+      verifyNever(
+        managers.preferencesManager.setLargestDurationUnit(argThat(anything)),
+      );
     });
 
     test("Preferences not a map", () async {
@@ -208,9 +211,11 @@ void main() {
       String json = '{"activities":[],"sessions":[],"preferences":[]}';
       await import(json: json);
       verifyNever(
-          managers.preferencesManager.setHomeDateRange(argThat(anything)));
-      verifyNever(managers.preferencesManager
-          .setLargestDurationUnit(argThat(anything)));
+        managers.preferencesManager.setHomeDateRange(argThat(anything)),
+      );
+      verifyNever(
+        managers.preferencesManager.setLargestDurationUnit(argThat(anything)),
+      );
     });
 
     test("Preferences map is empty", () async {
@@ -219,9 +224,11 @@ void main() {
       String json = '{"activities":[],"sessions":[],"preferences":{}}';
       await import(json: json);
       verifyNever(
-          managers.preferencesManager.setHomeDateRange(argThat(anything)));
-      verifyNever(managers.preferencesManager
-          .setLargestDurationUnit(argThat(anything)));
+        managers.preferencesManager.setHomeDateRange(argThat(anything)),
+      );
+      verifyNever(
+        managers.preferencesManager.setLargestDurationUnit(argThat(anything)),
+      );
     });
 
     test("Preferences values have wrong type", () async {
@@ -231,9 +238,11 @@ void main() {
           '{"activities":[],"sessions":[],"preferences":{"largest_duration_unit":"non-int","home_date_range":0}}';
       await import(json: json);
       verifyNever(
-          managers.preferencesManager.setHomeDateRange(argThat(anything)));
-      verifyNever(managers.preferencesManager
-          .setLargestDurationUnit(argThat(anything)));
+        managers.preferencesManager.setHomeDateRange(argThat(anything)),
+      );
+      verifyNever(
+        managers.preferencesManager.setLargestDurationUnit(argThat(anything)),
+      );
     });
 
     test("Preferences are correctly set", () async {

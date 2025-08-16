@@ -25,19 +25,19 @@ class Session extends Model implements Comparable<Session> {
   bool get isBanked => _isBanked != null && _isBanked;
 
   Session.fromMap(super.map)
-      : _activityId = map[keyActivityId],
-        _startTimestamp = map[keyStartTimestamp] ?? -1,
-        _endTimestamp = map[keyEndTimestamp],
-        _isBanked = map[keyIsBanked] == 1,
-        super.fromMap();
+    : _activityId = map[keyActivityId],
+      _startTimestamp = map[keyStartTimestamp] ?? -1,
+      _endTimestamp = map[keyEndTimestamp],
+      _isBanked = map[keyIsBanked] == 1,
+      super.fromMap();
 
   Session.fromBuilder(SessionBuilder super.builder)
-      : assert(builder.startTimestamp != null),
-        _activityId = builder.activityId,
-        _startTimestamp = builder.startTimestamp!,
-        _endTimestamp = builder.endTimestamp,
-        _isBanked = builder.isBanked,
-        super.fromBuilder();
+    : assert(builder.startTimestamp != null),
+      _activityId = builder.activityId,
+      _startTimestamp = builder.startTimestamp!,
+      _endTimestamp = builder.endTimestamp,
+      _isBanked = builder.isBanked,
+      super.fromBuilder();
 
   int get millisecondsDuration {
     if (_endTimestamp == null) {
@@ -115,11 +115,11 @@ class SessionBuilder extends ModelBuilder {
   SessionBuilder(this.activityId);
 
   SessionBuilder.fromSession(Session super.session)
-      : activityId = session._activityId,
-        startTimestamp = session._startTimestamp,
-        endTimestamp = session._endTimestamp,
-        isBanked = session._isBanked,
-        super.fromModel();
+    : activityId = session._activityId,
+      startTimestamp = session._startTimestamp,
+      endTimestamp = session._endTimestamp,
+      isBanked = session._isBanked,
+      super.fromModel();
 
   SessionBuilder endNow() {
     endTimestamp = TimeManager.get.currentTimestamp;

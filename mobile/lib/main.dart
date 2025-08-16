@@ -112,7 +112,8 @@ class ActivityLogState extends State<ActivityLog> {
         inputDecorationTheme: InputDecorationTheme(
           floatingLabelStyle: WidgetStateTextStyle.resolveWith((states) {
             return TextStyle(
-              color: (states.contains(WidgetState.focused) &&
+              color:
+                  (states.contains(WidgetState.focused) &&
                       !states.contains(WidgetState.error))
                   ? AppConfig.get.colorAppTheme
                   : null,

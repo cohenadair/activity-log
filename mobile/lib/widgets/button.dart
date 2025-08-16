@@ -12,10 +12,10 @@ class Button extends StatelessWidget {
     required VoidCallback onPressed,
     Icon? icon,
     Color? color,
-  })  : _text = text,
-        _onPressed = onPressed,
-        _icon = icon,
-        _color = color;
+  }) : _text = text,
+       _onPressed = onPressed,
+       _icon = icon,
+       _color = color;
 
   @override
   Widget build(BuildContext context) {
@@ -50,15 +50,15 @@ class ActionButton extends StatelessWidget {
   final String? _stringId;
 
   const ActionButton({required this.text, required this.onPressed})
-      : _stringId = null;
+    : _stringId = null;
 
   const ActionButton.done({required this.onPressed})
-      : _stringId = "done",
-        text = null;
+    : _stringId = "done",
+      text = null;
 
   const ActionButton.save({required this.onPressed})
-      : _stringId = "save",
-        text = null;
+    : _stringId = "save",
+      text = null;
 
   @override
   Widget build(BuildContext context) {

@@ -21,11 +21,9 @@ class EditSessionPage extends StatefulWidget {
   final Activity _activity;
   final Session? _editingSession;
 
-  const EditSessionPage({
-    required Activity activity,
-    Session? editingSession,
-  })  : _activity = activity,
-        _editingSession = editingSession;
+  const EditSessionPage({required Activity activity, Session? editingSession})
+    : _activity = activity,
+      _editingSession = editingSession;
 
   @override
   EditSessionPageState createState() => EditSessionPageState();
@@ -54,8 +52,9 @@ class EditSessionPageState extends State<EditSessionPage> {
   void initState() {
     if (_isEditing) {
       _startDate = _editingSession!.startDateTime;
-      _endDate =
-          _isEditingInProgress ? _startDate : _editingSession!.endDateTime!;
+      _endDate = _isEditingInProgress
+          ? _startDate
+          : _editingSession!.endDateTime!;
       _isBanked = _editingSession!.isBanked;
     } else {
       _startDate = TimeManager.get.now();
@@ -64,8 +63,9 @@ class EditSessionPageState extends State<EditSessionPage> {
     }
 
     _startTime = TimeOfDay.fromDateTime(_startDate);
-    _endTime =
-        _isEditingInProgress ? _startTime : TimeOfDay.fromDateTime(_endDate);
+    _endTime = _isEditingInProgress
+        ? _startTime
+        : TimeOfDay.fromDateTime(_endDate);
 
     super.initState();
   }
@@ -143,9 +143,7 @@ class EditSessionPageState extends State<EditSessionPage> {
                   },
                 ),
                 helper: _isEditingInProgress
-                    ? WarningText(
-                        Strings.of(context).editSessionPageInProgress,
-                      )
+                    ? WarningText(Strings.of(context).editSessionPageInProgress)
                     : null,
               ),
             ),
@@ -160,9 +158,11 @@ class EditSessionPageState extends State<EditSessionPage> {
                     visualDensity: VisualDensity.compact,
                     onPressed: () => showOkDialog(
                       context: context,
-                      description: Text(Strings.of(
-                        context,
-                      ).editSessionPageBankedSessionDescription),
+                      description: Text(
+                        Strings.of(
+                          context,
+                        ).editSessionPageBankedSessionDescription,
+                      ),
                     ),
                   ),
                 ],

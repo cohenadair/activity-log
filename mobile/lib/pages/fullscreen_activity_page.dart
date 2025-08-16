@@ -111,10 +111,11 @@ class _FullscreenActivityPageState extends State<FullscreenActivityPage> {
       iconSize: _playPauseButtonSize,
       icon: Icon(isRunning ? Icons.stop : Icons.play_arrow),
       color: isRunning ? Colors.red : Colors.green,
-      onPressed: () => (isRunning
-              ? DataManager.get.endSession(activity)
-              : DataManager.get.startSession(activity))
-          .then((_) => setState(() {})),
+      onPressed: () =>
+          (isRunning
+                  ? DataManager.get.endSession(activity)
+                  : DataManager.get.startSession(activity))
+              .then((_) => setState(() {})),
     );
   }
 }

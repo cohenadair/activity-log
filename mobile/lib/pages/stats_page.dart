@@ -48,8 +48,9 @@ class StatsPageState extends State<StatsPage> {
 
     _currentDateRange = PreferencesManager.get.statsDateRange;
 
-    _onActivitiesUpdated =
-        DataManager.get.activitiesUpdatedStream.listen((_) => _updateFutures());
+    _onActivitiesUpdated = DataManager.get.activitiesUpdatedStream.listen(
+      (_) => _updateFutures(),
+    );
 
     // Retrieve initial activities if needed.
     List<String> selectedIds = PreferencesManager.get.statsSelectedActivityIds;
@@ -116,10 +117,7 @@ class StatsPageState extends State<StatsPage> {
                 MinDivider(),
                 FutureBuilder<SummarizedActivityList>(
                   future: _summarizedActivityListFuture,
-                  builder: (
-                    BuildContext context,
-                    AsyncSnapshot<SummarizedActivityList> snapshot,
-                  ) {
+                  builder: (context, snapshot) {
                     if (!snapshot.hasData) {
                       return Loading(isCentered: true);
                     }
@@ -262,8 +260,10 @@ class StatsPageState extends State<StatsPage> {
     var dateRange = _currentDateRange.period == DateRange_Period.allDates
         ? null
         : _currentDateRange;
-    _summarizedActivityListFuture =
-        DataManager.get.getSummarizedActivities(dateRange, activities);
+    _summarizedActivityListFuture = DataManager.get.getSummarizedActivities(
+      dateRange,
+      activities,
+    );
 
     _activityCountFuture = DataManager.get.activityCount;
   }

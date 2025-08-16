@@ -68,15 +68,17 @@ class PreferencesManager {
 
     _largestDurationUnit =
         AppDurationUnit.values[prefs.getInt(_keyLargestDurationUnit) ?? 0];
-    _homeDateRange =
-        DateRanges.fromPreference(prefs.getString(_keyHomeDateRange));
+    _homeDateRange = DateRanges.fromPreference(
+      prefs.getString(_keyHomeDateRange),
+    );
 
     List<String> activityIds =
         prefs.getStringList(_keyStatsSelectedActivityIds) ?? [];
     _statsSelectedActivityIds = activityIds.isEmpty ? [] : activityIds;
 
-    _statsDateRange =
-        DateRanges.fromPreference(prefs.getString(_keyStatsDateRange));
+    _statsDateRange = DateRanges.fromPreference(
+      prefs.getString(_keyStatsDateRange),
+    );
 
     _userName = prefs.getString(_keyUserName);
     _userEmail = prefs.getString(_keyUserEmail);
@@ -156,18 +158,18 @@ class PreferencesManager {
 
 class LargestDurationBuilder extends _SimpleStreamBuilder<AppDurationUnit> {
   LargestDurationBuilder({required super.builder})
-      : super(
-          stream: PreferencesManager.get.largestDurationUnitStream,
-          valueCallback: () => PreferencesManager.get.largestDurationUnit,
-        );
+    : super(
+        stream: PreferencesManager.get.largestDurationUnitStream,
+        valueCallback: () => PreferencesManager.get.largestDurationUnit,
+      );
 }
 
 class HomeDateRangeBuilder extends _SimpleStreamBuilder<DateRange> {
   HomeDateRangeBuilder({required super.builder})
-      : super(
-          stream: PreferencesManager.get.homeDateRangeStream,
-          valueCallback: () => PreferencesManager.get.homeDateRange,
-        );
+    : super(
+        stream: PreferencesManager.get.homeDateRangeStream,
+        valueCallback: () => PreferencesManager.get.homeDateRange,
+      );
 }
 
 class _SimpleStreamBuilder<T> extends StatelessWidget {

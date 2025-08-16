@@ -39,9 +39,9 @@ class FutureListener extends StatefulWidget {
     required this.builder,
     this.initialValues = const [],
     this.onFuturesFinished,
-  })  : assert(futuresCallbacks.isNotEmpty),
-        assert(streams.isNotEmpty),
-        singleBuilder = null;
+  }) : assert(futuresCallbacks.isNotEmpty),
+       assert(streams.isNotEmpty),
+       singleBuilder = null;
 
   FutureListener.single({
     required Future Function() getFutureCallback,
@@ -49,10 +49,10 @@ class FutureListener extends StatefulWidget {
     required Widget Function(BuildContext, dynamic) builder,
     this.initialValues = const [],
     this.onFuturesFinished,
-  })  : futuresCallbacks = [getFutureCallback],
-        streams = [stream],
-        singleBuilder = builder,
-        builder = null;
+  }) : futuresCallbacks = [getFutureCallback],
+       streams = [stream],
+       singleBuilder = builder,
+       builder = null;
 
   @override
   FutureListenerState createState() => FutureListenerState();

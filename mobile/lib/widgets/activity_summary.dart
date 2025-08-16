@@ -103,14 +103,16 @@ class ActivitySummary extends StatelessWidget {
                 ),
                 SummaryItem(
                   title: Strings.of(context).activitySummaryCurrentStreak,
-                  subtitle:
-                      Strings.of(context).activitySummaryStreakDescription,
+                  subtitle: Strings.of(
+                    context,
+                  ).activitySummaryStreakDescription,
                   value: activity.currentStreak,
                 ),
                 SummaryItem(
                   title: Strings.of(context).activitySummaryStreak,
-                  subtitle:
-                      Strings.of(context).activitySummaryStreakDescription,
+                  subtitle: Strings.of(
+                    context,
+                  ).activitySummaryStreakDescription,
                   value: activity.longestStreak,
                 ),
               ],

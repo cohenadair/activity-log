@@ -18,14 +18,10 @@ class SessionsPage extends StatelessWidget {
       builder: (context, sessions) => ListPage<Session>(
         items: sessions,
         title: activity.name,
-        getEditPageCallback: (session) => EditSessionPage(
-          activity: activity,
-          editingSession: session,
-        ),
-        buildTileCallback: (session, onTapTile) => SessionListTile(
-          session: session,
-          onTap: onTapTile,
-        ),
+        getEditPageCallback: (session) =>
+            EditSessionPage(activity: activity, editingSession: session),
+        buildTileCallback: (session, onTapTile) =>
+            SessionListTile(session: session, onTap: onTapTile),
       ),
     );
   }

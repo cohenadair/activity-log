@@ -50,8 +50,10 @@ class StatsDateRangePickerState extends State<StatsDateRangePicker> {
           });
         }
       },
-      allItem:
-          _buildItem(context, DateRange(period: DateRange_Period.allDates)),
+      allItem: _buildItem(
+        context,
+        DateRange(period: DateRange_Period.allDates),
+      ),
       items: [
         ListPickerItem.divider(),
         _buildItem(context, DateRange(period: DateRange_Period.today)),
@@ -117,12 +119,14 @@ class StatsDateRangePickerState extends State<StatsDateRangePicker> {
 
     var dateRange = DateRange(
       period: DateRange_Period.custom,
-      startTimestamp: Int64(TimeManager.get
-          .dateTimeToTz(pickedRange.start)
-          .millisecondsSinceEpoch),
-      endTimestamp: Int64(TimeManager.get
-          .dateTimeToTz(endDate ?? pickedRange.end)
-          .millisecondsSinceEpoch),
+      startTimestamp: Int64(
+        TimeManager.get.dateTimeToTz(pickedRange.start).millisecondsSinceEpoch,
+      ),
+      endTimestamp: Int64(
+        TimeManager.get
+            .dateTimeToTz(endDate ?? pickedRange.end)
+            .millisecondsSinceEpoch,
+      ),
     );
 
     // Reset StatsDateRange.custom properties to return the picked DateRange.

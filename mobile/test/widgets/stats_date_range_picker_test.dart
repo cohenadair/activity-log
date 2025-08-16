@@ -19,12 +19,16 @@ void main() {
         (_) => StatsDateRangePicker(
           initialValue: DateRange(
             period: DateRange_Period.custom,
-            startTimestamp: Int64(TimeManager.get
-                .dateTimeFromValues(2020, 1, 1)
-                .millisecondsSinceEpoch),
-            endTimestamp: Int64(TimeManager.get
-                .dateTimeFromValues(2020, 2, 1)
-                .millisecondsSinceEpoch),
+            startTimestamp: Int64(
+              TimeManager.get
+                  .dateTimeFromValues(2020, 1, 1)
+                  .millisecondsSinceEpoch,
+            ),
+            endTimestamp: Int64(
+              TimeManager.get
+                  .dateTimeFromValues(2020, 2, 1)
+                  .millisecondsSinceEpoch,
+            ),
             timeZone: TimeManager.get.currentTimeZone,
           ),
           onDurationPicked: (_) {},

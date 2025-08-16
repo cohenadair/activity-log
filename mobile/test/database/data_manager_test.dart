@@ -84,10 +84,12 @@ void main() {
     required Duration expectedDuration,
   }) async {
     var dateRange = DateRange(
-      startTimestamp:
-          Int64(TimeManager.get.dateTimeToTz(startDate).millisecondsSinceEpoch),
-      endTimestamp:
-          Int64(TimeManager.get.dateTimeToTz(endDate).millisecondsSinceEpoch),
+      startTimestamp: Int64(
+        TimeManager.get.dateTimeToTz(startDate).millisecondsSinceEpoch,
+      ),
+      endTimestamp: Int64(
+        TimeManager.get.dateTimeToTz(endDate).millisecondsSinceEpoch,
+      ),
     );
 
     Activity activity = ActivityBuilder("").build;
@@ -127,12 +129,12 @@ void main() {
 
   test("Activities provided as parameter", () async {
     var dateRange = DateRange(
-      startTimestamp: Int64(TimeManager.get
-          .dateTimeFromValues(2018, 1, 1)
-          .millisecondsSinceEpoch),
-      endTimestamp: Int64(TimeManager.get
-          .dateTimeFromValues(2018, 2, 1)
-          .millisecondsSinceEpoch),
+      startTimestamp: Int64(
+        TimeManager.get.dateTimeFromValues(2018, 1, 1).millisecondsSinceEpoch,
+      ),
+      endTimestamp: Int64(
+        TimeManager.get.dateTimeFromValues(2018, 2, 1).millisecondsSinceEpoch,
+      ),
     );
 
     Activity activity = ActivityBuilder("").build;
@@ -175,12 +177,16 @@ void main() {
       endDate: TimeManager.get.dateTimeFromValues(2018, 1, 16, 4, 30),
       sessionRangeList: [
         DateRange(
-          startTimestamp: Int64(TimeManager.get
-              .dateTimeFromValues(2018, 1, 15, 2, 30)
-              .millisecondsSinceEpoch),
-          endTimestamp: Int64(TimeManager.get
-              .dateTimeFromValues(2018, 1, 15, 7, 30)
-              .millisecondsSinceEpoch),
+          startTimestamp: Int64(
+            TimeManager.get
+                .dateTimeFromValues(2018, 1, 15, 2, 30)
+                .millisecondsSinceEpoch,
+          ),
+          endTimestamp: Int64(
+            TimeManager.get
+                .dateTimeFromValues(2018, 1, 15, 7, 30)
+                .millisecondsSinceEpoch,
+          ),
         ),
       ],
       expectedLength: 1,
@@ -194,12 +200,16 @@ void main() {
       endDate: TimeManager.get.dateTimeFromValues(2018, 1, 16, 4, 30),
       sessionRangeList: [
         DateRange(
-          startTimestamp: Int64(TimeManager.get
-              .dateTimeFromValues(2018, 1, 16, 2, 30)
-              .millisecondsSinceEpoch),
-          endTimestamp: Int64(TimeManager.get
-              .dateTimeFromValues(2018, 1, 16, 7, 30)
-              .millisecondsSinceEpoch),
+          startTimestamp: Int64(
+            TimeManager.get
+                .dateTimeFromValues(2018, 1, 16, 2, 30)
+                .millisecondsSinceEpoch,
+          ),
+          endTimestamp: Int64(
+            TimeManager.get
+                .dateTimeFromValues(2018, 1, 16, 7, 30)
+                .millisecondsSinceEpoch,
+          ),
         ),
       ],
       expectedLength: 1,
@@ -213,12 +223,16 @@ void main() {
       endDate: TimeManager.get.dateTimeFromValues(2018, 1, 16, 4, 30),
       sessionRangeList: [
         DateRange(
-          startTimestamp: Int64(TimeManager.get
-              .dateTimeFromValues(2018, 1, 15, 2, 30)
-              .millisecondsSinceEpoch),
-          endTimestamp: Int64(TimeManager.get
-              .dateTimeFromValues(2018, 1, 16, 7, 30)
-              .millisecondsSinceEpoch),
+          startTimestamp: Int64(
+            TimeManager.get
+                .dateTimeFromValues(2018, 1, 15, 2, 30)
+                .millisecondsSinceEpoch,
+          ),
+          endTimestamp: Int64(
+            TimeManager.get
+                .dateTimeFromValues(2018, 1, 16, 7, 30)
+                .millisecondsSinceEpoch,
+          ),
         ),
       ],
       expectedLength: 1,
@@ -232,12 +246,16 @@ void main() {
       endDate: TimeManager.get.dateTimeFromValues(2018, 1, 16, 4, 30),
       sessionRangeList: [
         DateRange(
-          startTimestamp: Int64(TimeManager.get
-              .dateTimeFromValues(2018, 1, 15, 8, 30)
-              .millisecondsSinceEpoch),
-          endTimestamp: Int64(TimeManager.get
-              .dateTimeFromValues(2018, 1, 15, 20, 30)
-              .millisecondsSinceEpoch),
+          startTimestamp: Int64(
+            TimeManager.get
+                .dateTimeFromValues(2018, 1, 15, 8, 30)
+                .millisecondsSinceEpoch,
+          ),
+          endTimestamp: Int64(
+            TimeManager.get
+                .dateTimeFromValues(2018, 1, 15, 20, 30)
+                .millisecondsSinceEpoch,
+          ),
         ),
       ],
       expectedLength: 1,
@@ -251,12 +269,16 @@ void main() {
       endDate: TimeManager.get.dateTimeFromValues(2018, 1, 16, 4, 30),
       sessionRangeList: [
         DateRange(
-          startTimestamp: Int64(TimeManager.get
-              .dateTimeFromValues(2018, 1, 14, 8, 30)
-              .millisecondsSinceEpoch),
-          endTimestamp: Int64(TimeManager.get
-              .dateTimeFromValues(2018, 1, 15, 4, 30)
-              .millisecondsSinceEpoch),
+          startTimestamp: Int64(
+            TimeManager.get
+                .dateTimeFromValues(2018, 1, 14, 8, 30)
+                .millisecondsSinceEpoch,
+          ),
+          endTimestamp: Int64(
+            TimeManager.get
+                .dateTimeFromValues(2018, 1, 15, 4, 30)
+                .millisecondsSinceEpoch,
+          ),
         ),
       ],
       expectedLength: 1,
@@ -270,12 +292,16 @@ void main() {
       endDate: TimeManager.get.dateTimeFromValues(2018, 1, 16, 4, 30),
       sessionRangeList: [
         DateRange(
-          startTimestamp: Int64(TimeManager.get
-              .dateTimeFromValues(2018, 1, 16, 4, 30)
-              .millisecondsSinceEpoch),
-          endTimestamp: Int64(TimeManager.get
-              .dateTimeFromValues(2018, 1, 18, 4, 30)
-              .millisecondsSinceEpoch),
+          startTimestamp: Int64(
+            TimeManager.get
+                .dateTimeFromValues(2018, 1, 16, 4, 30)
+                .millisecondsSinceEpoch,
+          ),
+          endTimestamp: Int64(
+            TimeManager.get
+                .dateTimeFromValues(2018, 1, 18, 4, 30)
+                .millisecondsSinceEpoch,
+          ),
         ),
       ],
       expectedLength: 1,
@@ -285,12 +311,12 @@ void main() {
 
   test("Combination of all with multiple activities", () async {
     var dateRange = DateRange(
-      startTimestamp: Int64(TimeManager.get
-          .dateTimeFromValues(2018, 1, 1)
-          .millisecondsSinceEpoch),
-      endTimestamp: Int64(TimeManager.get
-          .dateTimeFromValues(2018, 2, 1)
-          .millisecondsSinceEpoch),
+      startTimestamp: Int64(
+        TimeManager.get.dateTimeFromValues(2018, 1, 1).millisecondsSinceEpoch,
+      ),
+      endTimestamp: Int64(
+        TimeManager.get.dateTimeFromValues(2018, 2, 1).millisecondsSinceEpoch,
+      ),
     );
 
     List<Activity> activities = [

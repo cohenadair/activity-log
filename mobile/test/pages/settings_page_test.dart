@@ -19,13 +19,16 @@ void main() {
     when(managers.appConfig.appIcon).thenReturn(Icons.add);
     when(managers.appConfig.appName).thenReturn(() => "Activity Log");
 
-    when(managers.preferencesManager.largestDurationUnit)
-        .thenReturn(AppDurationUnit.days);
-    when(managers.preferencesManager.homeDateRange)
-        .thenReturn(DateRange(period: DateRange_Period.allDates));
+    when(
+      managers.preferencesManager.largestDurationUnit,
+    ).thenReturn(AppDurationUnit.days);
+    when(
+      managers.preferencesManager.homeDateRange,
+    ).thenReturn(DateRange(period: DateRange_Period.allDates));
 
-    when(managers.subscriptionManager.subscriptions())
-        .thenAnswer((_) => Future.value(null));
+    when(
+      managers.subscriptionManager.subscriptions(),
+    ).thenAnswer((_) => Future.value(null));
     when(managers.subscriptionManager.isPro).thenReturn(false);
   });
 

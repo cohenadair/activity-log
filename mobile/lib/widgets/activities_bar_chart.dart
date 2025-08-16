@@ -73,31 +73,31 @@ class ActivitiesDurationBarChart extends StatelessWidget {
     if (longestDuration.inDays > 0) {
       // 0d 0h
       return (Duration duration) => formatDurations(
-            context: context,
-            durations: [duration],
-            includesSeconds: false,
-            includesMinutes: false,
-            largestDurationUnit: toLibDurationUnit(largestDurationUnit),
-          );
+        context: context,
+        durations: [duration],
+        includesSeconds: false,
+        includesMinutes: false,
+        largestDurationUnit: toLibDurationUnit(largestDurationUnit),
+      );
     } else if (longestDuration.inHours > 0) {
       // 0h 0m
       return (Duration duration) => formatDurations(
-            context: context,
-            durations: [duration],
-            includesDays: false,
-            includesSeconds: false,
-            largestDurationUnit: toLibDurationUnit(largestDurationUnit),
-          );
+        context: context,
+        durations: [duration],
+        includesDays: false,
+        includesSeconds: false,
+        largestDurationUnit: toLibDurationUnit(largestDurationUnit),
+      );
     } else {
       // 0m
       return (Duration duration) => formatDurations(
-            context: context,
-            durations: [duration],
-            includesDays: false,
-            includesHours: false,
-            includesSeconds: false,
-            largestDurationUnit: toLibDurationUnit(largestDurationUnit),
-          );
+        context: context,
+        durations: [duration],
+        includesDays: false,
+        includesHours: false,
+        includesSeconds: false,
+        largestDurationUnit: toLibDurationUnit(largestDurationUnit),
+      );
     }
   }
 }
@@ -151,8 +151,8 @@ class _ActivitiesBarChart extends StatefulWidget {
     required this.onBuildLabel,
     this.primaryAxisTickFormatterSpec,
     required this.onSelect,
-  })  : assert(!isEmpty(chartId)),
-        assert(activities.isNotEmpty);
+  }) : assert(!isEmpty(chartId)),
+       assert(activities.isNotEmpty);
 
   @override
   State<_ActivitiesBarChart> createState() => _ActivitiesBarChartState();
