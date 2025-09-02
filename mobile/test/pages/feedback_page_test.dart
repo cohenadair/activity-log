@@ -10,10 +10,10 @@ import 'package:mockito/mockito.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 import '../../../../adair-flutter-lib/test/test_utils/finder.dart';
+import '../../../../adair-flutter-lib/test/test_utils/testable.dart';
 import '../../../../adair-flutter-lib/test/test_utils/widget.dart';
 import '../mocks/mocks.mocks.dart';
 import '../stubbed_managers.dart';
-import '../test_utils.dart';
 
 void main() {
   late StubbedManagers managers;
@@ -23,7 +23,9 @@ void main() {
 
     when(managers.preferencesManager.userName).thenReturn("Cohen");
     when(managers.preferencesManager.userEmail).thenReturn("test@test.com");
-    when(managers.preferencesManager.setUserInfo(any, any)).thenAnswer((_) {});
+    when(
+      managers.preferencesManager.setUserInfo(any, any),
+    ).thenAnswer((_) => Future.value());
 
     when(
       managers.propertiesManager.supportEmail,

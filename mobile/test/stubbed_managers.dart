@@ -1,12 +1,15 @@
 import 'package:mobile/database/data_manager.dart';
-import 'package:mobile/device_info_wrapper.dart';
-import 'package:mobile/http_wrapper.dart';
-import 'package:mobile/package_info_wrapper.dart';
+import 'package:mobile/i18n/strings.dart';
 import 'package:mobile/preferences_manager.dart';
+import 'package:mobile/wrappers/device_info_wrapper.dart';
+import 'package:mobile/wrappers/http_wrapper.dart';
+import 'package:mobile/wrappers/package_info_wrapper.dart';
+import 'package:mobile/wrappers/wakelock_wrapper.dart';
 import 'package:mockito/mockito.dart';
 
 import '../../../adair-flutter-lib/test/mocks/mocks.mocks.dart';
 import '../../../adair-flutter-lib/test/test_utils/stubbed_managers.dart' as s;
+import '../../../adair-flutter-lib/test/test_utils/testable.dart';
 import 'mocks/mocks.mocks.dart';
 
 class StubbedManagers {
@@ -17,6 +20,7 @@ class StubbedManagers {
   late final MockDeviceInfoWrapper deviceInfoWrapper;
   late final MockPackageInfoWrapper packageInfoWrapper;
   late final MockHttpWrapper httpWrapper;
+  late final MockWakelockWrapper wakelockWrapper;
 
   static Future<StubbedManagers> create() async =>
       StubbedManagers._(await s.StubbedManagers.create());
@@ -53,5 +57,10 @@ class StubbedManagers {
 
     httpWrapper = MockHttpWrapper();
     HttpWrapper.set(httpWrapper);
+
+    wakelockWrapper = MockWakelockWrapper();
+    WakelockWrapper.set(wakelockWrapper);
+
+    Testable.additionalLocalizations = [StringsDelegate()];
   }
 }

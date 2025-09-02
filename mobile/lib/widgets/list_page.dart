@@ -1,5 +1,5 @@
+import 'package:adair_flutter_lib/utils/page.dart';
 import 'package:flutter/material.dart';
-import 'package:mobile/utils/page_utils.dart';
 import 'package:mobile/widgets/my_page.dart' as p;
 import 'package:mobile/widgets/widget.dart';
 

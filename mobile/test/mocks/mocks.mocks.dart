@@ -12,15 +12,16 @@ import 'package:device_info_plus/device_info_plus.dart' as _i4;
 import 'package:flutter/material.dart' as _i10;
 import 'package:http/http.dart' as _i6;
 import 'package:mobile/database/data_manager.dart' as _i13;
-import 'package:mobile/device_info_wrapper.dart' as _i18;
-import 'package:mobile/http_wrapper.dart' as _i20;
 import 'package:mobile/model/activity.dart' as _i11;
 import 'package:mobile/model/session.dart' as _i14;
 import 'package:mobile/model/summarized_activity.dart' as _i2;
-import 'package:mobile/package_info_wrapper.dart' as _i19;
 import 'package:mobile/preferences_manager.dart' as _i16;
 import 'package:mobile/utils/duration.dart' as _i17;
 import 'package:mobile/widgets/activity_list_tile.dart' as _i15;
+import 'package:mobile/wrappers/device_info_wrapper.dart' as _i18;
+import 'package:mobile/wrappers/http_wrapper.dart' as _i20;
+import 'package:mobile/wrappers/package_info_wrapper.dart' as _i19;
+import 'package:mobile/wrappers/wakelock_wrapper.dart' as _i22;
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:mockito/src/dummies.dart' as _i12;
 import 'package:package_info_plus/package_info_plus.dart' as _i5;
@@ -514,34 +515,49 @@ class MockPreferencesManager extends _i1.Mock
           as _i8.Future<void>);
 
   @override
-  void setLargestDurationUnit(_i17.AppDurationUnit? unit) => super.noSuchMethod(
-    Invocation.method(#setLargestDurationUnit, [unit]),
-    returnValueForMissingStub: null,
-  );
+  _i8.Future<void> setLargestDurationUnit(_i17.AppDurationUnit? unit) =>
+      (super.noSuchMethod(
+            Invocation.method(#setLargestDurationUnit, [unit]),
+            returnValue: _i8.Future<void>.value(),
+            returnValueForMissingStub: _i8.Future<void>.value(),
+          )
+          as _i8.Future<void>);
 
   @override
-  void setHomeDateRange(_i3.DateRange? range) => super.noSuchMethod(
-    Invocation.method(#setHomeDateRange, [range]),
-    returnValueForMissingStub: null,
-  );
+  _i8.Future<void> setHomeDateRange(_i3.DateRange? range) =>
+      (super.noSuchMethod(
+            Invocation.method(#setHomeDateRange, [range]),
+            returnValue: _i8.Future<void>.value(),
+            returnValueForMissingStub: _i8.Future<void>.value(),
+          )
+          as _i8.Future<void>);
 
   @override
-  void setStatsSelectedActivityIds(List<String>? ids) => super.noSuchMethod(
-    Invocation.method(#setStatsSelectedActivityIds, [ids]),
-    returnValueForMissingStub: null,
-  );
+  _i8.Future<void> setStatsSelectedActivityIds(List<String>? ids) =>
+      (super.noSuchMethod(
+            Invocation.method(#setStatsSelectedActivityIds, [ids]),
+            returnValue: _i8.Future<void>.value(),
+            returnValueForMissingStub: _i8.Future<void>.value(),
+          )
+          as _i8.Future<void>);
 
   @override
-  void setStatsDateRange(_i3.DateRange? range) => super.noSuchMethod(
-    Invocation.method(#setStatsDateRange, [range]),
-    returnValueForMissingStub: null,
-  );
+  _i8.Future<void> setStatsDateRange(_i3.DateRange? range) =>
+      (super.noSuchMethod(
+            Invocation.method(#setStatsDateRange, [range]),
+            returnValue: _i8.Future<void>.value(),
+            returnValueForMissingStub: _i8.Future<void>.value(),
+          )
+          as _i8.Future<void>);
 
   @override
-  void setUserInfo(String? name, String? email) => super.noSuchMethod(
-    Invocation.method(#setUserInfo, [name, email]),
-    returnValueForMissingStub: null,
-  );
+  _i8.Future<void> setUserInfo(String? name, String? email) =>
+      (super.noSuchMethod(
+            Invocation.method(#setUserInfo, [name, email]),
+            returnValue: _i8.Future<void>.value(),
+            returnValueForMissingStub: _i8.Future<void>.value(),
+          )
+          as _i8.Future<void>);
 }
 
 /// A class which mocks [DeviceInfoWrapper].
@@ -1664,4 +1680,25 @@ class MockSession extends _i1.Mock implements _i14.Session {
             returnValue: 0,
           )
           as int);
+}
+
+/// A class which mocks [WakelockWrapper].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockWakelockWrapper extends _i1.Mock implements _i22.WakelockWrapper {
+  MockWakelockWrapper() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  void enable() => super.noSuchMethod(
+    Invocation.method(#enable, []),
+    returnValueForMissingStub: null,
+  );
+
+  @override
+  void disable() => super.noSuchMethod(
+    Invocation.method(#disable, []),
+    returnValueForMissingStub: null,
+  );
 }

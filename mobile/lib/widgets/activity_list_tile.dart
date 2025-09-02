@@ -1,11 +1,11 @@
 import 'package:adair_flutter_lib/app_config.dart';
 import 'package:adair_flutter_lib/res/dimen.dart';
+import 'package:adair_flutter_lib/utils/page.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile/model/activity.dart';
 import 'package:mobile/model/session.dart';
 import 'package:mobile/pages/fullscreen_activity_page.dart';
 import 'package:mobile/preferences_manager.dart';
-import 'package:mobile/utils/page_utils.dart';
 import 'package:mobile/widgets/future_timer.dart';
 import 'package:mobile/widgets/list_item.dart';
 import 'package:mobile/widgets/text.dart';

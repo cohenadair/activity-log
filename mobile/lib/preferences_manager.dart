@@ -17,7 +17,7 @@ class PreferencesManager {
   static void set(PreferencesManager manager) => _instance = manager;
 
   @visibleForTesting
-  static void suicide() => _instance = PreferencesManager._();
+  static void reset() => _instance = PreferencesManager._();
 
   PreferencesManager._();
 
@@ -84,7 +84,7 @@ class PreferencesManager {
     _userEmail = prefs.getString(_keyUserEmail);
   }
 
-  void setLargestDurationUnit(AppDurationUnit unit) async {
+  Future<void> setLargestDurationUnit(AppDurationUnit unit) async {
     if (_largestDurationUnit == unit) {
       return;
     }
@@ -100,7 +100,7 @@ class PreferencesManager {
     _largestDurationUnitUpdated.notify();
   }
 
-  void setHomeDateRange(DateRange range) async {
+  Future<void> setHomeDateRange(DateRange range) async {
     if (_homeDateRange == range) {
       return;
     }
@@ -113,7 +113,7 @@ class PreferencesManager {
     _homeDateRangeUpdated.notify();
   }
 
-  void setStatsSelectedActivityIds(List<String>? ids) async {
+  Future<void> setStatsSelectedActivityIds(List<String>? ids) async {
     if (const DeepCollectionEquality.unordered().equals(
       _statsSelectedActivityIds,
       ids,
@@ -130,7 +130,7 @@ class PreferencesManager {
     );
   }
 
-  void setStatsDateRange(DateRange range) async {
+  Future<void> setStatsDateRange(DateRange range) async {
     if (_statsDateRange == range) {
       return;
     }
@@ -141,7 +141,7 @@ class PreferencesManager {
     await prefs.setString(_keyStatsDateRange, _statsDateRange.writeToJson());
   }
 
-  void setUserInfo(String name, String email) async {
+  Future<void> setUserInfo(String name, String email) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
     if (name != _userName) {

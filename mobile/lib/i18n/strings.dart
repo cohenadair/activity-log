@@ -217,6 +217,8 @@ class Strings {
       _getString("feedbackPage_connectionError");
   String get feedbackPageErrorSending =>
       _getString("feedbackPage_errorSending");
+
+  String get proPageWakeLock => _getString("proPage_wakeLock");
 }
 
 class StringsDelegate extends LocalizationsDelegate<Strings> {

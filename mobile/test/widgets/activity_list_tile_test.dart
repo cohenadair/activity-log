@@ -6,9 +6,9 @@ import 'package:mobile/utils/duration.dart';
 import 'package:mobile/widgets/activity_list_tile.dart';
 import 'package:mockito/mockito.dart';
 
+import '../../../../adair-flutter-lib/test/test_utils/testable.dart';
 import '../../../../adair-flutter-lib/test/test_utils/widget.dart';
 import '../stubbed_managers.dart';
-import '../test_utils.dart';
 
 void main() {
   late StubbedManagers managers;
@@ -32,6 +32,12 @@ void main() {
     when(
       managers.dataManager.inProgressSession(any),
     ).thenAnswer((_) => Future.value(null));
+
+    when(
+      managers.subscriptionManager.stream,
+    ).thenAnswer((_) => const Stream.empty());
+    when(managers.subscriptionManager.isFree).thenReturn(true);
+    when(managers.subscriptionManager.isPro).thenReturn(false);
   });
 
   testWidgets("Expand button opens full screen activity", (tester) async {

@@ -10,7 +10,7 @@ class DeviceInfoWrapper {
   static void set(DeviceInfoWrapper manager) => _instance = manager;
 
   @visibleForTesting
-  static void suicide() => _instance = DeviceInfoWrapper._();
+  static void reset() => _instance = DeviceInfoWrapper._();
 
   DeviceInfoWrapper._();
 

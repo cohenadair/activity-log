@@ -3,13 +3,15 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mobile/model/activity.dart';
+import 'package:mobile/model/session.dart';
 import 'package:mobile/pages/fullscreen_activity_page.dart';
 import 'package:mockito/mockito.dart';
 
+import '../../../../adair-flutter-lib/test/test_utils/disposable_tester.dart';
+import '../../../../adair-flutter-lib/test/test_utils/testable.dart';
 import '../../../../adair-flutter-lib/test/test_utils/widget.dart';
 import '../mocks/mocks.mocks.dart';
 import '../stubbed_managers.dart';
-import '../test_utils.dart';
 
 void main() {
   late StubbedManagers managers;
@@ -25,6 +27,15 @@ void main() {
     when(
       managers.dataManager.inProgressSession(any),
     ).thenAnswer((_) => Future.value(null));
+
+    when(
+      managers.subscriptionManager.stream,
+    ).thenAnswer((_) => const Stream.empty());
+    when(managers.subscriptionManager.isFree).thenReturn(true);
+    when(managers.subscriptionManager.isPro).thenReturn(false);
+
+    when(managers.wakelockWrapper.enable()).thenAnswer((_) {});
+    when(managers.wakelockWrapper.disable()).thenAnswer((_) {});
   });
 
   IconButton findStartStopButton(WidgetTester tester) {
@@ -182,5 +193,61 @@ void main() {
     await tester.pumpAndSettle(const Duration(seconds: 10));
 
     expect(find.text("00:20"), findsOneWidget);
+  });
+
+  testWidgets("Wakelock is disabled on dispose", (tester) async {
+    await pumpContext(
+      tester,
+      (_) => DisposableTester(child: FullscreenActivityPage("")),
+    );
+
+    var state = tester.firstState<DisposableTesterState>(
+      find.byType(DisposableTester),
+    );
+    state.removeChild();
+    await tester.pumpAndSettle();
+
+    verify(managers.wakelockWrapper.disable()).called(1);
+  });
+
+  testWidgets("Wakelock is a no-op for free users", (tester) async {
+    when(managers.subscriptionManager.isFree).thenReturn(true);
+    when(managers.subscriptionManager.isPro).thenReturn(false);
+
+    await pumpContext(tester, (_) => FullscreenActivityPage(""));
+    await tester.pump();
+
+    verifyNever(managers.wakelockWrapper.enable());
+    verifyNever(managers.wakelockWrapper.disable());
+  });
+
+  testWidgets("Wakelock is enabled if activity is in progress", (tester) async {
+    when(managers.subscriptionManager.isFree).thenReturn(false);
+    when(managers.subscriptionManager.isPro).thenReturn(true);
+    when(
+      managers.dataManager.inProgressSession(any),
+    ).thenAnswer((_) => Future.value(SessionBuilder("").build));
+
+    await pumpContext(tester, (_) => FullscreenActivityPage(""));
+    await tester.pump();
+
+    verify(managers.wakelockWrapper.enable()).called(1);
+    verifyNever(managers.wakelockWrapper.disable());
+  });
+
+  testWidgets("Wakelock is disabled if activity is not in progress", (
+    tester,
+  ) async {
+    when(managers.subscriptionManager.isFree).thenReturn(false);
+    when(managers.subscriptionManager.isPro).thenReturn(true);
+    when(
+      managers.dataManager.inProgressSession(any),
+    ).thenAnswer((_) => Future.value(null));
+
+    await pumpContext(tester, (_) => FullscreenActivityPage(""));
+    await tester.pump();
+
+    verifyNever(managers.wakelockWrapper.enable());
+    verify(managers.wakelockWrapper.disable()).called(1);
   });
 }

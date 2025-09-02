@@ -121,5 +121,6 @@ Map<String, Map<String, String>> englishStrings = {
         "No internet connection. Please check your connection and try again.",
     "feedbackPage_errorSending":
         "Error sending feedback. Please try again later, or email %s directly.",
+    "proPage_wakeLock": "Keep the screen on while in full screen activities",
   },
 };

@@ -1,9 +1,13 @@
+import 'package:adair_flutter_lib/managers/subscription_manager.dart';
 import 'package:adair_flutter_lib/res/dimen.dart';
+import 'package:adair_flutter_lib/widgets/pro_chip_button.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile/database/data_manager.dart';
 import 'package:mobile/model/activity.dart';
+import 'package:mobile/pages/activity_log_pro_page.dart';
 import 'package:mobile/widgets/future_listener.dart';
 import 'package:mobile/widgets/my_page.dart';
+import 'package:mobile/wrappers/wakelock_wrapper.dart';
 
 import '../model/session.dart';
 import '../widgets/future_timer.dart';
@@ -25,6 +29,12 @@ class _FullscreenActivityPageState extends State<FullscreenActivityPage> {
   String get _activityId => widget.activityId;
 
   @override
+  void dispose() {
+    super.dispose();
+    WakelockWrapper.get.disable();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return MyPage(
       child: OrientationBuilder(
@@ -38,9 +48,18 @@ class _FullscreenActivityPageState extends State<FullscreenActivityPage> {
             var activity = values?[0];
             var session = values?[1];
 
+            _handleWakelock(session != null);
+
             return Stack(
               children: [
                 Align(alignment: Alignment.topLeft, child: CloseButton()),
+                Align(
+                  alignment: Alignment.topRight,
+                  child: Padding(
+                    padding: insetsHorizontalDefault,
+                    child: ProChipButton(ActivityLogProPage()),
+                  ),
+                ),
                 Center(
                   child: Column(
                     mainAxisSize: MainAxisSize.max,
@@ -117,5 +136,17 @@ class _FullscreenActivityPageState extends State<FullscreenActivityPage> {
                   : DataManager.get.startSession(activity))
               .then((_) => setState(() {})),
     );
+  }
+
+  void _handleWakelock(bool isEnabled) {
+    if (SubscriptionManager.get.isFree) {
+      return;
+    }
+
+    if (isEnabled) {
+      WakelockWrapper.get.enable();
+    } else {
+      WakelockWrapper.get.disable();
+    }
   }
 }

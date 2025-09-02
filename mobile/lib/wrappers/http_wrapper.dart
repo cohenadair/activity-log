@@ -12,7 +12,7 @@ class HttpWrapper {
   static void set(HttpWrapper manager) => _instance = manager;
 
   @visibleForTesting
-  static void suicide() => _instance = HttpWrapper._();
+  static void reset() => _instance = HttpWrapper._();
 
   HttpWrapper._();
 

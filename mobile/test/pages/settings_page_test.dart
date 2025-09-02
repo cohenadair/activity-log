@@ -6,9 +6,9 @@ import 'package:mobile/pages/settings_page.dart';
 import 'package:mobile/utils/duration.dart';
 import 'package:mockito/mockito.dart';
 
+import '../../../../adair-flutter-lib/test/test_utils/testable.dart';
 import '../../../../adair-flutter-lib/test/test_utils/widget.dart';
 import '../stubbed_managers.dart';
-import '../test_utils.dart';
 
 void main() {
   late StubbedManagers managers;

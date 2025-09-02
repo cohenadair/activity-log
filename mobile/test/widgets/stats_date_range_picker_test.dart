@@ -4,9 +4,9 @@ import 'package:fixnum/fixnum.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mobile/widgets/stats_date_range_picker.dart';
 
+import '../../../../adair-flutter-lib/test/test_utils/testable.dart';
 import '../../../../adair-flutter-lib/test/test_utils/widget.dart';
 import '../stubbed_managers.dart';
-import '../test_utils.dart';
 
 void main() {
   setUp(() async {

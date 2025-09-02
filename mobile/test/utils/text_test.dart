@@ -4,8 +4,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mobile/widgets/text.dart';
 import 'package:quiver/time.dart';
 
+import '../../../../adair-flutter-lib/test/test_utils/testable.dart';
 import '../stubbed_managers.dart';
-import '../test_utils.dart';
 
 void main() {
   late StubbedManagers managers;

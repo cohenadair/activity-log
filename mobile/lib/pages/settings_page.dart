@@ -2,12 +2,12 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:adair_flutter_lib/model/gen/adair_flutter_lib.pb.dart';
-import 'package:adair_flutter_lib/pages/pro_page.dart';
 import 'package:adair_flutter_lib/res/dimen.dart';
 import 'package:adair_flutter_lib/utils/date_range.dart';
 import 'package:adair_flutter_lib/utils/dialog.dart';
 import 'package:adair_flutter_lib/utils/duration.dart';
 import 'package:adair_flutter_lib/utils/log.dart';
+import 'package:adair_flutter_lib/utils/page.dart';
 import 'package:adair_flutter_lib/widgets/loading.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -15,9 +15,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:mobile/database/backup.dart';
 import 'package:mobile/i18n/strings.dart';
+import 'package:mobile/pages/activity_log_pro_page.dart';
 import 'package:mobile/pages/feedback_page.dart';
 import 'package:mobile/preferences_manager.dart';
-import 'package:mobile/utils/page_utils.dart';
 import 'package:mobile/widgets/list_item.dart';
 import 'package:mobile/widgets/list_picker.dart';
 import 'package:mobile/widgets/my_page.dart';
@@ -100,7 +100,7 @@ class SettingsPageState extends State<SettingsPage> {
   Widget _buildPro() {
     return ListItem(
       title: Text(Strings.of(context).settingsPagePro),
-      onTap: () => present(context, ProPage(features: [])),
+      onTap: () => present(context, ActivityLogProPage()),
     );
   }
 

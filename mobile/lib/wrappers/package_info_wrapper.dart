@@ -10,7 +10,7 @@ class PackageInfoWrapper {
   static void set(PackageInfoWrapper manager) => _instance = manager;
 
   @visibleForTesting
-  static void suicide() => _instance = PackageInfoWrapper._();
+  static void reset() => _instance = PackageInfoWrapper._();
 
   PackageInfoWrapper._();
 

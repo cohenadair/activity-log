@@ -12,13 +12,13 @@ import 'package:adair_flutter_lib/utils/widget.dart';
 import 'package:adair_flutter_lib/widgets/loading.dart';
 import 'package:adair_flutter_lib/wrappers/io_wrapper.dart';
 import 'package:flutter/material.dart';
-import 'package:mobile/device_info_wrapper.dart';
-import 'package:mobile/http_wrapper.dart';
-import 'package:mobile/package_info_wrapper.dart';
 import 'package:mobile/preferences_manager.dart';
 import 'package:mobile/widgets/button.dart';
 import 'package:mobile/widgets/my_page.dart';
 import 'package:mobile/widgets/text.dart';
+import 'package:mobile/wrappers/device_info_wrapper.dart';
+import 'package:mobile/wrappers/http_wrapper.dart';
+import 'package:mobile/wrappers/package_info_wrapper.dart';
 import 'package:quiver/strings.dart';
 
 import '../i18n/strings.dart';
