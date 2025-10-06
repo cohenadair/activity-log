@@ -158,9 +158,13 @@ void main() {
 
   testWidgets("iOS data is valid", (tester) async {
     when(managers.ioWrapper.isIOS).thenReturn(true);
-    when(managers.deviceInfoWrapper.iosInfo).thenAnswer(
+    when(managers.lib.deviceInfoWrapper.iosInfo).thenAnswer(
       (_) => Future.value(
         IosDeviceInfo.fromMap({
+          "freeDiskSize": 0,
+          "totalDiskSize": 0,
+          "physicalRamSize": 0,
+          "availableRamSize": 0,
           "name": "iOS Device Info",
           "systemName": "iOS System",
           "systemVersion": "1234",
@@ -214,7 +218,7 @@ void main() {
     when(deviceInfo.id).thenReturn("ABCD1234");
 
     when(
-      managers.deviceInfoWrapper.androidInfo,
+      managers.lib.deviceInfoWrapper.androidInfo,
     ).thenAnswer((_) => Future.value(deviceInfo));
 
     await tester.pumpWidget(Testable((_) => FeedbackPage()));
@@ -246,9 +250,13 @@ void main() {
     ).thenAnswer((_) => Future.value(Response("", HttpStatus.badGateway)));
 
     when(managers.ioWrapper.isIOS).thenReturn(true);
-    when(managers.deviceInfoWrapper.iosInfo).thenAnswer(
+    when(managers.lib.deviceInfoWrapper.iosInfo).thenAnswer(
       (_) => Future.value(
         IosDeviceInfo.fromMap({
+          "freeDiskSize": 0,
+          "totalDiskSize": 0,
+          "physicalRamSize": 0,
+          "availableRamSize": 0,
           "name": "iOS Device Info",
           "systemName": "iOS System",
           "systemVersion": "1234",
@@ -300,9 +308,13 @@ void main() {
         ),
       ),
     );
-    when(managers.deviceInfoWrapper.iosInfo).thenAnswer(
+    when(managers.lib.deviceInfoWrapper.iosInfo).thenAnswer(
       (_) => Future.value(
         IosDeviceInfo.fromMap({
+          "freeDiskSize": 0,
+          "totalDiskSize": 0,
+          "physicalRamSize": 0,
+          "availableRamSize": 0,
           "name": "iOS Device Info",
           "systemName": "iOS System",
           "systemVersion": "1234",

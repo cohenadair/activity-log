@@ -10,13 +10,13 @@ import 'package:adair_flutter_lib/utils/snack_bar.dart';
 import 'package:adair_flutter_lib/utils/string.dart';
 import 'package:adair_flutter_lib/utils/widget.dart';
 import 'package:adair_flutter_lib/widgets/loading.dart';
+import 'package:adair_flutter_lib/wrappers/device_info_wrapper.dart';
 import 'package:adair_flutter_lib/wrappers/io_wrapper.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile/preferences_manager.dart';
 import 'package:mobile/widgets/button.dart';
 import 'package:mobile/widgets/my_page.dart';
 import 'package:mobile/widgets/text.dart';
-import 'package:mobile/wrappers/device_info_wrapper.dart';
 import 'package:mobile/wrappers/http_wrapper.dart';
 import 'package:mobile/wrappers/package_info_wrapper.dart';
 import 'package:quiver/strings.dart';
@@ -220,7 +220,10 @@ class _FeedbackPageState extends State<FeedbackPage> {
     );
 
     if (response.statusCode != HttpStatus.accepted) {
-      _log.e("Error sending feedback: ${response.statusCode}");
+      _log.e(
+        HttpException(response.statusCode.toString()),
+        reason: "Sending in-app feedback",
+      );
 
       setState(() {
         _isSending = false;
