@@ -47,6 +47,11 @@ android {
 
     defaultConfig {
         applicationId "com.cohenadair.activitylog"
+        // flutter.minSdkVersion can be found in the Flutter SDK files:
+        // flutter/packages/flutter_tools/gradle/src/main/kotlin/FlutterExtension.kt,
+        // and search for variable name.
+        //
+        // Currently, this value is 24.
         minSdkVersion flutter.minSdkVersion
         targetSdkVersion 35
         versionCode flutterVersionCode.toInteger()
@@ -70,6 +75,7 @@ android {
     }
 
     compileOptions {
+        coreLibraryDesugaringEnabled true
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
     }
@@ -87,5 +93,7 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.1.0-alpha4'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0-alpha4'
+
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.4'
 }
 
