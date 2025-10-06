@@ -9,7 +9,7 @@ import 'package:adair_flutter_lib/managers/properties_manager.dart';
 import 'package:adair_flutter_lib/managers/subscription_manager.dart';
 import 'package:adair_flutter_lib/managers/time_manager.dart';
 import 'package:adair_flutter_lib/res/theme.dart';
-import 'package:adair_flutter_lib/utils/log.dart';
+import 'package:adair_flutter_lib/widgets/safe_future_builder.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
@@ -72,8 +72,6 @@ class ActivityLog extends StatefulWidget {
 }
 
 class ActivityLogState extends State<ActivityLog> {
-  final _log = Log("ActivityLogState");
-
   late Future<void> _appInitializedFuture;
 
   @override
@@ -160,18 +158,13 @@ class ActivityLogState extends State<ActivityLog> {
         ),
       ),
       themeMode: AppConfig.get.themeMode(),
-      home: FutureBuilder(
+      home: SafeFutureBuilder(
         future: _appInitializedFuture,
-        builder: (_, snapshot) {
-          if (snapshot.hasError ||
-              snapshot.connectionState != ConnectionState.done) {
-            if (snapshot.hasError) {
-              _log.e(snapshot.error!.toString());
-            }
-            return Scaffold(backgroundColor: AppConfig.get.colorAppTheme);
-          }
-          return MainPage();
-        },
+        errorReason: "Initializing app",
+        // TODO: Replace with LandingPage from Anglers' Log
+        loadingBuilder: (_) =>
+            Scaffold(backgroundColor: AppConfig.get.colorAppTheme),
+        builder: (_, __) => MainPage(),
       ),
       debugShowCheckedModeBanner: false,
       localizationsDelegates: [
