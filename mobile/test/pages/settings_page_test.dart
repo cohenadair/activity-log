@@ -30,6 +30,9 @@ void main() {
       managers.subscriptionManager.subscriptions(),
     ).thenAnswer((_) => Future.value(null));
     when(managers.subscriptionManager.isPro).thenReturn(false);
+
+    when(managers.ioWrapper.isIOS).thenReturn(false);
+    when(managers.ioWrapper.isAndroid).thenReturn(true);
   });
 
   testWidgets("ProPage is shown", (tester) async {

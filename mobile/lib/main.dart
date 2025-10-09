@@ -18,6 +18,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:mobile/i18n/strings.dart';
 import 'package:mobile/l10n/l10n_extension.dart';
+import 'package:mobile/live_activities_manager.dart';
 import 'package:mobile/pages/main_page.dart';
 import 'package:mobile/preferences_manager.dart';
 import 'package:mobile/res/gen/custom_icons.dart';
@@ -222,5 +223,6 @@ class ActivityLogState extends State<ActivityLog> {
     // App managers.
     await PreferencesManager.get.init();
     await DataManager.get.init();
+    await LiveActivitiesManager.get.init();
   }
 }

@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:adair_flutter_lib/model/gen/adair_flutter_lib.pb.dart';
 import 'package:adair_flutter_lib/utils/date_range.dart';
+import 'package:adair_flutter_lib/utils/log.dart';
 import 'package:adair_flutter_lib/utils/void_stream_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile/database/sqlite_open_helper.dart';
@@ -30,6 +31,10 @@ class DataManager {
 
   late Database _database;
 
+  final _log = Log("DataManager");
+  final _sessionStartedController = StreamController<Session>.broadcast();
+  final _sessionEndedController = StreamController<Session>.broadcast();
+
   final _activitiesUpdated = VoidStreamController();
   final Map<String, VoidStreamController> _sessionsUpdatedMap = {};
 
@@ -39,6 +44,10 @@ class DataManager {
   /// This value is loaded during [DataManager] initialization, and used
   /// as an initial value for a [ActivityListModelBuilder].
   late List<ActivityListTileModel> _initialActivityListTileModels;
+
+  Stream<Session> get sessionStartedStream => _sessionStartedController.stream;
+
+  Stream<Session> get sessionEndedStream => _sessionEndedController.stream;
 
   /// Events are added to this [Stream] when an [Activity] is added, removed,
   /// or modified.
@@ -188,6 +197,7 @@ class DataManager {
   /// [Activity] is already running, this method does nothing. Returns the ID
   /// of the new [Session].
   Future<String?> startSession(Activity activity) async {
+    // TODO: Need to show notification page and request permission if a user is Pro.
     if (activity.isRunning) {
       // Only one session per activity can be running at a given time.
       return null;
@@ -204,25 +214,26 @@ class DataManager {
 
     var _ = await batch.commit();
     _activitiesUpdated.notify();
+    _sessionStartedController.add(newSession);
 
     return newSession.id;
   }
 
-  /// Ends the session for the given [Activity]. This method does nothing if
-  /// the given [Activity] isn't running. Always returns `null`, which can and
-  /// should be ignored.
-  Future<void> endSession(Activity activity) async {
+  /// Ends the session at [timestamp], or now, for the given [Activity]. This
+  /// method does nothing if the given [Activity] isn't running.
+  Future<void> endSession(Activity activity, [int? timestamp]) async {
     if (!activity.isRunning) {
       // Can't end a session for an activity that isn't running.
       return;
     }
 
-    Batch batch = _database.batch();
+    var currentSessionId = activity.currentSessionId!;
+    var batch = _database.batch();
 
     // Update session's end time.
     batch.rawUpdate("UPDATE session SET end_timestamp = ? WHERE id = ?", [
-      DateTime.now().millisecondsSinceEpoch,
-      activity.currentSessionId,
+      timestamp ?? DateTime.now().millisecondsSinceEpoch,
+      currentSessionId,
     ]);
 
     // Set the associated activity's current session to null.
@@ -233,6 +244,14 @@ class DataManager {
 
     await batch.commit();
     _activitiesUpdated.notify();
+
+    var session = await getSession(currentSessionId);
+    if (session == null) {
+      // Shouldn't really happen.
+      _log.e(Exception("Cannot find ended session"));
+    } else {
+      _sessionEndedController.add(session);
+    }
   }
 
   void addSession(Session session) {

@@ -122,5 +122,10 @@ Map<String, Map<String, String>> englishStrings = {
     "feedbackPage_errorSending":
         "Error sending feedback. Please try again later, or email %s directly.",
     "proPage_wakeLock": "Keep the screen on while in full screen activities",
+    "proPage_liveActivitiesAndroid":
+        "Ongoing notifications of in-progress sessions",
+    "proPage_liveActivitiesAndroidUnsupported": "Requires Android 8.0+",
+    "proPage_liveActivitiesApple": "Live activities of in-progress sessions",
+    "proPage_liveActivitiesAppleUnsupported": "Requires iOS 16.1+",
   },
 };
