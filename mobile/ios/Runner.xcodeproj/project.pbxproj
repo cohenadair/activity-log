@@ -81,6 +81,15 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		0D45129E2E9D762D00A73132 /* Exceptions for "ActiveSession" folder in "Runner" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				EndSessionIntent.swift,
+				LiveActivitiesAppAttributes.swift,
+				SharedData.swift,
+			);
+			target = 97C146ED1CF9000F007C117D /* Runner */;
+		};
 		0DD114E82E9802540044336F /* Exceptions for "ActiveSession" folder in "ActiveSessionExtension" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
@@ -94,6 +103,7 @@
 		0DD114D72E9802530044336F /* ActiveSession */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
+				0D45129E2E9D762D00A73132 /* Exceptions for "ActiveSession" folder in "Runner" target */,
 				0DD114E82E9802540044336F /* Exceptions for "ActiveSession" folder in "ActiveSessionExtension" target */,
 			);
 			explicitFileTypes = {
@@ -501,7 +511,7 @@
 				INFOPLIST_FILE = ActiveSession/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = ActiveSession;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -547,7 +557,7 @@
 				INFOPLIST_FILE = ActiveSession/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = ActiveSession;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -590,7 +600,7 @@
 				INFOPLIST_FILE = ActiveSession/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = ActiveSession;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

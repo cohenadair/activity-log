@@ -124,8 +124,8 @@ Map<String, Map<String, String>> englishStrings = {
     "proPage_wakeLock": "Keep the screen on while in full screen activities",
     "proPage_liveActivitiesAndroid":
         "Ongoing notifications of in-progress sessions",
-    "proPage_liveActivitiesAndroidUnsupported": "Requires Android 8.0+",
+    "proPage_liveActivitiesAndroidUnsupported": "Requires Android 8+",
     "proPage_liveActivitiesApple": "Live activities of in-progress sessions",
-    "proPage_liveActivitiesAppleUnsupported": "Requires iOS 16.1+",
+    "proPage_liveActivitiesAppleUnsupported": "Requires iOS 17+",
   },
 };

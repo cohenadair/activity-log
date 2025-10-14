@@ -10,21 +10,7 @@ import WidgetKit
 import SwiftUI
 import AppIntents
 
-// TODO: Seems to be required at a global scope for the live activity to show up.
-// Using a singleton didn't work. May require more investigation.
-private let defaults = UserDefaults(suiteName: "group.cohenadair.activitylog")!
-
-// TODO: Needs methods for accessing all fields set in LiveActivityManager._onSessionStarted().
-// These fields should be utilized when creating the live activity UI.
-
-struct LiveActivitiesAppAttributes: ActivityAttributes, Identifiable {
-    public typealias LiveDeliveryData = ContentState
-
-    public struct ContentState: Codable, Hashable { }
-
-    var id = UUID()
-}
-
+@available(iOS 17, *)
 struct ActiveSessionLiveActivity: Widget {
     // TODO: Finish UI.
     var body: some WidgetConfiguration {
@@ -32,15 +18,8 @@ struct ActiveSessionLiveActivity: Widget {
             HStack {
                 Text("Activity Name")
                 Spacer()
-                if #available(iOS 17, *) {
-                    Button(intent: EndSessionIntent("TODO: Get ID from defaults")) {
-                        Text("STOP")
-                    }
-                } else {
-                    // Note that this opens the app (no way around it for iOS 16-).
-                    Link(destination: URL(string: "")!) {
-                        Text("STOP")
-                    }
+                Button(intent: EndSessionIntent(liveActivityId: context.activityID, appActivityId: activityId(context))) {
+                    Text("STOP")
                 }
             }
         } dynamicIsland: { context in
@@ -68,10 +47,4 @@ struct ActiveSessionLiveActivity: Widget {
             .keylineTint(Color.red)
         }
     }
-}
-
-extension LiveActivitiesAppAttributes {
-  func prefixedKey(_ key: String) -> String {
-    return "\(id)_\(key)"
-  }
 }

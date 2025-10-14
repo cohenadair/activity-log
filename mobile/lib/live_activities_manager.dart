@@ -2,7 +2,9 @@ import 'dart:async';
 
 import 'package:adair_flutter_lib/app_config.dart';
 import 'package:adair_flutter_lib/managers/subscription_manager.dart';
+import 'package:adair_flutter_lib/utils/dotted_version.dart';
 import 'package:adair_flutter_lib/utils/log.dart';
+import 'package:adair_flutter_lib/wrappers/device_info_wrapper.dart';
 import 'package:adair_flutter_lib/wrappers/io_wrapper.dart';
 import 'package:flutter/foundation.dart';
 import 'package:live_activities/live_activities.dart';
@@ -44,16 +46,21 @@ class LiveActivitiesManager {
 
     await SharedPreferenceAppGroupWrapper.get.setAppGroup(_groupId);
 
-    if (await isSupported) {
+    if (await isSupported()) {
       DataManager.get.sessionStartedStream.listen(_onSessionStarted);
       DataManager.get.sessionEndedStream.listen(_onSessionEnded);
-      await _endActivitiesFromIosGroupData();
+      await _checkIosGroupData();
     } else {
       _log.d("Live activities are not supported in current OS version");
     }
   }
 
-  Future<bool> get isSupported => _liveActivities.areActivitiesSupported();
+  Future<bool> isSupported() async {
+    return DottedVersion.parse(
+          (await DeviceInfoWrapper.get.iosInfo).systemVersion,
+        ).major >=
+        17;
+  }
 
   Future<void> _onSessionStarted(Session session) async {
     if (SubscriptionManager.get.isFree) {
@@ -84,11 +91,14 @@ class LiveActivitiesManager {
 
   Future<void> _onSessionEnded(Session session) async {
     _cancelIosGroupDataPolling();
-    _log.d("Ending live activity: ${session.activityId}");
+    _log.d(
+      "Sending end live activity request to plugin: ${session.activityId}",
+    );
     await _liveActivities.endActivity(session.activityId);
   }
 
   Future<void> _onUrlEvent(UrlSchemeData data) async {
+    // TODO: Not needed for iOS. Confirm if needed for Android.
     _log.d("URL event: ${data.queryParameters}");
 
     var urlId = data.queryParameters.first["value"];
@@ -107,7 +117,7 @@ class LiveActivitiesManager {
 
     _iosGroupUpdatesTimer = Timer.periodic(
       _iosGroupDataPollDuration,
-      (_) => _endActivitiesFromIosGroupData(),
+      (_) => _checkIosGroupData(),
     );
   }
 
@@ -127,7 +137,7 @@ class LiveActivitiesManager {
     await DataManager.get.endSession(activity, timestamp);
   }
 
-  Future<void> _endActivitiesFromIosGroupData() async {
+  Future<void> _checkIosGroupData() async {
     // Hack to print from iOS widget extensions.
     var logs = await SharedPreferenceAppGroupWrapper.get.getStringList(
       _iosLogsKey,
@@ -137,6 +147,7 @@ class LiveActivitiesManager {
     }
     await SharedPreferenceAppGroupWrapper.get.setStringList(_iosLogsKey, null);
 
+    // Check for ended activities.
     var idTimePairs = await SharedPreferenceAppGroupWrapper.get.getStringList(
       _iosEndedActivitiesKey,
     );

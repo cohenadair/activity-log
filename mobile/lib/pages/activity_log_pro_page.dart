@@ -27,7 +27,7 @@ class ActivityLogProPage extends StatelessWidget {
   }
 
   Future<String?> _buildSubtext() async {
-    if (!await LiveActivitiesManager.get.isSupported) {
+    if (!await LiveActivitiesManager.get.isSupported()) {
       return IoWrapper.get.isAndroid
           ? L10n.get.app.proPageLiveActivitiesAndroidUnsupported
           : L10n.get.app.proPageLiveActivitiesAppleUnsupported;

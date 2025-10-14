@@ -14,25 +14,34 @@ struct EndSessionIntent: LiveActivityIntent {
     static var title: LocalizedStringResource = "End Session"
     static var openAppWhenRun: Bool = false
 
-    @Parameter(title: "Activity ID")
-    var activityId: String
+    @Parameter(title: "App Activity ID")
+    var appActivityId: String
+    
+    @Parameter(title: "Live Activity ID")
+    var liveActivityId: String
 
     init() {}
         
-    init(_ activityId: String) {
-        self.activityId = activityId
+    init(liveActivityId: String, appActivityId: String) {
+        self.liveActivityId = liveActivityId
+        self.appActivityId = appActivityId
     }
 
     func perform() async -> some IntentResult {
-        // TODO: Write to group data in format expected by LiveActivitiesManager._endActivitiesFromIosGroupData().
+        appendEndedActivity(appActivityId)
         
-        // TODO: This doesn't work. Presumably because this class isn't part of the Runner target.
-        // See https://github.com/praveeniroh/LiveActivity for an example of how to get this to
-        // work, including updating the live activity UI from an intent.
-        for activity in Activity<LiveActivitiesAppAttributes>.activities {
-            guard activity.id == activityId else {
+        let activities = Activity<LiveActivitiesAppAttributes>.activities
+        appendLog("Live Activities: \(activities.count)")
+        
+        // End live activity immediately. This gets around the delay from native-to-Flutter
+        // to end live activities. It also handles the case where the app is no longer
+        // running when the user ends the app activity.
+        for activity in activities {
+            guard activity.id == liveActivityId else {
+                appendLog("Activity ID (\(activity.id)) != input ID (\(liveActivityId))")
                 continue
             }
+            appendLog("Ending live activity from app intent")
             await activity.end(
                 ActivityContent(state: .init(), staleDate: nil),
                 dismissalPolicy: .immediate

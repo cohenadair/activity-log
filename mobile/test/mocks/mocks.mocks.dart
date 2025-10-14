@@ -314,9 +314,9 @@ class MockDataManager extends _i1.Mock implements _i14.DataManager {
           as _i7.Future<String?>);
 
   @override
-  _i7.Future<void> endSession(_i12.Activity? activity) =>
+  _i7.Future<void> endSession(_i12.Activity? activity, [int? timestamp]) =>
       (super.noSuchMethod(
-            Invocation.method(#endSession, [activity]),
+            Invocation.method(#endSession, [activity, timestamp]),
             returnValue: _i7.Future<void>.value(),
             returnValueForMissingStub: _i7.Future<void>.value(),
           )
