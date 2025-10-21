@@ -36,6 +36,7 @@ void main() {
   });
 
   testWidgets("ProPage is shown", (tester) async {
+    managers.lib.stubIosDeviceInfo();
     await tester.pumpWidget(Testable((_) => SettingsPage()));
 
     await tapAndSettle(tester, find.text("Activity Log Pro"));

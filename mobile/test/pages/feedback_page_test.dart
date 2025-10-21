@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:adair_flutter_lib/widgets/loading.dart';
-import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart';
@@ -158,32 +157,7 @@ void main() {
 
   testWidgets("iOS data is valid", (tester) async {
     when(managers.ioWrapper.isIOS).thenReturn(true);
-    when(managers.lib.deviceInfoWrapper.iosInfo).thenAnswer(
-      (_) => Future.value(
-        IosDeviceInfo.fromMap({
-          "freeDiskSize": 0,
-          "totalDiskSize": 0,
-          "physicalRamSize": 0,
-          "availableRamSize": 0,
-          "name": "iOS Device Info",
-          "systemName": "iOS System",
-          "systemVersion": "1234",
-          "model": "iPhone",
-          "modelName": "14 Pro",
-          "localizedModel": "iPhone",
-          "identifierForVendor": "Vendor ID",
-          "isPhysicalDevice": true,
-          "isiOSAppOnMac": false,
-          "utsname": {
-            "sysname": "Sys name",
-            "nodename": "Node name",
-            "release": "Release",
-            "version": "Version",
-            "machine": "iPhone Name",
-          },
-        }),
-      ),
-    );
+    managers.lib.stubIosDeviceInfo();
 
     await tester.pumpWidget(Testable((_) => FeedbackPage()));
     await enterTextFieldAndSettle(tester, "Message", "Test");
@@ -250,32 +224,7 @@ void main() {
     ).thenAnswer((_) => Future.value(Response("", HttpStatus.badGateway)));
 
     when(managers.ioWrapper.isIOS).thenReturn(true);
-    when(managers.lib.deviceInfoWrapper.iosInfo).thenAnswer(
-      (_) => Future.value(
-        IosDeviceInfo.fromMap({
-          "freeDiskSize": 0,
-          "totalDiskSize": 0,
-          "physicalRamSize": 0,
-          "availableRamSize": 0,
-          "name": "iOS Device Info",
-          "systemName": "iOS System",
-          "systemVersion": "1234",
-          "model": "iPhone",
-          "modelName": "14 Pro",
-          "localizedModel": "iPhone",
-          "identifierForVendor": "Vendor ID",
-          "isPhysicalDevice": true,
-          "isiOSAppOnMac": false,
-          "utsname": {
-            "sysname": "Sys name",
-            "nodename": "Node name",
-            "release": "Release",
-            "version": "Version",
-            "machine": "iPhone Name",
-          },
-        }),
-      ),
-    );
+    managers.lib.stubIosDeviceInfo();
 
     await tester.pumpWidget(Testable((_) => FeedbackPage()));
     await enterTextFieldAndSettle(tester, "Message", "Test");
@@ -308,32 +257,7 @@ void main() {
         ),
       ),
     );
-    when(managers.lib.deviceInfoWrapper.iosInfo).thenAnswer(
-      (_) => Future.value(
-        IosDeviceInfo.fromMap({
-          "freeDiskSize": 0,
-          "totalDiskSize": 0,
-          "physicalRamSize": 0,
-          "availableRamSize": 0,
-          "name": "iOS Device Info",
-          "systemName": "iOS System",
-          "systemVersion": "1234",
-          "model": "iPhone",
-          "modelName": "14 Pro",
-          "localizedModel": "iPhone",
-          "identifierForVendor": "Vendor ID",
-          "isPhysicalDevice": true,
-          "isiOSAppOnMac": false,
-          "utsname": {
-            "sysname": "Sys name",
-            "nodename": "Node name",
-            "release": "Release",
-            "version": "Version",
-            "machine": "iPhone Name",
-          },
-        }),
-      ),
-    );
+    managers.lib.stubIosDeviceInfo();
 
     await tester.pumpWidget(Testable((_) => FeedbackPage()));
     await enterTextFieldAndSettle(tester, "Message", "Test");

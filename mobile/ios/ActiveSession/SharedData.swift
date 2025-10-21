@@ -12,14 +12,6 @@ import WidgetKit
 // Using a singleton didn't work. May require more investigation.
 let defaults = UserDefaults(suiteName: "group.cohenadair.activitylog")!
 
-// TODO: Needs methods for accessing all fields set in LiveActivityManager._onSessionStarted().
-// These fields should be utilized when creating the live activity UI.
-
-@available(iOS 16.1, *)
-func activityId(_ context: ActivityViewContext<LiveActivitiesAppAttributes>) -> String {
-    return defaults.string(forKey: context.attributes.prefixedKey("activity_id"))!
-}
-
 func appendLog(_ log: String) {
     appendStringArray("logs", log)
 }

@@ -81,10 +81,14 @@ class LiveActivitiesManager {
       "activity_id": activity.id,
       "activity_name": activity.name,
       "session_start_timestamp": session.startTimestamp,
-      "background_red": AppConfig.get.colorAppTheme.r,
-      "background_green": AppConfig.get.colorAppTheme.g,
-      "background_blue": AppConfig.get.colorAppTheme.b,
-      "background_opacity": 50,
+      "bg_r": AppConfig.get.colorAppTheme.r,
+      "bg_g": AppConfig.get.colorAppTheme.g,
+      "bg_b": AppConfig.get.colorAppTheme.b,
+      "bg_a": 0.6,
+      "stop_bg_opacity": 0.35,
+      "timer_font_size": 48.0,
+      "activity_name_font_size": 20.0,
+      "padding": 16.0,
       "ios_ended_activities_key": _iosEndedActivitiesKey,
     });
   }
