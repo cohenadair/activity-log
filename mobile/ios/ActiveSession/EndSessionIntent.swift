@@ -12,7 +12,10 @@ import ActivityKit
 @available(iOS 17, *)
 struct EndSessionIntent: LiveActivityIntent {
     static var title: LocalizedStringResource = "End Session"
-    static var openAppWhenRun: Bool = false
+    static var isDiscoverable = false
+    
+    @available(iOS 26, *)
+    static var supportedModes: IntentModes = .background
 
     @Parameter(title: "App Activity ID")
     var appActivityId: String
@@ -50,4 +53,9 @@ struct EndSessionIntent: LiveActivityIntent {
         
         return .result()
     }
+}
+
+@available(iOS 17, *)
+extension EndSessionIntent {
+    static var openAppWhenRun: Bool { false }
 }
