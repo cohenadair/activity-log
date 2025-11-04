@@ -159,20 +159,12 @@ class MockDataManager extends _i1.Mock implements _i14.DataManager {
   }
 
   @override
-  _i7.Stream<_i15.Session> get sessionStartedStream =>
+  _i7.Stream<_i14.SessionEvent> get sessionStream =>
       (super.noSuchMethod(
-            Invocation.getter(#sessionStartedStream),
-            returnValue: _i7.Stream<_i15.Session>.empty(),
+            Invocation.getter(#sessionStream),
+            returnValue: _i7.Stream<_i14.SessionEvent>.empty(),
           )
-          as _i7.Stream<_i15.Session>);
-
-  @override
-  _i7.Stream<_i15.Session> get sessionEndedStream =>
-      (super.noSuchMethod(
-            Invocation.getter(#sessionEndedStream),
-            returnValue: _i7.Stream<_i15.Session>.empty(),
-          )
-          as _i7.Stream<_i15.Session>);
+          as _i7.Stream<_i14.SessionEvent>);
 
   @override
   _i7.Stream<void> get activitiesUpdatedStream =>
@@ -250,6 +242,14 @@ class MockDataManager extends _i1.Mock implements _i14.DataManager {
           as _i7.Future<_i12.Activity?>);
 
   @override
+  _i7.Future<String?> currentLiveActivityId(String? activityId) =>
+      (super.noSuchMethod(
+            Invocation.method(#currentLiveActivityId, [activityId]),
+            returnValue: _i7.Future<String?>.value(),
+          )
+          as _i7.Future<String?>);
+
+  @override
   _i7.Future<List<_i12.Activity>> getActivities(List<String>? ids) =>
       (super.noSuchMethod(
             Invocation.method(#getActivities, [ids]),
@@ -282,10 +282,13 @@ class MockDataManager extends _i1.Mock implements _i14.DataManager {
           as _i7.Future<void>);
 
   @override
-  void updateActivity(_i12.Activity? activity) => super.noSuchMethod(
-    Invocation.method(#updateActivity, [activity]),
-    returnValueForMissingStub: null,
-  );
+  _i7.Future<void> updateActivity(_i12.Activity? activity) =>
+      (super.noSuchMethod(
+            Invocation.method(#updateActivity, [activity]),
+            returnValue: _i7.Future<void>.value(),
+            returnValueForMissingStub: _i7.Future<void>.value(),
+          )
+          as _i7.Future<void>);
 
   @override
   void removeActivity(String? activityId) => super.noSuchMethod(

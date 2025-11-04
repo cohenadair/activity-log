@@ -32,10 +32,11 @@ class DataManager {
   late Database _database;
 
   final _log = Log("DataManager");
-  final _sessionStartedController = StreamController<Session>.broadcast();
-  final _sessionEndedController = StreamController<Session>.broadcast();
+  final _sessionController = StreamController<SessionEvent>.broadcast();
 
   final _activitiesUpdated = VoidStreamController();
+
+  // TODO: This is over-complicated. Refactor to use _sessionController.
   final Map<String, VoidStreamController> _sessionsUpdatedMap = {};
 
   /// Used for a more seamless transition between the launch screen and
@@ -45,9 +46,7 @@ class DataManager {
   /// as an initial value for a [ActivityListModelBuilder].
   late List<ActivityListTileModel> _initialActivityListTileModels;
 
-  Stream<Session> get sessionStartedStream => _sessionStartedController.stream;
-
-  Stream<Session> get sessionEndedStream => _sessionEndedController.stream;
+  Stream<SessionEvent> get sessionStream => _sessionController.stream;
 
   /// Events are added to this [Stream] when an [Activity] is added, removed,
   /// or modified.
@@ -77,10 +76,19 @@ class DataManager {
     return (await activityCount) <= 0 && (await sessionCount) <= 0;
   }
 
-  void _update(String table, Model model, VoidCallback notify) {
-    _database
-        .update(table, model.toMap(), where: "id = ?", whereArgs: [model.id])
-        .then((_) => notify());
+  Future<void> _update(String table, Model model, VoidCallback notify) async {
+    var rowsUpdated = await _database.update(
+      table,
+      model.toMap(),
+      where: "id = ?",
+      whereArgs: [model.id],
+    );
+
+    _log.d("Updated $rowsUpdated rows in $table");
+
+    if (rowsUpdated > 0) {
+      notify();
+    }
   }
 
   Future<int> _getRowCount(String tableName) async {
@@ -106,6 +114,26 @@ class DataManager {
 
   Future<Activity?> activity(String id) async =>
       (await getActivities([id])).firstOrNull;
+
+  Future<String?> currentLiveActivityId(String activityId) async {
+    var results = await _database.rawQuery(
+      "SELECT current_live_activity_id FROM activity WHERE id = ?",
+      [activityId],
+    );
+
+    if (results.isEmpty) {
+      _log.d("No live activity IDs found for activity $activityId");
+      return null;
+    }
+
+    if (results.length > 1) {
+      _log.d(
+        "Multiple live activity IDs found for activity $activityId, using first...",
+      );
+    }
+
+    return results.first["current_live_activity_id"] as String;
+  }
 
   Future<List<Activity>> getActivities(List<String> ids) async {
     String query =
@@ -144,8 +172,8 @@ class DataManager {
     }
   }
 
-  void updateActivity(Activity activity) {
-    _update("activity", activity, _activitiesUpdated.notify);
+  Future<void> updateActivity(Activity activity) {
+    return _update("activity", activity, _activitiesUpdated.notify);
   }
 
   void removeActivity(String activityId) {
@@ -214,7 +242,7 @@ class DataManager {
 
     var _ = await batch.commit();
     _activitiesUpdated.notify();
-    _sessionStartedController.add(newSession);
+    _sessionController.add(SessionEvent(SessionEventType.started, newSession));
 
     return newSession.id;
   }
@@ -236,9 +264,13 @@ class DataManager {
       currentSessionId,
     ]);
 
-    // Set the associated activity's current session to null.
+    // Clear the associated activity's session data.
     batch.rawUpdate(
-      "UPDATE activity SET current_session_id = NULL WHERE id = ?",
+      """
+      UPDATE activity 
+      SET current_session_id = NULL, current_live_activity_id = NULL   
+      WHERE id = ?
+      """,
       [activity.id],
     );
 
@@ -250,7 +282,7 @@ class DataManager {
       // Shouldn't really happen.
       _log.e(Exception("Cannot find ended session"));
     } else {
-      _sessionEndedController.add(session);
+      _sessionController.add(SessionEvent(SessionEventType.ended, session));
     }
   }
 
@@ -262,6 +294,7 @@ class DataManager {
 
   void updateSession(Session session) {
     _update("session", session, () {
+      _sessionController.add(SessionEvent(SessionEventType.updated, session));
       _notifySessionsUpdated(session.activityId);
     });
   }
@@ -640,4 +673,13 @@ class SessionsBuilder extends StatelessWidget {
       builder: (context, value) => builder(context, value as List<Session>),
     );
   }
+}
+
+enum SessionEventType { started, updated, ended }
+
+class SessionEvent {
+  final SessionEventType type;
+  final Session session;
+
+  SessionEvent(this.type, this.session);
 }

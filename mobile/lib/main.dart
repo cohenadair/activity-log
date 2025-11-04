@@ -9,6 +9,7 @@ import 'package:adair_flutter_lib/managers/properties_manager.dart';
 import 'package:adair_flutter_lib/managers/subscription_manager.dart';
 import 'package:adair_flutter_lib/managers/time_manager.dart';
 import 'package:adair_flutter_lib/res/theme.dart';
+import 'package:adair_flutter_lib/utils/root.dart';
 import 'package:adair_flutter_lib/widgets/safe_future_builder.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -93,7 +94,7 @@ class ActivityLogState extends State<ActivityLog> {
   Widget build(BuildContext context) {
     return MaterialApp(
       onGenerateTitle: (context) {
-        L10n.get.context = context;
+        Root.get.buildContext = context;
         return L10n.get.app.appName;
       },
       theme: AdairFlutterLibTheme.light().copyWith(

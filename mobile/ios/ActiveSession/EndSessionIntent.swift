@@ -44,7 +44,7 @@ struct EndSessionIntent: LiveActivityIntent {
                 appendLog("Activity ID (\(activity.id)) != input ID (\(liveActivityId))")
                 continue
             }
-            appendLog("Ending live activity from app intent")
+            appendLog("Ending live activity from app intent: \(activity.id)")
             await activity.end(
                 ActivityContent(state: .init(), staleDate: nil),
                 dismissalPolicy: .immediate

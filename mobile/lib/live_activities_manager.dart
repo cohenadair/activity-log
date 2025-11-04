@@ -2,16 +2,21 @@ import 'dart:async';
 
 import 'package:adair_flutter_lib/app_config.dart';
 import 'package:adair_flutter_lib/managers/subscription_manager.dart';
+import 'package:adair_flutter_lib/res/theme.dart';
 import 'package:adair_flutter_lib/utils/dotted_version.dart';
 import 'package:adair_flutter_lib/utils/log.dart';
+import 'package:adair_flutter_lib/utils/root.dart';
 import 'package:adair_flutter_lib/wrappers/device_info_wrapper.dart';
 import 'package:adair_flutter_lib/wrappers/io_wrapper.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:live_activities/live_activities.dart';
 import 'package:live_activities/models/url_scheme_data.dart';
 import 'package:mobile/database/data_manager.dart';
+import 'package:mobile/model/activity.dart';
 import 'package:mobile/wrappers/live_activities_wrapper.dart';
 import 'package:mobile/wrappers/shared_preference_app_group_wrapper.dart';
+import 'package:quiver/strings.dart';
 
 import 'model/session.dart';
 
@@ -47,8 +52,7 @@ class LiveActivitiesManager {
     await SharedPreferenceAppGroupWrapper.get.setAppGroup(_groupId);
 
     if (await isSupported()) {
-      DataManager.get.sessionStartedStream.listen(_onSessionStarted);
-      DataManager.get.sessionEndedStream.listen(_onSessionEnded);
+      DataManager.get.sessionStream.listen(_onSessionEvent);
       await _checkIosGroupData();
     } else {
       _log.d("Live activities are not supported in current OS version");
@@ -62,28 +66,44 @@ class LiveActivitiesManager {
         17;
   }
 
+  Future<void> _onSessionEvent(SessionEvent event) async {
+    switch (event.type) {
+      case SessionEventType.started:
+        return _onSessionStarted(event.session);
+      case SessionEventType.updated:
+        return _onSessionUpdated(event.session);
+      case SessionEventType.ended:
+        return _onSessionEnded(event.session);
+    }
+  }
+
   Future<void> _onSessionStarted(Session session) async {
     if (SubscriptionManager.get.isFree) {
-      _log.d("User is free; skipping live activity");
+      _log.d("User is free; skipping create");
       return;
     }
 
     var activity = await DataManager.get.activity(session.activityId);
     if (activity == null) {
-      _log.d("Can't create activity: ${session.activityId} doesn't exist");
+      _log.d("Can't create: ${session.activityId} doesn't exist");
       return;
     }
 
     _pollForIosGroupDataChanges();
-    _log.d("Starting live activity: ${session.activityId}");
-    await _liveActivities.createActivity(activity.id, {
+    _log.d("Sending create request: ${session.activityId}");
+
+    var bgColor = Root.get.buildContext.isDarkTheme
+        ? AdairFlutterLibTheme.dark().colorScheme.surface
+        : AppConfig.get.colorAppTheme;
+
+    var id = await _liveActivities.createActivity(activity.id, {
       "url_scheme": _urlScheme,
       "activity_id": activity.id,
       "activity_name": activity.name,
       "session_start_timestamp": session.startTimestamp,
-      "bg_r": AppConfig.get.colorAppTheme.r,
-      "bg_g": AppConfig.get.colorAppTheme.g,
-      "bg_b": AppConfig.get.colorAppTheme.b,
+      "bg_r": bgColor.r,
+      "bg_g": bgColor.g,
+      "bg_b": bgColor.b,
       "bg_a": 0.6,
       "stop_bg_opacity": 0.35,
       "timer_font_size": 48.0,
@@ -91,13 +111,45 @@ class LiveActivitiesManager {
       "padding": 16.0,
       "ios_ended_activities_key": _iosEndedActivitiesKey,
     });
+
+    if (id == null) {
+      _log.d("Live activity creation failed for activity ${activity.id}");
+      return;
+    }
+
+    await DataManager.get.updateActivity(
+      (ActivityBuilder.fromActivity(
+        activity,
+      )..currentLiveActivityId = id).build,
+    );
+  }
+
+  Future<void> _onSessionUpdated(Session session) async {
+    if (SubscriptionManager.get.isFree) {
+      _log.d("User is free; skipping update");
+      return;
+    }
+
+    var id = await DataManager.get.currentLiveActivityId(session.activityId);
+    if (isEmpty(id)) {
+      return;
+    }
+
+    _log.d("Sending update request: ${session.activityId}");
+
+    await _liveActivities.updateActivity(id!, {
+      "session_start_timestamp": session.startTimestamp,
+    });
   }
 
   Future<void> _onSessionEnded(Session session) async {
+    if (SubscriptionManager.get.isFree) {
+      _log.d("User is free; skipping end");
+      return;
+    }
+
     _cancelIosGroupDataPolling();
-    _log.d(
-      "Sending end live activity request to plugin: ${session.activityId}",
-    );
+    _log.d("Sending end request: ${session.activityId}");
     await _liveActivities.endActivity(session.activityId);
   }
 
