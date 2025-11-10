@@ -1,9 +1,11 @@
 import 'dart:async';
 
+import 'package:adair_flutter_lib/managers/subscription_manager.dart';
 import 'package:adair_flutter_lib/model/gen/adair_flutter_lib.pb.dart';
 import 'package:adair_flutter_lib/utils/date_range.dart';
 import 'package:adair_flutter_lib/utils/log.dart';
 import 'package:adair_flutter_lib/utils/void_stream_controller.dart';
+import 'package:adair_flutter_lib/wrappers/io_wrapper.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile/database/sqlite_open_helper.dart';
 import 'package:mobile/model/activity.dart';
@@ -14,6 +16,7 @@ import 'package:mobile/widgets/activity_list_tile.dart';
 import 'package:mobile/widgets/future_listener.dart';
 import 'package:sqflite/sqflite.dart';
 
+import '../notification_manager.dart';
 import '../preferences_manager.dart';
 
 class DataManager {
@@ -224,11 +227,18 @@ class DataManager {
   /// Creates and starts a new [Session] for the given [Activity]. If the given
   /// [Activity] is already running, this method does nothing. Returns the ID
   /// of the new [Session].
-  Future<String?> startSession(Activity activity) async {
-    // TODO: Need to show notification page and request permission if a user is Pro.
+  ///
+  /// If necessary, this method will request permission for notifications.
+  Future<String?> startSession(BuildContext context, Activity activity) async {
     if (activity.isRunning) {
       // Only one session per activity can be running at a given time.
       return null;
+    }
+
+    if (SubscriptionManager.get.isPro && IoWrapper.get.isAndroid) {
+      // Note that we don't care about the result here. The live_activities
+      // package is a no-op if the permission has already been set.
+      await NotificationManager.get.requestPermission(context);
     }
 
     Session newSession = SessionBuilder(activity.id).build;

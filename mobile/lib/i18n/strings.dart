@@ -318,6 +318,9 @@ class Strings {
 
   String get proPageLiveActivitiesAppleUnsupported =>
       _getString("proPage_liveActivitiesAppleUnsupported");
+
+  String get notificationPermissionPageDescAndroid =>
+      _getString("notificationPermissionPage_descAndroid");
 }
 
 class StringsDelegate extends LocalizationsDelegate<Strings> {

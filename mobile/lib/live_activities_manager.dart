@@ -45,25 +45,31 @@ class LiveActivitiesManager {
   Timer? _iosGroupUpdatesTimer;
 
   Future<void> init() async {
+    if (!await isSupported()) {
+      _log.d("Live activities are not supported in current OS version");
+      return;
+    }
+
     _liveActivities = LiveActivitiesWrapper.get.newInstance()
       ..init(appGroupId: _groupId, urlScheme: _urlScheme);
     _liveActivities.urlSchemeStream().listen(_onUrlEvent);
 
-    await SharedPreferenceAppGroupWrapper.get.setAppGroup(_groupId);
+    DataManager.get.sessionStream.listen(_onSessionEvent);
 
-    if (await isSupported()) {
-      DataManager.get.sessionStream.listen(_onSessionEvent);
+    if (IoWrapper.get.isIOS) {
+      await SharedPreferenceAppGroupWrapper.get.setAppGroup(_groupId);
       await _checkIosGroupData();
-    } else {
-      _log.d("Live activities are not supported in current OS version");
     }
   }
 
   Future<bool> isSupported() async {
-    return DottedVersion.parse(
-          (await DeviceInfoWrapper.get.iosInfo).systemVersion,
-        ).major >=
-        17;
+    if (IoWrapper.get.isAndroid) {
+      return (await DeviceInfoWrapper.get.androidInfo).version.sdkInt >= 26;
+    } else if (IoWrapper.get.isIOS) {
+      var version = (await DeviceInfoWrapper.get.iosInfo).systemVersion;
+      return DottedVersion.parse(version).major >= 17;
+    }
+    return false;
   }
 
   Future<void> _onSessionEvent(SessionEvent event) async {
@@ -194,6 +200,10 @@ class LiveActivitiesManager {
   }
 
   Future<void> _checkIosGroupData() async {
+    if (IoWrapper.get.isAndroid) {
+      return;
+    }
+
     // Hack to print from iOS widget extensions.
     var logs = await SharedPreferenceAppGroupWrapper.get.getStringList(
       _iosLogsKey,

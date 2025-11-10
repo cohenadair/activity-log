@@ -43,7 +43,7 @@ class ActivitiesPageState extends State<ActivitiesPage> {
   }
 
   void _startSession(Activity activity) {
-    DataManager.get.startSession(activity).then((_) => _update());
+    DataManager.get.startSession(context, activity).then((_) => _update());
   }
 
   void _endSession(Activity activity) {
