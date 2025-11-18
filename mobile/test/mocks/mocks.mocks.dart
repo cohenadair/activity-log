@@ -13,6 +13,7 @@ import 'package:device_info_plus/src/model/ios_device_info.dart' as _i9;
 import 'package:flutter/material.dart' as _i11;
 import 'package:http/http.dart' as _i5;
 import 'package:mobile/database/data_manager.dart' as _i14;
+import 'package:mobile/live_activities_manager.dart' as _i23;
 import 'package:mobile/model/activity.dart' as _i12;
 import 'package:mobile/model/session.dart' as _i15;
 import 'package:mobile/model/summarized_activity.dart' as _i2;
@@ -145,6 +146,14 @@ class MockActivity extends _i1.Mock implements _i12.Activity {
   Map<String, dynamic> toMap() =>
       (super.noSuchMethod(
             Invocation.method(#toMap, []),
+            returnValue: <String, dynamic>{},
+          )
+          as Map<String, dynamic>);
+
+  @override
+  Map<String, dynamic> toJson() =>
+      (super.noSuchMethod(
+            Invocation.method(#toJson, []),
             returnValue: <String, dynamic>{},
           )
           as Map<String, dynamic>);
@@ -309,9 +318,12 @@ class MockDataManager extends _i1.Mock implements _i14.DataManager {
           as _i7.Future<void>);
 
   @override
-  _i7.Future<String?> startSession(_i12.Activity? activity) =>
+  _i7.Future<String?> startSession(
+    _i11.BuildContext? context,
+    _i12.Activity? activity,
+  ) =>
       (super.noSuchMethod(
-            Invocation.method(#startSession, [activity]),
+            Invocation.method(#startSession, [context, activity]),
             returnValue: _i7.Future<String?>.value(),
           )
           as _i7.Future<String?>);
@@ -1720,4 +1732,31 @@ class MockWakelockWrapper extends _i1.Mock implements _i22.WakelockWrapper {
     Invocation.method(#disable, []),
     returnValueForMissingStub: null,
   );
+}
+
+/// A class which mocks [LiveActivitiesManager].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockLiveActivitiesManager extends _i1.Mock
+    implements _i23.LiveActivitiesManager {
+  MockLiveActivitiesManager() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  _i7.Future<void> init() =>
+      (super.noSuchMethod(
+            Invocation.method(#init, []),
+            returnValue: _i7.Future<void>.value(),
+            returnValueForMissingStub: _i7.Future<void>.value(),
+          )
+          as _i7.Future<void>);
+
+  @override
+  _i7.Future<bool> isSupported() =>
+      (super.noSuchMethod(
+            Invocation.method(#isSupported, []),
+            returnValue: _i7.Future<bool>.value(false),
+          )
+          as _i7.Future<bool>);
 }

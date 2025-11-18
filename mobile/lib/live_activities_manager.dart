@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:adair_flutter_lib/app_config.dart';
 import 'package:adair_flutter_lib/managers/subscription_manager.dart';
@@ -11,12 +12,14 @@ import 'package:adair_flutter_lib/wrappers/io_wrapper.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:live_activities/live_activities.dart';
-import 'package:live_activities/models/url_scheme_data.dart';
 import 'package:mobile/database/data_manager.dart';
 import 'package:mobile/model/activity.dart';
 import 'package:mobile/wrappers/live_activities_wrapper.dart';
 import 'package:mobile/wrappers/shared_preference_app_group_wrapper.dart';
+import 'package:mobile/wrappers/shared_preferences_wrapper.dart';
 import 'package:quiver/strings.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:shared_preferences_android/shared_preferences_android.dart';
 
 import 'model/session.dart';
 
@@ -34,15 +37,15 @@ class LiveActivitiesManager {
   LiveActivitiesManager._();
 
   static const _groupId = "group.cohenadair.activitylog";
-  static const _urlScheme = "activity-log://my.app/end-activity?id=";
-  static const _iosEndedActivitiesKey = "ended_activity_ids";
+  static const _endedActivitiesKey = "ended_activity_ids";
+  static const _groupDataPollDuration = Duration(seconds: 1);
   static const _iosLogsKey = "logs";
-  static const _iosGroupDataPollDuration = Duration(seconds: 1);
 
   final _log = Log("LiveActivitiesManager");
   late final LiveActivities _liveActivities;
+  late final SharedPreferencesAsync _androidPrefs;
 
-  Timer? _iosGroupUpdatesTimer;
+  Timer? _groupUpdatesTimer;
 
   Future<void> init() async {
     if (!await isSupported()) {
@@ -51,15 +54,23 @@ class LiveActivitiesManager {
     }
 
     _liveActivities = LiveActivitiesWrapper.get.newInstance()
-      ..init(appGroupId: _groupId, urlScheme: _urlScheme);
-    _liveActivities.urlSchemeStream().listen(_onUrlEvent);
+      ..init(appGroupId: _groupId);
 
     DataManager.get.sessionStream.listen(_onSessionEvent);
 
     if (IoWrapper.get.isIOS) {
       await SharedPreferenceAppGroupWrapper.get.setAppGroup(_groupId);
-      await _checkIosGroupData();
+    } else {
+      _androidPrefs = SharedPreferencesWrapper.get.sharedPreferencesAsync(
+        options: SharedPreferencesAsyncAndroidOptions(
+          backend: SharedPreferencesAndroidBackendLibrary.SharedPreferences,
+          originalSharedPreferencesOptions:
+              AndroidSharedPreferencesStoreOptions(fileName: _groupId),
+        ),
+      );
     }
+
+    await _checkGroupData();
   }
 
   Future<bool> isSupported() async {
@@ -95,7 +106,7 @@ class LiveActivitiesManager {
       return;
     }
 
-    _pollForIosGroupDataChanges();
+    _pollForGroupDataChanges();
     _log.d("Sending create request: ${session.activityId}");
 
     var bgColor = Root.get.buildContext.isDarkTheme
@@ -103,19 +114,14 @@ class LiveActivitiesManager {
         : AppConfig.get.colorAppTheme;
 
     var id = await _liveActivities.createActivity(activity.id, {
-      "url_scheme": _urlScheme,
       "activity_id": activity.id,
       "activity_name": activity.name,
       "session_start_timestamp": session.startTimestamp,
-      "bg_r": bgColor.r,
-      "bg_g": bgColor.g,
-      "bg_b": bgColor.b,
-      "bg_a": 0.6,
-      "stop_bg_opacity": 0.35,
-      "timer_font_size": 48.0,
-      "activity_name_font_size": 20.0,
-      "padding": 16.0,
-      "ios_ended_activities_key": _iosEndedActivitiesKey,
+      // Note that Android doesn't allow notification background color changes.
+      "ios_bg_r": bgColor.r,
+      "ios_bg_g": bgColor.g,
+      "ios_bg_b": bgColor.b,
+      "ios_bg_a": 0.6,
     });
 
     if (id == null) {
@@ -154,38 +160,21 @@ class LiveActivitiesManager {
       return;
     }
 
-    _cancelIosGroupDataPolling();
+    _cancelGroupDataPolling();
     _log.d("Sending end request: ${session.activityId}");
     await _liveActivities.endActivity(session.activityId);
   }
 
-  Future<void> _onUrlEvent(UrlSchemeData data) async {
-    // TODO: Not needed for iOS. Confirm if needed for Android.
-    _log.d("URL event: ${data.queryParameters}");
-
-    var urlId = data.queryParameters.first["value"];
-    if (urlId == null) {
-      _log.d("null URL id");
-      return;
-    }
-
-    _endActivity(urlId);
-  }
-
-  void _pollForIosGroupDataChanges() {
-    if (IoWrapper.get.isAndroid) {
-      return;
-    }
-
-    _iosGroupUpdatesTimer = Timer.periodic(
-      _iosGroupDataPollDuration,
-      (_) => _checkIosGroupData(),
+  void _pollForGroupDataChanges() {
+    _groupUpdatesTimer = Timer.periodic(
+      _groupDataPollDuration,
+      (_) => _checkGroupData(),
     );
   }
 
-  void _cancelIosGroupDataPolling() {
-    _iosGroupUpdatesTimer?.cancel();
-    _iosGroupUpdatesTimer = null;
+  void _cancelGroupDataPolling() {
+    _groupUpdatesTimer?.cancel();
+    _groupUpdatesTimer = null;
   }
 
   Future<void> _endActivity(String id, [int? timestamp]) async {
@@ -199,10 +188,8 @@ class LiveActivitiesManager {
     await DataManager.get.endSession(activity, timestamp);
   }
 
-  Future<void> _checkIosGroupData() async {
-    if (IoWrapper.get.isAndroid) {
-      return;
-    }
+  Future<void> _checkGroupDataIos() async {
+    assert(IoWrapper.get.isIOS);
 
     // Hack to print from iOS widget extensions.
     var logs = await SharedPreferenceAppGroupWrapper.get.getStringList(
@@ -213,10 +200,32 @@ class LiveActivitiesManager {
     }
     await SharedPreferenceAppGroupWrapper.get.setStringList(_iosLogsKey, null);
 
-    // Check for ended activities.
-    var idTimePairs = await SharedPreferenceAppGroupWrapper.get.getStringList(
-      _iosEndedActivitiesKey,
+    await _checkGroupDataForEndedActivities(
+      endedActivities: SharedPreferenceAppGroupWrapper.get.getStringList,
+      clearEndedActivities: (key) =>
+          SharedPreferenceAppGroupWrapper.get.setStringList(key, null),
     );
+  }
+
+  Future<void> _checkGroupDataAndroid() async {
+    assert(IoWrapper.get.isAndroid);
+    await _checkGroupDataForEndedActivities(
+      endedActivities: (key) async {
+        var prefs = await _androidPrefs.getString(key);
+        // Note that SharedPreferences on Android doesn't support String lists,
+        // only sets, which don't translate to Flutter, so we use a JSON array
+        // instead.
+        return isEmpty(prefs) ? null : List<String>.from(jsonDecode(prefs!));
+      },
+      clearEndedActivities: (key) => _androidPrefs.setString(key, ""),
+    );
+  }
+
+  Future<void> _checkGroupDataForEndedActivities({
+    required Future<List<String>?> Function(String key) endedActivities,
+    required Future<void> Function(String key) clearEndedActivities,
+  }) async {
+    var idTimePairs = await endedActivities(_endedActivitiesKey);
 
     if (idTimePairs == null || idTimePairs.isEmpty) {
       return;
@@ -233,9 +242,14 @@ class LiveActivitiesManager {
     }
 
     // Clear shared data; no longer need it.
-    await SharedPreferenceAppGroupWrapper.get.setStringList(
-      _iosEndedActivitiesKey,
-      null,
-    );
+    await clearEndedActivities(_endedActivitiesKey);
+  }
+
+  Future<void> _checkGroupData() async {
+    if (IoWrapper.get.isIOS) {
+      await _checkGroupDataIos();
+    } else {
+      await _checkGroupDataAndroid();
+    }
   }
 }

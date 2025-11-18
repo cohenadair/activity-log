@@ -1,5 +1,6 @@
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:mobile/database/data_manager.dart';
+import 'package:mobile/live_activities_manager.dart';
 import 'package:mobile/model/activity.dart';
 import 'package:mobile/model/session.dart';
 import 'package:mobile/preferences_manager.dart';
@@ -21,4 +22,5 @@ import 'package:sqflite/sqflite.dart';
 @GenerateMocks([IosDeviceInfo])
 @GenerateMocks([Session])
 @GenerateMocks([WakelockWrapper])
+@GenerateMocks([LiveActivitiesManager])
 void main() {}

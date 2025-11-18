@@ -34,7 +34,7 @@ if (keystorePropertiesFile.exists()) {
 
 android {
     namespace "com.cohenadair.mobile"
-    compileSdkVersion 35
+    compileSdkVersion 36
     ndkVersion flutter.ndkVersion
 
     sourceSets {
@@ -53,7 +53,7 @@ android {
         //
         // Currently, this value is 24.
         minSdkVersion flutter.minSdkVersion
-        targetSdkVersion 35
+        targetSdkVersion 36
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"

@@ -80,7 +80,7 @@ void main() {
     ).thenAnswer((_) => Future.value(session));
 
     when(
-      managers.dataManager.startSession(any),
+      managers.dataManager.startSession(any, any),
     ).thenAnswer((_) => Future.value(""));
 
     await tapAndSettle(tester, find.byIcon(Icons.play_arrow));
@@ -91,7 +91,7 @@ void main() {
     expect(find.byIcon(Icons.play_arrow), findsNothing);
     expect(find.byIcon(Icons.stop), findsOneWidget);
     expect(findStartStopButton(tester).color, Colors.red);
-    verify(managers.dataManager.startSession(any)).called(1);
+    verify(managers.dataManager.startSession(any, any)).called(1);
     verifyNever(managers.dataManager.endSession(any));
   });
 
@@ -115,7 +115,7 @@ void main() {
     ).thenAnswer((_) => Future.value(session));
 
     when(
-      managers.dataManager.startSession(any),
+      managers.dataManager.startSession(any, any),
     ).thenAnswer((_) => Future.value(""));
 
     await tester.pumpWidget(Testable((_) => FullscreenActivityPage("")));
@@ -133,7 +133,7 @@ void main() {
     expect(find.byIcon(Icons.stop), findsNothing);
     expect(findStartStopButton(tester).color, Colors.green);
     verify(managers.dataManager.endSession(any)).called(1);
-    verifyNever(managers.dataManager.startSession(any));
+    verifyNever(managers.dataManager.startSession(any, any));
   });
 
   testWidgets("Portrait orientation", (tester) async {
@@ -181,7 +181,7 @@ void main() {
     ).thenAnswer((_) => Future.value(session));
 
     when(
-      managers.dataManager.startSession(any),
+      managers.dataManager.startSession(any, any),
     ).thenAnswer((_) => Future.value(""));
 
     await tester.pumpWidget(Testable((_) => FullscreenActivityPage("")));

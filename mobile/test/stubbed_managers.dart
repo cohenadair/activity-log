@@ -1,5 +1,6 @@
 import 'package:mobile/database/data_manager.dart';
 import 'package:mobile/i18n/strings.dart';
+import 'package:mobile/live_activities_manager.dart';
 import 'package:mobile/preferences_manager.dart';
 import 'package:mobile/wrappers/http_wrapper.dart';
 import 'package:mobile/wrappers/package_info_wrapper.dart';
@@ -19,6 +20,7 @@ class StubbedManagers {
   late final MockPackageInfoWrapper packageInfoWrapper;
   late final MockHttpWrapper httpWrapper;
   late final MockWakelockWrapper wakelockWrapper;
+  late final MockLiveActivitiesManager liveActivitiesManager;
 
   static Future<StubbedManagers> create() async =>
       StubbedManagers._(await s.StubbedManagers.create());
@@ -55,6 +57,9 @@ class StubbedManagers {
 
     wakelockWrapper = MockWakelockWrapper();
     WakelockWrapper.set(wakelockWrapper);
+
+    liveActivitiesManager = MockLiveActivitiesManager();
+    LiveActivitiesManager.set(liveActivitiesManager);
 
     Testable.additionalLocalizations = [StringsDelegate()];
   }

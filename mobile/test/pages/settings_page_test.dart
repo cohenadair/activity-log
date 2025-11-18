@@ -33,6 +33,10 @@ void main() {
 
     when(managers.ioWrapper.isIOS).thenReturn(false);
     when(managers.ioWrapper.isAndroid).thenReturn(true);
+
+    when(
+      managers.liveActivitiesManager.isSupported(),
+    ).thenAnswer((_) => Future.value(true));
   });
 
   testWidgets("ProPage is shown", (tester) async {
