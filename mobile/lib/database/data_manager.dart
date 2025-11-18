@@ -326,6 +326,7 @@ class DataManager {
 
     await batch.commit();
 
+    _sessionController.add(SessionEvent(SessionEventType.deleted, session));
     _notifySessionsUpdated(session.activityId);
   }
 
@@ -685,7 +686,7 @@ class SessionsBuilder extends StatelessWidget {
   }
 }
 
-enum SessionEventType { started, updated, ended }
+enum SessionEventType { started, updated, ended, deleted }
 
 class SessionEvent {
   final SessionEventType type;

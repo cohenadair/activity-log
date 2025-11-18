@@ -90,7 +90,8 @@ class LiveActivitiesManager {
       case SessionEventType.updated:
         return _onSessionUpdated(event.session);
       case SessionEventType.ended:
-        return _onSessionEnded(event.session);
+      case SessionEventType.deleted:
+        return _onSessionEndedOrDeleted(event.session);
     }
   }
 
@@ -154,7 +155,7 @@ class LiveActivitiesManager {
     });
   }
 
-  Future<void> _onSessionEnded(Session session) async {
+  Future<void> _onSessionEndedOrDeleted(Session session) async {
     if (SubscriptionManager.get.isFree) {
       _log.d("User is free; skipping end");
       return;
