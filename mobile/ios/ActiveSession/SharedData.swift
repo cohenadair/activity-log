@@ -8,8 +8,8 @@
 import Foundation
 import WidgetKit
 
-// TODO: Seems to be required at a global scope for the live activity to show up.
-// Using a singleton didn't work. May require more investigation.
+// Seems to be required at a global scope for the live activity to show up.
+// Using a singleton didn't work as I expected it would.
 let defaults = UserDefaults(suiteName: "group.cohenadair.activitylog")!
 
 func appendLog(_ log: String) {

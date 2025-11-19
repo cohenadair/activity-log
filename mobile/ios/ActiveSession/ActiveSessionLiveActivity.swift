@@ -21,16 +21,23 @@ struct ActiveSessionLiveActivity: Widget {
         ActivityConfiguration(for: LiveActivitiesAppAttributes.self) { context in
             let model = Model(context: context)
             
+            // The +'s here are a workaround for the timer text's automatic stretching to fill its container.
+            // Details: https://stackoverflow.com/questions/66210592/widgetkit-timer-text-style-expands-it-to-fill-the-width-instead-of-taking-spa
+            // Also, this is stashed in a variable because the .lineLimit and .truncationMode modifiers
+            // used below do not work with Text "+" concatination.
+            let timerNameText =
+                Text(timerInterval: model.timerInterval, countsDown: false)
+                    .font(.system(size: timerFontSize)) +
+                Text("  ") +
+                Text(model.name)
+                    .font(.system(size: activityNameFontSize))
+                    .foregroundStyle(.secondary)
+            
             HStack(alignment: .center) {
                 HStack(alignment: .bottom) {
-                    // The +'s here are a workaround for the timer text's automatic stretching to fill its container.
-                    // Details: https://stackoverflow.com/questions/66210592/widgetkit-timer-text-style-expands-it-to-fill-the-width-instead-of-taking-spa
-                    Text(timerInterval: model.timerInterval, countsDown: false)
-                        .font(.system(size: timerFontSize)) +
-                    Text("  ") +
-                    Text(model.name)
-                        .font(.system(size: activityNameFontSize))
-                        .foregroundStyle(.secondary)
+                    timerNameText
+                        .lineLimit(1)
+                        .truncationMode(.tail)
                 }
                 Spacer()
                 Button(intent: EndSessionIntent(liveActivityId: context.activityID, appActivityId: model.id)) {
