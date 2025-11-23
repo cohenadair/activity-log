@@ -13,7 +13,6 @@ import com.example.live_activities.LiveActivityManager
 class CustomLiveActivityManager(context: Context) : LiveActivityManager(context) {
     private val intentFlags = PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
     private val context = context.applicationContext
-    private var activityId = ""
 
     private val contentIntent = PendingIntent.getActivity(
         context, 200, Intent(context, MainActivity::class.java).apply {
@@ -23,14 +22,16 @@ class CustomLiveActivityManager(context: Context) : LiveActivityManager(context)
 
     private val remoteViews = RemoteViews(context.packageName, R.layout.live_activity)
 
-    private fun stopActivityIntent() = PendingIntent.getBroadcast(
-        context, 200, Intent(context, StopButtonReceiver::class.java).apply {
-            putExtra("activity_id", activityId)
+    private fun stopActivityIntent(id: String, name: String) = PendingIntent.getBroadcast(
+        context, id.hashCode(), Intent(context, StopButtonReceiver::class.java).apply {
+            putExtra(StopButtonReceiver.EXTRA_ACTIVITY_ID, id)
+            putExtra(StopButtonReceiver.EXTRA_ACTIVITY_NAME, name)
         }, intentFlags
     )
 
     private fun updateRemoteViews(data: Map<String, Any>) {
-        activityId = data["activity_id"] as String
+        val id = data["activity_id"] as String
+        val name = data["activity_name"] as String
         remoteViews.setChronometer(
             R.id.timer,
             SystemClock.elapsedRealtime()
@@ -38,8 +39,8 @@ class CustomLiveActivityManager(context: Context) : LiveActivityManager(context)
             null,
             true
         )
-        remoteViews.setTextViewText(R.id.activity_name, data["activity_name"] as String)
-        remoteViews.setOnClickPendingIntent(R.id.stop_button, stopActivityIntent())
+        remoteViews.setTextViewText(R.id.activity_name, name)
+        remoteViews.setOnClickPendingIntent(R.id.stop_button, stopActivityIntent(id, name))
     }
 
     override suspend fun buildNotification(
