@@ -316,6 +316,9 @@ class Strings {
   String get proPageLiveActivitiesApple =>
       _getString("proPage_liveActivitiesApple");
 
+  String get proPageLiveActivitiesAppleDynamicIsland =>
+      _getString("proPage_liveActivitiesAppleDynamicIsland");
+
   String get proPageLiveActivitiesAppleUnsupported =>
       _getString("proPage_liveActivitiesAppleUnsupported");
 

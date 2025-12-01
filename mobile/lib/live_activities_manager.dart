@@ -54,7 +54,7 @@ class LiveActivitiesManager {
     }
 
     _liveActivities = LiveActivitiesWrapper.get.newInstance()
-      ..init(appGroupId: _groupId);
+      ..init(appGroupId: _groupId, requireNotificationPermission: false);
 
     DataManager.get.sessionStream.listen(_onSessionEvent);
 
@@ -118,11 +118,10 @@ class LiveActivitiesManager {
       "activity_id": activity.id,
       "activity_name": activity.name,
       "session_start_timestamp": session.startTimestamp,
-      // Note that Android doesn't allow notification background color changes.
-      "ios_bg_r": bgColor.r,
-      "ios_bg_g": bgColor.g,
-      "ios_bg_b": bgColor.b,
-      "ios_bg_a": 0.6,
+      "tint_r": bgColor.r,
+      "tint_g": bgColor.g,
+      "tint_b": bgColor.b,
+      "tint_a": 0.6,
     });
 
     if (id == null) {

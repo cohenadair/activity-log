@@ -125,7 +125,9 @@ Map<String, Map<String, String>> englishStrings = {
     "proPage_liveActivitiesAndroid":
         "Ongoing notifications of in-progress sessions",
     "proPage_liveActivitiesAndroidUnsupported": "Requires Android 8+",
-    "proPage_liveActivitiesApple": "Live activities of in-progress sessions",
+    "proPage_liveActivitiesApple": "Live Activities for in-progress sessions",
+    "proPage_liveActivitiesAppleDynamicIsland":
+        "Live Activity and Dynamic Island support for in-progress sessions",
     "proPage_liveActivitiesAppleUnsupported": "Requires iOS 17+",
     "notificationPermissionPage_descAndroid":
         "Allow Activity Log to create ongoing notifications of in-progress sessions.",

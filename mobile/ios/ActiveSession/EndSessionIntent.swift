@@ -41,7 +41,6 @@ struct EndSessionIntent: LiveActivityIntent {
         // running when the user ends the app activity.
         for activity in activities {
             guard activity.id == liveActivityId else {
-                appendLog("Activity ID (\(activity.id)) != input ID (\(liveActivityId))")
                 continue
             }
             appendLog("Ending live activity from app intent: \(activity.id)")
