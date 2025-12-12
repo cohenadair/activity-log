@@ -33,7 +33,7 @@ struct EndSessionIntent: LiveActivityIntent {
     func perform() async -> some IntentResult {
         appendEndedActivity(appActivityId)
         
-        let activities = Activity<LiveActivitiesAppAttributes>.activities
+        let activities = LiveActivityManager.get.activities
         appendLog("Live Activities: \(activities.count)")
         
         // End live activity immediately. This gets around the delay from native-to-Flutter

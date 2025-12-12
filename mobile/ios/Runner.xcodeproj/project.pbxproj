@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 70;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -90,16 +90,45 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		0D45129E2E9D762D00A73132 /* Exceptions for "ActiveSession" folder in "Runner" target */ = {
+		0D45129E2E9D762D00A73132 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				EndSessionIntent.swift,
 				LiveActivitiesAppAttributes.swift,
+				LiveActivityManager.swift,
 				SharedData.swift,
 			);
 			target = 97C146ED1CF9000F007C117D /* Runner */;
 		};
-		0DD114E82E9802540044336F /* Exceptions for "ActiveSession" folder in "ActiveSessionExtension" target */ = {
+		0DDB58BA2EE9AF4A00F65E44 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				ActiveSession/ActiveSessionBundleTests.swift,
+				ActiveSession/ActiveSessionLiveActivityTests.swift,
+				ActiveSession/EndSessionIntentTests.swift,
+				ActiveSession/LiveActivitiesAppAttributesTests.swift,
+				ActiveSession/LiveActivityManagerTests.swift,
+				ActiveSession/SharedDataTests.swift,
+				Mocks/MockLiveActivity.swift,
+				Mocks/MockLiveActivityManager.swift,
+			);
+			target = 0DDB543F2ED49FC900F65E44 /* RunnerTests */;
+		};
+		0DDB58BB2EE9AFED00F65E44 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				ActiveSession/ActiveSessionBundleTests.swift,
+				ActiveSession/ActiveSessionLiveActivityTests.swift,
+				ActiveSession/EndSessionIntentTests.swift,
+				ActiveSession/LiveActivitiesAppAttributesTests.swift,
+				ActiveSession/LiveActivityManagerTests.swift,
+				ActiveSession/SharedDataTests.swift,
+				Mocks/MockLiveActivity.swift,
+				Mocks/MockLiveActivityManager.swift,
+			);
+			target = 0DD114D12E9802530044336F /* ActiveSessionExtension */;
+		};
+		0DDB58BC2EE9B0AC00F65E44 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
@@ -109,30 +138,8 @@
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		0DD114D72E9802530044336F /* ActiveSession */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				0D45129E2E9D762D00A73132 /* Exceptions for "ActiveSession" folder in "Runner" target */,
-				0DD114E82E9802540044336F /* Exceptions for "ActiveSession" folder in "ActiveSessionExtension" target */,
-			);
-			explicitFileTypes = {
-			};
-			explicitFolders = (
-			);
-			path = ActiveSession;
-			sourceTree = "<group>";
-		};
-		0DDB54412ED49FC900F65E44 /* RunnerTests */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-			);
-			explicitFileTypes = {
-			};
-			explicitFolders = (
-			);
-			path = RunnerTests;
-			sourceTree = "<group>";
-		};
+		0DD114D72E9802530044336F /* ActiveSession */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (0D45129E2E9D762D00A73132 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, 0DDB58BC2EE9B0AC00F65E44 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = ActiveSession; sourceTree = "<group>"; };
+		0DDB58AB2EE9AE5F00F65E44 /* RunnerTests */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (0DDB58BB2EE9AFED00F65E44 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, 0DDB58BA2EE9AF4A00F65E44 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = RunnerTests; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -201,7 +208,7 @@
 				9740EEB11CF90186004384FC /* Flutter */,
 				97C146F01CF9000F007C117D /* Runner */,
 				0DD114D72E9802530044336F /* ActiveSession */,
-				0DDB54412ED49FC900F65E44 /* RunnerTests */,
+				0DDB58AB2EE9AE5F00F65E44 /* RunnerTests */,
 				97C146EF1CF9000F007C117D /* Products */,
 				34280E4F650A4C20AC1DBB7D /* Pods */,
 				19F8FF3136A9F00DAE3B2A56 /* Frameworks */,
@@ -252,6 +259,7 @@
 			);
 			fileSystemSynchronizedGroups = (
 				0DD114D72E9802530044336F /* ActiveSession */,
+				0DDB58AB2EE9AE5F00F65E44 /* RunnerTests */,
 			);
 			name = ActiveSessionExtension;
 			productName = ActiveSessionsExtension;
@@ -270,9 +278,6 @@
 			);
 			dependencies = (
 				0DDB54452ED49FC900F65E44 /* PBXTargetDependency */,
-			);
-			fileSystemSynchronizedGroups = (
-				0DDB54412ED49FC900F65E44 /* RunnerTests */,
 			);
 			name = RunnerTests;
 			productName = RunnerTests;
@@ -321,6 +326,7 @@
 					};
 					0DDB543F2ED49FC900F65E44 = {
 						CreatedOnToolsVersion = 26.1.1;
+						LastSwiftMigration = 2610;
 						TestTargetID = 97C146ED1CF9000F007C117D;
 					};
 					97C146ED1CF9000F007C117D = {
@@ -424,9 +430,13 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-resources-${CONFIGURATION}-input-files.xcfilelist",
 			);
+			inputPaths = (
+			);
 			name = "[CP] Copy Pods Resources";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -479,9 +489,13 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
+			inputPaths = (
+			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -704,6 +718,7 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
@@ -742,6 +757,7 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
@@ -776,6 +792,7 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
