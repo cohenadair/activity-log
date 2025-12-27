@@ -9,6 +9,8 @@ import 'package:mobile/model/session.dart';
 import 'package:mobile/utils/duration.dart';
 import 'package:mockito/mockito.dart';
 
+import '../../../../adair-flutter-lib/test/test_utils/async.dart';
+import '../../../../adair-flutter-lib/test/test_utils/testable.dart';
 import '../mocks/mocks.mocks.dart';
 import '../stubbed_managers.dart';
 
@@ -19,11 +21,13 @@ void main() {
   setUp(() async {
     managers = await StubbedManagers.create();
 
-    var batch = MockBatch();
+    final batch = MockBatch();
     when(batch.commit()).thenAnswer((_) => Future.value([]));
+    when(batch.rawUpdate(any, any)).thenAnswer((_) {});
 
     database = MockDatabase();
     when(database.batch()).thenReturn(batch);
+    when(database.rawQuery(any, any)).thenAnswer((_) => Future.value([]));
 
     when(
       managers.preferencesManager.largestDurationUnit,
@@ -47,8 +51,8 @@ void main() {
     DateRange dateRange,
     List<Map<String, dynamic>> result,
   ) {
-    var startMs = dateRange.startMs;
-    var endMs = dateRange.endMs;
+    final int startMs = dateRange.startMs;
+    final int endMs = dateRange.endMs;
     when(
       database.rawQuery(
         """
@@ -83,7 +87,7 @@ void main() {
     required int expectedLength,
     required Duration expectedDuration,
   }) async {
-    var dateRange = DateRange(
+    final dateRange = DateRange(
       startTimestamp: Int64(
         TimeManager.get.dateTimeToTz(startDate).millisecondsSinceEpoch,
       ),
@@ -92,7 +96,7 @@ void main() {
       ),
     );
 
-    Activity activity = ActivityBuilder("").build;
+    final activity = ActivityBuilder("").build;
 
     stubActivities([activity.toMap()]);
     stubOverlappingSessions(
@@ -107,7 +111,7 @@ void main() {
       }).toList(),
     );
 
-    var result = await DataManager.get.getSummarizedActivities(dateRange);
+    final result = await DataManager.get.getSummarizedActivities(dateRange);
 
     expect(result.activities.length, equals(expectedLength));
     if (expectedLength > 0) {
@@ -117,18 +121,18 @@ void main() {
 
   test("No activities", () async {
     stubActivities([]);
-    var dateRange = DateRange(
+    final dateRange = DateRange(
       startTimestamp: Int64(TimeManager.get.currentTimestamp),
       endTimestamp: Int64(TimeManager.get.currentTimestamp),
     );
-    var result = await DataManager.get.getSummarizedActivities(dateRange);
+    final result = await DataManager.get.getSummarizedActivities(dateRange);
     expect(result.activities, isEmpty);
     expect(result.longestSession, isNull);
     expect(result.mostFrequentActivity, isNull);
   });
 
   test("Activities provided as parameter", () async {
-    var dateRange = DateRange(
+    final dateRange = DateRange(
       startTimestamp: Int64(
         TimeManager.get.dateTimeFromValues(2018, 1, 1).millisecondsSinceEpoch,
       ),
@@ -137,7 +141,7 @@ void main() {
       ),
     );
 
-    Activity activity = ActivityBuilder("").build;
+    final activity = ActivityBuilder("").build;
 
     stubActivities([activity.toMap()]);
     stubOverlappingSessions(activity.id, dateRange, [
@@ -310,7 +314,7 @@ void main() {
   });
 
   test("Combination of all with multiple activities", () async {
-    var dateRange = DateRange(
+    final dateRange = DateRange(
       startTimestamp: Int64(
         TimeManager.get.dateTimeFromValues(2018, 1, 1).millisecondsSinceEpoch,
       ),
@@ -319,7 +323,7 @@ void main() {
       ),
     );
 
-    List<Activity> activities = [
+    final activities = [
       ActivityBuilder("Activity 1").build,
       ActivityBuilder("Activity 3").build,
       ActivityBuilder("Activity 0").build,
@@ -385,7 +389,7 @@ void main() {
 
     stubOverlappingSessions(activities[4].id, dateRange, []);
 
-    var result = await DataManager.get.getSummarizedActivities(dateRange);
+    final result = await DataManager.get.getSummarizedActivities(dateRange);
 
     expect(result.activities, isNotNull);
     expect(result.activities.length, equals(5));
@@ -436,5 +440,210 @@ void main() {
       ]),
     );
     expect(await DataManager.get.inProgressSession("id"), isNotNull);
+  });
+
+  test("Update notifies listeners", () async {
+    when(
+      database.update(
+        any,
+        any,
+        where: anyNamed("where"),
+        whereArgs: anyNamed("whereArgs"),
+      ),
+    ).thenAnswer((_) => Future.value(1));
+
+    final sub = DataManager.get.activitiesUpdatedStream.listen(
+      expectAsync1((_) {}),
+    );
+
+    await DataManager.get.updateActivity(ActivityBuilder("").build);
+    await Future<void>.delayed(const Duration(milliseconds: 50));
+
+    await sub.cancel();
+  });
+
+  test("Failed update doesn't notify listeners", () async {
+    when(
+      database.update(
+        any,
+        any,
+        where: anyNamed("where"),
+        whereArgs: anyNamed("whereArgs"),
+      ),
+    ).thenAnswer((_) => Future.value(0));
+
+    final sub = DataManager.get.activitiesUpdatedStream.listen(
+      expectAsync1((_) {}, count: 0),
+    );
+
+    await DataManager.get.updateActivity(ActivityBuilder("").build);
+    await Future<void>.delayed(const Duration(milliseconds: 50));
+
+    await sub.cancel();
+  });
+
+  test("currentLiveActivityId with no results", () async {
+    when(database.rawQuery(any, any)).thenAnswer((_) => Future.value([]));
+
+    String? liveActivityId;
+    final logs = await capturePrintStatements(() async {
+      liveActivityId = await DataManager.get.currentLiveActivityId("test-id");
+    });
+
+    expect(logs.length, 1);
+    expect(
+      logs.first,
+      "D/AL-DataManager: No live activity IDs found for activity test-id",
+    );
+    expect(liveActivityId, isNull);
+  });
+
+  test(
+    "currentLiveActivityId returns first ID if multiple are returned",
+    () async {
+      when(database.rawQuery(any, any)).thenAnswer(
+        (_) => Future.value([
+          {"current_live_activity_id": "id-1"},
+          {"current_live_activity_id": "id-0"},
+        ]),
+      );
+
+      String? liveActivityId;
+      final logs = await capturePrintStatements(() async {
+        liveActivityId = await DataManager.get.currentLiveActivityId("test-id");
+      });
+
+      expect(logs.length, 1);
+      expect(
+        logs.first.contains("Multiple live activity IDs found for activity"),
+        isTrue,
+      );
+      expect(liveActivityId, "id-1");
+    },
+  );
+
+  testWidgets(
+    "startSession requests notification permission for Android pro users",
+    (tester) async {
+      when(managers.subscriptionManager.isPro).thenReturn(true);
+      when(managers.ioWrapper.isAndroid).thenReturn(true);
+      when(
+        managers.notificationManager.requestPermission(any),
+      ).thenAnswer((_) => Future.value(true));
+
+      await DataManager.get.startSession(
+        await buildContext(tester),
+        ActivityBuilder("Test").build,
+      );
+
+      verify(managers.notificationManager.requestPermission(any)).called(1);
+    },
+  );
+
+  testWidgets("startSession notifies session listeners", (tester) async {
+    when(managers.subscriptionManager.isPro).thenReturn(false);
+
+    final streamExpectation = expectLater(
+      DataManager.get.sessionStream,
+      emits(predicate<SessionEvent>((e) => e.type == .started)),
+    );
+
+    await DataManager.get.startSession(
+      await buildContext(tester),
+      ActivityBuilder("Test").build,
+    );
+
+    await streamExpectation;
+  });
+
+  test("endSession uses passed in timestamp", () async {
+    final batch = MockBatch();
+    when(batch.rawUpdate(any, any)).thenAnswer((_) {});
+    when(batch.commit()).thenAnswer((_) => Future.value([]));
+
+    when(database.batch()).thenReturn(batch);
+
+    final activity = (ActivityBuilder(
+      "Test",
+    )..currentSessionId = "session-id").build;
+    await DataManager.get.endSession(activity, 5000);
+
+    final result = verify(batch.rawUpdate(any, captureAny));
+    result.called(greaterThan(0));
+    expect(result.captured.first[0], 5000);
+    expect(result.captured.first[1], "session-id");
+  });
+
+  test("endSession uses current timestamp", () async {
+    when(managers.timeManager.currentTimestamp).thenReturn(1000);
+
+    final batch = MockBatch();
+    when(batch.rawUpdate(any, any)).thenAnswer((_) {});
+    when(batch.commit()).thenAnswer((_) => Future.value([]));
+
+    when(database.batch()).thenReturn(batch);
+
+    final activity = (ActivityBuilder(
+      "Test",
+    )..currentSessionId = "session-id").build;
+    await DataManager.get.endSession(activity);
+
+    final result = verify(batch.rawUpdate(any, captureAny));
+    result.called(greaterThan(0));
+    expect(result.captured.first[0], 1000);
+    expect(result.captured.first[1], "session-id");
+  });
+
+  test(
+    "endSession logs an exception if ended session can't be found",
+    () async {
+      final logs = await capturePrintStatements(() async {
+        await DataManager.get.endSession(
+          (ActivityBuilder("Test")..currentSessionId = "session-id").build,
+        );
+      });
+      expect(logs.length, 1);
+      expect(logs.first.contains("Cannot find ended session"), isTrue);
+    },
+  );
+
+  test("endSession notifies session listeners when session is ended", () async {
+    when(
+      database.rawQuery(any, any),
+    ).thenAnswer((_) => Future.value([SessionBuilder("id").build.toMap()]));
+
+    final streamExpectation = expectLater(
+      DataManager.get.sessionStream,
+      emits(predicate<SessionEvent>((e) => e.type == .ended)),
+    );
+
+    final logs = await capturePrintStatements(() async {
+      await DataManager.get.endSession(
+        (ActivityBuilder("Test")..currentSessionId = "session-id").build,
+      );
+    });
+
+    expect(logs, isEmpty);
+    await streamExpectation;
+  });
+
+  test("deleteSession notifies session listeners", () async {
+    final streamExpectation = expectLater(
+      DataManager.get.sessionStream,
+      emits(predicate<SessionEvent>((e) => e.type == .deleted)),
+    );
+
+    await DataManager.get.deleteSession(SessionBuilder("id").build);
+    await streamExpectation;
+  });
+
+  test("getSession returns null if database map is null", () async {
+    when(database.rawQuery(any, any)).thenAnswer((_) => Future.value([]));
+    expect(await DataManager.get.getSession("id"), isNull);
+  });
+
+  test("getSession returns null if database map is empty", () async {
+    when(database.rawQuery(any, any)).thenAnswer((_) => Future.value([{}]));
+    expect(await DataManager.get.getSession("id"), isNull);
   });
 }

@@ -82,7 +82,7 @@ class EditSessionPageState extends State<EditSessionPage> {
             ]),
       padding: insetsVerticalSmall,
       onSave: _onPressedSaveButton,
-      onDelete: () => DataManager.get.removeSession(_editingSession!),
+      onDelete: () => DataManager.get.deleteSession(_editingSession!),
       deleteDescription: Strings.of(context).sessionListDeleteMessage,
       isEditingCallback: () => _isEditing,
       form: Form(

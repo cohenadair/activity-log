@@ -11,7 +11,6 @@ import 'package:package_info_plus/package_info_plus.dart';
 import '../../../../adair-flutter-lib/test/test_utils/finder.dart';
 import '../../../../adair-flutter-lib/test/test_utils/testable.dart';
 import '../../../../adair-flutter-lib/test/test_utils/widget.dart';
-import '../mocks/mocks.mocks.dart';
 import '../stubbed_managers.dart';
 
 void main() {
@@ -157,7 +156,7 @@ void main() {
 
   testWidgets("iOS data is valid", (tester) async {
     when(managers.ioWrapper.isIOS).thenReturn(true);
-    managers.lib.stubIosDeviceInfo();
+    managers.lib.stubIosDeviceInfo(iosVersion: "1234");
 
     await tester.pumpWidget(Testable((_) => FeedbackPage()));
     await enterTextFieldAndSettle(tester, "Message", "Test");
@@ -180,20 +179,7 @@ void main() {
   });
 
   testWidgets("Android data is valid", (tester) async {
-    when(managers.ioWrapper.isIOS).thenReturn(false);
-    when(managers.ioWrapper.isAndroid).thenReturn(true);
-
-    var buildVersion = MockAndroidBuildVersion();
-    when(buildVersion.sdkInt).thenReturn(33);
-
-    var deviceInfo = MockAndroidDeviceInfo();
-    when(deviceInfo.version).thenReturn(buildVersion);
-    when(deviceInfo.model).thenReturn("Pixel XL");
-    when(deviceInfo.id).thenReturn("ABCD1234");
-
-    when(
-      managers.lib.deviceInfoWrapper.androidInfo,
-    ).thenAnswer((_) => Future.value(deviceInfo));
+    managers.lib.stubAndroidDeviceInfo();
 
     await tester.pumpWidget(Testable((_) => FeedbackPage()));
     await enterTextFieldAndSettle(tester, "Message", "Test");

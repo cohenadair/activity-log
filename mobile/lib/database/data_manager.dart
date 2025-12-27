@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:adair_flutter_lib/managers/subscription_manager.dart';
+import 'package:adair_flutter_lib/managers/time_manager.dart';
 import 'package:adair_flutter_lib/model/gen/adair_flutter_lib.pb.dart';
 import 'package:adair_flutter_lib/utils/date_range.dart';
 import 'package:adair_flutter_lib/utils/log.dart';
@@ -252,7 +253,7 @@ class DataManager {
 
     var _ = await batch.commit();
     _activitiesUpdated.notify();
-    _sessionController.add(SessionEvent(SessionEventType.started, newSession));
+    _sessionController.add(SessionEvent(.started, newSession));
 
     return newSession.id;
   }
@@ -270,7 +271,7 @@ class DataManager {
 
     // Update session's end time.
     batch.rawUpdate("UPDATE session SET end_timestamp = ? WHERE id = ?", [
-      timestamp ?? DateTime.now().millisecondsSinceEpoch,
+      timestamp ?? TimeManager.get.currentTimestamp,
       currentSessionId,
     ]);
 
@@ -287,12 +288,12 @@ class DataManager {
     await batch.commit();
     _activitiesUpdated.notify();
 
-    var session = await getSession(currentSessionId);
+    final session = await getSession(currentSessionId);
     if (session == null) {
       // Shouldn't really happen.
       _log.e(Exception("Cannot find ended session"));
     } else {
-      _sessionController.add(SessionEvent(SessionEventType.ended, session));
+      _sessionController.add(SessionEvent(.ended, session));
     }
   }
 
@@ -304,13 +305,13 @@ class DataManager {
 
   void updateSession(Session session) {
     _update("session", session, () {
-      _sessionController.add(SessionEvent(SessionEventType.updated, session));
+      _sessionController.add(SessionEvent(.updated, session));
       _notifySessionsUpdated(session.activityId);
     });
   }
 
-  void removeSession(Session session) async {
-    Batch batch = _database.batch();
+  Future<void> deleteSession(Session session) async {
+    final batch = _database.batch();
 
     // Disassociate the session from activity if it is in progress.
     batch.rawUpdate(
@@ -326,7 +327,9 @@ class DataManager {
 
     await batch.commit();
 
-    _sessionController.add(SessionEvent(SessionEventType.deleted, session));
+    // TODO: Should probably confirm the delete was successful before notifying
+    //  listeners.
+    _sessionController.add(SessionEvent(.deleted, session));
     _notifySessionsUpdated(session.activityId);
   }
 
@@ -437,12 +440,10 @@ class DataManager {
       return null;
     }
 
-    String query = "SELECT * FROM session WHERE id = ?";
-    Map<String, dynamic> map = (await _database.rawQuery(query, [
-      sessionId,
-    ])).first;
+    final query = "SELECT * FROM session WHERE id = ?";
+    final map = (await _database.rawQuery(query, [sessionId])).firstOrNull;
 
-    return Session.fromMap(map);
+    return map == null || map.isEmpty ? null : Session.fromMap(map);
   }
 
   /// Case-insensitive compare of a given name to all other activity names.

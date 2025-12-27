@@ -1,9 +1,13 @@
 import 'package:mobile/database/data_manager.dart';
 import 'package:mobile/i18n/strings.dart';
 import 'package:mobile/live_activities_manager.dart';
+import 'package:mobile/notification_manager.dart';
 import 'package:mobile/preferences_manager.dart';
 import 'package:mobile/wrappers/http_wrapper.dart';
+import 'package:mobile/wrappers/live_activities_wrapper.dart';
 import 'package:mobile/wrappers/package_info_wrapper.dart';
+import 'package:mobile/wrappers/shared_preference_app_group_wrapper.dart';
+import 'package:mobile/wrappers/shared_preferences_wrapper.dart';
 import 'package:mobile/wrappers/wakelock_wrapper.dart';
 import 'package:mockito/mockito.dart';
 
@@ -21,6 +25,10 @@ class StubbedManagers {
   late final MockHttpWrapper httpWrapper;
   late final MockWakelockWrapper wakelockWrapper;
   late final MockLiveActivitiesManager liveActivitiesManager;
+  late final MockLiveActivitiesWrapper liveActivitiesWrapper;
+  late final MockNotificationManager notificationManager;
+  late final MockSharedPreferencesWrapper sharedPreferencesWrapper;
+  late final MockSharedPreferenceAppGroupWrapper sharedAppGroupWrapper;
 
   static Future<StubbedManagers> create() async =>
       StubbedManagers._(await s.StubbedManagers.create());
@@ -60,6 +68,18 @@ class StubbedManagers {
 
     liveActivitiesManager = MockLiveActivitiesManager();
     LiveActivitiesManager.set(liveActivitiesManager);
+
+    liveActivitiesWrapper = MockLiveActivitiesWrapper();
+    LiveActivitiesWrapper.set(liveActivitiesWrapper);
+
+    notificationManager = MockNotificationManager();
+    NotificationManager.set(notificationManager);
+
+    sharedPreferencesWrapper = MockSharedPreferencesWrapper();
+    SharedPreferencesWrapper.set(sharedPreferencesWrapper);
+
+    sharedAppGroupWrapper = MockSharedPreferenceAppGroupWrapper();
+    SharedPreferenceAppGroupWrapper.set(sharedAppGroupWrapper);
 
     Testable.additionalLocalizations = [StringsDelegate()];
   }

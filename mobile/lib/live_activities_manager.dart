@@ -53,8 +53,11 @@ class LiveActivitiesManager {
       return;
     }
 
-    _liveActivities = LiveActivitiesWrapper.get.newInstance()
-      ..init(appGroupId: _groupId, requireNotificationPermission: false);
+    _liveActivities = LiveActivitiesWrapper.get.newInstance();
+    await _liveActivities.init(
+      appGroupId: _groupId,
+      requireNotificationPermission: false,
+    );
 
     DataManager.get.sessionStream.listen(_onSessionEvent);
 
@@ -76,11 +79,10 @@ class LiveActivitiesManager {
   Future<bool> isSupported() async {
     if (IoWrapper.get.isAndroid) {
       return (await DeviceInfoWrapper.get.androidInfo).version.sdkInt >= 26;
-    } else if (IoWrapper.get.isIOS) {
-      var version = (await DeviceInfoWrapper.get.iosInfo).systemVersion;
+    } else {
+      final version = (await DeviceInfoWrapper.get.iosInfo).systemVersion;
       return DottedVersion.parse(version).major >= 17;
     }
-    return false;
   }
 
   Future<void> _onSessionEvent(SessionEvent event) async {
@@ -101,7 +103,7 @@ class LiveActivitiesManager {
       return;
     }
 
-    var activity = await DataManager.get.activity(session.activityId);
+    final activity = await DataManager.get.activity(session.activityId);
     if (activity == null) {
       _log.d("Can't create: ${session.activityId} doesn't exist");
       return;
@@ -110,11 +112,11 @@ class LiveActivitiesManager {
     _pollForGroupDataChanges();
     _log.d("Sending create request: ${session.activityId}");
 
-    var bgColor = Root.get.buildContext.isDarkTheme
+    final bgColor = Root.get.buildContext.isDarkTheme
         ? AdairFlutterLibTheme.dark().colorScheme.surface
         : AppConfig.get.colorAppTheme;
 
-    var id = await _liveActivities.createActivity(activity.id, {
+    final id = await _liveActivities.createActivity(activity.id, {
       "activity_id": activity.id,
       "activity_name": activity.name,
       "session_start_timestamp": session.startTimestamp,
@@ -142,7 +144,7 @@ class LiveActivitiesManager {
       return;
     }
 
-    var id = await DataManager.get.currentLiveActivityId(session.activityId);
+    final id = await DataManager.get.currentLiveActivityId(session.activityId);
     if (isEmpty(id)) {
       return;
     }
@@ -178,7 +180,7 @@ class LiveActivitiesManager {
   }
 
   Future<void> _endActivity(String id, [int? timestamp]) async {
-    var activity = await DataManager.get.activity(id);
+    final activity = await DataManager.get.activity(id);
     if (activity == null) {
       _log.d("Activity id not found: $id");
       return;
@@ -189,10 +191,8 @@ class LiveActivitiesManager {
   }
 
   Future<void> _checkGroupDataIos() async {
-    assert(IoWrapper.get.isIOS);
-
     // Hack to print from iOS widget extensions.
-    var logs = await SharedPreferenceAppGroupWrapper.get.getStringList(
+    final logs = await SharedPreferenceAppGroupWrapper.get.getStringList(
       _iosLogsKey,
     );
     for (var log in logs ?? []) {
@@ -208,10 +208,9 @@ class LiveActivitiesManager {
   }
 
   Future<void> _checkGroupDataAndroid() async {
-    assert(IoWrapper.get.isAndroid);
     await _checkGroupDataForEndedActivities(
       endedActivities: (key) async {
-        var prefs = await _androidPrefs.getString(key);
+        final prefs = await _androidPrefs.getString(key);
         // Note that SharedPreferences on Android doesn't support String lists,
         // only sets, which don't translate to Flutter, so we use a JSON array
         // instead.
@@ -225,17 +224,17 @@ class LiveActivitiesManager {
     required Future<List<String>?> Function(String key) endedActivities,
     required Future<void> Function(String key) clearEndedActivities,
   }) async {
-    var idTimePairs = await endedActivities(_endedActivitiesKey);
+    final idTimePairs = await endedActivities(_endedActivitiesKey);
 
     if (idTimePairs == null || idTimePairs.isEmpty) {
       return;
     }
 
     for (var pair in idTimePairs) {
-      var split = pair.split(":");
+      final split = pair.split(":");
       assert(split.length == 2, "Invalid ID-timestamp pair from group data");
 
-      var timestamp = int.tryParse(split.last);
+      final timestamp = int.tryParse(split.last);
       assert(timestamp != null, "Invalid timestamp from group data");
 
       await _endActivity(split.first, timestamp);
