@@ -11,7 +11,7 @@ version: 1.2.1+20230814
 publish_to: none
 
 environment:
-  sdk: ^3.8.1
+  sdk: ^3.10.0
 
 dependencies:
   flutter:
@@ -52,9 +52,9 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  build_runner: ^2.4.15             # https://pub.dev/packages/build_runner (Dart)
-  mockito: ^5.4.5                   # https://pub.dev/packages/mockito (Dart)
-  flutter_lints: ^5.0.0             # https://pub.dev/packages/flutter_lints (Flutter)
+  build_runner: ^2.10.4             # https://pub.dev/packages/build_runner (Dart)
+  mockito: ^5.5.1                   # https://pub.dev/packages/mockito (Dart)
+  flutter_lints: ^6.0.0             # https://pub.dev/packages/flutter_lints (Flutter)
 
 # For information on the generic Dart part of this file, see the
 # following page: https://www.dartlang.org/tools/pub/pubspec
