@@ -51,8 +51,8 @@ void main() {
     DateRange dateRange,
     List<Map<String, dynamic>> result,
   ) {
-    final int startMs = dateRange.startMs;
-    final int endMs = dateRange.endMs;
+    final startMs = dateRange.startMs;
+    final endMs = dateRange.endMs;
     when(
       database.rawQuery(
         """
