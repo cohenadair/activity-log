@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:adair_flutter_lib/res/theme.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mobile/database/data_manager.dart';
 import 'package:mobile/live_activities_manager.dart';
@@ -217,6 +218,63 @@ void main() {
 
     await flushPollingTimer();
   });
+
+  testWidgets(
+    "On session started handles exception when live activities are disabled by the user",
+    (tester) async {
+      when(managers.subscriptionManager.isFree).thenReturn(false);
+
+      when(
+        managers.dataManager.activity(any),
+      ).thenAnswer((_) => Future.value(ActivityBuilder("Test").build));
+
+      // Exception is thrown on iOS when a user denies or disables live
+      // activities for the app.
+      when(liveActivities.createActivity(any, any)).thenAnswer(
+        (_) => throw PlatformException(
+          code: "Test",
+          details: "User has denied activities",
+        ),
+      );
+
+      final logs = await capturePrintStatements(() async {
+        await buildContext(tester);
+        await initManager();
+        await emitSessionEvent(.started);
+      });
+      expect(logs.length, 2);
+      expect(logs.last.contains("User has disallowed live activities"), isTrue);
+      verifyNever(managers.dataManager.updateActivity(any));
+
+      await flushPollingTimer();
+    },
+  );
+
+  testWidgets(
+    "On session started handles unknown exception when creating a live activity",
+    (tester) async {
+      when(managers.subscriptionManager.isFree).thenReturn(false);
+
+      when(
+        managers.dataManager.activity(any),
+      ).thenAnswer((_) => Future.value(ActivityBuilder("Test").build));
+
+      when(liveActivities.createActivity(any, any)).thenAnswer(
+        (_) => throw PlatformException(code: "Test", details: "Test exception"),
+      );
+
+      final logs = await capturePrintStatements(() async {
+        await buildContext(tester);
+        await initManager();
+        await emitSessionEvent(.started);
+      });
+      expect(logs.length, 3);
+      expect(logs[1].contains("Live activity creation"), isTrue);
+      verifyNever(managers.dataManager.updateActivity(any));
+
+      await flushPollingTimer();
+    },
+  );
 
   testWidgets(
     "On session started exits early if the live activity failed to start",

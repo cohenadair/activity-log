@@ -11,6 +11,7 @@ import 'package:adair_flutter_lib/wrappers/device_info_wrapper.dart';
 import 'package:adair_flutter_lib/wrappers/io_wrapper.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:live_activities/live_activities.dart';
 import 'package:mobile/database/data_manager.dart';
 import 'package:mobile/model/activity.dart';
@@ -116,15 +117,27 @@ class LiveActivitiesManager {
         ? AdairFlutterLibTheme.dark().colorScheme.surface
         : AppConfig.get.colorAppTheme;
 
-    final id = await _liveActivities.createActivity(activity.id, {
-      "activity_id": activity.id,
-      "activity_name": activity.name,
-      "session_start_timestamp": session.startTimestamp,
-      "tint_r": bgColor.r,
-      "tint_g": bgColor.g,
-      "tint_b": bgColor.b,
-      "tint_a": 0.6,
-    });
+    String? id;
+    try {
+      id = await _liveActivities.createActivity(activity.id, {
+        "activity_id": activity.id,
+        "activity_name": activity.name,
+        "session_start_timestamp": session.startTimestamp,
+        "tint_r": bgColor.r,
+        "tint_g": bgColor.g,
+        "tint_b": bgColor.b,
+        "tint_a": 0.6,
+      });
+    } on PlatformException catch (e) {
+      if (e.details is String &&
+          e.details.contains("User has denied activities")) {
+        _log.d("User has disallowed live activities");
+        return;
+      }
+
+      _log.e(e, reason: "Live activity creation");
+      return;
+    }
 
     if (id == null) {
       _log.d("Live activity creation failed for activity ${activity.id}");
