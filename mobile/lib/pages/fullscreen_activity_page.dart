@@ -133,7 +133,7 @@ class _FullscreenActivityPageState extends State<FullscreenActivityPage> {
       onPressed: () =>
           (isRunning
                   ? DataManager.get.endSession(activity)
-                  : DataManager.get.startSession(activity))
+                  : DataManager.get.startSession(context, activity))
               .then((_) => setState(() {})),
     );
   }

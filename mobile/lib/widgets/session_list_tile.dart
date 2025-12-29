@@ -48,7 +48,7 @@ class SessionListTile extends StatelessWidget {
                 context: context,
                 description: Text(Strings.of(context).sessionListDeleteMessage),
                 onDelete: () {
-                  DataManager.get.removeSession(_session);
+                  DataManager.get.deleteSession(_session);
                 },
               );
             },

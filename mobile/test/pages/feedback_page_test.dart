@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:adair_flutter_lib/widgets/loading.dart';
-import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart';
@@ -12,7 +11,6 @@ import 'package:package_info_plus/package_info_plus.dart';
 import '../../../../adair-flutter-lib/test/test_utils/finder.dart';
 import '../../../../adair-flutter-lib/test/test_utils/testable.dart';
 import '../../../../adair-flutter-lib/test/test_utils/widget.dart';
-import '../mocks/mocks.mocks.dart';
 import '../stubbed_managers.dart';
 
 void main() {
@@ -158,32 +156,7 @@ void main() {
 
   testWidgets("iOS data is valid", (tester) async {
     when(managers.ioWrapper.isIOS).thenReturn(true);
-    when(managers.lib.deviceInfoWrapper.iosInfo).thenAnswer(
-      (_) => Future.value(
-        IosDeviceInfo.fromMap({
-          "freeDiskSize": 0,
-          "totalDiskSize": 0,
-          "physicalRamSize": 0,
-          "availableRamSize": 0,
-          "name": "iOS Device Info",
-          "systemName": "iOS System",
-          "systemVersion": "1234",
-          "model": "iPhone",
-          "modelName": "14 Pro",
-          "localizedModel": "iPhone",
-          "identifierForVendor": "Vendor ID",
-          "isPhysicalDevice": true,
-          "isiOSAppOnMac": false,
-          "utsname": {
-            "sysname": "Sys name",
-            "nodename": "Node name",
-            "release": "Release",
-            "version": "Version",
-            "machine": "iPhone Name",
-          },
-        }),
-      ),
-    );
+    managers.lib.stubIosDeviceInfo(iosVersion: "1234");
 
     await tester.pumpWidget(Testable((_) => FeedbackPage()));
     await enterTextFieldAndSettle(tester, "Message", "Test");
@@ -206,20 +179,7 @@ void main() {
   });
 
   testWidgets("Android data is valid", (tester) async {
-    when(managers.ioWrapper.isIOS).thenReturn(false);
-    when(managers.ioWrapper.isAndroid).thenReturn(true);
-
-    var buildVersion = MockAndroidBuildVersion();
-    when(buildVersion.sdkInt).thenReturn(33);
-
-    var deviceInfo = MockAndroidDeviceInfo();
-    when(deviceInfo.version).thenReturn(buildVersion);
-    when(deviceInfo.model).thenReturn("Pixel XL");
-    when(deviceInfo.id).thenReturn("ABCD1234");
-
-    when(
-      managers.lib.deviceInfoWrapper.androidInfo,
-    ).thenAnswer((_) => Future.value(deviceInfo));
+    managers.lib.stubAndroidDeviceInfo();
 
     await tester.pumpWidget(Testable((_) => FeedbackPage()));
     await enterTextFieldAndSettle(tester, "Message", "Test");
@@ -250,32 +210,7 @@ void main() {
     ).thenAnswer((_) => Future.value(Response("", HttpStatus.badGateway)));
 
     when(managers.ioWrapper.isIOS).thenReturn(true);
-    when(managers.lib.deviceInfoWrapper.iosInfo).thenAnswer(
-      (_) => Future.value(
-        IosDeviceInfo.fromMap({
-          "freeDiskSize": 0,
-          "totalDiskSize": 0,
-          "physicalRamSize": 0,
-          "availableRamSize": 0,
-          "name": "iOS Device Info",
-          "systemName": "iOS System",
-          "systemVersion": "1234",
-          "model": "iPhone",
-          "modelName": "14 Pro",
-          "localizedModel": "iPhone",
-          "identifierForVendor": "Vendor ID",
-          "isPhysicalDevice": true,
-          "isiOSAppOnMac": false,
-          "utsname": {
-            "sysname": "Sys name",
-            "nodename": "Node name",
-            "release": "Release",
-            "version": "Version",
-            "machine": "iPhone Name",
-          },
-        }),
-      ),
-    );
+    managers.lib.stubIosDeviceInfo();
 
     await tester.pumpWidget(Testable((_) => FeedbackPage()));
     await enterTextFieldAndSettle(tester, "Message", "Test");
@@ -308,32 +243,7 @@ void main() {
         ),
       ),
     );
-    when(managers.lib.deviceInfoWrapper.iosInfo).thenAnswer(
-      (_) => Future.value(
-        IosDeviceInfo.fromMap({
-          "freeDiskSize": 0,
-          "totalDiskSize": 0,
-          "physicalRamSize": 0,
-          "availableRamSize": 0,
-          "name": "iOS Device Info",
-          "systemName": "iOS System",
-          "systemVersion": "1234",
-          "model": "iPhone",
-          "modelName": "14 Pro",
-          "localizedModel": "iPhone",
-          "identifierForVendor": "Vendor ID",
-          "isPhysicalDevice": true,
-          "isiOSAppOnMac": false,
-          "utsname": {
-            "sysname": "Sys name",
-            "nodename": "Node name",
-            "release": "Release",
-            "version": "Version",
-            "machine": "iPhone Name",
-          },
-        }),
-      ),
-    );
+    managers.lib.stubIosDeviceInfo();
 
     await tester.pumpWidget(Testable((_) => FeedbackPage()));
     await enterTextFieldAndSettle(tester, "Message", "Test");

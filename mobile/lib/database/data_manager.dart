@@ -1,8 +1,12 @@
 import 'dart:async';
 
+import 'package:adair_flutter_lib/managers/subscription_manager.dart';
+import 'package:adair_flutter_lib/managers/time_manager.dart';
 import 'package:adair_flutter_lib/model/gen/adair_flutter_lib.pb.dart';
 import 'package:adair_flutter_lib/utils/date_range.dart';
+import 'package:adair_flutter_lib/utils/log.dart';
 import 'package:adair_flutter_lib/utils/void_stream_controller.dart';
+import 'package:adair_flutter_lib/wrappers/io_wrapper.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile/database/sqlite_open_helper.dart';
 import 'package:mobile/model/activity.dart';
@@ -13,6 +17,7 @@ import 'package:mobile/widgets/activity_list_tile.dart';
 import 'package:mobile/widgets/future_listener.dart';
 import 'package:sqflite/sqflite.dart';
 
+import '../notification_manager.dart';
 import '../preferences_manager.dart';
 
 class DataManager {
@@ -30,7 +35,12 @@ class DataManager {
 
   late Database _database;
 
+  final _log = Log("DataManager");
+  final _sessionController = StreamController<SessionEvent>.broadcast();
+
   final _activitiesUpdated = VoidStreamController();
+
+  // TODO: This is over-complicated. Refactor to use _sessionController.
   final Map<String, VoidStreamController> _sessionsUpdatedMap = {};
 
   /// Used for a more seamless transition between the launch screen and
@@ -39,6 +49,8 @@ class DataManager {
   /// This value is loaded during [DataManager] initialization, and used
   /// as an initial value for a [ActivityListModelBuilder].
   late List<ActivityListTileModel> _initialActivityListTileModels;
+
+  Stream<SessionEvent> get sessionStream => _sessionController.stream;
 
   /// Events are added to this [Stream] when an [Activity] is added, removed,
   /// or modified.
@@ -68,10 +80,19 @@ class DataManager {
     return (await activityCount) <= 0 && (await sessionCount) <= 0;
   }
 
-  void _update(String table, Model model, VoidCallback notify) {
-    _database
-        .update(table, model.toMap(), where: "id = ?", whereArgs: [model.id])
-        .then((_) => notify());
+  Future<void> _update(String table, Model model, VoidCallback notify) async {
+    var rowsUpdated = await _database.update(
+      table,
+      model.toMap(),
+      where: "id = ?",
+      whereArgs: [model.id],
+    );
+
+    _log.d("Updated $rowsUpdated rows in $table");
+
+    if (rowsUpdated > 0) {
+      notify();
+    }
   }
 
   Future<int> _getRowCount(String tableName) async {
@@ -97,6 +118,26 @@ class DataManager {
 
   Future<Activity?> activity(String id) async =>
       (await getActivities([id])).firstOrNull;
+
+  Future<String?> currentLiveActivityId(String activityId) async {
+    var results = await _database.rawQuery(
+      "SELECT current_live_activity_id FROM activity WHERE id = ?",
+      [activityId],
+    );
+
+    if (results.isEmpty) {
+      _log.d("No live activity IDs found for activity $activityId");
+      return null;
+    }
+
+    if (results.length > 1) {
+      _log.d(
+        "Multiple live activity IDs found for activity $activityId, using first...",
+      );
+    }
+
+    return results.first["current_live_activity_id"] as String;
+  }
 
   Future<List<Activity>> getActivities(List<String> ids) async {
     String query =
@@ -135,8 +176,8 @@ class DataManager {
     }
   }
 
-  void updateActivity(Activity activity) {
-    _update("activity", activity, _activitiesUpdated.notify);
+  Future<void> updateActivity(Activity activity) {
+    return _update("activity", activity, _activitiesUpdated.notify);
   }
 
   void removeActivity(String activityId) {
@@ -187,10 +228,18 @@ class DataManager {
   /// Creates and starts a new [Session] for the given [Activity]. If the given
   /// [Activity] is already running, this method does nothing. Returns the ID
   /// of the new [Session].
-  Future<String?> startSession(Activity activity) async {
+  ///
+  /// If necessary, this method will request permission for notifications.
+  Future<String?> startSession(BuildContext context, Activity activity) async {
     if (activity.isRunning) {
       // Only one session per activity can be running at a given time.
       return null;
+    }
+
+    if (SubscriptionManager.get.isPro && IoWrapper.get.isAndroid) {
+      // Note that we don't care about the result here. The live_activities
+      // package is a no-op if the permission has already been set.
+      await NotificationManager.get.requestPermission(context);
     }
 
     Session newSession = SessionBuilder(activity.id).build;
@@ -204,35 +253,48 @@ class DataManager {
 
     var _ = await batch.commit();
     _activitiesUpdated.notify();
+    _sessionController.add(SessionEvent(.started, newSession));
 
     return newSession.id;
   }
 
-  /// Ends the session for the given [Activity]. This method does nothing if
-  /// the given [Activity] isn't running. Always returns `null`, which can and
-  /// should be ignored.
-  Future<void> endSession(Activity activity) async {
+  /// Ends the session at [timestamp], or now, for the given [Activity]. This
+  /// method does nothing if the given [Activity] isn't running.
+  Future<void> endSession(Activity activity, [int? timestamp]) async {
     if (!activity.isRunning) {
       // Can't end a session for an activity that isn't running.
       return;
     }
 
-    Batch batch = _database.batch();
+    var currentSessionId = activity.currentSessionId!;
+    var batch = _database.batch();
 
     // Update session's end time.
     batch.rawUpdate("UPDATE session SET end_timestamp = ? WHERE id = ?", [
-      DateTime.now().millisecondsSinceEpoch,
-      activity.currentSessionId,
+      timestamp ?? TimeManager.get.currentTimestamp,
+      currentSessionId,
     ]);
 
-    // Set the associated activity's current session to null.
+    // Clear the associated activity's session data.
     batch.rawUpdate(
-      "UPDATE activity SET current_session_id = NULL WHERE id = ?",
+      """
+      UPDATE activity 
+      SET current_session_id = NULL, current_live_activity_id = NULL   
+      WHERE id = ?
+      """,
       [activity.id],
     );
 
     await batch.commit();
     _activitiesUpdated.notify();
+
+    final session = await getSession(currentSessionId);
+    if (session == null) {
+      // Shouldn't really happen.
+      _log.e(Exception("Cannot find ended session"));
+    } else {
+      _sessionController.add(SessionEvent(.ended, session));
+    }
   }
 
   void addSession(Session session) {
@@ -243,12 +305,13 @@ class DataManager {
 
   void updateSession(Session session) {
     _update("session", session, () {
+      _sessionController.add(SessionEvent(.updated, session));
       _notifySessionsUpdated(session.activityId);
     });
   }
 
-  void removeSession(Session session) async {
-    Batch batch = _database.batch();
+  Future<void> deleteSession(Session session) async {
+    final batch = _database.batch();
 
     // Disassociate the session from activity if it is in progress.
     batch.rawUpdate(
@@ -264,6 +327,9 @@ class DataManager {
 
     await batch.commit();
 
+    // TODO: Should probably confirm the delete was successful before notifying
+    //  listeners.
+    _sessionController.add(SessionEvent(.deleted, session));
     _notifySessionsUpdated(session.activityId);
   }
 
@@ -374,12 +440,10 @@ class DataManager {
       return null;
     }
 
-    String query = "SELECT * FROM session WHERE id = ?";
-    Map<String, dynamic> map = (await _database.rawQuery(query, [
-      sessionId,
-    ])).first;
+    final query = "SELECT * FROM session WHERE id = ?";
+    final map = (await _database.rawQuery(query, [sessionId])).firstOrNull;
 
-    return Session.fromMap(map);
+    return map == null || map.isEmpty ? null : Session.fromMap(map);
   }
 
   /// Case-insensitive compare of a given name to all other activity names.
@@ -621,4 +685,13 @@ class SessionsBuilder extends StatelessWidget {
       builder: (context, value) => builder(context, value as List<Session>),
     );
   }
+}
+
+enum SessionEventType { started, updated, ended, deleted }
+
+class SessionEvent {
+  final SessionEventType type;
+  final Session session;
+
+  SessionEvent(this.type, this.session);
 }

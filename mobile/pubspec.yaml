@@ -8,9 +8,10 @@ description: A simple mobile app for tracking activities.
 # build by specifying --build-name and --build-number, respectively.
 # Read more about versioning at semver.org.
 version: 1.2.1+20230814
+publish_to: none
 
 environment:
-  sdk: ^3.8.1
+  sdk: ^3.10.0
 
 dependencies:
   flutter:
@@ -28,14 +29,17 @@ dependencies:
   share_plus: ^10.1.4                         # https://pub.dev/packages/share_plus (Verified)
   file_picker: ^10.0.0                        # https://pub.dev/packages/file_picker (Verified)
   fixnum: ^1.1.1                              # https://pub.dev/packages/fixnum (Dart)
-  flutter_email_sender: ^7.0.0                # https://pub.dev/packages/flutter_email_sender
+  flutter_email_sender: ^8.0.0                # https://pub.dev/packages/flutter_email_sender
   http: ^1.3.0                                # https://pub.dev/packages/http (Dart)
   intl: ^0.20.2                               # https://pub.dev/packages/intl
+  live_activities: ^2.4.3                     # https://pub.dev/packages/live_activities
   package_info_plus: ^8.2.1                   # https://pub.dev/packages/package_info_plus
   path: ^1.9.1                                # https://pub.dev/packages/path (Dart)
   path_provider: ^2.1.5                       # https://pub.dev/packages/path_provider
   quiver: ^3.2.2                              # https://pub.dev/packages/quiver
-  shared_preferences: ^2.5.2                  # https://pub.dev/packages/shared_preferences
+  shared_preferences: ^2.5.3                  # https://pub.dev/packages/shared_preferences
+  shared_preference_app_group: ^1.1.1         # https://pub.dev/packages/shared_preference_app_group
+  shared_preferences_android: ^2.4.15         # https://pub.dev/packages/shared_preferences_android
   sqflite: ^2.4.2                             # https://pub.dev/packages/sqflite
   url_launcher: ^6.3.1                        # https://pub.dev/packages/url_launcher
   uuid: ^4.5.1                                # https://pub.dev/packages/uuid
@@ -48,9 +52,9 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  build_runner: ^2.4.15             # https://pub.dev/packages/build_runner (Dart)
-  mockito: ^5.4.5                   # https://pub.dev/packages/mockito (Dart)
-  flutter_lints: ^5.0.0             # https://pub.dev/packages/flutter_lints (Flutter)
+  build_runner: ^2.10.4             # https://pub.dev/packages/build_runner (Dart)
+  mockito: ^5.5.1                   # https://pub.dev/packages/mockito (Dart)
+  flutter_lints: ^6.0.0             # https://pub.dev/packages/flutter_lints (Flutter)
 
 # For information on the generic Dart part of this file, see the
 # following page: https://www.dartlang.org/tools/pub/pubspec

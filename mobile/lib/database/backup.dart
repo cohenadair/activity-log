@@ -46,7 +46,7 @@ Future<String> export() async {
       )..currentSessionId = null).build;
     }
 
-    return activity.toMap();
+    return activity.toJson();
   }).toList();
 
   // Sessions.

@@ -30,9 +30,17 @@ void main() {
       managers.subscriptionManager.subscriptions(),
     ).thenAnswer((_) => Future.value(null));
     when(managers.subscriptionManager.isPro).thenReturn(false);
+
+    when(managers.ioWrapper.isIOS).thenReturn(false);
+    when(managers.ioWrapper.isAndroid).thenReturn(true);
+
+    when(
+      managers.liveActivitiesManager.isSupported(),
+    ).thenAnswer((_) => Future.value(true));
   });
 
   testWidgets("ProPage is shown", (tester) async {
+    managers.lib.stubIosDeviceInfo();
     await tester.pumpWidget(Testable((_) => SettingsPage()));
 
     await tapAndSettle(tester, find.text("Activity Log Pro"));
