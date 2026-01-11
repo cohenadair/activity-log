@@ -264,7 +264,9 @@ class SettingsPageState extends State<SettingsPage> {
     return ListItem(
       title: Text(Strings.of(context).settingsPageExportLabel),
       subtitle: Text(Strings.of(context).settingsPageExportDescription),
-      trailing: _isCreatingBackup ? const Loading.listItem() : const SizedBox(),
+      trailing: _isCreatingBackup
+          ? const Loading.minimized()
+          : const SizedBox(),
       onTap: () {
         setState(() => _isCreatingBackup = true);
         _startExport(context.findRenderObject() as RenderBox);
@@ -276,7 +278,7 @@ class SettingsPageState extends State<SettingsPage> {
     return ListItem(
       title: Text(Strings.of(context).settingsPageImportLabel),
       subtitle: Text(Strings.of(context).settingsPageImportDescription),
-      trailing: _isImporting ? const Loading.listItem() : const SizedBox(),
+      trailing: _isImporting ? const Loading.minimized() : const SizedBox(),
       onTap: _startImport,
     );
   }
