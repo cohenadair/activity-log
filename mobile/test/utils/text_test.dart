@@ -391,6 +391,18 @@ void main() {
       );
       expect(find.text("Today (1h 3m)"), findsOneWidget);
     });
+
+    testWidgets("Minutes and seconds", (tester) async {
+      await tester.pumpWidget(
+        Testable(
+          (_) => DateDurationText(
+            managers.timeManager.now(),
+            const Duration(minutes: 3, seconds: 30),
+          ),
+        ),
+      );
+      expect(find.text("Today (3m 30s)"), findsOneWidget);
+    });
   });
 
   group("RunningDurationText", () {

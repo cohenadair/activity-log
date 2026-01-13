@@ -260,7 +260,9 @@ class DateDurationText extends StatelessWidget {
         context,
       ).secondsFormat(displayDuration.seconds);
     } else {
-      if (displayDuration.hours > 0) {
+      final includeHours = displayDuration.hours > 0;
+
+      if (includeHours) {
         formattedDuration += AdairFlutterLibLocalizations.of(
           context,
         ).hoursFormat(displayDuration.hours);
@@ -273,10 +275,10 @@ class DateDurationText extends StatelessWidget {
         ).minutesFormat(displayDuration.minutes);
       }
 
-      if (isEmpty(formattedDuration)) {
-        formattedDuration += AdairFlutterLibLocalizations.of(
-          context,
-        ).secondsFormat(displayDuration.seconds);
+      if ((isEmpty(formattedDuration) || !includeHours) &&
+          displayDuration.seconds > 0) {
+        formattedDuration +=
+            " ${AdairFlutterLibLocalizations.of(context).secondsFormat(displayDuration.seconds)}";
       }
     }
 
