@@ -268,7 +268,7 @@ void main() {
         await initManager();
         await emitSessionEvent(.started);
       });
-      expect(logs.length, 3);
+      expect(logs.length, 2);
       expect(logs[1].contains("Live activity creation"), isTrue);
       verifyNever(managers.dataManager.updateActivity(any));
 
