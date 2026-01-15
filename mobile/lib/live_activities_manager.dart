@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:adair_flutter_lib/app_config.dart';
+import 'package:adair_flutter_lib/managers/manager.dart';
 import 'package:adair_flutter_lib/managers/subscription_manager.dart';
 import 'package:adair_flutter_lib/res/theme.dart';
 import 'package:adair_flutter_lib/utils/dotted_version.dart';
@@ -24,7 +25,7 @@ import 'package:shared_preferences_android/shared_preferences_android.dart';
 
 import 'model/session.dart';
 
-class LiveActivitiesManager {
+class LiveActivitiesManager implements Manager {
   static var _instance = LiveActivitiesManager._();
 
   static LiveActivitiesManager get get => _instance;
@@ -48,6 +49,7 @@ class LiveActivitiesManager {
 
   Timer? _groupUpdatesTimer;
 
+  @override
   Future<void> init() async {
     if (!await isSupported()) {
       _log.d("Live activities are not supported in current OS version");

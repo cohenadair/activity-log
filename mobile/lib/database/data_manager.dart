@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:adair_flutter_lib/managers/manager.dart';
 import 'package:adair_flutter_lib/managers/subscription_manager.dart';
 import 'package:adair_flutter_lib/managers/time_manager.dart';
 import 'package:adair_flutter_lib/model/gen/adair_flutter_lib.pb.dart';
@@ -20,7 +21,7 @@ import 'package:sqflite/sqflite.dart';
 import '../notification_manager.dart';
 import '../preferences_manager.dart';
 
-class DataManager {
+class DataManager implements Manager {
   static var _instance = DataManager._();
 
   static DataManager get get => _instance;
@@ -56,6 +57,7 @@ class DataManager {
   /// or modified.
   Stream<void> get activitiesUpdatedStream => _activitiesUpdated.stream;
 
+  @override
   Future<void> init([Database? database]) async {
     if (database == null) {
       _database = await SQLiteOpenHelper.open();

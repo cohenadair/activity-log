@@ -2,7 +2,6 @@ Map<String, Map<String, String>> englishStrings = {
   "US": {},
   "CA": {},
   "default": {
-    "appName": "Activity Log",
     "done": "Done",
     "save": "Save",
     "none": "None",

@@ -1,24 +1,17 @@
-import 'dart:async';
 import 'dart:isolate';
-import 'dart:ui';
 
 import 'package:adair_flutter_lib/app_config.dart';
-import 'package:adair_flutter_lib/l10n/gen/adair_flutter_lib_localizations.dart';
-import 'package:adair_flutter_lib/l10n/l10n.dart';
 import 'package:adair_flutter_lib/managers/properties_manager.dart';
 import 'package:adair_flutter_lib/managers/subscription_manager.dart';
 import 'package:adair_flutter_lib/managers/time_manager.dart';
 import 'package:adair_flutter_lib/res/theme.dart';
-import 'package:adair_flutter_lib/utils/root.dart';
-import 'package:adair_flutter_lib/widgets/safe_future_builder.dart';
+import 'package:adair_flutter_lib/widgets/adair_flutter_lib_app.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:mobile/i18n/strings.dart';
-import 'package:mobile/l10n/l10n_extension.dart';
 import 'package:mobile/live_activities_manager.dart';
 import 'package:mobile/pages/main_page.dart';
 import 'package:mobile/preferences_manager.dart';
@@ -74,29 +67,31 @@ class ActivityLog extends StatefulWidget {
 }
 
 class ActivityLogState extends State<ActivityLog> {
-  late Future<void> _appInitializedFuture;
-
   @override
   void initState() {
     super.initState();
 
     AppConfig.get.init(
-      appName: () => L10n.get.app.appName,
+      appName: () => "Activity Log",
+      companyName: () => "Cohen Adair",
       appIcon: CustomIcons.app,
       colorAppTheme: Colors.green,
     );
-
-    // Wait for all app initializations before showing the app as "ready".
-    _appInitializedFuture = _initManagers();
   }
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      onGenerateTitle: (context) {
-        Root.get.buildContext = context;
-        return L10n.get.app.appName;
-      },
+    return AdairFlutterLibApp(
+      managers: [
+        TimeManager.get,
+        PropertiesManager.get,
+        SubscriptionManager.get,
+
+        // App managers.
+        PreferencesManager.get,
+        DataManager.get,
+        LiveActivitiesManager.get,
+      ],
       theme: AdairFlutterLibTheme.light().copyWith(
         buttonTheme: const ButtonThemeData(textTheme: ButtonTextTheme.primary),
         iconTheme: IconThemeData(color: AppConfig.get.colorAppTheme),
@@ -107,6 +102,7 @@ class ActivityLogState extends State<ActivityLog> {
           color: AppConfig.get.colorAppTheme,
         ),
         checkboxTheme: _checkboxThemeData(),
+        extensions: _themeExtensions(),
       ),
       darkTheme: AdairFlutterLibTheme.dark().copyWith(
         inputDecorationTheme: InputDecorationTheme(
@@ -158,25 +154,11 @@ class ActivityLogState extends State<ActivityLog> {
           ),
           todayBackgroundColor: _selectedBackgroundColor(),
         ),
+        extensions: _themeExtensions(),
       ),
       themeMode: AppConfig.get.themeMode(),
-      home: SafeFutureBuilder(
-        future: _appInitializedFuture,
-        errorReason: "Initializing app",
-        // TODO: Replace with LandingPage from Anglers' Log
-        loadingBuilder: (_) =>
-            Scaffold(backgroundColor: AppConfig.get.colorAppTheme),
-        builder: (_, __) => MainPage(),
-      ),
-      debugShowCheckedModeBanner: false,
-      localizationsDelegates: [
-        StringsDelegate(),
-        AdairFlutterLibLocalizations.delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
-      supportedLocales: const [Locale('en', 'US'), Locale('en', 'CA')],
+      homeBuilder: (_) => MainPage(),
+      localizationsDelegates: [StringsDelegate()],
     );
   }
 
@@ -215,15 +197,11 @@ class ActivityLogState extends State<ActivityLog> {
     );
   }
 
-  Future<void> _initManagers() async {
-    // Lib managers.
-    await TimeManager.get.init();
-    await PropertiesManager.get.init();
-    await SubscriptionManager.get.init();
-
-    // App managers.
-    await PreferencesManager.get.init();
-    await DataManager.get.init();
-    await LiveActivitiesManager.get.init();
-  }
+  List<ThemeExtension> _themeExtensions() => [
+    const AdairFlutterLibThemeExtension(
+      app: Colors.green,
+      onApp: Colors.white,
+      onAppSecondary: Colors.white54,
+    ),
+  ];
 }

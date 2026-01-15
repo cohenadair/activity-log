@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:adair_flutter_lib/managers/manager.dart';
 import 'package:adair_flutter_lib/model/gen/adair_flutter_lib.pb.dart';
 import 'package:adair_flutter_lib/utils/void_stream_controller.dart';
 import 'package:collection/collection.dart';
@@ -8,7 +9,7 @@ import 'package:mobile/utils/date_range.dart';
 import 'package:mobile/utils/duration.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class PreferencesManager {
+class PreferencesManager implements Manager {
   static var _instance = PreferencesManager._();
 
   static PreferencesManager get get => _instance;
@@ -63,6 +64,7 @@ class PreferencesManager {
 
   /// Initializes preference properties. This method should be called on app
   /// start.
+  @override
   Future<void> init() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 

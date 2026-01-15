@@ -32,8 +32,6 @@ class Strings {
     return value;
   }
 
-  String get appName => _getString("appName");
-
   String get done => _getString("done");
 
   String get save => _getString("save");
