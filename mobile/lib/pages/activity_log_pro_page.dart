@@ -1,7 +1,7 @@
 import 'package:adair_flutter_lib/l10n/l10n.dart';
 import 'package:adair_flutter_lib/pages/pro_page.dart';
 import 'package:adair_flutter_lib/utils/device.dart';
-import 'package:adair_flutter_lib/widgets/safe_future_builder.dart';
+import 'package:adair_flutter_lib/widgets/async_builder.dart';
 import 'package:adair_flutter_lib/wrappers/io_wrapper.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile/l10n/l10n_extension.dart';
@@ -27,7 +27,7 @@ class _ActivityLogProPageState extends State<ActivityLogProPage> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeFutureBuilder<(String, String?)>(
+    return AsyncBuilder<(String, String?)>.future(
       future: _textFutures,
       errorReason: "Fetching live activities subtext",
       builder: (context, texts) => ProPage(
@@ -36,8 +36,8 @@ class _ActivityLogProPageState extends State<ActivityLogProPage> {
           ProPageFeatureRow(
             IoWrapper.get.isAndroid
                 ? L10n.get.app.proPageLiveActivitiesAndroid
-                : texts?.$1 ?? "",
-            subtext: texts?.$2,
+                : texts.$1,
+            subtext: texts.$2,
           ),
         ],
       ),

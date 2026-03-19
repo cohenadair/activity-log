@@ -4,6 +4,7 @@ import 'package:adair_flutter_lib/res/anim.dart';
 import 'package:adair_flutter_lib/res/dimen.dart';
 import 'package:flutter/material.dart';
 
+// TODO: Replace with lib version.
 class MinDivider extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
