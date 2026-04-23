@@ -1,15 +1,10 @@
-import 'dart:isolate';
-
 import 'package:adair_flutter_lib/app_config.dart';
 import 'package:adair_flutter_lib/managers/properties_manager.dart';
 import 'package:adair_flutter_lib/managers/subscription_manager.dart';
 import 'package:adair_flutter_lib/managers/time_manager.dart';
 import 'package:adair_flutter_lib/res/theme.dart';
+import 'package:adair_flutter_lib/utils/firebase_setup.dart';
 import 'package:adair_flutter_lib/widgets/adair_flutter_lib_app.dart';
-import 'package:firebase_analytics/firebase_analytics.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_crashlytics/firebase_crashlytics.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile/i18n/strings.dart';
 import 'package:mobile/live_activities_manager.dart';
@@ -21,43 +16,7 @@ import 'database/data_manager.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
-  await Firebase.initializeApp();
-
-  // Analytics.
-  await FirebaseAnalytics.instance.setAnalyticsCollectionEnabled(kReleaseMode);
-
-  // Crashlytics. See https://firebase.flutter.dev/docs/crashlytics/usage for
-  // error handling guidelines.
-  await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(
-    kReleaseMode,
-  );
-  await FirebaseCrashlytics.instance.setCustomKey(
-    "Locale",
-    PlatformDispatcher.instance.locale.toString(),
-  );
-
-  // Pass all uncaught "fatal" errors from the framework to Crashlytics.
-  FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
-
-  // Pass all uncaught asynchronous errors that aren't handled by the Flutter
-  // framework to Crashlytics.
-  PlatformDispatcher.instance.onError = (error, stack) {
-    FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
-    return true;
-  };
-
-  // Catch non-Flutter errors.
-  Isolate.current.addErrorListener(
-    RawReceivePort((pair) async {
-      await FirebaseCrashlytics.instance.recordError(
-        pair.first,
-        pair.last,
-        fatal: true,
-      );
-    }).sendPort,
-  );
-
+  await setupFirebase();
   runApp(ActivityLog());
 }
 
