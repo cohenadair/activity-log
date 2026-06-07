@@ -5,6 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mobile/pages/settings_page.dart';
 import 'package:mobile/utils/duration.dart';
 import 'package:mockito/mockito.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 import '../../../../adair-flutter-lib/test/test_utils/testable.dart';
 import '../../../../adair-flutter-lib/test/test_utils/widget.dart';
@@ -37,6 +38,17 @@ void main() {
     when(
       managers.liveActivitiesManager.isSupported(),
     ).thenAnswer((_) => Future.value(true));
+
+    when(managers.lib.packageInfoWrapper.fromPlatform()).thenAnswer(
+      (_) => Future.value(
+        PackageInfo(
+          appName: "Activity Log",
+          packageName: "com.test.activitylog",
+          version: "1.0.0",
+          buildNumber: "1",
+        ),
+      ),
+    );
   });
 
   testWidgets("ProPage is shown", (tester) async {

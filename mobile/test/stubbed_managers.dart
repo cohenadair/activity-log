@@ -5,7 +5,6 @@ import 'package:mobile/notification_manager.dart';
 import 'package:mobile/preferences_manager.dart';
 import 'package:mobile/wrappers/http_wrapper.dart';
 import 'package:mobile/wrappers/live_activities_wrapper.dart';
-import 'package:mobile/wrappers/package_info_wrapper.dart';
 import 'package:mobile/wrappers/shared_preference_app_group_wrapper.dart';
 import 'package:mobile/wrappers/shared_preferences_wrapper.dart';
 import 'package:mobile/wrappers/wakelock_wrapper.dart';
@@ -21,7 +20,6 @@ class StubbedManagers {
 
   late final MockDataManager dataManager;
   late final MockPreferencesManager preferencesManager;
-  late final MockPackageInfoWrapper packageInfoWrapper;
   late final MockHttpWrapper httpWrapper;
   late final MockWakelockWrapper wakelockWrapper;
   late final MockLiveActivitiesManager liveActivitiesManager;
@@ -56,9 +54,6 @@ class StubbedManagers {
       preferencesManager.homeDateRangeStream,
     ).thenAnswer((_) => Stream.empty());
     PreferencesManager.set(preferencesManager);
-
-    packageInfoWrapper = MockPackageInfoWrapper();
-    PackageInfoWrapper.set(packageInfoWrapper);
 
     httpWrapper = MockHttpWrapper();
     HttpWrapper.set(httpWrapper);

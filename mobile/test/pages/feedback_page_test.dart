@@ -49,7 +49,7 @@ void main() {
     when(managers.ioWrapper.isIOS).thenReturn(false);
     when(managers.ioWrapper.isAndroid).thenReturn(false);
 
-    when(managers.packageInfoWrapper.fromPlatform()).thenAnswer(
+    when(managers.lib.packageInfoWrapper.fromPlatform()).thenAnswer(
       (_) => Future.value(
         PackageInfo(
           appName: "Test App",
@@ -233,7 +233,7 @@ void main() {
       managers.ioWrapper.lookup(any),
     ).thenAnswer((_) => Future.value([InternetAddress("192.168.2.211")]));
     when(managers.ioWrapper.isIOS).thenReturn(true);
-    when(managers.packageInfoWrapper.fromPlatform()).thenAnswer(
+    when(managers.lib.packageInfoWrapper.fromPlatform()).thenAnswer(
       (_) => Future.value(
         PackageInfo(
           appName: "Test App",

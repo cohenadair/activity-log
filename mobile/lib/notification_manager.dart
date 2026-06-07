@@ -20,8 +20,8 @@ class NotificationManager extends NotificationManagerBase {
   Future<bool> requestPermission(BuildContext context) {
     assert(IoWrapper.get.isAndroid);
     return super.requestPermissionIfNeeded(
-      context,
-      L10n.get.app.notificationPermissionPageDescAndroid,
+      context: context,
+      userDescription: L10n.get.app.notificationPermissionPageDescAndroid,
     );
   }
 }

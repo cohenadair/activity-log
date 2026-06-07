@@ -3,11 +3,13 @@ import 'dart:io';
 
 import 'package:adair_flutter_lib/model/gen/adair_flutter_lib.pb.dart';
 import 'package:adair_flutter_lib/res/dimen.dart';
+import 'package:adair_flutter_lib/res/theme.dart';
 import 'package:adair_flutter_lib/utils/date_range.dart';
 import 'package:adair_flutter_lib/utils/dialog.dart';
 import 'package:adair_flutter_lib/utils/duration.dart';
 import 'package:adair_flutter_lib/utils/log.dart';
 import 'package:adair_flutter_lib/utils/page.dart';
+import 'package:adair_flutter_lib/widgets/app_version.dart';
 import 'package:adair_flutter_lib/widgets/loading.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -23,7 +25,6 @@ import 'package:mobile/widgets/list_picker.dart';
 import 'package:mobile/widgets/my_page.dart';
 import 'package:mobile/widgets/text.dart';
 import 'package:mobile/widgets/widget.dart';
-import 'package:package_info_plus/package_info_plus.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:quiver/strings.dart';
 import 'package:share_plus/share_plus.dart';
@@ -239,14 +240,11 @@ class SettingsPageState extends State<SettingsPage> {
   }
 
   Widget _buildAbout() {
-    return ListItem(
-      title: Text(Strings.of(context).settingsPageVersion),
-      trailing: FutureBuilder<PackageInfo>(
-        future: PackageInfo.fromPlatform(),
-        builder: (_, snap) => snap.hasData
-            ? SecondaryText("${snap.data!.version} (${snap.data!.buildNumber})")
-            : const SizedBox(),
-      ),
+    return AppVersion(
+      inListTile: true,
+      style: Theme.of(
+        context,
+      ).textTheme.titleMedium!.copyWith(color: context.colorSecondaryText),
     );
   }
 

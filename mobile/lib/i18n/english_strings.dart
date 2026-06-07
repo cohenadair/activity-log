@@ -43,7 +43,6 @@ Map<String, Map<String, String>> englishStrings = {
     "sessionList_inProgress": "In progress",
     "sessionList_itemBankedAddition": " - Banked",
     "settingsPage_title": "Settings",
-    "settingsPage_version": "Version",
     "settingsPage_privacyPolicy": "Privacy Policy",
     "settingsPage_headingSupportUs": "Support Us",
     "settingsPage_headingAbout": "About",
