@@ -49,7 +49,8 @@ class DataManager implements Manager {
   ///
   /// This value is loaded during [DataManager] initialization, and used
   /// as an initial value for a [ActivityListModelBuilder].
-  late List<ActivityListTileModel> _initialActivityListTileModels;
+  @visibleForTesting
+  List<ActivityListTileModel> initialActivityListTileModels = [];
 
   Stream<SessionEvent> get sessionStream => _sessionController.stream;
 
@@ -65,7 +66,7 @@ class DataManager implements Manager {
       _database = database;
     }
 
-    _initialActivityListTileModels = await getActivityListModel(
+    initialActivityListTileModels = await getActivityListModel(
       dateRange: PreferencesManager.get.homeDateRange,
     );
   }
@@ -637,7 +638,7 @@ class ActivitiesBuilder extends StatelessWidget {
   Widget build(BuildContext context) {
     return FutureListener.single(
       getFutureCallback: () => DataManager.get.activities,
-      stream: DataManager.get._activitiesUpdated.stream,
+      stream: DataManager.get.activitiesUpdatedStream,
       builder: (context, value) => builder(context, value as List<Activity>),
     );
   }
@@ -653,10 +654,10 @@ class ActivityListModelBuilder extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FutureListener(
-      initialValues: [DataManager.get._initialActivityListTileModels],
+      initialValues: [DataManager.get.initialActivityListTileModels],
       onFuturesFinished: () =>
           // Cleanup now unused data.
-          DataManager.get._initialActivityListTileModels = const [],
+          DataManager.get.initialActivityListTileModels = const [],
       futuresCallbacks: [
         () => DataManager.get.getActivityListModel(
           dateRange: PreferencesManager.get.homeDateRange,
@@ -664,7 +665,7 @@ class ActivityListModelBuilder extends StatelessWidget {
       ],
       streams: [
         PreferencesManager.get.homeDateRangeStream,
-        DataManager.get._activitiesUpdated.stream,
+        DataManager.get.activitiesUpdatedStream,
       ],
       builder: (context, result) => builder(context, result?.first),
     );

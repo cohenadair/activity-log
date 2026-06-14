@@ -1,6 +1,12 @@
+import 'dart:async';
+
+import 'package:adair_flutter_lib/managers/subscription_manager.dart';
+import 'package:adair_flutter_lib/utils/page.dart';
 import 'package:flutter/material.dart';
+import 'package:mobile/database/data_manager.dart';
 import 'package:mobile/i18n/strings.dart';
 import 'package:mobile/pages/activities_page.dart';
+import 'package:mobile/pages/activity_log_pro_page.dart';
 import 'package:mobile/pages/settings_page.dart';
 import 'package:mobile/pages/stats_page.dart';
 
@@ -12,7 +18,11 @@ class MainPage extends StatefulWidget {
 }
 
 class MainPageState extends State<MainPage> {
+  static const _proPagePromptFrequency = 10;
+
   int _currentItemIndex = 0;
+
+  late final StreamSubscription<SessionEvent> _sessionSub;
 
   List<_BarItemData> get _navItems {
     return [
@@ -41,6 +51,18 @@ class MainPageState extends State<MainPage> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    _sessionSub = DataManager.get.sessionStream.listen(_onSessionEvent);
+  }
+
+  @override
+  void dispose() {
+    _sessionSub.cancel();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final navItems = _navItems;
 
@@ -61,6 +83,20 @@ class MainPageState extends State<MainPage> {
         },
       ),
     );
+  }
+
+  Future<void> _onSessionEvent(SessionEvent event) async {
+    if (event.type != SessionEventType.ended ||
+        !SubscriptionManager.get.isFree) {
+      return;
+    }
+    final count = await DataManager.get.sessionCount;
+    if (!mounted) {
+      return;
+    }
+    if (count % _proPagePromptFrequency == 0) {
+      present(context, ActivityLogProPage());
+    }
   }
 }
 
