@@ -3,8 +3,10 @@ import 'dart:convert';
 
 import 'package:mobile/database/data_manager.dart';
 import 'package:mobile/model/activity.dart';
+import 'package:mobile/model/report.dart';
 import 'package:mobile/model/session.dart';
 import 'package:mobile/preferences_manager.dart';
+import 'package:mobile/report_manager.dart';
 import 'package:quiver/strings.dart';
 
 import '../utils/date_range.dart';
@@ -25,6 +27,7 @@ enum ImportResult {
 
 const _keyActivities = "activities";
 const _keySessions = "sessions";
+const _keyReports = "reports";
 
 const _keyPreferences = "preferences";
 const _keyPreferencesLargestDurationUnit = "largest_duration_unit";
@@ -59,6 +62,10 @@ Future<String> export() async {
     }
     return session.toMap();
   }).toList();
+
+  // Reports.
+  List<Report> reportList = await ReportManager.get.reports();
+  jsonMap[_keyReports] = reportList.map((report) => report.toMap()).toList();
 
   // Preferences.
   jsonMap[_keyPreferences] = <String, dynamic>{};
@@ -150,6 +157,20 @@ Future<ImportResult> import({String? json}) async {
 
   // Update the database.
   await DataManager.get.addActivities(activitiesToAdd, notify: false);
+
+  // Reports. Use lenient handling — skip malformed entries.
+  if (jsonMap[_keyReports] is List) {
+    for (var reportJson in jsonMap[_keyReports] as List) {
+      if (reportJson is! Map<String, dynamic>) {
+        continue;
+      }
+      try {
+        await ReportManager.get.addReport(Report.fromMap(reportJson));
+      } catch (_) {
+        continue;
+      }
+    }
+  }
 
   // Notify listeners after everything has been added.
   await DataManager.get.addSessions(sessionsToAdd, notify: true);

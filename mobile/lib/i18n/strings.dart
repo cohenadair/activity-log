@@ -205,6 +205,32 @@ class Strings {
 
   String get statsPageTitle => _getString("statsPage_title");
 
+  String get statsPageSaveReportTooltip =>
+      _getString("statsPage_saveReportTooltip");
+
+  String get statsPageSaveAsReportTooltip =>
+      _getString("statsPage_saveAsReportTooltip");
+
+  String get statsPageSaveReportSuccess =>
+      _getString("statsPage_saveReportSuccess");
+
+  String get reportListPageTitle => _getString("reportListPage_title");
+
+  String get editReportPageNewTitle => _getString("editReportPage_newTitle");
+
+  String get editReportPageEditTitle => _getString("editReportPage_editTitle");
+
+  String get editReportPageNameLabel => _getString("editReportPage_nameLabel");
+
+  String get editReportPageDeleteMessage =>
+      _getString("editReportPage_deleteMessage");
+
+  String get editReportPageNameExists =>
+      _getString("editReportPage_nameExists");
+
+  String get editReportPageMissingName =>
+      _getString("editReportPage_missingName");
+
   String get statsPageNoActivitiesMessage =>
       _getString("statsPage_noActivitiesMessage");
 
@@ -300,6 +326,9 @@ class Strings {
 
   String get feedbackPageErrorSending =>
       _getString("feedbackPage_errorSending");
+
+  String get proPageSaveCustomStatsFilters =>
+      _getString("proPage_saveCustomStatsFilters");
 
   String get proPageWakeLock => _getString("proPage_wakeLock");
 

@@ -78,6 +78,17 @@ Map<String, Map<String, String>> englishStrings = {
     "settingsPage_importSendLogs": "Send Logs",
     "settingsPage_pro": "Activity Log Pro",
     "statsPage_title": "Stats",
+    "statsPage_saveReportTooltip": "Save Report",
+    "statsPage_saveAsReportTooltip": "Save as New Report",
+    "statsPage_saveReportSuccess": "Report saved successfully.",
+    "reportListPage_title": "Select a Report",
+    "editReportPage_newTitle": "New Report",
+    "editReportPage_editTitle": "Edit Report",
+    "editReportPage_nameLabel": "Name",
+    "editReportPage_deleteMessage":
+        "Are you sure you want to delete report %s? This action cannot be undone.",
+    "editReportPage_nameExists": "Report name already exists.",
+    "editReportPage_missingName": "Enter a name for your report.",
     "statsPage_noActivitiesMessage":
         "No activities to display. Visit the \"Home\" page to begin.",
     "statsPage_noDataMessage": "No data to show; try different filter options.",
@@ -119,6 +130,7 @@ Map<String, Map<String, String>> englishStrings = {
         "No internet connection. Please check your connection and try again.",
     "feedbackPage_errorSending":
         "Error sending feedback. Please try again later, or email %s directly.",
+    "proPage_saveCustomStatsFilters": "Save custom stats filters",
     "proPage_wakeLock": "Keep the screen on while in full screen activities",
     "proPage_liveActivitiesAndroid":
         "Ongoing notifications of in-progress sessions",

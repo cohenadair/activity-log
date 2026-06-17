@@ -3,6 +3,7 @@ import 'package:mobile/i18n/strings.dart';
 import 'package:mobile/live_activities_manager.dart';
 import 'package:mobile/notification_manager.dart';
 import 'package:mobile/preferences_manager.dart';
+import 'package:mobile/report_manager.dart';
 import 'package:mobile/wrappers/http_wrapper.dart';
 import 'package:mobile/wrappers/live_activities_wrapper.dart';
 import 'package:mobile/wrappers/shared_preference_app_group_wrapper.dart';
@@ -20,6 +21,7 @@ class StubbedManagers {
 
   late final MockDataManager dataManager;
   late final MockPreferencesManager preferencesManager;
+  late final MockReportManager reportManager;
   late final MockHttpWrapper httpWrapper;
   late final MockWakelockWrapper wakelockWrapper;
   late final MockLiveActivitiesManager liveActivitiesManager;
@@ -53,6 +55,7 @@ class StubbedManagers {
     when(
       preferencesManager.homeDateRangeStream,
     ).thenAnswer((_) => Stream.empty());
+    when(preferencesManager.selectedReportId).thenReturn(null);
     PreferencesManager.set(preferencesManager);
 
     httpWrapper = MockHttpWrapper();
@@ -75,6 +78,12 @@ class StubbedManagers {
 
     sharedAppGroupWrapper = MockSharedPreferenceAppGroupWrapper();
     SharedPreferenceAppGroupWrapper.set(sharedAppGroupWrapper);
+
+    reportManager = MockReportManager();
+    when(reportManager.reportsUpdatedStream).thenAnswer((_) => Stream.empty());
+    when(reportManager.reportsStream).thenAnswer((_) => Stream.value([]));
+    when(reportManager.reports()).thenAnswer((_) => Future.value([]));
+    ReportManager.set(reportManager);
 
     Testable.additionalLocalizations = [StringsDelegate()];
   }

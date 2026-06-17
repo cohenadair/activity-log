@@ -9,7 +9,17 @@ class MyPageAppBarStyle {
   final List<Widget>? actions;
   final Widget? leading;
 
-  MyPageAppBarStyle({this.title, this.subtitle, this.actions, this.leading});
+  /// When set, replaces the default [Text] title widget. Takes precedence over
+  /// [title] and [subtitle].
+  final Widget? titleWidget;
+
+  MyPageAppBarStyle({
+    this.title,
+    this.subtitle,
+    this.actions,
+    this.leading,
+    this.titleWidget,
+  });
 }
 
 class MyPage extends StatelessWidget {
@@ -26,9 +36,7 @@ class MyPage extends StatelessWidget {
       appBar: _appBarStyle == null
           ? null
           : AppBar(
-              title: _appBarStyle.subtitle == null
-                  ? Text(_appBarStyle.title == null ? "" : _appBarStyle.title!)
-                  : _buildTitleWithSubtitle(context),
+              title: _buildTitle(context),
               actions: _appBarStyle.actions,
               leading: _appBarStyle.leading,
               elevation: 0,
@@ -36,6 +44,20 @@ class MyPage extends StatelessWidget {
             ),
       body: SafeArea(child: _child),
     );
+  }
+
+  Widget _buildTitle(BuildContext context) {
+    final style = _appBarStyle!;
+
+    if (style.titleWidget != null) {
+      return style.titleWidget!;
+    }
+
+    if (style.subtitle != null) {
+      return _buildTitleWithSubtitle(context);
+    }
+
+    return Text(style.title ?? "");
   }
 
   Widget _buildTitleWithSubtitle(BuildContext context) {

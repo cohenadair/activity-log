@@ -85,7 +85,7 @@ class ListPicker<T> extends StatelessWidget {
       onTap: () {
         push(
           context,
-          _ListPickerPage<T>(
+          ListPickerPage<T>(
             pageTitle: pageTitle,
             listHeader: listHeader,
             allowsMultiSelect: allowsMultiSelect,
@@ -179,8 +179,12 @@ class ListPickerItem<T> {
        isDivider = false;
 }
 
-/// A helper page for [ListPicker] that renders a list of options.
-class _ListPickerPage<T> extends StatefulWidget {
+/// A reusable page for [ListPicker] that renders a list of options.
+///
+/// Use [trailingBuilder] to render a custom trailing widget per item, such as
+/// an edit button. When provided, the default checkmark is suppressed and the
+/// caller is responsible for indicating selection.
+class ListPickerPage<T> extends StatefulWidget {
   final String? pageTitle;
   final Widget? listHeader;
   final Set<T> selectedValues;
@@ -193,7 +197,13 @@ class _ListPickerPage<T> extends StatefulWidget {
 
   final bool allowsMultiSelect;
 
-  const _ListPickerPage({
+  /// If non-null, replaces the default checkmark trailing for each item.
+  final Widget Function(ListPickerItem<T> i, bool isSelected)? trailingBuilder;
+
+  /// If non-null, applied to each list item's content padding.
+  final EdgeInsets? contentPadding;
+
+  const ListPickerPage({
     this.pageTitle,
     this.listHeader,
     this.allowsMultiSelect = false,
@@ -202,13 +212,15 @@ class _ListPickerPage<T> extends StatefulWidget {
     required this.items,
     required this.onItemPicked,
     this.onDonePressed,
+    this.trailingBuilder,
+    this.contentPadding,
   });
 
   @override
-  _ListPickerPageState<T> createState() => _ListPickerPageState();
+  ListPickerPageState<T> createState() => ListPickerPageState();
 }
 
-class _ListPickerPageState<T> extends State<_ListPickerPage<T>> {
+class ListPickerPageState<T> extends State<ListPickerPage<T>> {
   late Set<T> _selectedValues;
 
   @override
@@ -245,12 +257,14 @@ class _ListPickerPageState<T> extends State<_ListPickerPage<T>> {
               return const Divider();
             }
 
+            final isSelected = _selectedValues.contains(item.value);
             return ListItem(
+              contentPadding: widget.contentPadding,
               title: Text(item.title!),
               subtitle: item.subtitle == null ? null : Text(item.subtitle!),
-              trailing: _selectedValues.contains(item.value)
-                  ? const Icon(Icons.check)
-                  : null,
+              trailing: widget.trailingBuilder == null
+                  ? (isSelected ? const Icon(Icons.check) : null)
+                  : widget.trailingBuilder!(item, isSelected),
               onTap: () async {
                 if (item.onTap == null) {
                   // Do not trigger the callback for an item that was

@@ -20,6 +20,7 @@ import 'package:sqflite/sqflite.dart';
 
 import '../notification_manager.dart';
 import '../preferences_manager.dart';
+import '../utils/database.dart';
 
 class DataManager implements Manager {
   static var _instance = DataManager._();
@@ -76,11 +77,14 @@ class DataManager implements Manager {
 
     batch.rawQuery("DELETE FROM activity");
     batch.rawQuery("DELETE FROM session");
+    batch.rawQuery("DELETE FROM report");
 
     await batch.commit(noResult: true);
 
     // Confirm data has been deleted.
-    return (await activityCount) <= 0 && (await sessionCount) <= 0;
+    return (await activityCount) <= 0 &&
+        (await sessionCount) <= 0 &&
+        (await rowCount(_database, "report")) <= 0;
   }
 
   Future<void> _update(String table, Model model, VoidCallback notify) async {
@@ -96,11 +100,6 @@ class DataManager implements Manager {
     if (rowsUpdated > 0) {
       notify();
     }
-  }
-
-  Future<int> _getRowCount(String tableName) async {
-    String query = "SELECT COUNT(*) FROM $tableName";
-    return Sqflite.firstIntValue(await _database.rawQuery(query)) ?? 0;
   }
 
   /// Events are added to this [Stream] when sessions for the given activity ID
@@ -154,7 +153,7 @@ class DataManager implements Manager {
     }).toList();
   }
 
-  Future<int> get activityCount async => _getRowCount("activity");
+  Future<int> get activityCount async => rowCount(_database, "activity");
 
   void addActivity(Activity activity) {
     _database.insert("activity", activity.toMap()).then((int value) {
@@ -204,7 +203,7 @@ class DataManager implements Manager {
     }).toList();
   }
 
-  Future<int> get sessionCount async => _getRowCount("session");
+  Future<int> get sessionCount async => rowCount(_database, "session");
 
   /// Batch inserts the list of [Session] objects into the database. To
   /// increase performance, a single insert may silently fail.
@@ -450,12 +449,8 @@ class DataManager implements Manager {
   }
 
   /// Case-insensitive compare of a given name to all other activity names.
-  Future<bool> activityNameExists(String name) async {
-    String query = """
-      SELECT COUNT(*) FROM activity WHERE name = ? COLLATE NOCASE
-    """;
-    return Sqflite.firstIntValue(await _database.rawQuery(query, [name])) == 1;
-  }
+  Future<bool> activityNameExists(String name) =>
+      nameExists(_database, "activity", name);
 
   /// Returns a [SummarizedActivityList] object within the given date
   /// range. If the `activities` parameter is not `null`, the result is

@@ -32,6 +32,7 @@ class _ActivityLogProPageState extends State<ActivityLogProPage> {
       errorReason: "Fetching live activities subtext",
       builder: (context, texts) => ProPage(
         features: [
+          ProPageFeatureRow(L10n.get.app.proPageSaveCustomStatsFilters),
           ProPageFeatureRow(L10n.get.app.proPageWakeLock),
           ProPageFeatureRow(
             IoWrapper.get.isAndroid

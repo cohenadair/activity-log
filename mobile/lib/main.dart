@@ -13,6 +13,7 @@ import 'package:mobile/preferences_manager.dart';
 import 'package:mobile/res/gen/custom_icons.dart';
 
 import 'database/data_manager.dart';
+import 'report_manager.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -26,6 +27,8 @@ class ActivityLog extends StatefulWidget {
 }
 
 class ActivityLogState extends State<ActivityLog> {
+  static const double _borderWidth = 2.0;
+
   @override
   void initState() {
     super.initState();
@@ -49,6 +52,7 @@ class ActivityLogState extends State<ActivityLog> {
         // App managers.
         PreferencesManager.get,
         DataManager.get,
+        ReportManager.get,
         LiveActivitiesManager.get,
       ],
       theme: AdairFlutterLibTheme.light().copyWith(
@@ -77,7 +81,7 @@ class ActivityLogState extends State<ActivityLog> {
           focusedBorder: UnderlineInputBorder(
             borderSide: BorderSide(
               color: AppConfig.get.colorAppTheme,
-              width: 2.0,
+              width: _borderWidth,
             ),
           ),
         ),

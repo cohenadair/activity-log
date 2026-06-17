@@ -20,10 +20,12 @@ import 'package:live_activities/models/url_scheme_data.dart' as _i26;
 import 'package:mobile/database/data_manager.dart' as _i13;
 import 'package:mobile/live_activities_manager.dart' as _i21;
 import 'package:mobile/model/activity.dart' as _i11;
+import 'package:mobile/model/report.dart' as _i33;
 import 'package:mobile/model/session.dart' as _i15;
 import 'package:mobile/model/summarized_activity.dart' as _i2;
 import 'package:mobile/notification_manager.dart' as _i27;
 import 'package:mobile/preferences_manager.dart' as _i16;
+import 'package:mobile/report_manager.dart' as _i32;
 import 'package:mobile/utils/duration.dart' as _i17;
 import 'package:mobile/widgets/activity_list_tile.dart' as _i14;
 import 'package:mobile/wrappers/http_wrapper.dart' as _i18;
@@ -589,6 +591,15 @@ class MockPreferencesManager extends _i1.Mock
   _i6.Future<void> setStatsDateRange(_i3.DateRange? range) =>
       (super.noSuchMethod(
             Invocation.method(#setStatsDateRange, [range]),
+            returnValue: _i6.Future<void>.value(),
+            returnValueForMissingStub: _i6.Future<void>.value(),
+          )
+          as _i6.Future<void>);
+
+  @override
+  _i6.Future<void> setSelectedReportId(String? id) =>
+      (super.noSuchMethod(
+            Invocation.method(#setSelectedReportId, [id]),
             returnValue: _i6.Future<void>.value(),
             returnValueForMissingStub: _i6.Future<void>.value(),
           )
@@ -1790,6 +1801,83 @@ class MockSharedPreferenceAppGroupWrapper extends _i1.Mock
   _i6.Future<void> setStringList(String? key, List<String>? value) =>
       (super.noSuchMethod(
             Invocation.method(#setStringList, [key, value]),
+            returnValue: _i6.Future<void>.value(),
+            returnValueForMissingStub: _i6.Future<void>.value(),
+          )
+          as _i6.Future<void>);
+}
+
+/// A class which mocks [ReportManager].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockReportManager extends _i1.Mock implements _i32.ReportManager {
+  MockReportManager() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  _i6.Stream<void> get reportsUpdatedStream =>
+      (super.noSuchMethod(
+            Invocation.getter(#reportsUpdatedStream),
+            returnValue: _i6.Stream<void>.empty(),
+          )
+          as _i6.Stream<void>);
+
+  @override
+  _i6.Stream<List<_i33.Report>> get reportsStream =>
+      (super.noSuchMethod(
+            Invocation.getter(#reportsStream),
+            returnValue: _i6.Stream<List<_i33.Report>>.empty(),
+          )
+          as _i6.Stream<List<_i33.Report>>);
+
+  @override
+  _i6.Future<void> init([_i5.Database? database]) =>
+      (super.noSuchMethod(
+            Invocation.method(#init, [database]),
+            returnValue: _i6.Future<void>.value(),
+            returnValueForMissingStub: _i6.Future<void>.value(),
+          )
+          as _i6.Future<void>);
+
+  @override
+  _i6.Future<List<_i33.Report>> reports() =>
+      (super.noSuchMethod(
+            Invocation.method(#reports, []),
+            returnValue: _i6.Future<List<_i33.Report>>.value(<_i33.Report>[]),
+          )
+          as _i6.Future<List<_i33.Report>>);
+
+  @override
+  _i6.Future<bool> reportNameExists(String? name) =>
+      (super.noSuchMethod(
+            Invocation.method(#reportNameExists, [name]),
+            returnValue: _i6.Future<bool>.value(false),
+          )
+          as _i6.Future<bool>);
+
+  @override
+  _i6.Future<void> addReport(_i33.Report? report) =>
+      (super.noSuchMethod(
+            Invocation.method(#addReport, [report]),
+            returnValue: _i6.Future<void>.value(),
+            returnValueForMissingStub: _i6.Future<void>.value(),
+          )
+          as _i6.Future<void>);
+
+  @override
+  _i6.Future<void> updateReport(_i33.Report? report) =>
+      (super.noSuchMethod(
+            Invocation.method(#updateReport, [report]),
+            returnValue: _i6.Future<void>.value(),
+            returnValueForMissingStub: _i6.Future<void>.value(),
+          )
+          as _i6.Future<void>);
+
+  @override
+  _i6.Future<void> removeReport(String? id) =>
+      (super.noSuchMethod(
+            Invocation.method(#removeReport, [id]),
             returnValue: _i6.Future<void>.value(),
             returnValueForMissingStub: _i6.Future<void>.value(),
           )

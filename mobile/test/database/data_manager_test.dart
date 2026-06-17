@@ -646,4 +646,111 @@ void main() {
     when(database.rawQuery(any, any)).thenAnswer((_) => Future.value([{}]));
     expect(await DataManager.get.getSession("id"), isNull);
   });
+
+  test(
+    "clearDatabase deletes report table and returns true when empty",
+    () async {
+      final batch = MockBatch();
+      when(batch.rawQuery(any)).thenReturn(null);
+      when(
+        batch.commit(noResult: anyNamed("noResult")),
+      ).thenAnswer((_) => Future.value([]));
+      when(database.batch()).thenReturn(batch);
+      when(database.rawQuery("SELECT COUNT(*) FROM activity")).thenAnswer(
+        (_) => Future.value([
+          {"COUNT(*)": 0},
+        ]),
+      );
+      when(database.rawQuery("SELECT COUNT(*) FROM session")).thenAnswer(
+        (_) => Future.value([
+          {"COUNT(*)": 0},
+        ]),
+      );
+      when(database.rawQuery("SELECT COUNT(*) FROM report")).thenAnswer(
+        (_) => Future.value([
+          {"COUNT(*)": 0},
+        ]),
+      );
+
+      expect(await DataManager.get.clearDatabase(), isTrue);
+      verify(batch.rawQuery("DELETE FROM report")).called(1);
+    },
+  );
+
+  test("clearDatabase returns false when report table is not empty", () async {
+    final batch = MockBatch();
+
+    when(batch.rawQuery(any)).thenReturn(null);
+    when(
+      batch.commit(noResult: anyNamed("noResult")),
+    ).thenAnswer((_) => Future.value([]));
+    when(database.batch()).thenReturn(batch);
+    when(database.rawQuery("SELECT COUNT(*) FROM activity")).thenAnswer(
+      (_) => Future.value([
+        {"COUNT(*)": 0},
+      ]),
+    );
+    when(database.rawQuery("SELECT COUNT(*) FROM session")).thenAnswer(
+      (_) => Future.value([
+        {"COUNT(*)": 0},
+      ]),
+    );
+    when(database.rawQuery("SELECT COUNT(*) FROM report")).thenAnswer(
+      (_) => Future.value([
+        {"COUNT(*)": 1},
+      ]),
+    );
+
+    expect(await DataManager.get.clearDatabase(), isFalse);
+  });
+
+  test("activityCount uses rowCount utility", () async {
+    when(database.rawQuery("SELECT COUNT(*) FROM activity")).thenAnswer(
+      (_) => Future.value([
+        {"COUNT(*)": 3},
+      ]),
+    );
+
+    expect(await DataManager.get.activityCount, 3);
+  });
+
+  test("sessionCount uses rowCount utility", () async {
+    when(database.rawQuery("SELECT COUNT(*) FROM session")).thenAnswer(
+      (_) => Future.value([
+        {"COUNT(*)": 5},
+      ]),
+    );
+
+    expect(await DataManager.get.sessionCount, 5);
+  });
+
+  test("activityNameExists returns true when name exists", () async {
+    when(
+      database.rawQuery(
+        "SELECT COUNT(*) FROM activity WHERE name = ? COLLATE NOCASE",
+        ["Run"],
+      ),
+    ).thenAnswer(
+      (_) => Future.value([
+        {"COUNT(*)": 1},
+      ]),
+    );
+
+    expect(await DataManager.get.activityNameExists("Run"), isTrue);
+  });
+
+  test("activityNameExists returns false when name does not exist", () async {
+    when(
+      database.rawQuery(
+        "SELECT COUNT(*) FROM activity WHERE name = ? COLLATE NOCASE",
+        ["Missing"],
+      ),
+    ).thenAnswer(
+      (_) => Future.value([
+        {"COUNT(*)": 0},
+      ]),
+    );
+
+    expect(await DataManager.get.activityNameExists("Missing"), isFalse);
+  });
 }

@@ -28,6 +28,7 @@ class PreferencesManager implements Manager {
   final _keyStatsDateRange = "preferences.statsDateRange";
   final _keyUserName = "preferences.userName";
   final _keyUserEmail = "preferences.userEmail";
+  final _keySelectedReportId = "preferences.selectedReportId";
 
   final VoidStreamController _largestDurationUnitUpdated =
       VoidStreamController();
@@ -45,6 +46,7 @@ class PreferencesManager implements Manager {
   late DateRange _statsDateRange;
   late String? _userName;
   late String? _userEmail;
+  late String? _selectedReportId;
 
   /// The largest unit used to display [Duration] objects. This value will never
   /// be `null`. Defaults to [AppDurationUnit.days].
@@ -61,6 +63,8 @@ class PreferencesManager implements Manager {
   String? get userName => _userName;
 
   String? get userEmail => _userEmail;
+
+  String? get selectedReportId => _selectedReportId;
 
   /// Initializes preference properties. This method should be called on app
   /// start.
@@ -84,6 +88,7 @@ class PreferencesManager implements Manager {
 
     _userName = prefs.getString(_keyUserName);
     _userEmail = prefs.getString(_keyUserEmail);
+    _selectedReportId = prefs.getString(_keySelectedReportId);
   }
 
   Future<void> setLargestDurationUnit(AppDurationUnit unit) async {
@@ -141,6 +146,21 @@ class PreferencesManager implements Manager {
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString(_keyStatsDateRange, _statsDateRange.writeToJson());
+  }
+
+  Future<void> setSelectedReportId(String? id) async {
+    if (_selectedReportId == id) {
+      return;
+    }
+
+    _selectedReportId = id;
+
+    final prefs = await SharedPreferences.getInstance();
+    if (id == null) {
+      await prefs.remove(_keySelectedReportId);
+    } else {
+      await prefs.setString(_keySelectedReportId, id);
+    }
   }
 
   Future<void> setUserInfo(String name, String email) async {
