@@ -376,7 +376,13 @@ class StatsPageState extends State<StatsPage> {
         selectedReport: _selectedReport,
         currentActivities: _currentActivities,
         currentDateRange: _currentDateRange,
-        onReportPicked: _applyReport,
+        onReportPicked: (report) {
+          if (report == null) {
+            setState(() => _clearFiltersAndReport());
+          } else {
+            _applyReport(report);
+          }
+        },
       ),
     );
   }
@@ -412,10 +418,7 @@ class StatsPageState extends State<StatsPage> {
         final updated = reports.where((r) => r.id == _selectedReport!.id);
 
         if (updated.isEmpty) {
-          _clearSelectedReport();
-          _currentActivities = {};
-          _currentDateRange = DateRange(period: DateRange_Period.allDates);
-          _updateFutures();
+          _clearFiltersAndReport();
         } else {
           _selectedReport = updated.first;
         }
@@ -426,6 +429,13 @@ class StatsPageState extends State<StatsPage> {
   void _clearSelectedReport() {
     _selectedReport = null;
     PreferencesManager.get.setSelectedReportId(null);
+  }
+
+  void _clearFiltersAndReport() {
+    _currentActivities = {};
+    _currentDateRange = DateRange(period: DateRange_Period.allDates);
+    _clearSelectedReport();
+    _updateFutures();
   }
 
   void _updateFutures() {

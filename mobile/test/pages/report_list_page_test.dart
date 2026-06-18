@@ -27,7 +27,7 @@ void main() {
   Future<void> pumpPage(
     WidgetTester tester, {
     Report? selectedReport,
-    void Function(Report)? onReportPicked,
+    void Function(Report?)? onReportPicked,
   }) async {
     await pumpContext(
       tester,
@@ -76,5 +76,55 @@ void main() {
 
     expect(picked, isNotNull);
     expect(picked!.id, "r1");
+  });
+
+  testWidgets("Default item is shown", (tester) async {
+    when(
+      managers.reportManager.reportsStream,
+    ).thenAnswer((_) => Stream.value([]));
+
+    await pumpPage(tester);
+    expect(find.text("Default"), findsOneWidget);
+  });
+
+  testWidgets("Tapping Default item calls onReportPicked with null", (
+    tester,
+  ) async {
+    var called = false;
+    Report? pickedValue = makeReport("r1", "Alpha");
+    when(
+      managers.reportManager.reportsStream,
+    ).thenAnswer((_) => Stream.value([]));
+
+    await pumpPage(
+      tester,
+      onReportPicked: (r) {
+        called = true;
+        pickedValue = r;
+      },
+    );
+    await tapAndSettle(tester, find.text("Default"));
+
+    expect(called, isTrue);
+    expect(pickedValue, isNull);
+  });
+
+  testWidgets("Default item has no edit button", (tester) async {
+    when(
+      managers.reportManager.reportsStream,
+    ).thenAnswer((_) => Stream.value([]));
+
+    await pumpPage(tester);
+    expect(find.byIcon(Icons.edit), findsNothing);
+  });
+
+  testWidgets("Edit button is not shown for null-value item", (tester) async {
+    final report = makeReport("r1", "Alpha");
+    when(
+      managers.reportManager.reportsStream,
+    ).thenAnswer((_) => Stream.value([report]));
+
+    await pumpPage(tester);
+    expect(find.byIcon(Icons.edit), findsOneWidget);
   });
 }

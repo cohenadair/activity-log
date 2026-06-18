@@ -82,6 +82,7 @@ Map<String, Map<String, String>> englishStrings = {
     "statsPage_saveAsReportTooltip": "Save as New Report",
     "statsPage_saveReportSuccess": "Report saved successfully.",
     "reportListPage_title": "Select a Report",
+    "reportListPage_defaultItem": "Default",
     "editReportPage_newTitle": "New Report",
     "editReportPage_editTitle": "Edit Report",
     "editReportPage_nameLabel": "Name",

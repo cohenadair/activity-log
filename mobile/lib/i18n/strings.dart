@@ -216,6 +216,9 @@ class Strings {
 
   String get reportListPageTitle => _getString("reportListPage_title");
 
+  String get reportListPageDefaultItem =>
+      _getString("reportListPage_defaultItem");
+
   String get editReportPageNewTitle => _getString("editReportPage_newTitle");
 
   String get editReportPageEditTitle => _getString("editReportPage_editTitle");
