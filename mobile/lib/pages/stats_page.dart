@@ -113,6 +113,7 @@ class StatsPageState extends State<StatsPage> {
     return MyPage(
       appBarStyle: MyPageAppBarStyle(
         titleWidget: _buildAppBarTitle(),
+        showLeadingProButton: true,
         actions: [_buildSaveReportButton(), _buildSaveAsButton()],
       ),
       child: FutureBuilder<int>(

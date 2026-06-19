@@ -21,6 +21,7 @@ class ActivitiesPageState extends State<ActivitiesPage> {
       builder: (BuildContext context, List<ActivityListTileModel> models) {
         return ListPage<ActivityListTileModel>(
           items: models,
+          showLeadingProButton: true,
           empty: EmptyPageHelp(
             icon: Icons.home,
             message: Strings.of(context).activitiesPageNoActivitiesMessage,

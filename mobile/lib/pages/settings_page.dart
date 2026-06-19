@@ -60,6 +60,7 @@ class SettingsPageState extends State<SettingsPage> {
     return MyPage(
       appBarStyle: MyPageAppBarStyle(
         title: Strings.of(context).settingsPageTitle,
+        showLeadingProButton: true,
       ),
       child: ListView(
         children: <Widget>[

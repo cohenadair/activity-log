@@ -10,6 +10,7 @@ class ListPage<T> extends StatefulWidget {
 
   /// A [Widget] to show when the list is empty.
   final Widget? empty;
+  final bool showLeadingProButton;
   final Widget Function(T?) getEditPageCallback;
   final Widget Function(T, Function(T)) buildTileCallback;
   final List<T> items;
@@ -17,6 +18,7 @@ class ListPage<T> extends StatefulWidget {
   const ListPage({
     required this.title,
     this.empty,
+    this.showLeadingProButton = false,
     required this.getEditPageCallback,
     required this.buildTileCallback,
     required this.items,
@@ -32,6 +34,7 @@ class ListPageState<T> extends State<ListPage<T>> {
     return p.MyPage(
       appBarStyle: p.MyPageAppBarStyle(
         title: widget.title,
+        showLeadingProButton: widget.showLeadingProButton,
         actions: <Widget>[
           IconButton(icon: const Icon(Icons.add), onPressed: _onPressAddButton),
         ],

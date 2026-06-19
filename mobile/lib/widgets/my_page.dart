@@ -1,13 +1,17 @@
 import 'dart:io';
 
 import 'package:adair_flutter_lib/res/dimen.dart';
+import 'package:adair_flutter_lib/res/theme.dart';
+import 'package:adair_flutter_lib/widgets/pro_chip_button.dart';
 import 'package:flutter/material.dart';
+import 'package:mobile/pages/activity_log_pro_page.dart';
 
 class MyPageAppBarStyle {
   final String? title;
   final String? subtitle;
   final List<Widget>? actions;
   final Widget? leading;
+  final bool showLeadingProButton;
 
   /// When set, replaces the default [Text] title widget. Takes precedence over
   /// [title] and [subtitle].
@@ -18,11 +22,14 @@ class MyPageAppBarStyle {
     this.subtitle,
     this.actions,
     this.leading,
+    this.showLeadingProButton = false,
     this.titleWidget,
   });
 }
 
 class MyPage extends StatelessWidget {
+  static const _leadingProButtonWidth = 98.0;
+
   final Widget _child;
   final MyPageAppBarStyle? _appBarStyle;
 
@@ -38,11 +45,25 @@ class MyPage extends StatelessWidget {
           : AppBar(
               title: _buildTitle(context),
               actions: _appBarStyle.actions,
-              leading: _appBarStyle.leading,
+              leading: _appBarStyle.leading ?? _buildLeadingProButton(context),
+              leadingWidth: _appBarStyle.showLeadingProButton
+                  ? _leadingProButtonWidth
+                  : null,
               elevation: 0,
               centerTitle: true,
             ),
       body: SafeArea(child: _child),
+    );
+  }
+
+  Widget? _buildLeadingProButton(BuildContext context) {
+    if (!_appBarStyle!.showLeadingProButton) {
+      return null;
+    }
+
+    return ProChipButton(
+      ActivityLogProPage(),
+      isOnAppColor: !context.isDarkTheme,
     );
   }
 

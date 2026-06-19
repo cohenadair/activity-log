@@ -31,6 +31,9 @@ void main() {
       managers.subscriptionManager.subscriptions(),
     ).thenAnswer((_) => Future.value(null));
     when(managers.subscriptionManager.isPro).thenReturn(false);
+    when(
+      managers.subscriptionManager.stream,
+    ).thenAnswer((_) => const Stream.empty());
 
     when(managers.ioWrapper.isIOS).thenReturn(false);
     when(managers.ioWrapper.isAndroid).thenReturn(true);
