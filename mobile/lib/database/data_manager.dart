@@ -475,6 +475,9 @@ class DataManager implements Manager {
       }
     }
 
+    // Exclude activities hidden from stats.
+    activityList.removeWhere((a) => a.isHiddenFromStats);
+
     List<SummarizedActivity> summarizedActivities = [];
 
     // Get all sessions for all activities and construct a SummarizedActivity

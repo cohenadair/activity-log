@@ -1,6 +1,7 @@
 import 'package:adair_flutter_lib/l10n/l10n.dart';
 import 'package:adair_flutter_lib/pages/pro_page.dart';
 import 'package:adair_flutter_lib/utils/device.dart';
+import 'package:adair_flutter_lib/utils/page.dart' as page;
 import 'package:adair_flutter_lib/widgets/async_builder.dart';
 import 'package:adair_flutter_lib/wrappers/io_wrapper.dart';
 import 'package:flutter/material.dart';
@@ -8,6 +9,10 @@ import 'package:mobile/l10n/l10n_extension.dart';
 import 'package:mobile/live_activities_manager.dart';
 
 class ActivityLogProPage extends StatefulWidget {
+  static void present(BuildContext context) {
+    page.present(context, ActivityLogProPage());
+  }
+
   @override
   State<ActivityLogProPage> createState() => _ActivityLogProPageState();
 }
@@ -34,6 +39,8 @@ class _ActivityLogProPageState extends State<ActivityLogProPage> {
         features: [
           ProPageFeatureRow(L10n.get.app.proPageSaveCustomStatsFilters),
           ProPageFeatureRow(L10n.get.app.proPageWakeLock),
+          ProPageFeatureRow(L10n.get.app.proPageArchiveActivities),
+          ProPageFeatureRow(L10n.get.app.proPageHideFromStats),
           ProPageFeatureRow(
             IoWrapper.get.isAndroid
                 ? L10n.get.app.proPageLiveActivitiesAndroid

@@ -102,7 +102,7 @@ class SettingsPageState extends State<SettingsPage> {
   Widget _buildPro() {
     return ListItem(
       title: Text(Strings.of(context).settingsPagePro),
-      onTap: () => present(context, ActivityLogProPage()),
+      onTap: () => ActivityLogProPage.present(context),
     );
   }
 

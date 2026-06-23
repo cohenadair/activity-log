@@ -2,8 +2,8 @@ import 'package:adair_flutter_lib/l10n/l10n.dart';
 import 'package:adair_flutter_lib/managers/time_manager.dart';
 import 'package:adair_flutter_lib/res/dimen.dart';
 import 'package:adair_flutter_lib/utils/date_time.dart';
-import 'package:adair_flutter_lib/utils/dialog.dart';
 import 'package:adair_flutter_lib/utils/string.dart';
+import 'package:adair_flutter_lib/widgets/checkbox_input.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:mobile/i18n/strings.dart';
@@ -11,7 +11,6 @@ import 'package:mobile/model/activity.dart';
 import 'package:mobile/model/session.dart';
 import 'package:mobile/widgets/date_time_picker.dart';
 import 'package:mobile/widgets/edit_page.dart';
-import 'package:mobile/widgets/list_item.dart';
 import 'package:mobile/widgets/text.dart';
 import 'package:timezone/timezone.dart';
 
@@ -148,30 +147,14 @@ class EditSessionPageState extends State<EditSessionPage> {
               ),
             ),
             Container(height: paddingDefault),
-            ListItem(
-              contentPadding: const EdgeInsets.only(left: paddingDefault),
-              title: Row(
-                children: [
-                  Text(Strings.of(context).editSessionPageBankedSession),
-                  IconButton(
-                    icon: const Icon(Icons.help_outline),
-                    visualDensity: VisualDensity.compact,
-                    onPressed: () => showOkDialog(
-                      context: context,
-                      description: Text(
-                        Strings.of(
-                          context,
-                        ).editSessionPageBankedSessionDescription,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              trailing: Checkbox(
-                value: _isBanked,
-                onChanged: (value) =>
-                    setState(() => _isBanked = value ?? false),
-              ),
+            CheckboxInput(
+              label: Strings.of(context).editSessionPageBankedSession,
+              helpText: Strings.of(
+                context,
+              ).editSessionPageBankedSessionDescription,
+              value: _isBanked,
+              padding: insetsHorizontalDefault,
+              onChanged: (value) => setState(() => _isBanked = value),
             ),
           ],
         ),

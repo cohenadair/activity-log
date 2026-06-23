@@ -1,3 +1,4 @@
+import 'package:adair_flutter_lib/managers/subscription_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile/database/data_manager.dart';
 import 'package:mobile/i18n/strings.dart';
@@ -34,6 +35,10 @@ class ActivityPickerState extends State<ActivityPicker> {
           Strings.of(context).activityDropdownAllActivities,
         ).build;
 
+        final showHeader =
+            !SubscriptionManager.get.isFree &&
+            activities.any((a) => a.isArchived);
+
         return ListPicker<Activity>(
           allowsMultiSelect: true,
           initialValues: widget.initialActivities.isEmpty
@@ -48,7 +53,13 @@ class ActivityPickerState extends State<ActivityPicker> {
             }
           },
           allItem: _buildItem(_allActivitiesActivity),
-          items: activities.map((activity) => _buildItem(activity)).toList(),
+          items: activities
+              .where((a) => !a.isHiddenFromStats)
+              .map((activity) => _buildItem(activity))
+              .toList(),
+          listHeader: showHeader
+              ? Text(Strings.of(context).activityPickerArchivedHint)
+              : null,
           titleBuilder: (Set<Activity> selectedActivities) {
             return Text(
               selectedActivities

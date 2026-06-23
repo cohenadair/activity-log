@@ -753,4 +753,26 @@ void main() {
 
     expect(await DataManager.get.activityNameExists("Missing"), isFalse);
   });
+
+  test(
+    "getSummarizedActivities excludes activities where isHiddenFromStats is true",
+    () async {
+      final hiddenActivity = (ActivityBuilder(
+        "Hidden",
+      )..isHiddenFromStats = true).build;
+      final visibleActivity = ActivityBuilder("Visible").build;
+
+      stubActivities([hiddenActivity.toMap(), visibleActivity.toMap()]);
+
+      final dateRange = DateRange(
+        startTimestamp: Int64(TimeManager.get.currentTimestamp),
+        endTimestamp: Int64(TimeManager.get.currentTimestamp),
+      );
+
+      final result = await DataManager.get.getSummarizedActivities(dateRange);
+
+      expect(result.activities.length, 1);
+      expect(result.activities.first.value.name, "Visible");
+    },
+  );
 }

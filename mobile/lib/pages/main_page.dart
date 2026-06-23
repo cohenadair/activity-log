@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:adair_flutter_lib/managers/subscription_manager.dart';
-import 'package:adair_flutter_lib/utils/page.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile/database/data_manager.dart';
 import 'package:mobile/i18n/strings.dart';
@@ -95,7 +94,7 @@ class MainPageState extends State<MainPage> {
       return;
     }
     if (count % _proPagePromptFrequency == 0) {
-      present(context, ActivityLogProPage());
+      ActivityLogProPage.present(context);
     }
   }
 }

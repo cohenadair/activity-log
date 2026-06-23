@@ -236,7 +236,7 @@ class StatsPageState extends State<StatsPage> {
 
   Future<void> _saveReport() async {
     if (SubscriptionManager.get.isFree) {
-      present(context, ActivityLogProPage());
+      ActivityLogProPage.present(context);
       return;
     }
 
@@ -356,7 +356,7 @@ class StatsPageState extends State<StatsPage> {
 
   void _openSaveReport() {
     if (SubscriptionManager.get.isFree) {
-      present(context, ActivityLogProPage());
+      ActivityLogProPage.present(context);
       return;
     }
 

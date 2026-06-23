@@ -1,10 +1,12 @@
 import 'package:adair_flutter_lib/res/dimen.dart';
 import 'package:adair_flutter_lib/utils/page.dart';
 import 'package:adair_flutter_lib/utils/string.dart';
+import 'package:adair_flutter_lib/widgets/checkbox_input.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile/i18n/strings.dart';
 import 'package:mobile/model/activity.dart';
 import 'package:mobile/model/session.dart';
+import 'package:mobile/pages/activity_log_pro_page.dart';
 import 'package:mobile/pages/edit_session_page.dart';
 import 'package:mobile/pages/sessions_page.dart';
 import 'package:mobile/widgets/edit_page.dart';
@@ -30,6 +32,8 @@ class EditActivityPageState extends State<EditActivityPage> {
   bool get _isEditing => widget.editingActivity != null;
 
   late TextEditingController _nameController;
+  late bool _isArchived;
+  late bool _isHiddenFromStats;
   String? _nameValidatorValue;
 
   @override
@@ -37,6 +41,10 @@ class EditActivityPageState extends State<EditActivityPage> {
     _nameController = TextEditingController(
       text: _isEditing ? widget.editingActivity!.name : null,
     );
+    _isArchived = _isEditing ? widget.editingActivity!.isArchived : false;
+    _isHiddenFromStats = _isEditing
+        ? widget.editingActivity!.isHiddenFromStats
+        : false;
 
     super.initState();
   }
@@ -77,10 +85,40 @@ class EditActivityPageState extends State<EditActivityPage> {
                 validator: (value) => _nameValidatorValue,
               ),
             ),
+            _buildArchived(),
+            _buildIsHiddenFromStats(),
             _isEditing ? _buildRecentSessions() : const SizedBox(),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildArchived() {
+    return ProCheckboxInput(
+      label: Strings.of(context).archived,
+      helpText: Strings.of(context).editActivityPageArchivedDescription,
+      value: _isArchived,
+      padding: insetsHorizontalDefault,
+      onProRequired: () => ActivityLogProPage.present(context),
+      onSetValue: (value) {
+        setState(() {
+          _isArchived = value;
+          if (_isArchived) {
+            _isHiddenFromStats = true;
+          }
+        });
+      },
+    );
+  }
+
+  Widget _buildIsHiddenFromStats() {
+    return ProCheckboxInput(
+      label: Strings.of(context).editActivityPageHideFromStats,
+      value: _isHiddenFromStats,
+      padding: insetsHorizontalDefault,
+      onProRequired: () => ActivityLogProPage.present(context),
+      onSetValue: (value) => setState(() => _isHiddenFromStats = value),
     );
   }
 
@@ -177,10 +215,15 @@ class EditActivityPageState extends State<EditActivityPage> {
 
       if (_isEditing) {
         var builder = ActivityBuilder.fromActivity(widget.editingActivity!)
-          ..name = nameCandidate;
+          ..name = nameCandidate
+          ..isArchived = _isArchived
+          ..isHiddenFromStats = _isHiddenFromStats;
         DataManager.get.updateActivity(builder.build);
       } else {
-        DataManager.get.addActivity(ActivityBuilder(nameCandidate).build);
+        var builder = ActivityBuilder(nameCandidate)
+          ..isArchived = _isArchived
+          ..isHiddenFromStats = _isHiddenFromStats;
+        DataManager.get.addActivity(builder.build);
       }
 
       Navigator.pop(context);

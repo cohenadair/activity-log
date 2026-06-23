@@ -8,6 +8,7 @@ Map<String, Map<String, String>> englishStrings = {
     "navigationBar_home": "Home",
     "navigationBar_stats": "Stats",
     "navigationBar_settings": "Settings",
+    "archived": "Archived",
     "activitiesPage_title": "Activities",
     "activitiesPage_noActivitiesMessage":
         "No activities to display. Click the \"+\" button to begin.",
@@ -20,6 +21,11 @@ Map<String, Map<String, String>> englishStrings = {
     "editActivityPage_missingName": "Enter a name for your activity",
     "editActivityPage_recentSessions": "Recent Sessions",
     "editActivityPage_moreSessions": "View All",
+    "editActivityPage_archivedDescription":
+        "Archived activities are hidden from stats and shown at the bottom of the Home page.",
+    "editActivityPage_hideFromStats": "Hidden From Stats",
+    "activityPicker_archivedHint":
+        "Don't see your activity? Verify it isn't Archived.",
     "editSessionPage_newTitle": "New %s Session",
     "editSessionPage_editTitle": "Edit %s Session",
     "editSessionPage_startDate": "Start date",
@@ -131,6 +137,8 @@ Map<String, Map<String, String>> englishStrings = {
         "No internet connection. Please check your connection and try again.",
     "feedbackPage_errorSending":
         "Error sending feedback. Please try again later, or email %s directly.",
+    "proPage_archiveActivities": "Archive activities",
+    "proPage_hideFromStats": "Hide activities from stats",
     "proPage_saveCustomStatsFilters": "Save custom stats filters",
     "proPage_wakeLock": "Keep the screen on while in full screen activities",
     "proPage_liveActivitiesAndroid":

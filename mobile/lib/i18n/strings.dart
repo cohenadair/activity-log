@@ -51,6 +51,8 @@ class Strings {
   String get activitiesPageNoActivitiesMessage =>
       _getString("activitiesPage_noActivitiesMessage");
 
+  String get archived => _getString("archived");
+
   String get editActivityPageNewTitle =>
       _getString("editActivityPage_newTitle");
 
@@ -74,6 +76,15 @@ class Strings {
 
   String get editActivityPageMoreSessions =>
       _getString("editActivityPage_moreSessions");
+
+  String get editActivityPageArchivedDescription =>
+      _getString("editActivityPage_archivedDescription");
+
+  String get editActivityPageHideFromStats =>
+      _getString("editActivityPage_hideFromStats");
+
+  String get activityPickerArchivedHint =>
+      _getString("activityPicker_archivedHint");
 
   String get editSessionPageNewTitle => _getString("editSessionPage_newTitle");
 
@@ -329,6 +340,11 @@ class Strings {
 
   String get feedbackPageErrorSending =>
       _getString("feedbackPage_errorSending");
+
+  String get proPageArchiveActivities =>
+      _getString("proPage_archiveActivities");
+
+  String get proPageHideFromStats => _getString("proPage_hideFromStats");
 
   String get proPageSaveCustomStatsFilters =>
       _getString("proPage_saveCustomStatsFilters");
