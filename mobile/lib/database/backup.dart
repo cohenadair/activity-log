@@ -1,6 +1,9 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
+import 'dart:isolate';
 
+import 'package:adair_flutter_lib/wrappers/path_provider_wrapper.dart';
 import 'package:mobile/database/data_manager.dart';
 import 'package:mobile/model/activity.dart';
 import 'package:mobile/model/report.dart';
@@ -29,13 +32,13 @@ const _keyActivities = "activities";
 const _keySessions = "sessions";
 const _keyReports = "reports";
 
+const _backupFileName = "ActivityLogBackup.dat";
+
 const _keyPreferences = "preferences";
 const _keyPreferencesLargestDurationUnit = "largest_duration_unit";
 const _keyPreferencesHomeDateRange = "home_date_range";
 
-/// Returns a JSON [String] representation of the database,
-/// or `null` if there was an error.
-Future<String> export() async {
+Future<Map<String, dynamic>> _fetchExportData() async {
   Map<String, dynamic> jsonMap = {};
 
   // Activities.
@@ -76,7 +79,19 @@ Future<String> export() async {
       .homeDateRange
       .writeToJson();
 
-  return jsonEncode(jsonMap);
+  return jsonMap;
+}
+
+/// Serializes the database to a backup file in the temporary directory and
+/// returns the file path.
+Future<String> export() async {
+  final map = await _fetchExportData();
+  final tempPath = await PathProviderWrapper.get.temporaryPath;
+  final path = "$tempPath/$_backupFileName";
+  await Isolate.run(() async {
+    await File(path).writeAsString(jsonEncode(map));
+  });
+  return path;
 }
 
 /// Returns an [ImportResult] from parsing the given JSON and replacing the

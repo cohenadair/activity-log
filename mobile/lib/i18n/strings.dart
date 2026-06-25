@@ -155,6 +155,9 @@ class Strings {
   String get settingsPageHeadingBackup =>
       _getString("settingsPage_headingBackup");
 
+  String get settingsPageHeadingExport =>
+      _getString("settingsPage_headingExport");
+
   String get settingsPageLargestDurationLabel =>
       _getString("settingsPage_largestDurationLabel");
 
@@ -186,6 +189,12 @@ class Strings {
 
   String get settingsPageAndroidErrorRateMessage =>
       _getString("settingsPage_android_errorRateMessage");
+
+  String get settingsPageExportXlsxLabel =>
+      _getString("settingsPage_exportXlsxLabel");
+
+  String get settingsPageExportXlsxDescription =>
+      _getString("settingsPage_exportXlsxDescription");
 
   String get settingsPageExportLabel => _getString("settingsPage_exportLabel");
 
@@ -340,6 +349,8 @@ class Strings {
 
   String get feedbackPageErrorSending =>
       _getString("feedbackPage_errorSending");
+
+  String get proPageExportXlsx => _getString("proPage_exportXlsx");
 
   String get proPageArchiveActivities =>
       _getString("proPage_archiveActivities");

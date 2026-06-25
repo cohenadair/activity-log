@@ -41,6 +41,7 @@ class _ActivityLogProPageState extends State<ActivityLogProPage> {
           ProPageFeatureRow(L10n.get.app.proPageWakeLock),
           ProPageFeatureRow(L10n.get.app.proPageArchiveActivities),
           ProPageFeatureRow(L10n.get.app.proPageHideFromStats),
+          ProPageFeatureRow(L10n.get.app.proPageExportXlsx),
           ProPageFeatureRow(
             IoWrapper.get.isAndroid
                 ? L10n.get.app.proPageLiveActivitiesAndroid

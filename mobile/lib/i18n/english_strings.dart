@@ -3,6 +3,7 @@ Map<String, Map<String, String>> englishStrings = {
   "CA": {},
   "default": {
     "done": "Done",
+    "error": "Error",
     "save": "Save",
     "none": "None",
     "navigationBar_home": "Home",
@@ -55,6 +56,7 @@ Map<String, Map<String, String>> englishStrings = {
     "settingsPage_headingOther": "Preferences",
     "settingsPage_headingHelpAndFeedback": "Help & Feedback",
     "settingsPage_headingBackup": "Backup",
+    "settingsPage_headingExport": "Export",
     "settingsPage_largestDurationLabel": "Largest Duration Unit",
     "settingsPage_largestDurationDays": "Days",
     "settingsPage_largestDurationHours": "Hours",
@@ -70,6 +72,9 @@ Map<String, Map<String, String>> englishStrings = {
         "Unable to open App Store. Please make sure it is installed and enabled.",
     "settingsPage_android_errorRateMessage":
         "Unable to open Google Play. Please make sure it is installed and enabled",
+    "settingsPage_exportXlsxLabel": "Excel Spreadsheet",
+    "settingsPage_exportXlsxDescription":
+        "Save your data as a XLSX spreadsheet.",
     "settingsPage_exportLabel": "Export",
     "settingsPage_exportDescription": "Save your data to any storage location.",
     "settingsPage_importLabel": "Import",
@@ -137,6 +142,7 @@ Map<String, Map<String, String>> englishStrings = {
         "No internet connection. Please check your connection and try again.",
     "feedbackPage_errorSending":
         "Error sending feedback. Please try again later, or email %s directly.",
+    "proPage_exportXlsx": "Save data to an Excel (XLSX) spreadsheet",
     "proPage_archiveActivities": "Archive activities",
     "proPage_hideFromStats": "Hide activities from stats",
     "proPage_saveCustomStatsFilters": "Save custom stats filters",

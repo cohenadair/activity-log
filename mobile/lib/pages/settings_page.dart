@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:adair_flutter_lib/managers/subscription_manager.dart';
 import 'package:adair_flutter_lib/model/gen/adair_flutter_lib.pb.dart';
 import 'package:adair_flutter_lib/res/dimen.dart';
 import 'package:adair_flutter_lib/res/theme.dart';
@@ -16,6 +17,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:mobile/database/backup.dart';
+import 'package:mobile/database/xlsx_export.dart';
 import 'package:mobile/i18n/strings.dart';
 import 'package:mobile/pages/activity_log_pro_page.dart';
 import 'package:mobile/pages/feedback_page.dart';
@@ -25,7 +27,6 @@ import 'package:mobile/widgets/list_picker.dart';
 import 'package:mobile/widgets/my_page.dart';
 import 'package:mobile/widgets/text.dart';
 import 'package:mobile/widgets/widget.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:quiver/strings.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -47,12 +48,10 @@ class SettingsPageState extends State<SettingsPage> {
   static const _playStoreUrl = "market://details?id=com.cohenadair.activitylog";
   static const _privacyUrl =
       "https://cohenadair.github.io/activity-log/privacy_policy.html";
-  static const _backupFileExtension = "dat";
-  static const _backupFileName = "ActivityLogBackup.$_backupFileExtension";
-
   static const _log = Log("SettingsPage");
 
   bool _isCreatingBackup = false;
+  bool _isCreatingXlsx = false;
   bool _isImporting = false;
 
   @override
@@ -74,6 +73,9 @@ class SettingsPageState extends State<SettingsPage> {
           _buildHeading(Strings.of(context).settingsPageHeadingBackup),
           _buildExport(),
           _buildImport(),
+          MinDivider(),
+          _buildHeading(Strings.of(context).settingsPageHeadingExport),
+          _buildExportXlsx(),
           MinDivider(),
           _buildHeading(Strings.of(context).settingsPageHeadingHelpAndFeedback),
           _buildContact(),
@@ -273,6 +275,22 @@ class SettingsPageState extends State<SettingsPage> {
     );
   }
 
+  Widget _buildExportXlsx() {
+    return ListItem(
+      title: Text(Strings.of(context).settingsPageExportXlsxLabel),
+      subtitle: Text(Strings.of(context).settingsPageExportXlsxDescription),
+      trailing: _isCreatingXlsx ? const Loading.minimized() : const SizedBox(),
+      onTap: () {
+        if (SubscriptionManager.get.isFree) {
+          ActivityLogProPage.present(context);
+          return;
+        }
+        setState(() => _isCreatingXlsx = true);
+        _startExportXlsx(context.findRenderObject() as RenderBox);
+      },
+    );
+  }
+
   Widget _buildImport() {
     return ListItem(
       title: Text(Strings.of(context).settingsPageImportLabel),
@@ -282,23 +300,40 @@ class SettingsPageState extends State<SettingsPage> {
     );
   }
 
-  void _startExport(RenderBox renderBox) async {
-    // Save backup file to sandbox cache. It'll be small and it'll be overridden
-    // by subsequent backups, so let the system handle deletion.
-    var tempDir = await getTemporaryDirectory();
-    var path = "${tempDir.path}/$_backupFileName";
-    var backupFile = File(path);
-    backupFile.writeAsStringSync(await export());
+  Future<void> _startExport(RenderBox renderBox) async {
+    await _shareFile(
+      renderBox,
+      await export(),
+      mimeType: "text/plain",
+      onDone: () => _isCreatingBackup = false,
+    );
+  }
+
+  Future<void> _startExportXlsx(RenderBox renderBox) async {
+    await _shareFile(
+      renderBox,
+      await exportXlsx(),
+      onDone: () => _isCreatingXlsx = false,
+    );
+  }
+
+  Future<void> _shareFile(
+    RenderBox renderBox,
+    String path, {
+    String? mimeType,
+    required void Function() onDone,
+  }) async {
+    if (!mounted) {
+      return;
+    }
+
+    setState(onDone);
 
     await Share.shareXFiles(
-      [XFile(path, mimeType: "text/plain")],
+      [XFile(path, mimeType: mimeType)],
       sharePositionOrigin:
           renderBox.localToGlobal(Offset.zero) & renderBox.size,
     );
-
-    setState(() {
-      _isCreatingBackup = false;
-    });
   }
 
   void _startImport() async {
@@ -335,12 +370,14 @@ class SettingsPageState extends State<SettingsPage> {
     try {
       // This method will throw an exception for non-text files, such as
       // an image or archive.
-      jsonString = file.readAsStringSync();
+      jsonString = await file.readAsString();
     } on Exception {
-      showErrorDialog(
-        context: context,
-        description: Text(Strings.of(context).settingsPageImportBadFile),
-      );
+      if (mounted) {
+        showErrorDialog(
+          context: context,
+          description: Text(Strings.of(context).settingsPageImportBadFile),
+        );
+      }
     }
 
     if (jsonString != null) {
@@ -356,6 +393,10 @@ class SettingsPageState extends State<SettingsPage> {
           _showImportError(result, file);
         }
       }
+    }
+
+    if (!mounted) {
+      return;
     }
 
     setState(() => _isImporting = false);

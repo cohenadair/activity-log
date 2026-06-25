@@ -1,7 +1,10 @@
+import 'dart:io';
+
 import 'package:adair_flutter_lib/model/gen/adair_flutter_lib.pb.dart';
 import 'package:adair_flutter_lib/pages/pro_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mobile/pages/activity_log_pro_page.dart';
 import 'package:mobile/pages/settings_page.dart';
 import 'package:mobile/utils/duration.dart';
 import 'package:mockito/mockito.dart';
@@ -31,6 +34,7 @@ void main() {
       managers.subscriptionManager.subscriptions(),
     ).thenAnswer((_) => Future.value(null));
     when(managers.subscriptionManager.isPro).thenReturn(false);
+    when(managers.subscriptionManager.isFree).thenReturn(true);
     when(
       managers.subscriptionManager.stream,
     ).thenAnswer((_) => const Stream.empty());
@@ -60,5 +64,38 @@ void main() {
 
     await tapAndSettle(tester, find.text("Activity Log Pro"));
     expect(find.byType(ProPage), findsOneWidget);
+  });
+
+  testWidgets("Export XLSX tap shows pro page when subscription is free", (
+    tester,
+  ) async {
+    managers.lib.stubIosDeviceInfo();
+    when(managers.subscriptionManager.isPro).thenReturn(false);
+    when(managers.subscriptionManager.isFree).thenReturn(true);
+
+    await tester.pumpWidget(Testable((_) => SettingsPage()));
+    await ensureVisibleAndSettle(tester, find.text("Excel Spreadsheet"));
+    await tapAndSettle(tester, find.text("Excel Spreadsheet"));
+
+    expect(find.byType(ActivityLogProPage), findsOneWidget);
+  });
+
+  testWidgets("Export XLSX tap does not show pro page when subscribed", (
+    tester,
+  ) async {
+    managers.lib.stubIosDeviceInfo();
+    when(managers.subscriptionManager.isPro).thenReturn(true);
+    when(managers.subscriptionManager.isFree).thenReturn(false);
+    when(
+      managers.lib.pathProviderWrapper.temporaryPath,
+    ).thenAnswer((_) async => Directory.systemTemp.path);
+    when(managers.dataManager.activities).thenAnswer((_) async => []);
+
+    await tester.pumpWidget(Testable((_) => SettingsPage()));
+    await ensureVisibleAndSettle(tester, find.text("Excel Spreadsheet"));
+    await tester.tap(find.text("Excel Spreadsheet"));
+    await tester.pump();
+
+    expect(find.byType(ActivityLogProPage), findsNothing);
   });
 }
