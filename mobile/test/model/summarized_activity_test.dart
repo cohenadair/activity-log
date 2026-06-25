@@ -100,15 +100,13 @@ void main() {
       expect(activity.totalDuration, equals(const Duration(hours: 12)));
       expect(activity.averageDurationOverall, equals(const Duration(hours: 6)));
       expect(activity.averageDurationPerDay.inMilliseconds, equals(8640000));
-      expect(activity.averageDurationPerWeek.inMilliseconds, equals(60480000));
-      expect(
-        activity.averageDurationPerMonth.inMilliseconds,
-        equals(259200000),
-      );
+      // 5 days → weeks = ceil(5/7) = 1, months = ceil(5/30) = 1
+      expect(activity.averageDurationPerWeek.inMilliseconds, equals(43200000));
+      expect(activity.averageDurationPerMonth.inMilliseconds, equals(43200000));
       expect(activity.longestStreak, equals(2));
       expect(activity.sessionsPerDay, equals(2 / 5));
-      expect(activity.sessionsPerWeek, equals(2.8));
-      expect(activity.sessionsPerMonth, equals(12));
+      expect(activity.sessionsPerWeek, equals(2.0));
+      expect(activity.sessionsPerMonth, equals(2.0));
     });
 
     test("All time averages", () {
@@ -146,9 +144,10 @@ void main() {
         sessions: sessions,
       );
 
-      expect(activity.sessionsPerDay, equals(9600));
-      expect(activity.sessionsPerWeek, equals(67200));
-      expect(activity.sessionsPerMonth, equals(288000));
+      // Sessions span only 45 seconds; days/weeks/months all ceil to 1.
+      expect(activity.sessionsPerDay, equals(5.0));
+      expect(activity.sessionsPerWeek, equals(5.0));
+      expect(activity.sessionsPerMonth, equals(5.0));
     });
   });
 
@@ -628,8 +627,8 @@ void main() {
         sessions: sessions,
       );
 
-      // Average is only over 12 months.
-      expect(activity.averageDurationPerMonth.inMilliseconds, equals(12468019));
+      // Range spans ~10.65 months → ceil = 11; 37h / 11 = 12109091 ms.
+      expect(activity.averageDurationPerMonth.inMilliseconds, equals(12109091));
     });
   });
 
@@ -743,13 +742,11 @@ void main() {
       expect(result.totalDuration, const Duration(hours: 18).inMilliseconds);
 
       var averageDurations = result.averageDurations;
+      // Range spans ~14.79 days → days=15, weeks=ceil(2.11)=3, months=ceil(0.49)=1
       expect(averageDurations.overall, const Duration(milliseconds: 10800000));
-      expect(averageDurations.perDay, const Duration(milliseconds: 4380845));
-      expect(averageDurations.perWeek, const Duration(milliseconds: 30665915));
-      expect(
-        averageDurations.perMonth,
-        const Duration(milliseconds: 131425352),
-      );
+      expect(averageDurations.perDay, const Duration(milliseconds: 4320000));
+      expect(averageDurations.perWeek, const Duration(milliseconds: 21600000));
+      expect(averageDurations.perMonth, const Duration(milliseconds: 64800000));
     });
   });
 
@@ -782,8 +779,8 @@ void main() {
         sessions: sessions,
       );
 
-      // Average is over 13 months.
-      expect(activity.averageDurationPerMonth.inMilliseconds, equals(10115122));
+      // Range spans ~11.39 months → ceil = 12; 32h / 12 = 9600000 ms.
+      expect(activity.averageDurationPerMonth.inMilliseconds, equals(9600000));
     });
 
     test("Multiple in-progress session", () {
@@ -815,8 +812,8 @@ void main() {
         sessions: sessions,
       );
 
-      // Average is over 13 months.
-      expect(activity.averageDurationPerMonth.inMilliseconds, equals(10747317));
+      // Range spans ~11.39 months → ceil = 12; 34h / 12 = 10200000 ms.
+      expect(activity.averageDurationPerMonth.inMilliseconds, equals(10200000));
     });
   });
 }
