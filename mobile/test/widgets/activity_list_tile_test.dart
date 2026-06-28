@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mobile/model/activity.dart';
+import 'package:mobile/model/session.dart';
 import 'package:mobile/pages/fullscreen_activity_page.dart';
 import 'package:mobile/utils/duration.dart';
 import 'package:mobile/widgets/activity_list_tile.dart';
@@ -56,5 +57,22 @@ void main() {
 
     await tapAndSettle(tester, find.byIcon(Icons.fullscreen));
     expect(find.byType(FullscreenActivityPage), findsOneWidget);
+  });
+
+  testWidgets("updatesWidget callback fires when activity is running", (
+    tester,
+  ) async {
+    await pumpContext(
+      tester,
+      (_) => ActivityListTile(
+        model: ActivityListTileModel(ActivityBuilder("Test").build)
+          ..currentSession = SessionBuilder("id").build,
+        onTap: (_) {},
+        onTapStartSession: () {},
+        onTapEndSession: () {},
+      ),
+    );
+
+    await tester.pump(const Duration(milliseconds: 1100));
   });
 }

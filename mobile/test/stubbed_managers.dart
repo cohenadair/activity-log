@@ -1,6 +1,7 @@
 import 'package:mobile/database/data_manager.dart';
 import 'package:mobile/i18n/strings.dart';
 import 'package:mobile/live_activities_manager.dart';
+import 'package:mobile/model/activity.dart';
 import 'package:mobile/notification_manager.dart';
 import 'package:mobile/preferences_manager.dart';
 import 'package:mobile/report_manager.dart';
@@ -56,6 +57,12 @@ class StubbedManagers {
       preferencesManager.homeDateRangeStream,
     ).thenAnswer((_) => Stream.empty());
     when(preferencesManager.selectedReportId).thenReturn(null);
+    when(
+      preferencesManager.activitySortOptionStream,
+    ).thenAnswer((_) => Stream.empty());
+    when(
+      preferencesManager.activitySortOption,
+    ).thenReturn(ActivitySortOption.alphabetical);
     PreferencesManager.set(preferencesManager);
 
     httpWrapper = MockHttpWrapper();

@@ -1,6 +1,7 @@
 import 'package:adair_flutter_lib/model/gen/adair_flutter_lib.pb.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mobile/i18n/strings.dart';
 import 'package:mobile/model/activity.dart';
 import 'package:mobile/pages/activities_page.dart';
 import 'package:mobile/pages/edit_activity_page.dart';
@@ -10,6 +11,7 @@ import 'package:mobile/widgets/widget.dart';
 import 'package:mockito/mockito.dart';
 
 import '../../../../adair-flutter-lib/test/test_utils/testable.dart';
+import '../../../../adair-flutter-lib/test/test_utils/widget.dart';
 import '../stubbed_managers.dart';
 
 void main() {
@@ -59,7 +61,7 @@ void main() {
   testWidgets("Shows empty state when no activities", (tester) async {
     stubActivityListModel([]);
 
-    await tester.pumpWidget(Testable((_) => ActivitiesPage()));
+    await pumpContext(tester, (_) => ActivitiesPage());
     await tester.pumpAndSettle();
 
     expect(find.byType(ActivityListTile), findsNothing);
@@ -73,7 +75,7 @@ void main() {
     final activity = ActivityBuilder("Run").build;
     stubActivityListModel([ActivityListTileModel(activity)]);
 
-    await tester.pumpWidget(Testable((_) => ActivitiesPage()));
+    await pumpContext(tester, (_) => ActivitiesPage());
     await tester.pumpAndSettle();
 
     expect(find.byType(ActivityListTile), findsOneWidget);
@@ -88,7 +90,7 @@ void main() {
       )..isArchived = true).build;
       stubActivityListModel([ActivityListTileModel(archivedActivity)]);
 
-      await tester.pumpWidget(Testable((_) => ActivitiesPage()));
+      await pumpContext(tester, (_) => ActivitiesPage());
       await tester.pumpAndSettle();
 
       expect(find.text("Archived"), findsOneWidget);
@@ -102,7 +104,7 @@ void main() {
     final active = ActivityBuilder("Run").build;
     stubActivityListModel([ActivityListTileModel(active)]);
 
-    await tester.pumpWidget(Testable((_) => ActivitiesPage()));
+    await pumpContext(tester, (_) => ActivitiesPage());
     await tester.pumpAndSettle();
 
     expect(find.text("Archived"), findsNothing);
@@ -118,7 +120,7 @@ void main() {
       ActivityListTileModel(archived),
     ]);
 
-    await tester.pumpWidget(Testable((_) => ActivitiesPage()));
+    await pumpContext(tester, (_) => ActivitiesPage());
     await tester.pumpAndSettle();
 
     expect(find.byType(ActivityListTile), findsNWidgets(2));
@@ -132,7 +134,7 @@ void main() {
       managers.dataManager.startSession(any, any),
     ).thenAnswer((_) => Future.value(null));
 
-    await tester.pumpWidget(Testable((_) => ActivitiesPage()));
+    await pumpContext(tester, (_) => ActivitiesPage());
     await tester.pumpAndSettle();
 
     final tile = tester.widget<ActivityListTile>(find.byType(ActivityListTile));
@@ -149,7 +151,7 @@ void main() {
       managers.dataManager.endSession(any),
     ).thenAnswer((_) => Future.value());
 
-    await tester.pumpWidget(Testable((_) => ActivitiesPage()));
+    await pumpContext(tester, (_) => ActivitiesPage());
     await tester.pumpAndSettle();
 
     final tile = tester.widget<ActivityListTile>(find.byType(ActivityListTile));
@@ -170,13 +172,166 @@ void main() {
       managers.dataManager.activityNameExists(any),
     ).thenAnswer((_) => Future.value(false));
 
-    await tester.pumpWidget(Testable((_) => ActivitiesPage()));
+    await pumpContext(tester, (_) => ActivitiesPage());
     await tester.pumpAndSettle();
 
     await tester.tap(find.byIcon(Icons.add));
     await tester.pumpAndSettle();
 
     expect(find.byType(EditActivityPage), findsOneWidget);
+  });
+
+  testWidgets("_sort sorts by totalTime descending", (tester) async {
+    when(
+      managers.preferencesManager.activitySortOption,
+    ).thenReturn(ActivitySortOption.totalTime);
+
+    stubActivityListModel([
+      ActivityListTileModel(ActivityBuilder("Low").build)
+        ..duration = const Duration(minutes: 5),
+      ActivityListTileModel(ActivityBuilder("High").build)
+        ..duration = const Duration(hours: 2),
+    ]);
+
+    await pumpContext(tester, (_) => ActivitiesPage());
+    await tester.pumpAndSettle();
+
+    final tiles = tester
+        .widgetList<ActivityListTile>(find.byType(ActivityListTile))
+        .toList();
+    expect(tiles.first.model.activity.name, "High");
+    expect(tiles.last.model.activity.name, "Low");
+  });
+
+  testWidgets("_sort sorts by mostRecentSession descending", (tester) async {
+    when(
+      managers.preferencesManager.activitySortOption,
+    ).thenReturn(ActivitySortOption.mostRecentSession);
+
+    stubActivityListModel([
+      ActivityListTileModel(ActivityBuilder("Older").build)
+        ..mostRecentSessionTimestamp = 100,
+      ActivityListTileModel(ActivityBuilder("Newer").build)
+        ..mostRecentSessionTimestamp = 999,
+    ]);
+
+    await pumpContext(tester, (_) => ActivitiesPage());
+    await tester.pumpAndSettle();
+
+    final tiles = tester
+        .widgetList<ActivityListTile>(find.byType(ActivityListTile))
+        .toList();
+    expect(tiles.first.model.activity.name, "Newer");
+    expect(tiles.last.model.activity.name, "Older");
+  });
+
+  testWidgets("_sort sorts by creationDate descending", (tester) async {
+    when(
+      managers.preferencesManager.activitySortOption,
+    ).thenReturn(ActivitySortOption.creationDate);
+
+    stubActivityListModel([
+      ActivityListTileModel((ActivityBuilder("Older")..createdAt = 50).build),
+      ActivityListTileModel((ActivityBuilder("Newer")..createdAt = 200).build),
+    ]);
+
+    await pumpContext(tester, (_) => ActivitiesPage());
+    await tester.pumpAndSettle();
+
+    final tiles = tester
+        .widgetList<ActivityListTile>(find.byType(ActivityListTile))
+        .toList();
+    expect(tiles.first.model.activity.name, "Newer");
+    expect(tiles.last.model.activity.name, "Older");
+  });
+
+  testWidgets("_sort sorts by alphabetical ascending", (tester) async {
+    when(
+      managers.preferencesManager.activitySortOption,
+    ).thenReturn(ActivitySortOption.alphabetical);
+
+    stubActivityListModel([
+      ActivityListTileModel(ActivityBuilder("Zebra").build),
+      ActivityListTileModel(ActivityBuilder("Apple").build),
+    ]);
+
+    await pumpContext(tester, (_) => ActivitiesPage());
+    await tester.pumpAndSettle();
+
+    final tiles = tester
+        .widgetList<ActivityListTile>(find.byType(ActivityListTile))
+        .toList();
+    expect(tiles.first.model.activity.name, "Apple");
+    expect(tiles.last.model.activity.name, "Zebra");
+  });
+
+  testWidgets("_buildSortButton shows checkmark next to current option", (
+    tester,
+  ) async {
+    when(
+      managers.preferencesManager.activitySortOption,
+    ).thenReturn(ActivitySortOption.totalTime);
+
+    stubActivityListModel([]);
+    await pumpContext(tester, (_) => ActivitiesPage());
+    await tester.pumpAndSettle();
+
+    await tapAndSettle(tester, find.byIcon(Icons.more_vert));
+
+    expect(find.byIcon(Icons.check), findsOneWidget);
+  });
+
+  testWidgets("Selecting sort option calls setActivitySortOption", (
+    tester,
+  ) async {
+    when(
+      managers.preferencesManager.activitySortOption,
+    ).thenReturn(ActivitySortOption.alphabetical);
+    when(
+      managers.preferencesManager.setActivitySortOption(any),
+    ).thenAnswer((_) => Future.value());
+
+    stubActivityListModel([]);
+    await pumpContext(tester, (_) => ActivitiesPage());
+    await tester.pumpAndSettle();
+
+    await tapAndSettle(tester, find.byIcon(Icons.more_vert));
+    await tapAndSettle(
+      tester,
+      find.text(
+        Strings.of(
+          tester.element(find.byType(ActivitiesPage)),
+        ).activitiesPageSortTotalTime,
+      ),
+    );
+
+    verify(
+      managers.preferencesManager.setActivitySortOption(
+        ActivitySortOption.totalTime,
+      ),
+    ).called(1);
+  });
+
+  testWidgets("_startSession starts session in DataManager", (tester) async {
+    when(
+      managers.preferencesManager.activitySortOption,
+    ).thenReturn(ActivitySortOption.mostRecentSession);
+
+    final activity = ActivityBuilder("Run").build;
+    stubActivityListModel([ActivityListTileModel(activity)]);
+    when(
+      managers.dataManager.startSession(any, any),
+    ).thenAnswer((_) => Future.value(null));
+
+    await pumpContext(tester, (_) => ActivitiesPage());
+    await tester.pumpAndSettle();
+
+    tester
+        .widget<ActivityListTile>(find.byType(ActivityListTile))
+        .onTapStartSession();
+    await tester.pumpAndSettle();
+
+    verify(managers.dataManager.startSession(any, activity)).called(1);
   });
 
   testWidgets("Tapping activity tile opens EditActivityPage with activity", (
@@ -200,7 +355,7 @@ void main() {
       managers.dataManager.getSessionsUpdatedStream(any),
     ).thenAnswer((_) => const Stream.empty());
 
-    await tester.pumpWidget(Testable((_) => ActivitiesPage()));
+    await pumpContext(tester, (_) => ActivitiesPage());
     await tester.pumpAndSettle();
 
     final tile = tester.widget<ActivityListTile>(find.byType(ActivityListTile));

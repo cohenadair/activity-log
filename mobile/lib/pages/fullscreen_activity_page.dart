@@ -10,8 +10,8 @@ import 'package:mobile/widgets/my_page.dart';
 import 'package:mobile/wrappers/wakelock_wrapper.dart';
 
 import '../model/session.dart';
-import '../widgets/future_timer.dart';
 import '../widgets/text.dart';
+import '../widgets/timer.dart';
 
 class FullscreenActivityPage extends StatefulWidget {
   final String activityId;
@@ -108,7 +108,7 @@ class _FullscreenActivityPageState extends State<FullscreenActivityPage> {
 
   Widget _buildTimer(Activity activity, Session? session) {
     return Timer(
-      shouldUpdateCallback: () => activity.isRunning,
+      updatesWidget: () => activity.isRunning,
       childBuilder: () => Container(
         width: double.infinity,
         padding: insetsHorizontalDefault,

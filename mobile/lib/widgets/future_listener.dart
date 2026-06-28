@@ -1,12 +1,17 @@
 import 'dart:async';
 
+import 'package:adair_flutter_lib/utils/log.dart';
 import 'package:flutter/material.dart';
+
+final _log = const Log("FutureListener");
 
 /// A utility [Widget] capable of listening to multiple [Stream]s.
 ///
 /// The value of each [Stream] is never used. When an event is added to a given
 /// [Stream], each given [Future] callback is invoked, and its [Future]
 /// updated.
+///
+/// TODO: Remove and add multi-stream/future support to [AsyncBuilder].
 class FutureListener extends StatefulWidget {
   /// The [Future]s that are updated when one of [Stream]s in [streams]
   /// receives an event.
@@ -68,7 +73,10 @@ class FutureListenerState extends State<FutureListener> {
 
     for (var stream in widget.streams) {
       _onUpdateEvents.add(
-        stream.listen((newValue) => setState(() => _updateFutures())),
+        stream.listen(
+          (newValue) => setState(() => _updateFutures()),
+          onError: (e) => _log.e(e, reason: "Stream error in FutureListener"),
+        ),
       );
     }
 

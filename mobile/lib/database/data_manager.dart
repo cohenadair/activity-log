@@ -155,10 +155,14 @@ class DataManager implements Manager {
 
   Future<int> get activityCount async => rowCount(_database, "activity");
 
-  void addActivity(Activity activity) {
-    _database.insert("activity", activity.toMap()).then((int value) {
-      _activitiesUpdated.notify();
-    });
+  Future<void> addActivity(Activity activity) async {
+    await _database.insert(
+      "activity",
+      (ActivityBuilder.fromActivity(
+        activity,
+      )..createdAt = TimeManager.get.currentTimestamp).build.toMap(),
+    );
+    _activitiesUpdated.notify();
   }
 
   /// Batch inserts the list of [Activity] objects into the database. To
@@ -570,11 +574,18 @@ class DataManager implements Manager {
       GROUP BY activity_id
     """;
 
+    String mostRecentSessionQuery = """
+      SELECT activity_id, MAX(start_timestamp) as max_ts
+      FROM session
+      GROUP BY activity_id
+    """;
+
     Batch batch = _database.batch();
     batch.rawQuery(allActivitiesQuery);
     batch.rawQuery(inProgressSessionsQuery);
     batch.rawQuery(totalDurationsQuery, [dateRange.endMs, dateRange.startMs]);
     batch.rawQuery(bankedSessionsQuery, [dateRange.endMs, dateRange.startMs]);
+    batch.rawQuery(mostRecentSessionQuery);
     List<dynamic> mapList = await batch.commit();
 
     if (mapList.isEmpty) {
@@ -611,11 +622,12 @@ class DataManager implements Manager {
           Duration(milliseconds: sessionMap["sum_value"] ?? 0);
     });
 
-    // Sort alphabetically.
-    List<ActivityListTileModel> result = modelMap.values.toList();
-    result.sort((a, b) => a.activity.name.compareTo(b.activity.name));
+    // Most recent session timestamps.
+    mapList[4].forEach((row) {
+      modelMap[row["activity_id"]]!.mostRecentSessionTimestamp = row["max_ts"];
+    });
 
-    return result;
+    return modelMap.values.toList();
   }
 
   void _notifySessionsUpdated(String activityId) {

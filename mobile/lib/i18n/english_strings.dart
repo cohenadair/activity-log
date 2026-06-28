@@ -13,6 +13,11 @@ Map<String, Map<String, String>> englishStrings = {
     "activitiesPage_title": "Activities",
     "activitiesPage_noActivitiesMessage":
         "No activities to display. Click the \"+\" button to begin.",
+    "activitiesPage_sortBy": "Sort By",
+    "activitiesPage_sortTotalTime": "Total session time",
+    "activitiesPage_sortMostRecentSession": "Most recent session",
+    "activitiesPage_sortCreationDate": "Newest first",
+    "activitiesPage_sortAlphabetical": "Alphabetical",
     "editActivityPage_newTitle": "New Activity",
     "editActivityPage_editTitle": "Edit Activity",
     "editActivityPage_nameLabel": "Name",

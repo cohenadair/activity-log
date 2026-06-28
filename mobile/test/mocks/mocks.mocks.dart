@@ -127,6 +127,24 @@ class MockActivity extends _i1.Mock implements _i11.Activity {
   }
 
   @override
+  bool get isArchived =>
+      (super.noSuchMethod(Invocation.getter(#isArchived), returnValue: false)
+          as bool);
+
+  @override
+  bool get isHiddenFromStats =>
+      (super.noSuchMethod(
+            Invocation.getter(#isHiddenFromStats),
+            returnValue: false,
+          )
+          as bool);
+
+  @override
+  int get createdAt =>
+      (super.noSuchMethod(Invocation.getter(#createdAt), returnValue: 0)
+          as int);
+
+  @override
   String get name =>
       (super.noSuchMethod(
             Invocation.getter(#name),
@@ -292,10 +310,13 @@ class MockDataManager extends _i1.Mock implements _i13.DataManager {
           as _i6.Future<List<_i11.Activity>>);
 
   @override
-  void addActivity(_i11.Activity? activity) => super.noSuchMethod(
-    Invocation.method(#addActivity, [activity]),
-    returnValueForMissingStub: null,
-  );
+  _i6.Future<void> addActivity(_i11.Activity? activity) =>
+      (super.noSuchMethod(
+            Invocation.method(#addActivity, [activity]),
+            returnValue: _i6.Future<void>.value(),
+            returnValueForMissingStub: _i6.Future<void>.value(),
+          )
+          as _i6.Future<void>);
 
   @override
   _i6.Future<void> addActivities(
@@ -498,6 +519,14 @@ class MockPreferencesManager extends _i1.Mock
   }
 
   @override
+  _i6.Stream<void> get activitySortOptionStream =>
+      (super.noSuchMethod(
+            Invocation.getter(#activitySortOptionStream),
+            returnValue: _i6.Stream<void>.empty(),
+          )
+          as _i6.Stream<void>);
+
+  @override
   _i6.Stream<void> get largestDurationUnitStream =>
       (super.noSuchMethod(
             Invocation.getter(#largestDurationUnitStream),
@@ -512,6 +541,14 @@ class MockPreferencesManager extends _i1.Mock
             returnValue: _i6.Stream<void>.empty(),
           )
           as _i6.Stream<void>);
+
+  @override
+  _i11.ActivitySortOption get activitySortOption =>
+      (super.noSuchMethod(
+            Invocation.getter(#activitySortOption),
+            returnValue: _i11.ActivitySortOption.totalTime,
+          )
+          as _i11.ActivitySortOption);
 
   @override
   _i17.AppDurationUnit get largestDurationUnit =>
@@ -555,6 +592,15 @@ class MockPreferencesManager extends _i1.Mock
   _i6.Future<void> init() =>
       (super.noSuchMethod(
             Invocation.method(#init, []),
+            returnValue: _i6.Future<void>.value(),
+            returnValueForMissingStub: _i6.Future<void>.value(),
+          )
+          as _i6.Future<void>);
+
+  @override
+  _i6.Future<void> setActivitySortOption(_i11.ActivitySortOption? option) =>
+      (super.noSuchMethod(
+            Invocation.method(#setActivitySortOption, [option]),
             returnValue: _i6.Future<void>.value(),
             returnValueForMissingStub: _i6.Future<void>.value(),
           )

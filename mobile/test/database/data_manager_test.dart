@@ -754,6 +754,74 @@ void main() {
     expect(await DataManager.get.activityNameExists("Missing"), isFalse);
   });
 
+  test("addActivity sets createdAt to current timestamp", () async {
+    when(managers.timeManager.currentTimestamp).thenReturn(99999);
+    when(database.insert(any, any)).thenAnswer((_) => Future.value(1));
+
+    await DataManager.get.addActivity(ActivityBuilder("Run").build);
+
+    expect(
+      (verify(database.insert("activity", captureAny)).captured.single
+          as Map<String, dynamic>)[Activity.keyCreatedAt],
+      99999,
+    );
+  });
+
+  test("getActivityListModel populates mostRecentSessionTimestamp", () async {
+    final activity = ActivityBuilder("Run").build;
+    final batch = MockBatch();
+
+    when(database.batch()).thenReturn(batch);
+    when(batch.commit()).thenAnswer(
+      (_) => Future.value([
+        [activity.toMap()], // activities
+        [], // in-progress sessions
+        [], // total durations
+        [], // banked sessions
+        [
+          {"activity_id": activity.id, "max_ts": 12345},
+        ], // most recent session timestamps
+      ]),
+    );
+
+    when(
+      managers.preferencesManager.homeDateRange,
+    ).thenReturn(DateRange(period: DateRange_Period.allDates));
+
+    final result = await DataManager.get.getActivityListModel(
+      dateRange: DateRange(period: DateRange_Period.allDates),
+    );
+
+    expect(result.length, 1);
+    expect(result.first.mostRecentSessionTimestamp, 12345);
+  });
+
+  test(
+    "getActivityListModel mostRecentSessionTimestamp is null when no sessions",
+    () async {
+      final activity = ActivityBuilder("Run").build;
+      final batch = MockBatch();
+
+      when(database.batch()).thenReturn(batch);
+      when(batch.commit()).thenAnswer(
+        (_) => Future.value([
+          [activity.toMap()], // activities
+          [], // in-progress sessions
+          [], // total durations
+          [], // banked sessions
+          [], // most recent session timestamps (empty)
+        ]),
+      );
+
+      final result = await DataManager.get.getActivityListModel(
+        dateRange: DateRange(period: DateRange_Period.allDates),
+      );
+
+      expect(result.length, 1);
+      expect(result.first.mostRecentSessionTimestamp, isNull);
+    },
+  );
+
   test(
     "getSummarizedActivities excludes activities where isHiddenFromStats is true",
     () async {

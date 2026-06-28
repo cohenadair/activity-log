@@ -5,6 +5,7 @@ import 'package:adair_flutter_lib/model/gen/adair_flutter_lib.pb.dart';
 import 'package:adair_flutter_lib/utils/void_stream_controller.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:mobile/model/activity.dart';
 import 'package:mobile/utils/date_range.dart';
 import 'package:mobile/utils/duration.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -22,6 +23,7 @@ class PreferencesManager implements Manager {
 
   PreferencesManager._();
 
+  final _keyActivitySortOption = "preferences.activitySortOption";
   final _keyLargestDurationUnit = "preferences.largestDurationUnit";
   final _keyHomeDateRange = "preferences.homeDateRange";
   final _keyStatsSelectedActivityIds = "preferences.statsSelectedActivityIds";
@@ -30,15 +32,21 @@ class PreferencesManager implements Manager {
   final _keyUserEmail = "preferences.userEmail";
   final _keySelectedReportId = "preferences.selectedReportId";
 
+  final VoidStreamController _activitySortOptionUpdated =
+      VoidStreamController();
   final VoidStreamController _largestDurationUnitUpdated =
       VoidStreamController();
   final VoidStreamController _homeDateRangeUpdated = VoidStreamController();
+
+  Stream<void> get activitySortOptionStream =>
+      _activitySortOptionUpdated.stream;
 
   Stream<void> get largestDurationUnitStream =>
       _largestDurationUnitUpdated.stream;
 
   Stream<void> get homeDateRangeStream => _homeDateRangeUpdated.stream;
 
+  late ActivitySortOption _activitySortOption;
   late AppDurationUnit _largestDurationUnit;
   late DateRange _homeDateRange;
 
@@ -47,6 +55,8 @@ class PreferencesManager implements Manager {
   late String? _userName;
   late String? _userEmail;
   late String? _selectedReportId;
+
+  ActivitySortOption get activitySortOption => _activitySortOption;
 
   /// The largest unit used to display [Duration] objects. This value will never
   /// be `null`. Defaults to [AppDurationUnit.days].
@@ -72,6 +82,9 @@ class PreferencesManager implements Manager {
   Future<void> init() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
+    _activitySortOption =
+        ActivitySortOption.values[prefs.getInt(_keyActivitySortOption) ??
+            ActivitySortOption.alphabetical.index];
     _largestDurationUnit =
         AppDurationUnit.values[prefs.getInt(_keyLargestDurationUnit) ?? 0];
     _homeDateRange = DateRanges.fromPreference(
@@ -89,6 +102,22 @@ class PreferencesManager implements Manager {
     _userName = prefs.getString(_keyUserName);
     _userEmail = prefs.getString(_keyUserEmail);
     _selectedReportId = prefs.getString(_keySelectedReportId);
+  }
+
+  Future<void> setActivitySortOption(ActivitySortOption option) async {
+    if (_activitySortOption == option) {
+      return;
+    }
+
+    _activitySortOption = option;
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setInt(
+      _keyActivitySortOption,
+      ActivitySortOption.values.indexOf(option),
+    );
+
+    _activitySortOptionUpdated.notify();
   }
 
   Future<void> setLargestDurationUnit(AppDurationUnit unit) async {

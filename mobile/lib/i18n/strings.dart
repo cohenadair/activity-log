@@ -51,6 +51,20 @@ class Strings {
   String get activitiesPageNoActivitiesMessage =>
       _getString("activitiesPage_noActivitiesMessage");
 
+  String get activitiesPageSortBy => _getString("activitiesPage_sortBy");
+
+  String get activitiesPageSortTotalTime =>
+      _getString("activitiesPage_sortTotalTime");
+
+  String get activitiesPageSortMostRecentSession =>
+      _getString("activitiesPage_sortMostRecentSession");
+
+  String get activitiesPageSortCreationDate =>
+      _getString("activitiesPage_sortCreationDate");
+
+  String get activitiesPageSortAlphabetical =>
+      _getString("activitiesPage_sortAlphabetical");
+
   String get archived => _getString("archived");
 
   String get editActivityPageNewTitle =>

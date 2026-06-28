@@ -6,7 +6,7 @@ import 'package:sqflite/sqflite.dart';
 
 class SQLiteOpenHelper {
   static const String _name = "activitylog.db";
-  static const int _version = 5;
+  static const int _version = 6;
 
   static const List<String> _schema0 = [
     """
@@ -58,12 +58,25 @@ class SQLiteOpenHelper {
     """,
   ];
 
+  static const List<String> _schema5 = [
+    "ALTER TABLE activity ADD COLUMN created_at INTEGER",
+    """
+    UPDATE activity
+    SET created_at = (
+      SELECT MIN(start_timestamp)
+      FROM session
+      WHERE session.activity_id = activity.id
+    )
+    """,
+  ];
+
   static const List<List<String>> _schema = [
     _schema0,
     _schema1,
     _schema2,
     _schema3,
     _schema4,
+    _schema5,
   ];
 
   static const _log = Log("SQLiteOpenHelper");

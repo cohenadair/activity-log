@@ -269,7 +269,7 @@ void main() {
     "Save when creating calls addActivity with isArchived and isHiddenFromStats",
     (tester) async {
       Activity? savedActivity;
-      when(managers.dataManager.addActivity(any)).thenAnswer((inv) {
+      when(managers.dataManager.addActivity(any)).thenAnswer((inv) async {
         savedActivity = inv.positionalArguments.first as Activity;
       });
 

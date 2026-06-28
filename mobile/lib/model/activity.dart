@@ -1,17 +1,26 @@
 import 'package:mobile/model/model.dart';
 
+enum ActivitySortOption {
+  totalTime,
+  mostRecentSession,
+  creationDate,
+  alphabetical,
+}
+
 class Activity extends Model {
   static const keyName = "name";
   static const keyCurrentSessionId = "current_session_id";
   static const keyCurrentLiveActivityId = "current_live_activity_id";
   static const keyIsArchived = "is_archived";
   static const keyIsHiddenFromStats = "is_hidden_from_stats";
+  static const keyCreatedAt = "created_at";
 
   final String _name;
   final String? _currentSessionId;
   final String? _currentLiveActivityId;
   final bool isArchived;
   final bool isHiddenFromStats;
+  final int createdAt;
 
   String get name => _name;
 
@@ -25,6 +34,7 @@ class Activity extends Model {
       _currentLiveActivityId = map[keyCurrentLiveActivityId],
       isArchived = map[keyIsArchived] == 1,
       isHiddenFromStats = map[keyIsHiddenFromStats] == 1,
+      createdAt = map[keyCreatedAt] ?? 0,
       super.fromMap();
 
   Activity.fromBuilder(ActivityBuilder super.builder)
@@ -33,6 +43,7 @@ class Activity extends Model {
       _currentLiveActivityId = builder.currentLiveActivityId,
       isArchived = builder.isArchived,
       isHiddenFromStats = builder.isHiddenFromStats,
+      createdAt = builder.createdAt,
       super.fromBuilder();
 
   bool get isRunning => _currentSessionId != null;
@@ -45,6 +56,7 @@ class Activity extends Model {
       keyCurrentLiveActivityId: _currentLiveActivityId,
       keyIsArchived: isArchived ? 1 : 0,
       keyIsHiddenFromStats: isHiddenFromStats ? 1 : 0,
+      keyCreatedAt: createdAt,
     }..addAll(super.toMap());
   }
 
@@ -56,6 +68,7 @@ class Activity extends Model {
       keyCurrentSessionId: _currentSessionId,
       keyIsArchived: isArchived ? 1 : 0,
       keyIsHiddenFromStats: isHiddenFromStats ? 1 : 0,
+      keyCreatedAt: createdAt,
     }..addAll(super.toMap());
   }
 
@@ -75,6 +88,8 @@ class ActivityBuilder extends ModelBuilder {
   bool isArchived;
   bool isHiddenFromStats;
 
+  int createdAt = 0;
+
   ActivityBuilder(this.name) : isArchived = false, isHiddenFromStats = false;
 
   ActivityBuilder.fromActivity(Activity super.activity)
@@ -83,6 +98,7 @@ class ActivityBuilder extends ModelBuilder {
       currentLiveActivityId = activity._currentLiveActivityId,
       isArchived = activity.isArchived,
       isHiddenFromStats = activity.isHiddenFromStats,
+      createdAt = activity.createdAt,
       super.fromModel();
 
   @override
