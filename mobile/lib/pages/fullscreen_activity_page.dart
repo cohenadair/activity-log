@@ -39,7 +39,10 @@ class _FullscreenActivityPageState extends State<FullscreenActivityPage> {
     return MyPage(
       child: OrientationBuilder(
         builder: (context, orientation) => FutureListener(
-          streams: [DataManager.get.activitiesUpdatedStream],
+          streams: [
+            DataManager.get.activitiesUpdatedStream,
+            SubscriptionManager.get.stream,
+          ],
           futuresCallbacks: [
             () => DataManager.get.activity(_activityId),
             () => DataManager.get.inProgressSession(_activityId),
