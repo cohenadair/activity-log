@@ -31,12 +31,17 @@ void main() {
     when(
       managers.propertiesManager.clientSenderEmail,
     ).thenReturn("sender@test.com");
+    when(
+      managers.subscriptionManager.userId,
+    ).thenAnswer((_) async => "rc_test_123");
+
     when(managers.propertiesManager.feedbackTemplate).thenReturn("""
       App version: %s
       OS version: %s
       Device: %s
       Device ID: %s
-      
+      RevenueCat ID: %s
+
       Name: %s
       Email: %s
       Message: %s
@@ -222,6 +227,52 @@ void main() {
       ),
       findsOneWidget,
     );
+  });
+
+  testWidgets("RevenueCat ID is included in feedback body", (tester) async {
+    when(managers.ioWrapper.isIOS).thenReturn(true);
+    managers.lib.stubIosDeviceInfo();
+
+    await tester.pumpWidget(Testable((_) => FeedbackPage()));
+    await enterTextFieldAndSettle(tester, "Message", "Test");
+    await tapAndSettle(tester, find.text("SEND"));
+
+    var result = verify(
+      managers.httpWrapper.post(
+        any,
+        headers: anyNamed("headers"),
+        body: captureAnyNamed("body"),
+      ),
+    );
+    result.called(1);
+
+    String content = result.captured.first;
+    expect(content.contains("rc_test_123"), isTrue);
+    expect(content.contains("Unknown"), isFalse);
+  });
+
+  testWidgets("RevenueCat ID error falls back to Unknown", (tester) async {
+    when(
+      managers.subscriptionManager.userId,
+    ).thenAnswer((_) async => throw Exception("RevenueCat error"));
+    when(managers.ioWrapper.isIOS).thenReturn(true);
+    managers.lib.stubIosDeviceInfo();
+
+    await tester.pumpWidget(Testable((_) => FeedbackPage()));
+    await enterTextFieldAndSettle(tester, "Message", "Test");
+    await tapAndSettle(tester, find.text("SEND"));
+
+    var result = verify(
+      managers.httpWrapper.post(
+        any,
+        headers: anyNamed("headers"),
+        body: captureAnyNamed("body"),
+      ),
+    );
+    result.called(1);
+
+    String content = result.captured.first;
+    expect(content.contains("Unknown"), isTrue);
   });
 
   testWidgets("Successful send", (tester) async {

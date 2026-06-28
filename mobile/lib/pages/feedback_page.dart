@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:adair_flutter_lib/managers/properties_manager.dart';
+import 'package:adair_flutter_lib/managers/subscription_manager.dart';
 import 'package:adair_flutter_lib/res/dimen.dart';
 import 'package:adair_flutter_lib/utils/dialog.dart';
 import 'package:adair_flutter_lib/utils/io.dart';
@@ -174,6 +175,13 @@ class _FeedbackPageState extends State<FeedbackPage> {
       deviceId = info.id;
     }
 
+    var revenueCatId = "";
+    try {
+      revenueCatId = await SubscriptionManager.get.userId;
+    } catch (e) {
+      _log.e(e, reason: "Getting RevenueCat customer ID for feedback");
+    }
+
     var name = _nameController.text;
     var email = _emailController.text;
     var message = _messageController.text;
@@ -202,6 +210,7 @@ class _FeedbackPageState extends State<FeedbackPage> {
             isNotEmpty(osVersion) ? osVersion : "Unknown",
             isNotEmpty(deviceModel) ? deviceModel : "Unknown",
             isNotEmpty(deviceId) ? deviceId : "Unknown",
+            isNotEmpty(revenueCatId) ? revenueCatId : "Unknown",
             isNotEmpty(name) ? name : "Unknown",
             email,
             message,
