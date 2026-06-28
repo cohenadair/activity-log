@@ -816,4 +816,73 @@ void main() {
       expect(activity.averageDurationPerMonth.inMilliseconds, equals(10200000));
     });
   });
+
+  test("totalDaysForSessions returns 0 when sessions are empty", () {
+    final activity = SummarizedActivity(
+      value: ActivityBuilder("").build,
+      dateRange: null,
+      sessions: [],
+    );
+
+    expect(activity.totalDaysForSessions, 0);
+  });
+
+  test("totalDaysForSessions uses dateRange when set", () {
+    final activity = SummarizedActivity(
+      value: ActivityBuilder("").build,
+      dateRange: DateRange(
+        period: DateRange_Period.custom,
+        startTimestamp: Int64(
+          TimeManager.get.dateTimeFromValues(2024, 1, 1).millisecondsSinceEpoch,
+        ),
+        endTimestamp: Int64(
+          TimeManager.get.dateTimeFromValues(2024, 1, 8).millisecondsSinceEpoch,
+        ),
+      ),
+      sessions: [
+        buildSession("", DateTime(2024, 1, 3), DateTime(2024, 1, 3, 1)),
+      ],
+    );
+
+    // DateRange of exactly 7 days → days = 7.
+    expect(activity.totalDaysForSessions, 7);
+  });
+
+  test(
+    "totalDaysForSessions computes range from sessions when dateRange is null",
+    () {
+      final sessions = [
+        buildSession("", DateTime(2024, 1, 1), DateTime(2024, 1, 1, 1)),
+        buildSession("", DateTime(2024, 1, 6), DateTime(2024, 1, 6, 1)),
+      ];
+
+      final activity = SummarizedActivity(
+        value: ActivityBuilder("").build,
+        dateRange: null,
+        sessions: sessions,
+      );
+
+      // Range: Jan 1 00:00 to Jan 6 01:00 → 5d 1h → ceil = 6 days.
+      expect(activity.totalDaysForSessions, 6);
+    },
+  );
+
+  test(
+    "totalDaysForSessions uses current time as end when last session is in-progress",
+    () {
+      managers.lib.stubCurrentTime(DateTime(2024, 1, 10));
+
+      // In-progress session (no end timestamp).
+      final sessions = [buildSession("", DateTime(2024, 1, 1), null)];
+
+      final activity = SummarizedActivity(
+        value: ActivityBuilder("").build,
+        dateRange: null,
+        sessions: sessions,
+      );
+
+      // Range: Jan 1 00:00 to Jan 10 00:00 (stubbed now) → exactly 9 days.
+      expect(activity.totalDaysForSessions, 9);
+    },
+  );
 }

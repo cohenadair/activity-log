@@ -117,6 +117,7 @@ Map<String, Map<String, String>> englishStrings = {
     "statsPage_totalDuration": "Total duration",
     "activitySummary_sessionTitle": "Sessions",
     "activitySummary_numberOfSessions": "Number of sessions",
+    "activitySummary_sessionCountWithPercent": "%s in %s days (%s%)",
     "activitySummary_averageSessions": "Average sessions",
     "activitySummary_totalDuration": "Total duration",
     "activitySummary_averageDurations": "Average durations",

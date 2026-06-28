@@ -121,8 +121,8 @@ class ActivitiesNumberOfSessionsBarChart extends StatelessWidget {
       padding: padding,
       activities: activities,
       onBuildLabel: (SummarizedActivity activity) =>
-          "${activity.value.name} (${activity.numberOfSessions})",
-      onMeasure: (SummarizedActivity activity) => activity.numberOfSessions,
+          "${activity.value.name} (${activity.sessionCount})",
+      onMeasure: (SummarizedActivity activity) => activity.sessionCount,
       onSelect: onSelect,
     );
   }

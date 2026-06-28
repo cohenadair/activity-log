@@ -44,7 +44,28 @@ class SummarizedActivity {
     this.sessions = const [],
   });
 
-  int get numberOfSessions => sessions.length;
+  int get sessionCount => sessions.length;
+
+  /// The total days in the effective date range: the selected [dateRange], or
+  /// the span from earliest to latest session when no range is set.
+  int get totalDaysForSessions {
+    if (sessions.isEmpty) {
+      return 0;
+    }
+
+    final range =
+        dateRange ??
+        DateRange(
+          period: DateRange_Period.custom,
+          startTimestamp: Int64(sessions.first.startTimestamp),
+          endTimestamp: Int64(
+            sessions.last.endTimestamp ??
+                TimeManager.get.now().millisecondsSinceEpoch,
+          ),
+        );
+
+    return range.days;
+  }
 
   double get sessionsPerDay {
     if (_cachedSessionsPerDay == null) {
@@ -78,7 +99,7 @@ class SummarizedActivity {
   }
 
   Duration get averageDurationOverall =>
-      averageDuration(totalDuration.inMilliseconds, numberOfSessions);
+      averageDuration(totalDuration.inMilliseconds, sessionCount);
 
   Duration get totalDuration {
     if (_cachedTotalDuration == null) {
@@ -255,12 +276,12 @@ class SummarizedActivity {
       return 0;
     }
 
-    return numberOfSessions / divisor;
+    return sessionCount / divisor;
   }
 
   @override
   String toString() {
-    return "{activity=${value.name}; duration=$totalDuration; numberOfSessions=$numberOfSessions}";
+    return "{activity=${value.name}; duration=$totalDuration; numberOfSessions=$sessionCount}";
   }
 }
 
@@ -366,7 +387,7 @@ class SummarizedActivityList {
   List<SummarizedActivity>? get activitiesSortedByNumberOfSessions {
     if (_cachedActivitiesSortedByNumberOfSessions == null) {
       List<SummarizedActivity> copy = List.of(activities);
-      copy.sort((a, b) => b.numberOfSessions.compareTo(a.numberOfSessions));
+      copy.sort((a, b) => b.sessionCount.compareTo(a.sessionCount));
       _cachedActivitiesSortedByNumberOfSessions = copy;
     }
     return _cachedActivitiesSortedByNumberOfSessions;

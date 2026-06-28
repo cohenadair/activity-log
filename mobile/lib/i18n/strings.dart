@@ -295,6 +295,9 @@ class Strings {
   String get activitySummaryNumberOfSessions =>
       _getString("activitySummary_numberOfSessions");
 
+  String get activitySummarySessionCountWithPercent =>
+      _getString("activitySummary_sessionCountWithPercent");
+
   String get activitySummaryAverageSessions =>
       _getString("activitySummary_averageSessions");
 

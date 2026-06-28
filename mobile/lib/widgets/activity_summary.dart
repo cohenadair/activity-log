@@ -1,6 +1,7 @@
 import 'package:adair_flutter_lib/res/dimen.dart';
 import 'package:adair_flutter_lib/utils/date_time.dart';
 import 'package:adair_flutter_lib/utils/duration.dart';
+import 'package:adair_flutter_lib/utils/string.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile/i18n/strings.dart';
 import 'package:mobile/model/summarized_activity.dart';
@@ -37,7 +38,7 @@ class ActivitySummary extends StatelessWidget {
               items: <SummaryItem>[
                 SummaryItem(
                   title: Strings.of(context).activitySummaryNumberOfSessions,
-                  value: activity.numberOfSessions,
+                  value: _buildSessionCountValue(context),
                 ),
               ],
             ),
@@ -138,6 +139,18 @@ class ActivitySummary extends StatelessWidget {
         );
       },
     );
+  }
+
+  String _buildSessionCountValue(BuildContext context) {
+    final totalDays = activity.totalDaysForSessions;
+    final percent = totalDays > 0
+        ? (activity.sessionCount / totalDays * 100).round()
+        : 0;
+    return format(Strings.of(context).activitySummarySessionCountWithPercent, [
+      activity.sessionCount,
+      totalDays,
+      percent,
+    ]);
   }
 
   Widget _buildSessionsChart() {
