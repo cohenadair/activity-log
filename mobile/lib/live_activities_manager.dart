@@ -177,6 +177,14 @@ class LiveActivitiesManager implements Manager {
       return;
     }
 
+    // If the activity still has an active session, the deleted session was not
+    // the current one — don't stop the live activity.
+    final activity = await DataManager.get.activity(session.activityId);
+    if (activity != null && activity.currentSessionId != null) {
+      _log.d("Deleted session is not the current session; skipping end");
+      return;
+    }
+
     _cancelGroupDataPolling();
     _log.d("Sending end request: ${session.activityId}");
     await _liveActivities.endActivity(session.activityId);

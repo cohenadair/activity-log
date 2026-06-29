@@ -377,6 +377,9 @@ void main() {
   test("On session ended/deleted ends the live activity", () async {
     when(managers.subscriptionManager.isFree).thenReturn(false);
     when(liveActivities.endActivity(any)).thenAnswer((_) => Future.value());
+    when(
+      managers.dataManager.activity(any),
+    ).thenAnswer((_) => Future.value(ActivityBuilder("Test").build));
 
     await initManager();
 
@@ -386,6 +389,25 @@ void main() {
     await emitSessionEvent(.deleted);
     verify(liveActivities.endActivity(any)).called(1);
   });
+
+  test(
+    "On session deleted does not end the live activity when another session is still active",
+    () async {
+      when(managers.subscriptionManager.isFree).thenReturn(false);
+      when(managers.dataManager.activity(any)).thenAnswer(
+        (_) => Future.value(
+          (ActivityBuilder(
+            "Test",
+          )..currentSessionId = "active-session-id").build,
+        ),
+      );
+
+      await initManager();
+
+      await emitSessionEvent(.deleted);
+      verifyNever(liveActivities.endActivity(any));
+    },
+  );
 
   test(
     "Ending the live activity via group data exits early if activity doesn't exist",
