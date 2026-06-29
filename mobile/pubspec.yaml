@@ -56,6 +56,14 @@ dev_dependencies:
   build_runner: ^2.10.4             # https://pub.dev/packages/build_runner (Dart)
   mockito: ^5.5.1                   # https://pub.dev/packages/mockito (Dart)
   flutter_lints: ^6.0.0             # https://pub.dev/packages/flutter_lints (Flutter)
+  flutter_native_splash: ^2.4.8     # https://pub.dev/packages/flutter_native_splash
+
+flutter_native_splash:
+  color: "#FAFAFA"
+  color_dark: "#303030"
+  android_12:
+    color: "#FAFAFA"
+    color_dark: "#303030"
 
 # For information on the generic Dart part of this file, see the
 # following page: https://www.dartlang.org/tools/pub/pubspec
