@@ -817,15 +817,43 @@ void main() {
     });
   });
 
-  test("totalDaysForSessions returns 0 when sessions are empty", () {
-    final activity = SummarizedActivity(
-      value: ActivityBuilder("").build,
-      dateRange: null,
-      sessions: [],
-    );
+  test(
+    "totalDaysForSessions returns 0 when sessions are empty and dateRange is null",
+    () {
+      final activity = SummarizedActivity(
+        value: ActivityBuilder("").build,
+        dateRange: null,
+        sessions: [],
+      );
 
-    expect(activity.totalDaysForSessions, 0);
-  });
+      expect(activity.totalDaysForSessions, 0);
+    },
+  );
+
+  test(
+    "totalDaysForSessions returns dateRange days when sessions are empty and dateRange is set",
+    () {
+      final activity = SummarizedActivity(
+        value: ActivityBuilder("").build,
+        dateRange: DateRange(
+          period: DateRange_Period.custom,
+          startTimestamp: Int64(
+            TimeManager.get
+                .dateTimeFromValues(2024, 3, 1)
+                .millisecondsSinceEpoch,
+          ),
+          endTimestamp: Int64(
+            TimeManager.get
+                .dateTimeFromValues(2024, 3, 2)
+                .millisecondsSinceEpoch,
+          ),
+        ),
+        sessions: [],
+      );
+
+      expect(activity.totalDaysForSessions, 1);
+    },
+  );
 
   test("totalDaysForSessions uses dateRange when set", () {
     final activity = SummarizedActivity(

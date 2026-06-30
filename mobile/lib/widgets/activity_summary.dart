@@ -146,11 +146,10 @@ class ActivitySummary extends StatelessWidget {
     final percent = totalDays > 0
         ? (activity.sessionCount / totalDays * 100).round()
         : 0;
-    return format(Strings.of(context).activitySummarySessionCountWithPercent, [
-      activity.sessionCount,
-      totalDays,
-      percent,
-    ]);
+    final template = totalDays == 1
+        ? Strings.of(context).activitySummarySessionCountWithPercentSingular
+        : Strings.of(context).activitySummarySessionCountWithPercent;
+    return format(template, [activity.sessionCount, totalDays, percent]);
   }
 
   Widget _buildSessionsChart() {

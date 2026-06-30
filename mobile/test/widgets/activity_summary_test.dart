@@ -63,6 +63,44 @@ void main() {
     },
   );
 
+  testWidgets("Session count shows singular day string when totalDays is 1", (
+    tester,
+  ) async {
+    final activity = SummarizedActivity(
+      value: ActivityBuilder("Test").build,
+      dateRange: DateRange(
+        period: DateRange_Period.custom,
+        startTimestamp: Int64(DateTime(2024, 1, 1).millisecondsSinceEpoch),
+        endTimestamp: Int64(DateTime(2024, 1, 2).millisecondsSinceEpoch),
+      ),
+      sessions: [],
+    );
+
+    await pump(tester, activity);
+
+    // totalDaysForSessions = 1 (empty sessions + dateRange = 1 day) → singular
+    expect(find.text("0 in 1 day (0%)"), findsOneWidget);
+  });
+
+  testWidgets("Session count shows plural day string when totalDays is > 1", (
+    tester,
+  ) async {
+    final activity = SummarizedActivity(
+      value: ActivityBuilder("Test").build,
+      dateRange: DateRange(
+        period: DateRange_Period.custom,
+        startTimestamp: Int64(DateTime(2024, 1, 1).millisecondsSinceEpoch),
+        endTimestamp: Int64(DateTime(2024, 1, 2, 15).millisecondsSinceEpoch),
+      ),
+      sessions: [],
+    );
+
+    await pump(tester, activity);
+
+    // totalDaysForSessions = 1 (empty sessions + dateRange = 1 day) → singular
+    expect(find.text("0 in 2 days (0%)"), findsOneWidget);
+  });
+
   testWidgets(
     "Session count shows correct days and percent when sessions exist",
     (tester) async {

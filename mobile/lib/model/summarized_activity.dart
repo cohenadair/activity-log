@@ -50,7 +50,7 @@ class SummarizedActivity {
   /// the span from earliest to latest session when no range is set.
   int get totalDaysForSessions {
     if (sessions.isEmpty) {
-      return 0;
+      return dateRange == null ? 0 : dateRange!.days;
     }
 
     final range =
