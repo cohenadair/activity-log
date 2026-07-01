@@ -36,6 +36,17 @@ class StatsDateRangePickerState extends State<StatsDateRangePicker> {
   }
 
   @override
+  void didUpdateWidget(StatsDateRangePicker oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    if (widget.initialValue.period == DateRange_Period.custom) {
+      _customDateRange = widget.initialValue;
+    } else {
+      _customDateRange = DateRange(period: DateRange_Period.custom);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return ListPicker<DateRange>(
       initialValues: {widget.initialValue},
