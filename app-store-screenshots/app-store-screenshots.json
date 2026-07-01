@@ -1,0 +1,777 @@
+{
+  "schemaVersion": 2,
+  "appName": "Activity Log",
+  "themeId": "activity-log-green",
+  "connectedCanvas": true,
+  "locales": [
+    "en"
+  ],
+  "locale": "en",
+  "device": "android-10",
+  "orientation": "landscape",
+  "appIcon": "",
+  "slidesByDevice": {
+    "iphone": [
+      {
+        "id": "al_iphone_1",
+        "layout": "device-bottom",
+        "label": {
+          "en": "THE HOOK"
+        },
+        "headline": {
+          "en": "Know where \nyour day went\n"
+        },
+        "screenshot": "/screenshots/apple/iphone/en/01.png",
+        "transforms": {
+          "caption": {
+            "x": 105.60000000000001,
+            "y": 229.44,
+            "width": 1108.8,
+            "height": 803.04,
+            "rotation": 0,
+            "zIndex": 4
+          }
+        }
+      },
+      {
+        "id": "al_iphone_2",
+        "layout": "device-bottom",
+        "label": {
+          "en": "SIMPLICITY"
+        },
+        "headline": {
+          "en": "One tap to start,\none to stop"
+        },
+        "screenshot": "/screenshots/apple/iphone/en/02.png",
+        "inverted": true
+      },
+      {
+        "id": "al_iphone_3",
+        "layout": "device-bottom",
+        "label": {
+          "en": "ALWAYS-ON"
+        },
+        "headline": {
+          "en": "Track from your\nlock screen"
+        },
+        "screenshot": "/screenshots/apple/iphone/en/03.png"
+      },
+      {
+        "id": "al_iphone_4",
+        "layout": "device-bottom",
+        "label": {
+          "en": "EXPORT"
+        },
+        "headline": {
+          "en": "Export to Excel\nin seconds"
+        },
+        "screenshot": "/screenshots/apple/iphone/en/04.png",
+        "inverted": true
+      },
+      {
+        "id": "al_iphone_5",
+        "layout": "device-bottom",
+        "label": {
+          "en": "STATS"
+        },
+        "headline": {
+          "en": "See where your\ntime actually goes"
+        },
+        "screenshot": "/screenshots/apple/iphone/en/05.png"
+      },
+      {
+        "id": "al_iphone_6",
+        "layout": "device-bottom",
+        "label": {
+          "en": "POWER"
+        },
+        "headline": {
+          "en": "Run unlimited\nactivities at once"
+        },
+        "screenshot": "/screenshots/apple/iphone/en/06.png",
+        "inverted": true
+      }
+    ],
+    "android": [
+      {
+        "id": "al_android_1",
+        "layout": "hero",
+        "label": {
+          "en": "THE HOOK"
+        },
+        "headline": {
+          "en": "Know where \nyour day went\n"
+        },
+        "screenshot": "/screenshots/android/phone/en/01.png"
+      },
+      {
+        "id": "al_android_2",
+        "layout": "hero",
+        "label": {
+          "en": "SIMPLICITY"
+        },
+        "headline": {
+          "en": "One tap to start,\none to stop"
+        },
+        "screenshot": "/screenshots/android/phone/en/02.png",
+        "inverted": true
+      },
+      {
+        "id": "al_android_3",
+        "layout": "hero",
+        "label": {
+          "en": "ALWAYS-ON"
+        },
+        "headline": {
+          "en": "Track from your\nlock screen"
+        },
+        "screenshot": "/screenshots/android/phone/en/03.png"
+      },
+      {
+        "id": "al_android_4",
+        "layout": "hero",
+        "label": {
+          "en": "EXPORT"
+        },
+        "headline": {
+          "en": "Export to Excel\nin seconds"
+        },
+        "screenshot": "/screenshots/android/phone/en/04.png",
+        "inverted": true
+      },
+      {
+        "id": "al_android_5",
+        "layout": "hero",
+        "label": {
+          "en": "STATS"
+        },
+        "headline": {
+          "en": "See where your\ntime actually goes"
+        },
+        "screenshot": "/screenshots/android/phone/en/05.png"
+      },
+      {
+        "id": "al_android_6",
+        "layout": "hero",
+        "label": {
+          "en": "POWER"
+        },
+        "headline": {
+          "en": "Run unlimited\nactivities at once"
+        },
+        "screenshot": "/screenshots/android/phone/en/06.png",
+        "inverted": true
+      }
+    ],
+    "ipad": [
+      {
+        "id": "al_ipad_p_1",
+        "layout": "hero",
+        "label": {
+          "en": "THE HOOK"
+        },
+        "headline": {
+          "en": "Know where \nyour day went\n"
+        },
+        "screenshot": "/screenshots/apple/iphone/en/01.png"
+      },
+      {
+        "id": "al_ipad_p_2",
+        "layout": "hero",
+        "label": {
+          "en": "SIMPLICITY"
+        },
+        "headline": {
+          "en": "One tap to start,\none to stop"
+        },
+        "screenshot": "/screenshots/apple/iphone/en/02.png",
+        "inverted": true
+      },
+      {
+        "id": "al_ipad_p_3",
+        "layout": "hero",
+        "label": {
+          "en": "ALWAYS-ON"
+        },
+        "headline": {
+          "en": "Track from your\nlock screen"
+        },
+        "screenshot": "/screenshots/apple/iphone/en/03.png"
+      },
+      {
+        "id": "al_ipad_p_4",
+        "layout": "hero",
+        "label": {
+          "en": "EXPORT"
+        },
+        "headline": {
+          "en": "Export to Excel\nin seconds"
+        },
+        "screenshot": "/screenshots/apple/iphone/en/04.png",
+        "inverted": true
+      },
+      {
+        "id": "al_ipad_p_5",
+        "layout": "hero",
+        "label": {
+          "en": "STATS"
+        },
+        "headline": {
+          "en": "See where your\ntime actually goes"
+        },
+        "screenshot": "/screenshots/apple/iphone/en/05.png"
+      },
+      {
+        "id": "al_ipad_p_6",
+        "layout": "hero",
+        "label": {
+          "en": "POWER"
+        },
+        "headline": {
+          "en": "Run unlimited\nactivities at once"
+        },
+        "screenshot": "/screenshots/apple/iphone/en/06.png",
+        "inverted": true
+      }
+    ],
+    "android-7": [
+      {
+        "id": "al_and7_p_1",
+        "layout": "hero",
+        "label": {
+          "en": "THE HOOK"
+        },
+        "headline": {
+          "en": "Know where \nyour day went\n"
+        },
+        "screenshot": "/screenshots/android/phone/en/01.png",
+        "orientationFilter": "portrait"
+      },
+      {
+        "id": "al_and7_p_2",
+        "layout": "hero",
+        "label": {
+          "en": "SIMPLICITY"
+        },
+        "headline": {
+          "en": "One tap to start,\none to stop"
+        },
+        "screenshot": "/screenshots/android/phone/en/02.png",
+        "inverted": true,
+        "orientationFilter": "portrait"
+      },
+      {
+        "id": "al_and7_p_3",
+        "layout": "hero",
+        "label": {
+          "en": "ALWAYS-ON"
+        },
+        "headline": {
+          "en": "Track from your\nlock screen"
+        },
+        "screenshot": "/screenshots/android/phone/en/03.png",
+        "orientationFilter": "portrait"
+      },
+      {
+        "id": "al_and7_p_4",
+        "layout": "hero",
+        "label": {
+          "en": "EXPORT"
+        },
+        "headline": {
+          "en": "Export to Excel\nin seconds"
+        },
+        "screenshot": "/screenshots/android/phone/en/04.png",
+        "inverted": true,
+        "orientationFilter": "portrait"
+      },
+      {
+        "id": "al_and7_p_5",
+        "layout": "hero",
+        "label": {
+          "en": "STATS"
+        },
+        "headline": {
+          "en": "See where your\ntime actually goes"
+        },
+        "screenshot": "/screenshots/android/phone/en/05.png",
+        "orientationFilter": "portrait"
+      },
+      {
+        "id": "al_and7_p_6",
+        "layout": "hero",
+        "label": {
+          "en": "POWER"
+        },
+        "headline": {
+          "en": "Run unlimited\nactivities at once"
+        },
+        "screenshot": "/screenshots/android/phone/en/06.png",
+        "inverted": true,
+        "orientationFilter": "portrait"
+      },
+      {
+        "id": "al_and7_l_1",
+        "layout": "hero",
+        "label": {
+          "en": "THE HOOK"
+        },
+        "headline": {
+          "en": "Know where \nyour day went\n"
+        },
+        "screenshot": "/screenshots/android/phone/en/01.png",
+        "transforms": {
+          "device": {
+            "x": 245.76,
+            "y": 390.53,
+            "width": 1428.48,
+            "height": 952.32,
+            "rotation": 0,
+            "zIndex": 3
+          },
+          "caption": {
+            "x": 153.6,
+            "y": 27.26,
+            "width": 1612.8,
+            "height": 336,
+            "rotation": 0,
+            "zIndex": 4
+          }
+        },
+        "orientationFilter": "landscape"
+      },
+      {
+        "id": "al_and7_l_2",
+        "layout": "hero",
+        "label": {
+          "en": "SIMPLICITY"
+        },
+        "headline": {
+          "en": "One tap to start,\none to stop"
+        },
+        "screenshot": "/screenshots/android/phone/en/02.png",
+        "inverted": true,
+        "transforms": {
+          "device": {
+            "x": 245.76,
+            "y": 390.53,
+            "width": 1428.48,
+            "height": 952.32,
+            "rotation": 0,
+            "zIndex": 3
+          },
+          "caption": {
+            "x": 153.6,
+            "y": 27.26,
+            "width": 1612.8,
+            "height": 336,
+            "rotation": 0,
+            "zIndex": 4
+          }
+        },
+        "orientationFilter": "landscape"
+      },
+      {
+        "id": "al_and7_l_3",
+        "layout": "hero",
+        "label": {
+          "en": "ALWAYS-ON"
+        },
+        "headline": {
+          "en": "Track from your\nlock screen"
+        },
+        "screenshot": "/screenshots/android/phone/en/03.png",
+        "transforms": {
+          "device": {
+            "x": 245.76,
+            "y": 390.53,
+            "width": 1428.48,
+            "height": 952.32,
+            "rotation": 0,
+            "zIndex": 3
+          },
+          "caption": {
+            "x": 153.6,
+            "y": 27.26,
+            "width": 1612.8,
+            "height": 336,
+            "rotation": 0,
+            "zIndex": 4
+          }
+        },
+        "orientationFilter": "landscape"
+      },
+      {
+        "id": "al_and7_l_4",
+        "layout": "hero",
+        "label": {
+          "en": "EXPORT"
+        },
+        "headline": {
+          "en": "Export to Excel\nin seconds"
+        },
+        "screenshot": "/screenshots/android/phone/en/04.png",
+        "inverted": true,
+        "transforms": {
+          "device": {
+            "x": 245.76,
+            "y": 390.53,
+            "width": 1428.48,
+            "height": 952.32,
+            "rotation": 0,
+            "zIndex": 3
+          },
+          "caption": {
+            "x": 153.6,
+            "y": 27.26,
+            "width": 1612.8,
+            "height": 336,
+            "rotation": 0,
+            "zIndex": 4
+          }
+        },
+        "orientationFilter": "landscape"
+      },
+      {
+        "id": "al_and7_l_5",
+        "layout": "hero",
+        "label": {
+          "en": "STATS"
+        },
+        "headline": {
+          "en": "See where your\ntime actually goes"
+        },
+        "screenshot": "/screenshots/android/phone/en/05.png",
+        "transforms": {
+          "device": {
+            "x": 245.76,
+            "y": 390.53,
+            "width": 1428.48,
+            "height": 952.32,
+            "rotation": 0,
+            "zIndex": 3
+          },
+          "caption": {
+            "x": 153.6,
+            "y": 27.26,
+            "width": 1612.8,
+            "height": 336,
+            "rotation": 0,
+            "zIndex": 4
+          }
+        },
+        "orientationFilter": "landscape"
+      },
+      {
+        "id": "al_and7_l_6",
+        "layout": "hero",
+        "label": {
+          "en": "POWER"
+        },
+        "headline": {
+          "en": "Run unlimited\nactivities at once"
+        },
+        "screenshot": "/screenshots/android/phone/en/06.png",
+        "inverted": true,
+        "transforms": {
+          "device": {
+            "x": 245.76,
+            "y": 390.53,
+            "width": 1428.48,
+            "height": 952.32,
+            "rotation": 0,
+            "zIndex": 3
+          },
+          "caption": {
+            "x": 153.6,
+            "y": 27.26,
+            "width": 1612.8,
+            "height": 336,
+            "rotation": 0,
+            "zIndex": 4
+          }
+        },
+        "orientationFilter": "landscape"
+      }
+    ],
+    "android-10": [
+      {
+        "id": "al_and10_p_1",
+        "layout": "hero",
+        "label": {
+          "en": "THE HOOK"
+        },
+        "headline": {
+          "en": "Know where \nyour day went\n"
+        },
+        "screenshot": "/screenshots/android/phone/en/01.png",
+        "orientationFilter": "portrait"
+      },
+      {
+        "id": "al_and10_p_2",
+        "layout": "hero",
+        "label": {
+          "en": "SIMPLICITY"
+        },
+        "headline": {
+          "en": "One tap to start,\none to stop"
+        },
+        "screenshot": "/screenshots/android/phone/en/02.png",
+        "inverted": true,
+        "orientationFilter": "portrait"
+      },
+      {
+        "id": "al_and10_p_3",
+        "layout": "hero",
+        "label": {
+          "en": "ALWAYS-ON"
+        },
+        "headline": {
+          "en": "Track from your\nlock screen"
+        },
+        "screenshot": "/screenshots/android/phone/en/03.png",
+        "orientationFilter": "portrait"
+      },
+      {
+        "id": "al_and10_p_4",
+        "layout": "hero",
+        "label": {
+          "en": "EXPORT"
+        },
+        "headline": {
+          "en": "Export to Excel\nin seconds"
+        },
+        "screenshot": "/screenshots/android/phone/en/04.png",
+        "inverted": true,
+        "orientationFilter": "portrait"
+      },
+      {
+        "id": "al_and10_p_5",
+        "layout": "hero",
+        "label": {
+          "en": "STATS"
+        },
+        "headline": {
+          "en": "See where your\ntime actually goes"
+        },
+        "screenshot": "/screenshots/android/phone/en/05.png",
+        "orientationFilter": "portrait"
+      },
+      {
+        "id": "al_and10_p_6",
+        "layout": "hero",
+        "label": {
+          "en": "POWER"
+        },
+        "headline": {
+          "en": "Run unlimited\nactivities at once"
+        },
+        "screenshot": "/screenshots/android/phone/en/06.png",
+        "inverted": true,
+        "orientationFilter": "portrait"
+      },
+      {
+        "id": "al_and10_l_1",
+        "layout": "hero",
+        "label": {
+          "en": "THE HOOK"
+        },
+        "headline": {
+          "en": "Know where \nyour day went\n"
+        },
+        "screenshot": "/screenshots/android/phone/en/01.png",
+        "transforms": {
+          "device": {
+            "x": 327.68,
+            "y": 520.7,
+            "width": 1904.64,
+            "height": 1269.76,
+            "rotation": 0,
+            "zIndex": 3
+          },
+          "caption": {
+            "x": 204.8,
+            "y": 36.35,
+            "width": 2150.4,
+            "height": 448,
+            "rotation": 0,
+            "zIndex": 4
+          }
+        },
+        "orientationFilter": "landscape"
+      },
+      {
+        "id": "al_and10_l_2",
+        "layout": "hero",
+        "label": {
+          "en": "SIMPLICITY"
+        },
+        "headline": {
+          "en": "One tap to start,\none to stop"
+        },
+        "screenshot": "/screenshots/android/phone/en/02.png",
+        "inverted": true,
+        "transforms": {
+          "device": {
+            "x": 327.68,
+            "y": 520.7,
+            "width": 1904.64,
+            "height": 1269.76,
+            "rotation": 0,
+            "zIndex": 3
+          },
+          "caption": {
+            "x": 204.8,
+            "y": 36.35,
+            "width": 2150.4,
+            "height": 448,
+            "rotation": 0,
+            "zIndex": 4
+          }
+        },
+        "orientationFilter": "landscape"
+      },
+      {
+        "id": "al_and10_l_3",
+        "layout": "hero",
+        "label": {
+          "en": "ALWAYS-ON"
+        },
+        "headline": {
+          "en": "Track from your\nlock screen"
+        },
+        "screenshot": "/screenshots/android/phone/en/03.png",
+        "transforms": {
+          "device": {
+            "x": 327.68,
+            "y": 520.7,
+            "width": 1904.64,
+            "height": 1269.76,
+            "rotation": 0,
+            "zIndex": 3
+          },
+          "caption": {
+            "x": 204.8,
+            "y": 36.35,
+            "width": 2150.4,
+            "height": 448,
+            "rotation": 0,
+            "zIndex": 4
+          }
+        },
+        "orientationFilter": "landscape"
+      },
+      {
+        "id": "al_and10_l_4",
+        "layout": "hero",
+        "label": {
+          "en": "EXPORT"
+        },
+        "headline": {
+          "en": "Export to Excel\nin seconds"
+        },
+        "screenshot": "/screenshots/android/phone/en/04.png",
+        "inverted": true,
+        "transforms": {
+          "device": {
+            "x": 327.68,
+            "y": 520.7,
+            "width": 1904.64,
+            "height": 1269.76,
+            "rotation": 0,
+            "zIndex": 3
+          },
+          "caption": {
+            "x": 204.8,
+            "y": 36.35,
+            "width": 2150.4,
+            "height": 448,
+            "rotation": 0,
+            "zIndex": 4
+          }
+        },
+        "orientationFilter": "landscape"
+      },
+      {
+        "id": "al_and10_l_5",
+        "layout": "hero",
+        "label": {
+          "en": "STATS"
+        },
+        "headline": {
+          "en": "See where your\ntime actually goes"
+        },
+        "screenshot": "/screenshots/android/phone/en/05.png",
+        "transforms": {
+          "device": {
+            "x": 327.68,
+            "y": 520.7,
+            "width": 1904.64,
+            "height": 1269.76,
+            "rotation": 0,
+            "zIndex": 3
+          },
+          "caption": {
+            "x": 204.8,
+            "y": 36.35,
+            "width": 2150.4,
+            "height": 448,
+            "rotation": 0,
+            "zIndex": 4
+          }
+        },
+        "orientationFilter": "landscape"
+      },
+      {
+        "id": "al_and10_l_6",
+        "layout": "hero",
+        "label": {
+          "en": "POWER"
+        },
+        "headline": {
+          "en": "Run unlimited\nactivities at once"
+        },
+        "screenshot": "/screenshots/android/phone/en/06.png",
+        "inverted": true,
+        "transforms": {
+          "device": {
+            "x": 327.68,
+            "y": 520.7,
+            "width": 1904.64,
+            "height": 1269.76,
+            "rotation": 0,
+            "zIndex": 3
+          },
+          "caption": {
+            "x": 204.8,
+            "y": 36.35,
+            "width": 2150.4,
+            "height": 448,
+            "rotation": 0,
+            "zIndex": 4
+          }
+        },
+        "orientationFilter": "landscape"
+      }
+    ],
+    "feature-graphic": [
+      {
+        "id": "al_fg_1",
+        "layout": "feature-graphic",
+        "label": {},
+        "headline": {
+          "en": "Know where your time goes."
+        },
+        "screenshot": ""
+      }
+    ]
+  },
+  "crossScreenMockupsByDevice": {
+    "iphone": [],
+    "ipad": [],
+    "android": [],
+    "android-7": [],
+    "android-10": [],
+    "feature-graphic": []
+  }
+}
