@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:adair_flutter_lib/managers/subscription_manager.dart';
 import 'package:adair_flutter_lib/model/gen/adair_flutter_lib.pb.dart';
 import 'package:adair_flutter_lib/res/dimen.dart';
+import 'package:adair_flutter_lib/res/theme.dart';
 import 'package:adair_flutter_lib/utils/duration.dart';
 import 'package:adair_flutter_lib/utils/page.dart';
 import 'package:adair_flutter_lib/utils/snack_bar.dart';
@@ -211,6 +212,7 @@ class StatsPageState extends State<StatsPage> {
       icon: const Icon(Icons.save_outlined),
       tooltip: Strings.of(context).statsPageSaveReportTooltip,
       onPressed: _isSelectedReportModified ? _saveReport : null,
+      disabledColor: context.colorOnAppBarDisabled,
     );
   }
 
