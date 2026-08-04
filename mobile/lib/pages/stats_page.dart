@@ -5,6 +5,7 @@ import 'package:adair_flutter_lib/model/gen/adair_flutter_lib.pb.dart';
 import 'package:adair_flutter_lib/res/dimen.dart';
 import 'package:adair_flutter_lib/res/theme.dart';
 import 'package:adair_flutter_lib/utils/duration.dart';
+import 'package:adair_flutter_lib/utils/log.dart';
 import 'package:adair_flutter_lib/utils/page.dart';
 import 'package:adair_flutter_lib/utils/snack_bar.dart';
 import 'package:adair_flutter_lib/utils/string.dart';
@@ -27,6 +28,7 @@ import 'package:mobile/widgets/activity_picker.dart';
 import 'package:mobile/widgets/activity_summary.dart';
 import 'package:mobile/widgets/average_durations_list_item.dart';
 import 'package:mobile/widgets/my_page.dart';
+import 'package:mobile/widgets/stats_calendar.dart';
 import 'package:mobile/widgets/stats_date_range_picker.dart';
 import 'package:mobile/widgets/summary.dart';
 import 'package:mobile/widgets/text.dart';
@@ -43,6 +45,14 @@ class StatsPage extends StatefulWidget {
 }
 
 class StatsPageState extends State<StatsPage> {
+  // The app bar's actions can show up to 2 icon buttons (save report, save
+  // as report), but leading only ever shows 1 (the view toggle). Reserving
+  // matching invisible space on each side keeps the title centered on the
+  // screen instead of centered within the unequal leading/actions gap.
+  static const _iconButtonWidth = kMinInteractiveDimension;
+
+  final _log = Log("StatsPage");
+
   final scrollController = ScrollController();
 
   Set<Activity> _currentActivities = {};
@@ -51,28 +61,67 @@ class StatsPageState extends State<StatsPage> {
   List<Report> _reports = [];
   Report? _selectedReport;
 
-  late Future<SummarizedActivityList> _summarizedActivityListFuture;
+  late bool _showsCalendar;
+
+  // The last successfully loaded data. Kept on screen (rather than reset to
+  // null/Loading) across refreshes so the calendar and chart update in place
+  // instead of being torn down and rebuilt.
+  SummarizedActivityList? _summarizedActivityList;
+  int? _activityCount;
+  bool _isRefreshing = false;
+
+  // Guards against a slower, earlier full refresh overwriting a newer one.
+  // Kept separate from [_sessionUpdateGeneration] so a targeted
+  // single-activity refresh can't strand [_isRefreshing] by advancing a
+  // generation counter that _updateFutures is still waiting on.
+  int _refreshGeneration = 0;
+
+  // Guards against a slower, earlier single-activity refresh overwriting a
+  // newer one. See [_refreshGeneration].
+  int _sessionUpdateGeneration = 0;
+
   late StreamSubscription<void> _onActivitiesUpdated;
+  late StreamSubscription<SessionEvent> _onSessionEvent;
   late StreamSubscription<void> _onReportsUpdated;
-  Future<int> _activityCountFuture = Future.value(0);
+  late StreamSubscription<void> _onSubscriptionUpdated;
 
   bool get _isFilterModified =>
       _currentActivities.isNotEmpty ||
       _currentDateRange.period != DateRange_Period.allDates;
+
+  DateRange? get _effectiveDateRange =>
+      _currentDateRange.period == DateRange_Period.allDates
+      ? null
+      : _currentDateRange;
 
   @override
   void initState() {
     super.initState();
 
     _currentDateRange = PreferencesManager.get.statsDateRange;
+    // A persisted calendar preference doesn't apply if the user is no
+    // longer Pro; fall back to the chart view in that case.
+    _showsCalendar =
+        PreferencesManager.get.statsShowsCalendar &&
+        !SubscriptionManager.get.isFree;
 
     _onActivitiesUpdated = DataManager.get.activitiesUpdatedStream.listen(
       (_) => _updateFutures(),
     );
 
+    _onSessionEvent = DataManager.get.sessionStream.listen(_onSessionUpdated);
+
     _onReportsUpdated = ReportManager.get.reportsUpdatedStream.listen(
       (_) => _reloadReports(),
     );
+
+    _onSubscriptionUpdated = SubscriptionManager.get.stream.listen((_) {
+      setState(() {
+        _showsCalendar =
+            PreferencesManager.get.statsShowsCalendar &&
+            !SubscriptionManager.get.isFree;
+      });
+    });
 
     List<String> selectedIds = PreferencesManager.get.statsSelectedActivityIds;
     if (selectedIds.isNotEmpty) {
@@ -105,7 +154,9 @@ class StatsPageState extends State<StatsPage> {
   @override
   void dispose() {
     _onActivitiesUpdated.cancel();
+    _onSessionEvent.cancel();
     _onReportsUpdated.cancel();
+    _onSubscriptionUpdated.cancel();
     super.dispose();
   }
 
@@ -114,82 +165,134 @@ class StatsPageState extends State<StatsPage> {
     return MyPage(
       appBarStyle: MyPageAppBarStyle(
         titleWidget: _buildAppBarTitle(),
-        showLeadingProButton: true,
+        leading: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _buildViewToggleButton(),
+            const SizedBox(width: _iconButtonWidth),
+          ],
+        ),
+        leadingWidth: _iconButtonWidth * 2,
         actions: [_buildSaveReportButton(), _buildSaveAsButton()],
       ),
-      child: FutureBuilder<int>(
-        future: _activityCountFuture,
-        builder: (BuildContext context, AsyncSnapshot<int> snapshot) {
-          if (!snapshot.hasData) {
-            return const SizedBox();
-          }
-
-          int activityCount = snapshot.data!;
-          if (activityCount <= 0) {
-            return EmptyPageHelp(
-              icon: Icons.show_chart,
-              message: Strings.of(context).statsPageNoActivitiesMessage,
-            );
-          }
-
-          return SingleChildScrollView(
-            controller: scrollController,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                ActivityPicker(
-                  initialActivities: _currentActivities,
-                  onPickedActivitiesChanged: (Set<Activity> pickedActivities) {
-                    setState(() {
-                      _currentActivities = pickedActivities;
-                      _updateFutures();
-                    });
-                  },
-                ),
-                StatsDateRangePicker(
-                  initialValue: _currentDateRange,
-                  onDurationPicked: (pickedDateRange) {
-                    setState(() {
-                      _currentDateRange = pickedDateRange;
-                      _updateFutures();
-                    });
-                  },
-                ),
-                MinDivider(),
-                FutureBuilder<SummarizedActivityList>(
-                  future: _summarizedActivityListFuture,
-                  builder: (context, snapshot) {
-                    if (!snapshot.hasData) {
-                      return Loading(isCentered: true);
-                    }
-
-                    List<SummarizedActivity> activities =
-                        snapshot.data!.activities;
-                    if (activities.isEmpty) {
-                      return Padding(
-                        padding: insetsDefault,
-                        child: ErrorText(
-                          Strings.of(context).statsPageNoDataMessage,
-                        ),
-                      );
-                    }
-
-                    if (activities.length == 1 &&
-                        (activities.first.dateRange == null ||
-                            activities.first.dateRange!.period !=
-                                DateRange_Period.allDates)) {
-                      return _buildForSingleActivity(activities.first);
-                    } else {
-                      return _buildForMultipleActivities(snapshot.data!);
-                    }
-                  },
-                ),
-              ],
-            ),
-          );
-        },
-      ),
+      child: _buildBody(),
     );
+  }
+
+  Widget _buildBody() {
+    if (_activityCount == null) {
+      return const SizedBox();
+    }
+
+    if (_activityCount! <= 0) {
+      return EmptyPageHelp(
+        icon: Icons.show_chart,
+        message: Strings.of(context).statsPageNoActivitiesMessage,
+      );
+    }
+
+    return Stack(
+      children: [
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ActivityPicker(
+              initialActivities: _currentActivities,
+              onPickedActivitiesChanged: (Set<Activity> pickedActivities) {
+                setState(() => _currentActivities = pickedActivities);
+                _updateFutures();
+              },
+            ),
+            StatsDateRangePicker(
+              initialValue: _currentDateRange,
+              onDurationPicked: (pickedDateRange) {
+                setState(() => _currentDateRange = pickedDateRange);
+                _updateFutures();
+              },
+            ),
+            MinDivider(),
+            Expanded(
+              child: IndexedStack(
+                index: _showsCalendar ? 1 : 0,
+                children: [_buildChartTab(), _buildCalendarTab()],
+              ),
+            ),
+          ],
+        ),
+        _buildRefreshingIndicator(),
+      ],
+    );
+  }
+
+  Widget _buildRefreshingIndicator() {
+    if (!_isRefreshing) {
+      return const SizedBox();
+    }
+    return const Align(
+      alignment: Alignment.topCenter,
+      child: LinearProgressIndicator(),
+    );
+  }
+
+  Widget _buildViewToggleButton() {
+    return IconButton(
+      icon: Icon(_showsCalendar ? Icons.show_chart : Icons.calendar_month),
+      tooltip: _showsCalendar
+          ? Strings.of(context).statsPageChartTab
+          : Strings.of(context).statsPageCalendarTab,
+      onPressed: () {
+        if (!_showsCalendar && SubscriptionManager.get.isFree) {
+          ActivityLogProPage.present(context);
+          return;
+        }
+        setState(() => _showsCalendar = !_showsCalendar);
+        PreferencesManager.get.setStatsShowsCalendar(_showsCalendar);
+      },
+    );
+  }
+
+  Widget _buildChartTab() {
+    return SingleChildScrollView(
+      controller: scrollController,
+      child: _buildSummarizedActivities((data, activities) {
+        if (activities.length == 1 &&
+            (activities.first.dateRange == null ||
+                activities.first.dateRange!.period !=
+                    DateRange_Period.allDates)) {
+          return _buildForSingleActivity(activities.first);
+        } else {
+          return _buildForMultipleActivities(data);
+        }
+      }),
+    );
+  }
+
+  Widget _buildCalendarTab() {
+    return _buildSummarizedActivities(
+      (data, activities) => StatsCalendar(summarizedActivities: activities),
+    );
+  }
+
+  Widget _buildSummarizedActivities(
+    Widget Function(
+      SummarizedActivityList data,
+      List<SummarizedActivity> activities,
+    )
+    builder,
+  ) {
+    var data = _summarizedActivityList;
+    if (data == null) {
+      return Loading(isCentered: true);
+    }
+
+    if (data.activities.isEmpty) {
+      return Padding(
+        padding: insetsDefault,
+        child: ErrorText(Strings.of(context).statsPageNoDataMessage),
+      );
+    }
+
+    return builder(data, data.activities);
   }
 
   Widget _buildAppBarTitle() {
@@ -205,7 +308,7 @@ class StatsPageState extends State<StatsPage> {
 
   Widget _buildSaveReportButton() {
     if (_selectedReport == null || SubscriptionManager.get.isFree) {
-      return const SizedBox();
+      return const SizedBox(width: _iconButtonWidth, height: _iconButtonWidth);
     }
 
     return IconButton(
@@ -441,22 +544,112 @@ class StatsPageState extends State<StatsPage> {
     _updateFutures();
   }
 
-  void _updateFutures() {
+  Future<void> _updateFutures() async {
     PreferencesManager.get.setStatsDateRange(_currentDateRange);
     PreferencesManager.get.setStatsSelectedActivityIds(
       _currentActivities.map((activity) => activity.id).toList(),
     );
 
+    var generation = ++_refreshGeneration;
+    setState(() => _isRefreshing = true);
+
     List<Activity> activities = List.of(_currentActivities);
 
-    var dateRange = _currentDateRange.period == DateRange_Period.allDates
-        ? null
-        : _currentDateRange;
-    _summarizedActivityListFuture = DataManager.get.getSummarizedActivities(
-      dateRange,
-      activities,
-    );
+    // Kick both queries off together rather than awaiting one before
+    // starting the other. Each future's error handling is attached
+    // immediately, rather than after awaiting the other future first, so an
+    // early rejection is never briefly left without a listener (which Dart
+    // reports as an unhandled Zone error even though it's caught below).
+    Future<SummarizedActivityList?> loadSummarizedActivities() async {
+      try {
+        return await DataManager.get.getSummarizedActivities(
+          _effectiveDateRange,
+          activities,
+        );
+      } catch (e) {
+        _log.e(
+          e,
+          reason: "Failed to load summarized activities for Stats page",
+        );
+        return null;
+      }
+    }
 
-    _activityCountFuture = DataManager.get.activityCount;
+    Future<int?> loadActivityCount() async {
+      try {
+        return await DataManager.get.activityCount;
+      } catch (e) {
+        _log.e(e, reason: "Failed to load activity count for Stats page");
+        return null;
+      }
+    }
+
+    var summarizedActivityListFuture = loadSummarizedActivities();
+    var activityCountFuture = loadActivityCount();
+
+    var summarizedActivityList = await summarizedActivityListFuture;
+    var activityCount = await activityCountFuture;
+
+    if (!mounted || generation != _refreshGeneration) {
+      return;
+    }
+
+    setState(() {
+      _isRefreshing = false;
+      if (summarizedActivityList != null) {
+        _summarizedActivityList = summarizedActivityList;
+      }
+      if (activityCount != null) {
+        _activityCount = activityCount;
+      }
+    });
+  }
+
+  /// Refreshes only the single [Activity] affected by [event], instead of
+  /// re-querying and recalculating every currently displayed activity. Falls
+  /// back to doing nothing if the affected activity isn't currently
+  /// displayed, or if the cached data doesn't match the current filter (a
+  /// full refresh is already in flight via [_onActivitiesUpdated] in that
+  /// case).
+  Future<void> _onSessionUpdated(SessionEvent event) async {
+    var currentList = _summarizedActivityList;
+    if (currentList == null || currentList.dateRange != _effectiveDateRange) {
+      return;
+    }
+
+    var index = currentList.activities.indexWhere(
+      (summarized) => summarized.value.id == event.session.activityId,
+    );
+    if (index < 0) {
+      return;
+    }
+
+    var generation = ++_sessionUpdateGeneration;
+
+    SummarizedActivity? updatedActivity;
+    try {
+      updatedActivity = await DataManager.get.getSummarizedActivity(
+        currentList.activities[index].value,
+        _effectiveDateRange,
+      );
+    } catch (e) {
+      _log.e(e, reason: "Failed to refresh activity for Stats page");
+    }
+
+    if (!mounted ||
+        generation != _sessionUpdateGeneration ||
+        updatedActivity == null) {
+      return;
+    }
+
+    var updatedActivities = List.of(currentList.activities);
+    updatedActivities[index] = updatedActivity;
+
+    setState(() {
+      _summarizedActivityList = SummarizedActivityList(
+        updatedActivities,
+        currentList.dateRange,
+      );
+    });
   }
 }

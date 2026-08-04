@@ -487,23 +487,39 @@ class DataManager implements Manager {
     // Get all sessions for all activities and construct a SummarizedActivity
     // object.
     for (Activity activity in activityList) {
-      List<Map<String, dynamic>> sessionMapList;
-      if (dateRange == null) {
-        // No date range was provided, get all sessions.
-        sessionMapList = await _database.rawQuery(
-          """
+      summarizedActivities.add(
+        await getSummarizedActivity(activity, dateRange),
+      );
+    }
+
+    summarizedActivities.sort((a, b) => a.value.name.compareTo(b.value.name));
+    return SummarizedActivityList(summarizedActivities, dateRange);
+  }
+
+  /// Returns a [SummarizedActivity] for the given [Activity], restricted to
+  /// sessions overlapping [dateRange]. If [dateRange] is `null`, all of the
+  /// [Activity]'s sessions are included.
+  Future<SummarizedActivity> getSummarizedActivity(
+    Activity activity,
+    DateRange? dateRange,
+  ) async {
+    List<Map<String, dynamic>> sessionMapList;
+    if (dateRange == null) {
+      // No date range was provided, get all sessions.
+      sessionMapList = await _database.rawQuery(
+        """
           SELECT * FROM session
             WHERE activity_id = ?
             AND is_banked = 0
             ORDER BY start_timestamp
           """,
-          [activity.id],
-        );
-      } else {
-        // Query for sessions that belong to this Activity and overlap the
-        // desired date range.
-        sessionMapList = await _database.rawQuery(
-          """
+        [activity.id],
+      );
+    } else {
+      // Query for sessions that belong to this Activity and overlap the
+      // desired date range.
+      sessionMapList = await _database.rawQuery(
+        """
           SELECT * FROM session
             WHERE activity_id = ?
             AND start_timestamp < ?
@@ -511,31 +527,25 @@ class DataManager implements Manager {
             AND is_banked = 0
             ORDER BY start_timestamp
           """,
-          [activity.id, dateRange.endMs, dateRange.startMs],
-        );
-      }
-
-      List<Session> sessionList = [];
-
-      for (var map in sessionMapList) {
-        sessionList.add(
-          SessionBuilder.fromSession(
-            Session.fromMap(map),
-          ).pinToDateRange(dateRange).build,
-        );
-      }
-
-      summarizedActivities.add(
-        SummarizedActivity(
-          value: activity,
-          dateRange: dateRange,
-          sessions: sessionList,
-        ),
+        [activity.id, dateRange.endMs, dateRange.startMs],
       );
     }
 
-    summarizedActivities.sort((a, b) => a.value.name.compareTo(b.value.name));
-    return SummarizedActivityList(summarizedActivities, dateRange);
+    List<Session> sessionList = [];
+
+    for (var map in sessionMapList) {
+      sessionList.add(
+        SessionBuilder.fromSession(
+          Session.fromMap(map),
+        ).pinToDateRange(dateRange).build,
+      );
+    }
+
+    return SummarizedActivity(
+      value: activity,
+      dateRange: dateRange,
+      sessions: sessionList,
+    );
   }
 
   /// Returns a list of [ActivityListTileModel] objects meant to be used in

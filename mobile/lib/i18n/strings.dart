@@ -239,6 +239,10 @@ class Strings {
 
   String get statsPageTitle => _getString("statsPage_title");
 
+  String get statsPageChartTab => _getString("statsPage_chartTab");
+
+  String get statsPageCalendarTab => _getString("statsPage_calendarTab");
+
   String get statsPageSaveReportTooltip =>
       _getString("statsPage_saveReportTooltip");
 
@@ -371,6 +375,8 @@ class Strings {
       _getString("feedbackPage_errorSending");
 
   String get proPageExportXlsx => _getString("proPage_exportXlsx");
+
+  String get proPageCalendarView => _getString("proPage_calendarView");
 
   String get proPageArchiveActivities =>
       _getString("proPage_archiveActivities");

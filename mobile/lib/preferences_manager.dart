@@ -28,6 +28,7 @@ class PreferencesManager implements Manager {
   final _keyHomeDateRange = "preferences.homeDateRange";
   final _keyStatsSelectedActivityIds = "preferences.statsSelectedActivityIds";
   final _keyStatsDateRange = "preferences.statsDateRange";
+  final _keyStatsShowCalendar = "preferences.statsShowsCalendar";
   final _keyUserName = "preferences.userName";
   final _keyUserEmail = "preferences.userEmail";
   final _keySelectedReportId = "preferences.selectedReportId";
@@ -52,6 +53,7 @@ class PreferencesManager implements Manager {
 
   late List<String> _statsSelectedActivityIds;
   late DateRange _statsDateRange;
+  late bool _statsShowsCalendar;
   late String? _userName;
   late String? _userEmail;
   late String? _selectedReportId;
@@ -69,6 +71,10 @@ class PreferencesManager implements Manager {
   List<String> get statsSelectedActivityIds => _statsSelectedActivityIds;
 
   DateRange get statsDateRange => _statsDateRange;
+
+  /// Whether the Stats page's calendar view (rather than the chart view) was
+  /// last shown.
+  bool get statsShowsCalendar => _statsShowsCalendar;
 
   String? get userName => _userName;
 
@@ -98,6 +104,8 @@ class PreferencesManager implements Manager {
     _statsDateRange = DateRanges.fromPreference(
       prefs.getString(_keyStatsDateRange),
     );
+
+    _statsShowsCalendar = prefs.getBool(_keyStatsShowCalendar) ?? false;
 
     _userName = prefs.getString(_keyUserName);
     _userEmail = prefs.getString(_keyUserEmail);
@@ -175,6 +183,17 @@ class PreferencesManager implements Manager {
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString(_keyStatsDateRange, _statsDateRange.writeToJson());
+  }
+
+  Future<void> setStatsShowsCalendar(bool value) async {
+    if (_statsShowsCalendar == value) {
+      return;
+    }
+
+    _statsShowsCalendar = value;
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_keyStatsShowCalendar, value);
   }
 
   Future<void> setSelectedReportId(String? id) async {

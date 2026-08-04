@@ -61,60 +61,66 @@ class _FakeSummarizedActivityList_0 extends _i1.SmartFake
     : super(parent, parentInvocation);
 }
 
-class _FakeDateRange_1 extends _i1.SmartFake implements _i3.DateRange {
-  _FakeDateRange_1(Object parent, Invocation parentInvocation)
+class _FakeSummarizedActivity_1 extends _i1.SmartFake
+    implements _i2.SummarizedActivity {
+  _FakeSummarizedActivity_1(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
 
-class _FakeResponse_2 extends _i1.SmartFake implements _i4.Response {
-  _FakeResponse_2(Object parent, Invocation parentInvocation)
+class _FakeDateRange_2 extends _i1.SmartFake implements _i3.DateRange {
+  _FakeDateRange_2(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
 
-class _FakeDatabase_3 extends _i1.SmartFake implements _i5.Database {
-  _FakeDatabase_3(Object parent, Invocation parentInvocation)
+class _FakeResponse_3 extends _i1.SmartFake implements _i4.Response {
+  _FakeResponse_3(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
 
-class _FakeFuture_4<T1> extends _i1.SmartFake implements _i6.Future<T1> {
-  _FakeFuture_4(Object parent, Invocation parentInvocation)
+class _FakeDatabase_4 extends _i1.SmartFake implements _i5.Database {
+  _FakeDatabase_4(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
 
-class _FakeQueryCursor_5 extends _i1.SmartFake implements _i5.QueryCursor {
-  _FakeQueryCursor_5(Object parent, Invocation parentInvocation)
+class _FakeFuture_5<T1> extends _i1.SmartFake implements _i6.Future<T1> {
+  _FakeFuture_5(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
 
-class _FakeBatch_6 extends _i1.SmartFake implements _i5.Batch {
-  _FakeBatch_6(Object parent, Invocation parentInvocation)
+class _FakeQueryCursor_6 extends _i1.SmartFake implements _i5.QueryCursor {
+  _FakeQueryCursor_6(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
 
-class _FakeDuration_7 extends _i1.SmartFake implements Duration {
-  _FakeDuration_7(Object parent, Invocation parentInvocation)
+class _FakeBatch_7 extends _i1.SmartFake implements _i5.Batch {
+  _FakeBatch_7(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
 
-class _FakeTZDateTime_8 extends _i1.SmartFake implements _i7.TZDateTime {
-  _FakeTZDateTime_8(Object parent, Invocation parentInvocation)
+class _FakeDuration_8 extends _i1.SmartFake implements Duration {
+  _FakeDuration_8(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
 
-class _FakeTimeOfDay_9 extends _i1.SmartFake implements _i8.TimeOfDay {
-  _FakeTimeOfDay_9(Object parent, Invocation parentInvocation)
+class _FakeTZDateTime_9 extends _i1.SmartFake implements _i7.TZDateTime {
+  _FakeTZDateTime_9(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
 
-class _FakeLiveActivities_10 extends _i1.SmartFake
+class _FakeTimeOfDay_10 extends _i1.SmartFake implements _i8.TimeOfDay {
+  _FakeTimeOfDay_10(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
+}
+
+class _FakeLiveActivities_11 extends _i1.SmartFake
     implements _i9.LiveActivities {
-  _FakeLiveActivities_10(Object parent, Invocation parentInvocation)
+  _FakeLiveActivities_11(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
 
-class _FakeSharedPreferencesAsync_11 extends _i1.SmartFake
+class _FakeSharedPreferencesAsync_12 extends _i1.SmartFake
     implements _i10.SharedPreferencesAsync {
-  _FakeSharedPreferencesAsync_11(Object parent, Invocation parentInvocation)
+  _FakeSharedPreferencesAsync_12(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
 
@@ -495,6 +501,25 @@ class MockDataManager extends _i1.Mock implements _i13.DataManager {
           as _i6.Future<_i2.SummarizedActivityList>);
 
   @override
+  _i6.Future<_i2.SummarizedActivity> getSummarizedActivity(
+    _i11.Activity? activity,
+    _i3.DateRange? dateRange,
+  ) =>
+      (super.noSuchMethod(
+            Invocation.method(#getSummarizedActivity, [activity, dateRange]),
+            returnValue: _i6.Future<_i2.SummarizedActivity>.value(
+              _FakeSummarizedActivity_1(
+                this,
+                Invocation.method(#getSummarizedActivity, [
+                  activity,
+                  dateRange,
+                ]),
+              ),
+            ),
+          )
+          as _i6.Future<_i2.SummarizedActivity>);
+
+  @override
   _i6.Future<List<_i14.ActivityListTileModel>> getActivityListModel({
     required _i3.DateRange? dateRange,
   }) =>
@@ -562,7 +587,7 @@ class MockPreferencesManager extends _i1.Mock
   _i3.DateRange get homeDateRange =>
       (super.noSuchMethod(
             Invocation.getter(#homeDateRange),
-            returnValue: _FakeDateRange_1(
+            returnValue: _FakeDateRange_2(
               this,
               Invocation.getter(#homeDateRange),
             ),
@@ -581,12 +606,20 @@ class MockPreferencesManager extends _i1.Mock
   _i3.DateRange get statsDateRange =>
       (super.noSuchMethod(
             Invocation.getter(#statsDateRange),
-            returnValue: _FakeDateRange_1(
+            returnValue: _FakeDateRange_2(
               this,
               Invocation.getter(#statsDateRange),
             ),
           )
           as _i3.DateRange);
+
+  @override
+  bool get statsShowsCalendar =>
+      (super.noSuchMethod(
+            Invocation.getter(#statsShowsCalendar),
+            returnValue: false,
+          )
+          as bool);
 
   @override
   _i6.Future<void> init() =>
@@ -643,6 +676,15 @@ class MockPreferencesManager extends _i1.Mock
           as _i6.Future<void>);
 
   @override
+  _i6.Future<void> setStatsShowsCalendar(bool? value) =>
+      (super.noSuchMethod(
+            Invocation.method(#setStatsShowsCalendar, [value]),
+            returnValue: _i6.Future<void>.value(),
+            returnValueForMissingStub: _i6.Future<void>.value(),
+          )
+          as _i6.Future<void>);
+
+  @override
   _i6.Future<void> setSelectedReportId(String? id) =>
       (super.noSuchMethod(
             Invocation.method(#setSelectedReportId, [id]),
@@ -683,7 +725,7 @@ class MockHttpWrapper extends _i1.Mock implements _i18.HttpWrapper {
               {#headers: headers, #body: body, #encoding: encoding},
             ),
             returnValue: _i6.Future<_i4.Response>.value(
-              _FakeResponse_2(
+              _FakeResponse_3(
                 this,
                 Invocation.method(
                   #post,
@@ -724,7 +766,7 @@ class MockDatabase extends _i1.Mock implements _i5.Database {
   _i5.Database get database =>
       (super.noSuchMethod(
             Invocation.getter(#database),
-            returnValue: _FakeDatabase_3(this, Invocation.getter(#database)),
+            returnValue: _FakeDatabase_4(this, Invocation.getter(#database)),
           )
           as _i5.Database);
 
@@ -756,7 +798,7 @@ class MockDatabase extends _i1.Mock implements _i5.Database {
                   ),
                   (T v) => _i6.Future<T>.value(v),
                 ) ??
-                _FakeFuture_4<T>(
+                _FakeFuture_5<T>(
                   this,
                   Invocation.method(
                     #transaction,
@@ -781,7 +823,7 @@ class MockDatabase extends _i1.Mock implements _i5.Database {
                   ),
                   (T v) => _i6.Future<T>.value(v),
                 ) ??
-                _FakeFuture_4<T>(
+                _FakeFuture_5<T>(
                   this,
                   Invocation.method(#readTransaction, [action]),
                 ),
@@ -800,7 +842,7 @@ class MockDatabase extends _i1.Mock implements _i5.Database {
                   ),
                   (T v) => _i6.Future<T>.value(v),
                 ) ??
-                _FakeFuture_4<T>(
+                _FakeFuture_5<T>(
                   this,
                   Invocation.method(#devInvokeMethod, [method, arguments]),
                 ),
@@ -827,7 +869,7 @@ class MockDatabase extends _i1.Mock implements _i5.Database {
                   ),
                   (T v) => _i6.Future<T>.value(v),
                 ) ??
-                _FakeFuture_4<T>(
+                _FakeFuture_5<T>(
                   this,
                   Invocation.method(#devInvokeSqlMethod, [
                     method,
@@ -936,7 +978,7 @@ class MockDatabase extends _i1.Mock implements _i5.Database {
               {#bufferSize: bufferSize},
             ),
             returnValue: _i6.Future<_i5.QueryCursor>.value(
-              _FakeQueryCursor_5(
+              _FakeQueryCursor_6(
                 this,
                 Invocation.method(
                   #rawQueryCursor,
@@ -980,7 +1022,7 @@ class MockDatabase extends _i1.Mock implements _i5.Database {
               },
             ),
             returnValue: _i6.Future<_i5.QueryCursor>.value(
-              _FakeQueryCursor_5(
+              _FakeQueryCursor_6(
                 this,
                 Invocation.method(
                   #queryCursor,
@@ -1061,7 +1103,7 @@ class MockDatabase extends _i1.Mock implements _i5.Database {
   _i5.Batch batch() =>
       (super.noSuchMethod(
             Invocation.method(#batch, []),
-            returnValue: _FakeBatch_6(this, Invocation.method(#batch, [])),
+            returnValue: _FakeBatch_7(this, Invocation.method(#batch, [])),
           )
           as _i5.Batch);
 }
@@ -1254,7 +1296,7 @@ class MockSession extends _i1.Mock implements _i15.Session {
   Duration get duration =>
       (super.noSuchMethod(
             Invocation.getter(#duration),
-            returnValue: _FakeDuration_7(this, Invocation.getter(#duration)),
+            returnValue: _FakeDuration_8(this, Invocation.getter(#duration)),
           )
           as Duration);
 
@@ -1262,7 +1304,7 @@ class MockSession extends _i1.Mock implements _i15.Session {
   _i7.TZDateTime get startDateTime =>
       (super.noSuchMethod(
             Invocation.getter(#startDateTime),
-            returnValue: _FakeTZDateTime_8(
+            returnValue: _FakeTZDateTime_9(
               this,
               Invocation.getter(#startDateTime),
             ),
@@ -1273,7 +1315,7 @@ class MockSession extends _i1.Mock implements _i15.Session {
   _i8.TimeOfDay get startTimeOfDay =>
       (super.noSuchMethod(
             Invocation.getter(#startTimeOfDay),
-            returnValue: _FakeTimeOfDay_9(
+            returnValue: _FakeTimeOfDay_10(
               this,
               Invocation.getter(#startTimeOfDay),
             ),
@@ -1371,7 +1413,7 @@ class MockLiveActivitiesWrapper extends _i1.Mock
   _i9.LiveActivities newInstance() =>
       (super.noSuchMethod(
             Invocation.method(#newInstance, []),
-            returnValue: _FakeLiveActivities_10(
+            returnValue: _FakeLiveActivities_11(
               this,
               Invocation.method(#newInstance, []),
             ),
@@ -1667,7 +1709,7 @@ class MockSharedPreferencesWrapper extends _i1.Mock
   }) =>
       (super.noSuchMethod(
             Invocation.method(#sharedPreferencesAsync, [], {#options: options}),
-            returnValue: _FakeSharedPreferencesAsync_11(
+            returnValue: _FakeSharedPreferencesAsync_12(
               this,
               Invocation.method(#sharedPreferencesAsync, [], {
                 #options: options,

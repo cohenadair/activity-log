@@ -175,6 +175,84 @@ void main() {
     );
   });
 
+  test("getSummarizedActivity matches getSummarizedActivities entry", () async {
+    final dateRange = DateRange(
+      startTimestamp: Int64(
+        TimeManager.get.dateTimeFromValues(2018, 1, 1).millisecondsSinceEpoch,
+      ),
+      endTimestamp: Int64(
+        TimeManager.get.dateTimeFromValues(2018, 2, 1).millisecondsSinceEpoch,
+      ),
+    );
+
+    final activity = ActivityBuilder("").build;
+
+    stubActivities([activity.toMap()]);
+    stubOverlappingSessions(activity.id, dateRange, [
+      buildSession(
+        activity.id,
+        TimeManager.get.dateTimeFromValues(2018, 1, 15, 5),
+        TimeManager.get.dateTimeFromValues(2018, 1, 15, 7),
+      ),
+    ]);
+
+    final listResult = await DataManager.get.getSummarizedActivities(
+      dateRange,
+      [activity],
+    );
+    final singleResult = await DataManager.get.getSummarizedActivity(
+      activity,
+      dateRange,
+    );
+
+    expect(singleResult.value, equals(listResult.activities[0].value));
+    expect(
+      singleResult.totalDuration,
+      equals(listResult.activities[0].totalDuration),
+    );
+    expect(
+      singleResult.sessionCount,
+      equals(listResult.activities[0].sessionCount),
+    );
+  });
+
+  test(
+    "getSummarizedActivity with null dateRange returns all sessions",
+    () async {
+      final activity = ActivityBuilder("").build;
+
+      stubActivities([activity.toMap()]);
+      when(
+        database.rawQuery(
+          """
+          SELECT * FROM session
+            WHERE activity_id = ?
+            AND is_banked = 0
+            ORDER BY start_timestamp
+          """,
+          [activity.id],
+        ),
+      ).thenAnswer(
+        (_) => Future.value([
+          buildSession(
+            activity.id,
+            TimeManager.get.dateTimeFromValues(2018, 1, 15, 5),
+            TimeManager.get.dateTimeFromValues(2018, 1, 15, 7),
+          ),
+        ]),
+      );
+
+      final result = await DataManager.get.getSummarizedActivity(
+        activity,
+        null,
+      );
+
+      expect(result.value, equals(activity));
+      expect(result.sessionCount, equals(1));
+      expect(result.totalDuration, equals(const Duration(hours: 2)));
+    },
+  );
+
   test("Session start outside range, session end inside range", () async {
     await assertSummarizedActivities(
       startDate: TimeManager.get.dateTimeFromValues(2018, 1, 15, 4, 30),

@@ -11,6 +11,7 @@ class MyPageAppBarStyle {
   final String? subtitle;
   final List<Widget>? actions;
   final Widget? leading;
+  final double? leadingWidth;
   final bool showLeadingProButton;
 
   /// When set, replaces the default [Text] title widget. Takes precedence over
@@ -22,6 +23,7 @@ class MyPageAppBarStyle {
     this.subtitle,
     this.actions,
     this.leading,
+    this.leadingWidth,
     this.showLeadingProButton = false,
     this.titleWidget,
   });
@@ -46,9 +48,11 @@ class MyPage extends StatelessWidget {
               title: _buildTitle(context),
               actions: _appBarStyle.actions,
               leading: _appBarStyle.leading ?? _buildLeadingProButton(context),
-              leadingWidth: _appBarStyle.showLeadingProButton
-                  ? _leadingProButtonWidth
-                  : null,
+              leadingWidth:
+                  _appBarStyle.leadingWidth ??
+                  (_appBarStyle.showLeadingProButton
+                      ? _leadingProButtonWidth
+                      : null),
               elevation: 0,
               centerTitle: true,
             ),

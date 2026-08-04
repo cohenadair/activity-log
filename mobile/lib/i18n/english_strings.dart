@@ -94,6 +94,8 @@ Map<String, Map<String, String>> englishStrings = {
     "settingsPage_importSendLogs": "Send Logs",
     "settingsPage_pro": "Activity Log Pro",
     "statsPage_title": "Stats",
+    "statsPage_chartTab": "Chart",
+    "statsPage_calendarTab": "Calendar",
     "statsPage_saveReportTooltip": "Save Report",
     "statsPage_saveAsReportTooltip": "Save as New Report",
     "statsPage_saveReportSuccess": "Report saved successfully.",
@@ -150,6 +152,7 @@ Map<String, Map<String, String>> englishStrings = {
     "feedbackPage_errorSending":
         "Error sending feedback. Please try again later, or email %s directly.",
     "proPage_exportXlsx": "Save data to an Excel (XLSX) spreadsheet",
+    "proPage_calendarView": "View sessions on a calendar",
     "proPage_archiveActivities": "Archive activities",
     "proPage_hideFromStats": "Hide activities from stats",
     "proPage_saveCustomStatsFilters": "Save custom stats filters",

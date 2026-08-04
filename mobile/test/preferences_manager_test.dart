@@ -73,4 +73,34 @@ void main() {
       ActivitySortOption.totalTime.index,
     );
   });
+
+  test("init defaults statsShowsCalendar to false when not set", () {
+    expect(PreferencesManager.get.statsShowsCalendar, isFalse);
+  });
+
+  test("init loads statsShowsCalendar from SharedPreferences", () async {
+    SharedPreferences.setMockInitialValues({
+      "preferences.statsShowsCalendar": true,
+    });
+    PreferencesManager.reset();
+    await PreferencesManager.get.init();
+
+    expect(PreferencesManager.get.statsShowsCalendar, isTrue);
+  });
+
+  test("setStatsShowsCalendar does nothing when value is the same", () async {
+    await PreferencesManager.get.setStatsShowsCalendar(false);
+
+    final prefs = await SharedPreferences.getInstance();
+    expect(prefs.getBool("preferences.statsShowsCalendar"), isNull);
+  });
+
+  test("setStatsShowsCalendar saves the new value", () async {
+    await PreferencesManager.get.setStatsShowsCalendar(true);
+
+    expect(PreferencesManager.get.statsShowsCalendar, isTrue);
+
+    final prefs = await SharedPreferences.getInstance();
+    expect(prefs.getBool("preferences.statsShowsCalendar"), isTrue);
+  });
 }

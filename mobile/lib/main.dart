@@ -7,6 +7,7 @@ import 'package:adair_flutter_lib/utils/firebase_setup.dart';
 import 'package:adair_flutter_lib/widgets/adair_flutter_lib_app.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile/i18n/strings.dart';
+import 'package:mobile/l10n/syncfusion_localizations.dart';
 import 'package:mobile/live_activities_manager.dart';
 import 'package:mobile/pages/main_page.dart';
 import 'package:mobile/preferences_manager.dart';
@@ -121,7 +122,10 @@ class ActivityLogState extends State<ActivityLog> {
       ),
       themeMode: AppConfig.get.themeMode(),
       homeBuilder: (_) => MainPage(),
-      localizationsDelegates: [StringsDelegate()],
+      localizationsDelegates: [
+        StringsDelegate(),
+        const SyncfusionLocalizationsDelegate(),
+      ],
     );
   }
 

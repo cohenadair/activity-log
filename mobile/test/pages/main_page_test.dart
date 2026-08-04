@@ -50,6 +50,7 @@ void main() {
     when(
       managers.preferencesManager.largestDurationUnit,
     ).thenReturn(AppDurationUnit.hours);
+    when(managers.preferencesManager.statsShowsCalendar).thenReturn(false);
 
     when(managers.subscriptionManager.isFree).thenReturn(true);
     when(managers.subscriptionManager.isPro).thenReturn(false);
