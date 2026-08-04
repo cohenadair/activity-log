@@ -103,6 +103,56 @@ void main() {
     expect(find.text("November 2022"), findsNWidgets(2));
   });
 
+  testWidgets("Today button returns to the current month", (tester) async {
+    var activity = ActivityBuilder("Reading").build;
+    var session = buildSession(activity.id);
+
+    await pumpContext(
+      tester,
+      (_) => Scaffold(
+        body: StatsCalendar(
+          summarizedActivities: buildSummarized(activity, session),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle(const Duration(milliseconds: 50));
+
+    await tapAndSettle(tester, find.byIcon(Icons.chevron_left));
+    expect(find.text("September 2022"), findsNWidgets(2));
+
+    await tapAndSettle(tester, find.byIcon(Icons.today));
+    expect(find.text("October 2022"), findsNWidgets(2));
+  });
+
+  testWidgets("Header tap opens the picker to the visible month, not today", (
+    tester,
+  ) async {
+    var activity = ActivityBuilder("Reading").build;
+    var session = buildSession(activity.id);
+
+    await pumpContext(
+      tester,
+      (_) => Scaffold(
+        body: StatsCalendar(
+          summarizedActivities: buildSummarized(activity, session),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle(const Duration(milliseconds: 50));
+
+    await tapAndSettle(tester, find.byIcon(Icons.chevron_left));
+    expect(find.text("September 2022"), findsNWidgets(2));
+
+    await tapAndSettle(tester, find.text("September 2022").first);
+    await tapAndSettle(tester, find.text("OK"));
+
+    // Confirming without picking a different month/year should leave the
+    // calendar on September — proving the picker opened there, not on
+    // today's month (October).
+    expect(find.text("October 2022"), findsNothing);
+    expect(find.text("September 2022"), findsNWidgets(2));
+  });
+
   testWidgets("Header tap opens the month/year picker and updates state", (
     tester,
   ) async {

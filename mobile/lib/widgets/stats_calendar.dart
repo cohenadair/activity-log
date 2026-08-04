@@ -91,6 +91,9 @@ class _StatsCalendarState extends State<StatsCalendar> {
     );
   }
 
+  // TODO: This header (today/prev/next buttons + month/year picker) is
+  // similar to anglers-log's CalendarPage._buildHeader. Consider extracting
+  // a shared widget into adair-flutter-lib if a third consumer appears.
   Widget _buildHeader(BuildContext context) {
     return Row(
       children: [
@@ -116,6 +119,15 @@ class _StatsCalendarState extends State<StatsCalendar> {
               ),
             ),
           ),
+        ),
+        IconButton(
+          icon: const Icon(Icons.today),
+          onPressed: () {
+            setState(() {
+              _controller.selectedDate = _controller.displayDate =
+                  TimeManager.get.currentDateTime;
+            });
+          },
         ),
         IconButton(
           icon: const Icon(Icons.chevron_left),
@@ -226,7 +238,10 @@ class _StatsCalendarState extends State<StatsCalendar> {
   }
 
   Future<void> _showDatePicker() async {
-    var pickedDateTime = await showMonthYearPicker(context);
+    var pickedDateTime = await showMonthYearPicker(
+      context,
+      initialDate: _controller.displayDate,
+    );
     if (pickedDateTime == null) {
       return;
     }
