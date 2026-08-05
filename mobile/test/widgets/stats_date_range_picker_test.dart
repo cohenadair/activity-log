@@ -9,8 +9,10 @@ import '../../../../adair-flutter-lib/test/test_utils/widget.dart';
 import '../stubbed_managers.dart';
 
 void main() {
+  late StubbedManagers managers;
+
   setUp(() async {
-    await StubbedManagers.create(); // For TimeManager.
+    managers = await StubbedManagers.create(); // For TimeManager.
   });
 
   testWidgets("Initially set custom date range", (tester) async {
@@ -43,5 +45,43 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text("Jan 1, 2020 to Feb 1, 2020"), findsOneWidget);
+  });
+
+  testWidgets("Custom date range picker includes entire last day", (
+    tester,
+  ) async {
+    managers.lib.stubCurrentTime(DateTime(2020, 1, 15));
+
+    DateRange? pickedRange;
+    await tester.pumpWidget(
+      Testable(
+        (_) => StatsDateRangePicker(
+          initialValue: DateRange(period: DateRange_Period.allDates),
+          onDurationPicked: (range) => pickedRange = range,
+        ),
+      ),
+    );
+
+    await tapAndSettle(tester, find.text("All dates"));
+
+    // Scroll so custom date range is shown.
+    await tester.drag(find.text("Last year"), const Offset(0, -400));
+    await tester.pumpAndSettle();
+
+    await tapAndSettle(tester, find.text("Custom"));
+
+    // Pick a date range from the 3rd to the 10th within the calendar.
+    await tapAndSettle(tester, find.text("3").first);
+    await tapAndSettle(tester, find.text("10").first);
+    await tapAndSettle(tester, find.text("SAVE"));
+
+    // The end timestamp should be midnight the day *after* the last picked
+    // day, so the entirety of the last picked day is included in the range.
+    expect(
+      pickedRange!.endTimestamp,
+      Int64(
+        TimeManager.get.dateTimeFromValues(2020, 1, 11).millisecondsSinceEpoch,
+      ),
+    );
   });
 }

@@ -6,7 +6,6 @@ import 'package:adair_flutter_lib/utils/date_range.dart';
 import 'package:fixnum/fixnum.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile/widgets/list_picker.dart';
-import 'package:timezone/timezone.dart';
 
 /// A [ListPicker] wrapper widget for selecting a date range, such as the
 /// "Last 7 days" or "This week" from a list.
@@ -119,25 +118,18 @@ class StatsDateRangePickerState extends State<StatsDateRangePicker> {
       return null;
     }
 
-    TZDateTime? endDate;
-    if (pickedRange.start == pickedRange.end) {
-      // If only the start date was picked, or the start and end time are equal,
-      // set the end date to a range of 1 day.
-      endDate = TimeManager.get.dateTimeToTz(
-        pickedRange.start.add(const Duration(days: 1)),
-      );
-    }
+    // showDateRangePicker returns dates at midnight, so add a day to the end
+    // date to include all of the last picked day in the range.
+    var endDate = TimeManager.get.dateTimeToTz(
+      pickedRange.end.add(const Duration(days: 1)),
+    );
 
     var dateRange = DateRange(
       period: DateRange_Period.custom,
       startTimestamp: Int64(
         TimeManager.get.dateTimeToTz(pickedRange.start).millisecondsSinceEpoch,
       ),
-      endTimestamp: Int64(
-        TimeManager.get
-            .dateTimeToTz(endDate ?? pickedRange.end)
-            .millisecondsSinceEpoch,
-      ),
+      endTimestamp: Int64(endDate.millisecondsSinceEpoch),
     );
 
     // Reset StatsDateRange.custom properties to return the picked DateRange.
