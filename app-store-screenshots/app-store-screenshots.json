@@ -7,8 +7,8 @@
     "en"
   ],
   "locale": "en",
-  "device": "android-10",
-  "orientation": "landscape",
+  "device": "iphone",
+  "orientation": "portrait",
   "appIcon": "",
   "slidesByDevice": {
     "iphone": [
@@ -86,7 +86,7 @@
           "en": "POWER"
         },
         "headline": {
-          "en": "Run unlimited\nactivities at once"
+          "en": "Organize however you need"
         },
         "screenshot": "/screenshots/apple/iphone/en/06.png",
         "inverted": true
@@ -157,7 +157,7 @@
           "en": "POWER"
         },
         "headline": {
-          "en": "Run unlimited\nactivities at once"
+          "en": "Organize however you need"
         },
         "screenshot": "/screenshots/android/phone/en/06.png",
         "inverted": true
@@ -173,7 +173,7 @@
         "headline": {
           "en": "Know where \nyour day went\n"
         },
-        "screenshot": "/screenshots/apple/iphone/en/01.png"
+        "screenshot": "/screenshots/apple/ipad/en/01.png"
       },
       {
         "id": "al_ipad_p_2",
@@ -184,7 +184,7 @@
         "headline": {
           "en": "One tap to start,\none to stop"
         },
-        "screenshot": "/screenshots/apple/iphone/en/02.png",
+        "screenshot": "/screenshots/apple/ipad/en/02.png",
         "inverted": true
       },
       {
@@ -196,7 +196,7 @@
         "headline": {
           "en": "Track from your\nlock screen"
         },
-        "screenshot": "/screenshots/apple/iphone/en/03.png"
+        "screenshot": "/screenshots/apple/ipad/en/03.png"
       },
       {
         "id": "al_ipad_p_4",
@@ -207,7 +207,7 @@
         "headline": {
           "en": "Export to Excel\nin seconds"
         },
-        "screenshot": "/screenshots/apple/iphone/en/04.png",
+        "screenshot": "/screenshots/apple/ipad/en/04.png",
         "inverted": true
       },
       {
@@ -219,7 +219,7 @@
         "headline": {
           "en": "See where your\ntime actually goes"
         },
-        "screenshot": "/screenshots/apple/iphone/en/05.png"
+        "screenshot": "/screenshots/apple/ipad/en/05.png"
       },
       {
         "id": "al_ipad_p_6",
@@ -228,9 +228,9 @@
           "en": "POWER"
         },
         "headline": {
-          "en": "Run unlimited\nactivities at once"
+          "en": "Organize however you need"
         },
-        "screenshot": "/screenshots/apple/iphone/en/06.png",
+        "screenshot": "/screenshots/apple/ipad/en/06.png",
         "inverted": true
       }
     ],
@@ -304,7 +304,7 @@
           "en": "POWER"
         },
         "headline": {
-          "en": "Run unlimited\nactivities at once"
+          "en": "Organize however you need"
         },
         "screenshot": "/screenshots/android/phone/en/06.png",
         "inverted": true,
@@ -564,7 +564,7 @@
           "en": "POWER"
         },
         "headline": {
-          "en": "Run unlimited\nactivities at once"
+          "en": "Organize however you need"
         },
         "screenshot": "/screenshots/android/phone/en/06.png",
         "inverted": true,
