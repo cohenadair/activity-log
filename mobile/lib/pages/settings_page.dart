@@ -10,6 +10,7 @@ import 'package:adair_flutter_lib/utils/dialog.dart';
 import 'package:adair_flutter_lib/utils/duration.dart';
 import 'package:adair_flutter_lib/utils/log.dart';
 import 'package:adair_flutter_lib/utils/page.dart';
+import 'package:adair_flutter_lib/utils/widget.dart';
 import 'package:adair_flutter_lib/widgets/app_version.dart';
 import 'package:adair_flutter_lib/widgets/loading.dart';
 import 'package:file_picker/file_picker.dart';
@@ -49,6 +50,9 @@ class SettingsPageState extends State<SettingsPage> {
   static const _privacyUrl =
       "https://cohenadair.github.io/activity-log/privacy_policy.html";
   static const _log = Log("SettingsPage");
+
+  final GlobalKey _exportKey = GlobalKey();
+  final GlobalKey _exportXlsxKey = GlobalKey();
 
   bool _isCreatingBackup = false;
   bool _isCreatingXlsx = false;
@@ -263,6 +267,7 @@ class SettingsPageState extends State<SettingsPage> {
 
   Widget _buildExport() {
     return ListItem(
+      key: _exportKey,
       title: Text(Strings.of(context).settingsPageExportLabel),
       subtitle: Text(Strings.of(context).settingsPageExportDescription),
       trailing: _isCreatingBackup
@@ -270,13 +275,14 @@ class SettingsPageState extends State<SettingsPage> {
           : const SizedBox(),
       onTap: () {
         setState(() => _isCreatingBackup = true);
-        _startExport(context.findRenderObject() as RenderBox);
+        _startExport(_exportKey.globalPosition());
       },
     );
   }
 
   Widget _buildExportXlsx() {
     return ListItem(
+      key: _exportXlsxKey,
       title: Text(Strings.of(context).settingsPageExportXlsxLabel),
       subtitle: Text(Strings.of(context).settingsPageExportXlsxDescription),
       trailing: _isCreatingXlsx ? const Loading.minimized() : const SizedBox(),
@@ -286,7 +292,7 @@ class SettingsPageState extends State<SettingsPage> {
           return;
         }
         setState(() => _isCreatingXlsx = true);
-        _startExportXlsx(context.findRenderObject() as RenderBox);
+        _startExportXlsx(_exportXlsxKey.globalPosition());
       },
     );
   }
@@ -300,25 +306,25 @@ class SettingsPageState extends State<SettingsPage> {
     );
   }
 
-  Future<void> _startExport(RenderBox renderBox) async {
+  Future<void> _startExport(Rect? sharePositionOrigin) async {
     await _shareFile(
-      renderBox,
+      sharePositionOrigin,
       await export(),
       mimeType: "text/plain",
       onDone: () => _isCreatingBackup = false,
     );
   }
 
-  Future<void> _startExportXlsx(RenderBox renderBox) async {
+  Future<void> _startExportXlsx(Rect? sharePositionOrigin) async {
     await _shareFile(
-      renderBox,
+      sharePositionOrigin,
       await exportXlsx(),
       onDone: () => _isCreatingXlsx = false,
     );
   }
 
   Future<void> _shareFile(
-    RenderBox renderBox,
+    Rect? sharePositionOrigin,
     String path, {
     String? mimeType,
     required void Function() onDone,
@@ -329,11 +335,9 @@ class SettingsPageState extends State<SettingsPage> {
 
     setState(onDone);
 
-    await Share.shareXFiles(
-      [XFile(path, mimeType: mimeType)],
-      sharePositionOrigin:
-          renderBox.localToGlobal(Offset.zero) & renderBox.size,
-    );
+    await Share.shareXFiles([
+      XFile(path, mimeType: mimeType),
+    ], sharePositionOrigin: sharePositionOrigin);
   }
 
   void _startImport() async {

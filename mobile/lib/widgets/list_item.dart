@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:adair_flutter_lib/res/anim.dart';
+import 'package:adair_flutter_lib/utils/widget.dart';
 import 'package:flutter/material.dart';
 
 /// A [ListTile] wrapper with app default properties.
@@ -13,6 +14,7 @@ class ListItem extends StatelessWidget {
   final VoidCallback? onTap;
 
   const ListItem({
+    super.key,
     this.contentPadding,
     this.title,
     this.subtitle,
@@ -89,15 +91,15 @@ class ExpansionListItemState extends State<ExpansionListItem> {
   }
 
   void _scrollIfNeeded() {
-    if (_key.currentContext == null || widget.scrollController == null) {
+    final position = _key.globalPosition();
+    if (position == null || widget.scrollController == null) {
       return;
     }
 
-    RenderBox box = _key.currentContext!.findRenderObject() as RenderBox;
     widget.scrollController!.animateTo(
       min(
         widget.scrollController!.position.maxScrollExtent,
-        _previousScrollOffset + box.size.height,
+        _previousScrollOffset + position.height,
       ),
       duration: animDurationDefault,
       curve: Curves.linear,
