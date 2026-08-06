@@ -164,9 +164,20 @@ class LiveActivitiesManager implements Manager {
       return;
     }
 
+    final activity = await DataManager.get.activity(session.activityId);
+    if (activity == null) {
+      _log.d("Can't update: ${session.activityId} doesn't exist");
+      return;
+    }
+
     _log.d("Sending update request: ${session.activityId}");
 
+    // Android's live activity notification is rebuilt from scratch on every
+    // update call (unlike iOS, which reads persisted values by key), so all
+    // fields consumed by CustomLiveActivityManager must be resent here.
     await _liveActivities.updateActivity(id!, {
+      "activity_id": activity.id,
+      "activity_name": activity.name,
       "session_start_timestamp": session.startTimestamp,
     });
   }

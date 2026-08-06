@@ -346,11 +346,31 @@ void main() {
     },
   );
 
+  test(
+    "On session updated exits early if the activity doesn't exist",
+    () async {
+      when(managers.subscriptionManager.isFree).thenReturn(false);
+      when(
+        managers.dataManager.currentLiveActivityId(any),
+      ).thenAnswer((_) => Future.value("live-activity-id"));
+      when(
+        managers.dataManager.activity(any),
+      ).thenAnswer((_) => Future.value(null));
+
+      await initManager();
+      await emitSessionEvent(.updated);
+      verifyNever(liveActivities.updateActivity(any, any));
+    },
+  );
+
   test("On session updated updates the live activity", () async {
     when(managers.subscriptionManager.isFree).thenReturn(false);
     when(
       managers.dataManager.currentLiveActivityId(any),
     ).thenAnswer((_) => Future.value("live-activity-id"));
+    when(
+      managers.dataManager.activity(any),
+    ).thenAnswer((_) => Future.value(ActivityBuilder("Test").build));
     when(
       liveActivities.updateActivity(any, any),
     ).thenAnswer((_) => Future.value());
@@ -358,9 +378,13 @@ void main() {
     await initManager();
     await emitSessionEvent(.updated);
 
-    final result = verify(liveActivities.updateActivity(captureAny, any));
+    final result = verify(
+      liveActivities.updateActivity(captureAny, captureAny),
+    );
     result.called(1);
     expect(result.captured.first, "live-activity-id");
+    expect(result.captured.last["activity_id"], isNotNull);
+    expect(result.captured.last["activity_name"], "Test");
   });
 
   test("On session ended exits early if the user is free", () async {
