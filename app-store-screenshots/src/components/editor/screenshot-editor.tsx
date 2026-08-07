@@ -516,7 +516,21 @@ export function ScreenshotEditor() {
     el.style.transformOrigin = "top left";
     el.style.zIndex = "-1";
     try {
-      const dataUrl = await toPng(el, {
+      // waitForPaint's two RAFs are not a guarantee that large images have
+      // finished decoding — without this, toPng can snapshot before a big
+      // screenshot has painted, producing a blank/black device frame. Race
+      // against a timeout: img.decode() can hang indefinitely on some images
+      // in Chromium, and el spans the whole multi-screen deck, so one stuck
+      // decode must not block every remaining export.
+      await Promise.all(
+        Array.from(el.querySelectorAll("img")).map((img) =>
+          Promise.race([
+            img.decode().catch(() => undefined),
+            new Promise((resolve) => setTimeout(resolve, 3000)),
+          ]),
+        ),
+      );
+      const toPngOptions = {
         width: sourceW,
         height: sourceH,
         canvasWidth: exportW,
@@ -524,7 +538,17 @@ export function ScreenshotEditor() {
         pixelRatio: 1,
         cacheBust: false,
         backgroundColor: "#ffffff",
-      });
+      };
+      // html-to-image's own embedImages step skips waiting on <img> src that
+      // are already data: URLs (see node_modules/html-to-image/lib/embed-
+      // images.js embedImageNode) — which is exactly what every screenshot
+      // is, since image-cache.ts pre-converts them to data URIs. That means
+      // nothing waits for the library's internally cloned <img> to actually
+      // finish loading before the SVG->canvas rasterization runs, and the
+      // clone can snapshot blank. Rendering twice and keeping the second
+      // result is the documented workaround for this class of bug.
+      await toPng(el, toPngOptions);
+      const dataUrl = await toPng(el, toPngOptions);
       return dataUrl;
     } finally {
       el.style.left = prev.left || "-99999px";

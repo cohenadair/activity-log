@@ -68,20 +68,6 @@ export function AndroidPhone({ src, alt = "", style, hideEmpty }: FrameProps) {
         <div
           style={{
             position: "absolute",
-            top: "1.5%",
-            left: "50%",
-            transform: "translateX(-50%)",
-            width: "3%",
-            height: "1.4%",
-            borderRadius: "50%",
-            background: "#0d0d0f",
-            border: "1px solid rgba(255,255,255,0.06)",
-            zIndex: 20,
-          }}
-        />
-        <div
-          style={{
-            position: "absolute",
             left: "3.5%",
             top: "2%",
             width: "93%",
@@ -125,19 +111,6 @@ export function AndroidTabletP({ src, alt = "", style, hideEmpty }: FrameProps) 
         <div
           style={{
             position: "absolute",
-            top: "1.2%",
-            left: "50%",
-            transform: "translateX(-50%)",
-            width: "1.4%",
-            height: "0.88%",
-            borderRadius: "50%",
-            background: "#0d0d0f",
-            zIndex: 20,
-          }}
-        />
-        <div
-          style={{
-            position: "absolute",
             left: "3.5%",
             top: "2.2%",
             width: "93%",
@@ -178,19 +151,6 @@ export function AndroidTabletL({ src, alt = "", style, hideEmpty }: FrameProps) 
           overflow: "hidden",
         }}
       >
-        <div
-          style={{
-            position: "absolute",
-            left: "1.2%",
-            top: "50%",
-            transform: "translateY(-50%)",
-            width: "0.88%",
-            height: "1.4%",
-            borderRadius: "50%",
-            background: "#0d0d0f",
-            zIndex: 20,
-          }}
-        />
         <div
           style={{
             position: "absolute",

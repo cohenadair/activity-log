@@ -102,7 +102,17 @@
         "headline": {
           "en": "Know where \nyour day went\n"
         },
-        "screenshot": "/screenshots/android/phone/en/01.png"
+        "screenshot": "/screenshots/android/phone/en/01.png",
+        "transforms": {
+          "device": {
+            "x": 200.70778097982713,
+            "y": 670.2736599423635,
+            "width": 678.5844380403457,
+            "height": 1470.266282420749,
+            "rotation": 0,
+            "zIndex": 3
+          }
+        }
       },
       {
         "id": "al_android_2",
@@ -123,7 +133,7 @@
           "en": "ALWAYS-ON"
         },
         "headline": {
-          "en": "Track from your\nlock screen"
+          "en": "Track from your\nnotifications"
         },
         "screenshot": "/screenshots/android/phone/en/03.png"
       },
@@ -267,7 +277,7 @@
           "en": "ALWAYS-ON"
         },
         "headline": {
-          "en": "Track from your\nlock screen"
+          "en": "Track from your\nnotifications"
         },
         "screenshot": "/screenshots/android/phone/en/03.png",
         "orientationFilter": "portrait"
@@ -319,13 +329,13 @@
         "headline": {
           "en": "Know where \nyour day went\n"
         },
-        "screenshot": "/screenshots/android/phone/en/01.png",
+        "screenshot": "/screenshots/android/tablet/en/01.png",
         "transforms": {
           "device": {
             "x": 245.76,
-            "y": 390.53,
+            "y": 420.2900000000001,
             "width": 1428.48,
-            "height": 952.32,
+            "height": 892.8,
             "rotation": 0,
             "zIndex": 3
           },
@@ -349,14 +359,14 @@
         "headline": {
           "en": "One tap to start,\none to stop"
         },
-        "screenshot": "/screenshots/android/phone/en/02.png",
+        "screenshot": "/screenshots/android/tablet/en/02.png",
         "inverted": true,
         "transforms": {
           "device": {
             "x": 245.76,
-            "y": 390.53,
+            "y": 420.2900000000001,
             "width": 1428.48,
-            "height": 952.32,
+            "height": 892.8,
             "rotation": 0,
             "zIndex": 3
           },
@@ -378,15 +388,15 @@
           "en": "ALWAYS-ON"
         },
         "headline": {
-          "en": "Track from your\nlock screen"
+          "en": "Track from your\nnotifications"
         },
-        "screenshot": "/screenshots/android/phone/en/03.png",
+        "screenshot": "/screenshots/android/tablet/en/03.png",
         "transforms": {
           "device": {
             "x": 245.76,
-            "y": 390.53,
+            "y": 420.2900000000001,
             "width": 1428.48,
-            "height": 952.32,
+            "height": 892.8,
             "rotation": 0,
             "zIndex": 3
           },
@@ -410,14 +420,14 @@
         "headline": {
           "en": "Export to Excel\nin seconds"
         },
-        "screenshot": "/screenshots/android/phone/en/04.png",
+        "screenshot": "/screenshots/android/tablet/en/04.png",
         "inverted": true,
         "transforms": {
           "device": {
             "x": 245.76,
-            "y": 390.53,
+            "y": 420.2900000000001,
             "width": 1428.48,
-            "height": 952.32,
+            "height": 892.8,
             "rotation": 0,
             "zIndex": 3
           },
@@ -441,13 +451,13 @@
         "headline": {
           "en": "See where your\ntime actually goes"
         },
-        "screenshot": "/screenshots/android/phone/en/05.png",
+        "screenshot": "/screenshots/android/tablet/en/05.png",
         "transforms": {
           "device": {
             "x": 245.76,
-            "y": 390.53,
+            "y": 420.2900000000001,
             "width": 1428.48,
-            "height": 952.32,
+            "height": 892.8,
             "rotation": 0,
             "zIndex": 3
           },
@@ -469,16 +479,16 @@
           "en": "POWER"
         },
         "headline": {
-          "en": "Run unlimited\nactivities at once"
+          "en": "Organize however \nyou need\n"
         },
-        "screenshot": "/screenshots/android/phone/en/06.png",
+        "screenshot": "/screenshots/android/tablet/en/06.png",
         "inverted": true,
         "transforms": {
           "device": {
             "x": 245.76,
-            "y": 390.53,
+            "y": 420.2900000000001,
             "width": 1428.48,
-            "height": 952.32,
+            "height": 892.8,
             "rotation": 0,
             "zIndex": 3
           },
@@ -527,7 +537,7 @@
           "en": "ALWAYS-ON"
         },
         "headline": {
-          "en": "Track from your\nlock screen"
+          "en": "Track from your\nnotifications"
         },
         "screenshot": "/screenshots/android/phone/en/03.png",
         "orientationFilter": "portrait"
@@ -579,13 +589,13 @@
         "headline": {
           "en": "Know where \nyour day went\n"
         },
-        "screenshot": "/screenshots/android/phone/en/01.png",
+        "screenshot": "/screenshots/android/tablet/en/01.png",
         "transforms": {
           "device": {
             "x": 327.68,
-            "y": 520.7,
+            "y": 560.3799999999999,
             "width": 1904.64,
-            "height": 1269.76,
+            "height": 1190.4,
             "rotation": 0,
             "zIndex": 3
           },
@@ -609,14 +619,14 @@
         "headline": {
           "en": "One tap to start,\none to stop"
         },
-        "screenshot": "/screenshots/android/phone/en/02.png",
+        "screenshot": "/screenshots/android/tablet/en/02.png",
         "inverted": true,
         "transforms": {
           "device": {
             "x": 327.68,
-            "y": 520.7,
+            "y": 560.3799999999999,
             "width": 1904.64,
-            "height": 1269.76,
+            "height": 1190.4,
             "rotation": 0,
             "zIndex": 3
           },
@@ -638,15 +648,15 @@
           "en": "ALWAYS-ON"
         },
         "headline": {
-          "en": "Track from your\nlock screen"
+          "en": "Track from your\nnotifications"
         },
-        "screenshot": "/screenshots/android/phone/en/03.png",
+        "screenshot": "/screenshots/android/tablet/en/03.png",
         "transforms": {
           "device": {
             "x": 327.68,
-            "y": 520.7,
+            "y": 560.3799999999999,
             "width": 1904.64,
-            "height": 1269.76,
+            "height": 1190.4,
             "rotation": 0,
             "zIndex": 3
           },
@@ -670,14 +680,14 @@
         "headline": {
           "en": "Export to Excel\nin seconds"
         },
-        "screenshot": "/screenshots/android/phone/en/04.png",
+        "screenshot": "/screenshots/android/tablet/en/04.png",
         "inverted": true,
         "transforms": {
           "device": {
             "x": 327.68,
-            "y": 520.7,
+            "y": 560.3799999999999,
             "width": 1904.64,
-            "height": 1269.76,
+            "height": 1190.4,
             "rotation": 0,
             "zIndex": 3
           },
@@ -701,13 +711,13 @@
         "headline": {
           "en": "See where your\ntime actually goes"
         },
-        "screenshot": "/screenshots/android/phone/en/05.png",
+        "screenshot": "/screenshots/android/tablet/en/05.png",
         "transforms": {
           "device": {
             "x": 327.68,
-            "y": 520.7,
+            "y": 560.3799999999999,
             "width": 1904.64,
-            "height": 1269.76,
+            "height": 1190.4,
             "rotation": 0,
             "zIndex": 3
           },
@@ -729,16 +739,16 @@
           "en": "POWER"
         },
         "headline": {
-          "en": "Run unlimited\nactivities at once"
+          "en": "Organize however \nyou need\n"
         },
-        "screenshot": "/screenshots/android/phone/en/06.png",
+        "screenshot": "/screenshots/android/tablet/en/06.png",
         "inverted": true,
         "transforms": {
           "device": {
             "x": 327.68,
-            "y": 520.7,
+            "y": 560.3799999999999,
             "width": 1904.64,
-            "height": 1269.76,
+            "height": 1190.4,
             "rotation": 0,
             "zIndex": 3
           },
