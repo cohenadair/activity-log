@@ -10,3 +10,4 @@ mobile/android/keystore.properties
 *.cxx
 mobile/firebase.json
 mobile/coverage/lcov.info
+mobile/build_and_upload_release.sh
