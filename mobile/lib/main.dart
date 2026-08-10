@@ -1,4 +1,5 @@
 import 'package:adair_flutter_lib/app_config.dart';
+import 'package:adair_flutter_lib/managers/app_review_manager.dart';
 import 'package:adair_flutter_lib/managers/properties_manager.dart';
 import 'package:adair_flutter_lib/managers/subscription_manager.dart';
 import 'package:adair_flutter_lib/managers/time_manager.dart';
@@ -40,6 +41,8 @@ class ActivityLogState extends State<ActivityLog> {
       appIcon: CustomIcons.app,
       colorAppTheme: Colors.green,
     );
+
+    AppReviewManager.get.configure(eventThreshold: 15);
   }
 
   @override
@@ -49,6 +52,7 @@ class ActivityLogState extends State<ActivityLog> {
         TimeManager.get,
         PropertiesManager.get,
         SubscriptionManager.get,
+        AppReviewManager.get,
 
         // App managers.
         PreferencesManager.get,

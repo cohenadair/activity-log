@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:adair_flutter_lib/managers/app_review_manager.dart';
 import 'package:adair_flutter_lib/managers/subscription_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile/database/data_manager.dart';
@@ -85,17 +86,25 @@ class MainPageState extends State<MainPage> {
   }
 
   Future<void> _onSessionEvent(SessionEvent event) async {
-    if (event.type != SessionEventType.ended ||
-        !SubscriptionManager.get.isFree) {
+    if (event.type != SessionEventType.ended) {
       return;
     }
+
     final count = await DataManager.get.sessionCount;
     if (!mounted) {
       return;
     }
-    if (count % _proPagePromptFrequency == 0) {
+
+    var didShowProUpsell = false;
+    if (SubscriptionManager.get.isFree &&
+        count % _proPagePromptFrequency == 0) {
       ActivityLogProPage.present(context);
+      didShowProUpsell = true;
     }
+
+    await AppReviewManager.get.onQualifyingEventOccurred(
+      skip: didShowProUpsell,
+    );
   }
 }
 

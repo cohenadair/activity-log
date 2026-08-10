@@ -8,7 +8,6 @@ import 'package:mobile/report_manager.dart';
 import 'package:mobile/wrappers/http_wrapper.dart';
 import 'package:mobile/wrappers/live_activities_wrapper.dart';
 import 'package:mobile/wrappers/shared_preference_app_group_wrapper.dart';
-import 'package:mobile/wrappers/shared_preferences_wrapper.dart';
 import 'package:mobile/wrappers/wakelock_wrapper.dart';
 import 'package:mockito/mockito.dart';
 
@@ -28,7 +27,6 @@ class StubbedManagers {
   late final MockLiveActivitiesManager liveActivitiesManager;
   late final MockLiveActivitiesWrapper liveActivitiesWrapper;
   late final MockNotificationManager notificationManager;
-  late final MockSharedPreferencesWrapper sharedPreferencesWrapper;
   late final MockSharedPreferenceAppGroupWrapper sharedAppGroupWrapper;
 
   static Future<StubbedManagers> create() async =>
@@ -37,6 +35,8 @@ class StubbedManagers {
   // TODO: Remove these wrappers and just expose `lib` as a public field.
   MockAppConfig get appConfig => lib.appConfig;
 
+  MockAppReviewManager get appReviewManager => lib.appReviewManager;
+
   MockIoWrapper get ioWrapper => lib.ioWrapper;
 
   MockPropertiesManager get propertiesManager => lib.propertiesManager;
@@ -44,6 +44,9 @@ class StubbedManagers {
   MockSubscriptionManager get subscriptionManager => lib.subscriptionManager;
 
   MockTimeManager get timeManager => lib.timeManager;
+
+  MockSharedPreferencesWrapper get sharedPreferencesWrapper =>
+      lib.sharedPreferencesWrapper;
 
   StubbedManagers._(this.lib) {
     dataManager = MockDataManager();
@@ -79,9 +82,6 @@ class StubbedManagers {
 
     notificationManager = MockNotificationManager();
     NotificationManager.set(notificationManager);
-
-    sharedPreferencesWrapper = MockSharedPreferencesWrapper();
-    SharedPreferencesWrapper.set(sharedPreferencesWrapper);
 
     sharedAppGroupWrapper = MockSharedPreferenceAppGroupWrapper();
     SharedPreferenceAppGroupWrapper.set(sharedAppGroupWrapper);

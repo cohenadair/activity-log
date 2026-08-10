@@ -61,6 +61,12 @@ void main() {
       managers.subscriptionManager.stream,
     ).thenAnswer((_) => const Stream.empty());
 
+    when(
+      managers.appReviewManager.onQualifyingEventOccurred(
+        skip: anyNamed("skip"),
+      ),
+    ).thenAnswer((_) => Future.value());
+
     when(managers.appConfig.appIcon).thenReturn(Icons.add);
     when(managers.appConfig.appName).thenReturn(() => "Activity Log");
     when(managers.ioWrapper.isAndroid).thenReturn(true);
@@ -93,12 +99,18 @@ void main() {
 
     expect(find.byType(ActivityLogProPage), findsNothing);
     verifyNever(managers.dataManager.sessionCount);
+    verifyNever(
+      managers.appReviewManager.onQualifyingEventOccurred(
+        skip: anyNamed("skip"),
+      ),
+    );
   });
 
   testWidgets(
     "Ended session event for subscribed user does not show pro page",
     (tester) async {
       when(managers.subscriptionManager.isFree).thenReturn(false);
+      when(managers.dataManager.sessionCount).thenAnswer((_) async => 10);
 
       await pumpContext(tester, (_) => const MainPage());
       await tester.pumpAndSettle();
@@ -109,7 +121,9 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.byType(ActivityLogProPage), findsNothing);
-      verifyNever(managers.dataManager.sessionCount);
+      verify(
+        managers.appReviewManager.onQualifyingEventOccurred(skip: false),
+      ).called(1);
     },
   );
 
@@ -128,6 +142,9 @@ void main() {
 
       verify(managers.dataManager.sessionCount).called(1);
       expect(find.byType(ActivityLogProPage), findsNothing);
+      verify(
+        managers.appReviewManager.onQualifyingEventOccurred(skip: false),
+      ).called(1);
     },
   );
 
@@ -143,5 +160,8 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.byType(ActivityLogProPage), findsOneWidget);
+    verify(
+      managers.appReviewManager.onQualifyingEventOccurred(skip: true),
+    ).called(1);
   });
 }
