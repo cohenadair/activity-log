@@ -75,12 +75,15 @@ void main() {
     await tapAndSettle(tester, find.text("10").first);
     await tapAndSettle(tester, find.text("SAVE"));
 
-    // The end timestamp should be midnight the day *after* the last picked
-    // day, so the entirety of the last picked day is included in the range.
+    // The end timestamp should be the last millisecond of the last picked
+    // day, so the entirety of the last picked day is included in the range,
+    // while still displaying the date the user picked.
     expect(
       pickedRange!.endTimestamp,
       Int64(
-        TimeManager.get.dateTimeFromValues(2020, 1, 11).millisecondsSinceEpoch,
+        TimeManager.get
+            .dateTimeFromValues(2020, 1, 10, 23, 59, 59, 999)
+            .millisecondsSinceEpoch,
       ),
     );
   });

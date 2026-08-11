@@ -118,10 +118,13 @@ class StatsDateRangePickerState extends State<StatsDateRangePicker> {
       return null;
     }
 
-    // showDateRangePicker returns dates at midnight, so add a day to the end
-    // date to include all of the last picked day in the range.
+    // showDateRangePicker returns dates at midnight, so include up to the
+    // last millisecond of the picked end day, so the entire day is included
+    // in the range while still displaying the date the user picked.
     var endDate = TimeManager.get.dateTimeToTz(
-      pickedRange.end.add(const Duration(days: 1)),
+      pickedRange.end
+          .add(const Duration(days: 1))
+          .subtract(const Duration(milliseconds: 1)),
     );
 
     var dateRange = DateRange(
