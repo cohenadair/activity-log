@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:adair_flutter_lib/managers/properties_manager.dart';
 import 'package:adair_flutter_lib/managers/subscription_manager.dart';
 import 'package:adair_flutter_lib/model/gen/adair_flutter_lib.pb.dart';
 import 'package:adair_flutter_lib/res/dimen.dart';
@@ -43,12 +44,10 @@ class SettingsPage extends StatefulWidget {
 }
 
 class SettingsPageState extends State<SettingsPage> {
-  static const _supportEmail = "cohenadair@gmail.com";
   static const _rateAppStoreUrl =
       "itms-apps://itunes.apple.com/app/id1458926666?action=write-review";
   static const _playStoreUrl = "market://details?id=com.cohenadair.activitylog";
-  static const _privacyUrl =
-      "https://cohenadair.github.io/activity-log/privacy_policy.html";
+  static const _privacyUrl = "https://activitylog.ca/privacy-policy.html";
   static const _log = Log("SettingsPage");
 
   final GlobalKey _exportKey = GlobalKey();
@@ -440,7 +439,7 @@ class SettingsPageState extends State<SettingsPage> {
         Email(
           subject: "$subject ($osName)",
           body: body ?? "",
-          recipients: [_supportEmail],
+          recipients: [PropertiesManager.get.supportEmail],
           attachmentPaths: isEmpty(attachmentPath) ? [] : [attachmentPath!],
         ),
       );
