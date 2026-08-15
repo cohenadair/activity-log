@@ -5,7 +5,6 @@ import 'package:mobile/model/activity.dart';
 import 'package:mobile/notification_manager.dart';
 import 'package:mobile/preferences_manager.dart';
 import 'package:mobile/report_manager.dart';
-import 'package:mobile/wrappers/http_wrapper.dart';
 import 'package:mobile/wrappers/live_activities_wrapper.dart';
 import 'package:mobile/wrappers/shared_preference_app_group_wrapper.dart';
 import 'package:mobile/wrappers/wakelock_wrapper.dart';
@@ -22,7 +21,6 @@ class StubbedManagers {
   late final MockDataManager dataManager;
   late final MockPreferencesManager preferencesManager;
   late final MockReportManager reportManager;
-  late final MockHttpWrapper httpWrapper;
   late final MockWakelockWrapper wakelockWrapper;
   late final MockLiveActivitiesManager liveActivitiesManager;
   late final MockLiveActivitiesWrapper liveActivitiesWrapper;
@@ -36,6 +34,8 @@ class StubbedManagers {
   MockAppConfig get appConfig => lib.appConfig;
 
   MockAppReviewManager get appReviewManager => lib.appReviewManager;
+
+  MockEmailManager get emailManager => lib.emailManager;
 
   MockIoWrapper get ioWrapper => lib.ioWrapper;
 
@@ -67,9 +67,6 @@ class StubbedManagers {
       preferencesManager.activitySortOption,
     ).thenReturn(ActivitySortOption.alphabetical);
     PreferencesManager.set(preferencesManager);
-
-    httpWrapper = MockHttpWrapper();
-    HttpWrapper.set(httpWrapper);
 
     wakelockWrapper = MockWakelockWrapper();
     WakelockWrapper.set(wakelockWrapper);

@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:adair_flutter_lib/widgets/loading.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:http/http.dart';
 import 'package:mobile/pages/feedback_page.dart';
 import 'package:mockito/mockito.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -29,9 +28,6 @@ void main() {
       managers.propertiesManager.supportEmail,
     ).thenReturn("support@test.com");
     when(
-      managers.propertiesManager.clientSenderEmail,
-    ).thenReturn("sender@test.com");
-    when(
       managers.subscriptionManager.userId,
     ).thenAnswer((_) async => "rc_test_123");
 
@@ -46,7 +42,6 @@ void main() {
       Email: %s
       Message: %s
     """);
-    when(managers.propertiesManager.sendGridApiKey).thenReturn("API KEY");
 
     when(
       managers.ioWrapper.lookup(any),
@@ -66,16 +61,16 @@ void main() {
     );
 
     when(
-      managers.httpWrapper.post(
-        any,
-        headers: anyNamed("headers"),
-        body: anyNamed("body"),
+      managers.emailManager.send(
+        appName: anyNamed("appName"),
+        replyToEmail: anyNamed("replyToEmail"),
+        replyToName: anyNamed("replyToName"),
+        subject: anyNamed("subject"),
+        text: anyNamed("text"),
+        attachments: anyNamed("attachments"),
       ),
     ).thenAnswer(
-      (_) => Future.delayed(
-        const Duration(milliseconds: 50),
-        () => Response("", HttpStatus.accepted),
-      ),
+      (_) => Future.delayed(const Duration(milliseconds: 50), () => true),
     );
   });
 
@@ -168,10 +163,13 @@ void main() {
     await tapAndSettle(tester, find.text("SEND"));
 
     var result = verify(
-      managers.httpWrapper.post(
-        any,
-        headers: anyNamed("headers"),
-        body: captureAnyNamed("body"),
+      managers.emailManager.send(
+        appName: anyNamed("appName"),
+        replyToEmail: anyNamed("replyToEmail"),
+        replyToName: anyNamed("replyToName"),
+        subject: anyNamed("subject"),
+        text: captureAnyNamed("text"),
+        attachments: anyNamed("attachments"),
       ),
     );
     result.called(1);
@@ -191,10 +189,13 @@ void main() {
     await tapAndSettle(tester, find.text("SEND"));
 
     var result = verify(
-      managers.httpWrapper.post(
-        any,
-        headers: anyNamed("headers"),
-        body: captureAnyNamed("body"),
+      managers.emailManager.send(
+        appName: anyNamed("appName"),
+        replyToEmail: anyNamed("replyToEmail"),
+        replyToName: anyNamed("replyToName"),
+        subject: anyNamed("subject"),
+        text: captureAnyNamed("text"),
+        attachments: anyNamed("attachments"),
       ),
     );
     result.called(1);
@@ -205,14 +206,17 @@ void main() {
     expect(content.contains("Android (33)"), isTrue);
   });
 
-  testWidgets("HTTP error shows error text", (tester) async {
+  testWidgets("Send failure shows error text", (tester) async {
     when(
-      managers.httpWrapper.post(
-        any,
-        headers: anyNamed("headers"),
-        body: anyNamed("body"),
+      managers.emailManager.send(
+        appName: anyNamed("appName"),
+        replyToEmail: anyNamed("replyToEmail"),
+        replyToName: anyNamed("replyToName"),
+        subject: anyNamed("subject"),
+        text: anyNamed("text"),
+        attachments: anyNamed("attachments"),
       ),
-    ).thenAnswer((_) => Future.value(Response("", HttpStatus.badGateway)));
+    ).thenAnswer((_) => Future.value(false));
 
     when(managers.ioWrapper.isIOS).thenReturn(true);
     managers.lib.stubIosDeviceInfo();
@@ -229,6 +233,61 @@ void main() {
     );
   });
 
+  testWidgets("Error text is hidden while retrying after a failed send", (
+    tester,
+  ) async {
+    when(
+      managers.emailManager.send(
+        appName: anyNamed("appName"),
+        replyToEmail: anyNamed("replyToEmail"),
+        replyToName: anyNamed("replyToName"),
+        subject: anyNamed("subject"),
+        text: anyNamed("text"),
+        attachments: anyNamed("attachments"),
+      ),
+    ).thenAnswer((_) => Future.value(false));
+
+    when(managers.ioWrapper.isIOS).thenReturn(true);
+    managers.lib.stubIosDeviceInfo();
+
+    await tester.pumpWidget(Testable((_) => FeedbackPage()));
+    await enterTextFieldAndSettle(tester, "Message", "Test");
+    await tapAndSettle(tester, find.text("SEND"));
+
+    expect(
+      find.text(
+        "Error sending feedback. Please try again later, or email support@test.com directly.",
+      ),
+      findsOneWidget,
+    );
+
+    when(
+      managers.emailManager.send(
+        appName: anyNamed("appName"),
+        replyToEmail: anyNamed("replyToEmail"),
+        replyToName: anyNamed("replyToName"),
+        subject: anyNamed("subject"),
+        text: anyNamed("text"),
+        attachments: anyNamed("attachments"),
+      ),
+    ).thenAnswer(
+      (_) => Future.delayed(const Duration(milliseconds: 50), () => true),
+    );
+
+    await tester.tap(find.text("SEND"));
+    await tester.pump();
+
+    expect(
+      find.text(
+        "Error sending feedback. Please try again later, or email support@test.com directly.",
+      ),
+      findsNothing,
+    );
+
+    await tester.pumpAndSettle(const Duration(milliseconds: 50));
+    await tapAndSettle(tester, find.text("OK"));
+  });
+
   testWidgets("RevenueCat ID is included in feedback body", (tester) async {
     when(managers.ioWrapper.isIOS).thenReturn(true);
     managers.lib.stubIosDeviceInfo();
@@ -238,10 +297,13 @@ void main() {
     await tapAndSettle(tester, find.text("SEND"));
 
     var result = verify(
-      managers.httpWrapper.post(
-        any,
-        headers: anyNamed("headers"),
-        body: captureAnyNamed("body"),
+      managers.emailManager.send(
+        appName: anyNamed("appName"),
+        replyToEmail: anyNamed("replyToEmail"),
+        replyToName: anyNamed("replyToName"),
+        subject: anyNamed("subject"),
+        text: captureAnyNamed("text"),
+        attachments: anyNamed("attachments"),
       ),
     );
     result.called(1);
@@ -263,10 +325,13 @@ void main() {
     await tapAndSettle(tester, find.text("SEND"));
 
     var result = verify(
-      managers.httpWrapper.post(
-        any,
-        headers: anyNamed("headers"),
-        body: captureAnyNamed("body"),
+      managers.emailManager.send(
+        appName: anyNamed("appName"),
+        replyToEmail: anyNamed("replyToEmail"),
+        replyToName: anyNamed("replyToName"),
+        subject: anyNamed("subject"),
+        text: captureAnyNamed("text"),
+        attachments: anyNamed("attachments"),
       ),
     );
     result.called(1);

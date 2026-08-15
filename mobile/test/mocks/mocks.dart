@@ -6,7 +6,6 @@ import 'package:mobile/model/session.dart';
 import 'package:mobile/notification_manager.dart';
 import 'package:mobile/preferences_manager.dart';
 import 'package:mobile/report_manager.dart';
-import 'package:mobile/wrappers/http_wrapper.dart';
 import 'package:mobile/wrappers/live_activities_wrapper.dart';
 import 'package:mobile/wrappers/shared_preference_app_group_wrapper.dart';
 import 'package:mobile/wrappers/wakelock_wrapper.dart';
@@ -17,7 +16,6 @@ import 'package:sqflite/sqflite.dart';
 @GenerateMocks([Activity])
 @GenerateMocks([DataManager])
 @GenerateMocks([PreferencesManager])
-@GenerateMocks([HttpWrapper])
 @GenerateMocks([Database])
 @GenerateMocks([Batch])
 @GenerateMocks([Session])

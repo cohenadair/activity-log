@@ -1,6 +1,4 @@
-import 'dart:convert';
-import 'dart:io';
-
+import 'package:adair_flutter_lib/managers/email_manager.dart';
 import 'package:adair_flutter_lib/managers/properties_manager.dart';
 import 'package:adair_flutter_lib/managers/subscription_manager.dart';
 import 'package:adair_flutter_lib/res/dimen.dart';
@@ -9,7 +7,6 @@ import 'package:adair_flutter_lib/utils/io.dart';
 import 'package:adair_flutter_lib/utils/log.dart';
 import 'package:adair_flutter_lib/utils/snack_bar.dart';
 import 'package:adair_flutter_lib/utils/string.dart';
-import 'package:adair_flutter_lib/utils/widget.dart';
 import 'package:adair_flutter_lib/widgets/loading.dart';
 import 'package:adair_flutter_lib/wrappers/device_info_wrapper.dart';
 import 'package:adair_flutter_lib/wrappers/io_wrapper.dart';
@@ -19,7 +16,6 @@ import 'package:mobile/preferences_manager.dart';
 import 'package:mobile/widgets/button.dart';
 import 'package:mobile/widgets/my_page.dart';
 import 'package:mobile/widgets/text.dart';
-import 'package:mobile/wrappers/http_wrapper.dart';
 import 'package:quiver/strings.dart';
 
 import '../i18n/strings.dart';
@@ -32,8 +28,6 @@ class FeedbackPage extends StatefulWidget {
 }
 
 class _FeedbackPageState extends State<FeedbackPage> {
-  static const _urlSendGrid = "https://api.sendgrid.com/v3/mail/send";
-
   static const _maxLengthName = 40;
   static const _maxLengthEmail = 320;
   static const _maxLengthMessage = 500;
@@ -145,17 +139,21 @@ class _FeedbackPageState extends State<FeedbackPage> {
 
     // Check internet connection.
     if (!await isConnected()) {
-      safeUseContext(
-        this,
-        () => showErrorSnackBar(
-          context,
-          Strings.of(context).feedbackPageConnectionError,
-        ),
+      if (!mounted) {
+        return;
+      }
+
+      showErrorSnackBar(
+        context,
+        Strings.of(context).feedbackPageConnectionError,
       );
       return;
     }
 
-    setState(() => _isSending = true);
+    setState(() {
+      _isSending = true;
+      _showSendError = false;
+    });
 
     // Gather app and device info.
     var appVersion = (await PackageInfoWrapper.get.fromPlatform()).version;
@@ -186,53 +184,34 @@ class _FeedbackPageState extends State<FeedbackPage> {
     var email = _emailController.text;
     var message = _messageController.text;
 
-    // API data, per https://sendgrid.com/docs/api-reference/.
-    var body = <String, dynamic>{
-      "personalizations": [
-        {
-          "to": [
-            {"email": PropertiesManager.get.supportEmail},
-          ],
-        },
-      ],
-      "from": {
-        "name":
-            "Activity Log ${IoWrapper.get.isAndroid ? "Android" : "iOS"} App",
-        "email": PropertiesManager.get.clientSenderEmail,
-      },
-      "reply_to": {"email": email, "name": name},
-      "subject": "User Feedback",
-      "content": [
-        {
-          "type": "text/plain",
-          "value": format(PropertiesManager.get.feedbackTemplate, [
-            appVersion,
-            isNotEmpty(osVersion) ? osVersion : "Unknown",
-            isNotEmpty(deviceModel) ? deviceModel : "Unknown",
-            isNotEmpty(deviceId) ? deviceId : "Unknown",
-            isNotEmpty(revenueCatId) ? revenueCatId : "Unknown",
-            isNotEmpty(name) ? name : "Unknown",
-            email,
-            message,
-          ]),
-        },
-      ],
-    };
+    var text = format(PropertiesManager.get.feedbackTemplate, [
+      appVersion,
+      isNotEmpty(osVersion) ? osVersion : "Unknown",
+      isNotEmpty(deviceModel) ? deviceModel : "Unknown",
+      isNotEmpty(deviceId) ? deviceId : "Unknown",
+      isNotEmpty(revenueCatId) ? revenueCatId : "Unknown",
+      isNotEmpty(name) ? name : "Unknown",
+      email,
+      message,
+    ]);
 
-    var response = await HttpWrapper.get.post(
-      Uri.parse(_urlSendGrid),
-      headers: <String, String>{
-        "Content-Type": "application/json; charset=UTF-8",
-        "Authorization": "Bearer ${PropertiesManager.get.sendGridApiKey}",
-      },
-      body: jsonEncode(body),
+    var sent = await EmailManager.get.send(
+      appName: "Activity Log",
+      replyToEmail: email,
+      replyToName: name,
+      subject: "User Feedback",
+      text: text,
     );
 
-    if (response.statusCode != HttpStatus.accepted) {
+    if (!sent) {
       _log.e(
-        HttpException(response.statusCode.toString()),
+        Exception("Error sending feedback"),
         reason: "Sending in-app feedback",
       );
+
+      if (!mounted) {
+        return;
+      }
 
       setState(() {
         _isSending = false;
@@ -246,19 +225,21 @@ class _FeedbackPageState extends State<FeedbackPage> {
       _nameController.text,
       _emailController.text,
     );
+
+    if (!mounted) {
+      return;
+    }
+
     setState(() {
       _isSending = false;
       _showSendError = false;
     });
 
     // Confirm feedback has been sent.
-    safeUseContext(
-      this,
-      () => showOkDialog(
-        context: context,
-        description: Text(Strings.of(context).feedbackPageConfirmation),
-        onTapOk: () => Navigator.of(context).pop(),
-      ),
+    showOkDialog(
+      context: context,
+      description: Text(Strings.of(context).feedbackPageConfirmation),
+      onTapOk: () => Navigator.of(context).pop(),
     );
   }
 
