@@ -26,7 +26,7 @@ dependencies:
   community_charts_flutter: ^1.0.4            # https://pub.dev/packages/community_charts_flutter
   collection: ^1.19.1                         # https://pub.dev/packages/collection (Dart)
   device_info_plus: ^11.3.0                   # https://pub.dev/packages/device_info_plus (Flutter)
-  share_plus: ^10.1.4                         # https://pub.dev/packages/share_plus (Verified)
+  share_plus: ^12.0.2                         # https://pub.dev/packages/share_plus (Verified)
   file_picker: ^10.0.0                        # https://pub.dev/packages/file_picker (Verified)
   fixnum: ^1.1.1                              # https://pub.dev/packages/fixnum (Dart)
   flutter_email_sender: ^8.0.0                # https://pub.dev/packages/flutter_email_sender

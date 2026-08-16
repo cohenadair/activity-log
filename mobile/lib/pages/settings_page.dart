@@ -334,13 +334,12 @@ class SettingsPageState extends State<SettingsPage> {
 
     setState(onDone);
 
-    try {
-      await Share.shareXFiles([
-        XFile(path, mimeType: mimeType),
-      ], sharePositionOrigin: sharePositionOrigin);
-    } catch (e) {
-      _log.e(e, reason: "Failed to share file");
-    }
+    await SharePlus.instance.share(
+      ShareParams(
+        files: [XFile(path, mimeType: mimeType)],
+        sharePositionOrigin: sharePositionOrigin,
+      ),
+    );
   }
 
   void _startImport() async {
