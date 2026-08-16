@@ -138,7 +138,7 @@ class DataManager implements Manager {
       );
     }
 
-    return results.first["current_live_activity_id"] as String;
+    return results.first["current_live_activity_id"] as String?;
   }
 
   Future<List<Activity>> getActivities(List<String> ids) async {
