@@ -576,6 +576,16 @@ void main() {
     expect(liveActivityId, isNull);
   });
 
+  test("currentLiveActivityId returns null if column value is null", () async {
+    when(database.rawQuery(any, any)).thenAnswer(
+      (_) => Future.value([
+        {"current_live_activity_id": null},
+      ]),
+    );
+
+    expect(await DataManager.get.currentLiveActivityId("test-id"), isNull);
+  });
+
   test(
     "currentLiveActivityId returns first ID if multiple are returned",
     () async {
