@@ -408,6 +408,37 @@ void main() {
         await initManager();
         await emitSessionEvent(.updated);
       });
+      expect(
+        logs.last.contains(
+          "Live activity not found; not allowed or dismissed by user",
+        ),
+        isTrue,
+      );
+
+      final result = verify(managers.dataManager.updateActivity(captureAny));
+      result.called(1);
+      expect((result.captured.first as Activity).currentLiveActivityId, isNull);
+    },
+  );
+
+  test(
+    "On session updated clears the stale ID for an unknown update exception",
+    () async {
+      when(managers.subscriptionManager.isFree).thenReturn(false);
+      when(
+        managers.dataManager.currentLiveActivityId(any),
+      ).thenAnswer((_) => Future.value("live-activity-id"));
+      when(
+        managers.dataManager.activity(any),
+      ).thenAnswer((_) => Future.value(ActivityBuilder("Test").build));
+      when(liveActivities.updateActivity(any, any)).thenAnswer(
+        (_) => throw PlatformException(code: "Test", message: "Test exception"),
+      );
+
+      final logs = await capturePrintStatements(() async {
+        await initManager();
+        await emitSessionEvent(.updated);
+      });
       expect(logs.last.contains("Live activity update"), isTrue);
 
       final result = verify(managers.dataManager.updateActivity(captureAny));
