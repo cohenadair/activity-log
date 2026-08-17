@@ -92,24 +92,28 @@ class SQLiteOpenHelper {
     );
   }
 
-  static void _onCreate(Database db, int version) {
+  static Future<void> _onCreate(Database db, int version) async {
     for (var schema in _schema) {
-      _executeSchema(db, schema);
+      await _executeSchema(db, schema);
     }
   }
 
-  static void _onUpgrade(Database db, int oldVersion, int newVersion) {
+  static Future<void> _onUpgrade(
+    Database db,
+    int oldVersion,
+    int newVersion,
+  ) async {
     for (int version = oldVersion; version < newVersion; ++version) {
       if (version >= _schema.length) {
         throw ArgumentError("Invalid database version: $newVersion");
       }
-      _executeSchema(db, _schema[version]);
+      await _executeSchema(db, _schema[version]);
     }
   }
 
-  static void _executeSchema(Database db, List<String> schema) {
+  static Future<void> _executeSchema(Database db, List<String> schema) async {
     for (var query in schema) {
-      db.execute(query);
+      await db.execute(query);
     }
   }
 }
