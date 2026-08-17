@@ -183,7 +183,11 @@ class LiveActivitiesManager implements Manager {
         "session_start_timestamp": session.startTimestamp,
       });
     } on PlatformException catch (e) {
-      _log.e(e, reason: "Live activity update");
+      if (e.code == "ACTIVITY_ERROR") {
+        _log.d("Live activity not found; not allowed or dismissed by user");
+      } else {
+        _log.e(e, reason: "Live activity update");
+      }
 
       // The live activity no longer exists on the OS side (e.g. dismissed
       // by the user, or permission was revoked) — clear the stale ID so
