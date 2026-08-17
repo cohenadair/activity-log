@@ -387,6 +387,35 @@ void main() {
     expect(result.captured.last["activity_name"], "Test");
   });
 
+  test(
+    "On session updated clears the stale ID when the live activity no longer exists",
+    () async {
+      when(managers.subscriptionManager.isFree).thenReturn(false);
+      when(
+        managers.dataManager.currentLiveActivityId(any),
+      ).thenAnswer((_) => Future.value("live-activity-id"));
+      when(
+        managers.dataManager.activity(any),
+      ).thenAnswer((_) => Future.value(ActivityBuilder("Test").build));
+      when(liveActivities.updateActivity(any, any)).thenAnswer(
+        (_) => throw PlatformException(
+          code: "ACTIVITY_ERROR",
+          message: "Activity not found",
+        ),
+      );
+
+      final logs = await capturePrintStatements(() async {
+        await initManager();
+        await emitSessionEvent(.updated);
+      });
+      expect(logs.last.contains("Live activity update"), isTrue);
+
+      final result = verify(managers.dataManager.updateActivity(captureAny));
+      result.called(1);
+      expect((result.captured.first as Activity).currentLiveActivityId, isNull);
+    },
+  );
+
   test("On session ended exits early if the user is free", () async {
     when(managers.subscriptionManager.isFree).thenReturn(true);
     await initManager();

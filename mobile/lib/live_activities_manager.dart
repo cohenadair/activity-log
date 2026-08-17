@@ -172,14 +172,28 @@ class LiveActivitiesManager implements Manager {
 
     _log.d("Sending update request: ${session.activityId}");
 
-    // Android's live activity notification is rebuilt from scratch on every
-    // update call (unlike iOS, which reads persisted values by key), so all
-    // fields consumed by CustomLiveActivityManager must be resent here.
-    await _liveActivities.updateActivity(id!, {
-      "activity_id": activity.id,
-      "activity_name": activity.name,
-      "session_start_timestamp": session.startTimestamp,
-    });
+    try {
+      // Android's live activity notification is rebuilt from scratch on
+      // every update call (unlike iOS, which reads persisted values by
+      // key), so all fields consumed by CustomLiveActivityManager must be
+      // resent here.
+      await _liveActivities.updateActivity(id!, {
+        "activity_id": activity.id,
+        "activity_name": activity.name,
+        "session_start_timestamp": session.startTimestamp,
+      });
+    } on PlatformException catch (e) {
+      _log.e(e, reason: "Live activity update");
+
+      // The live activity no longer exists on the OS side (e.g. dismissed
+      // by the user, or permission was revoked) — clear the stale ID so
+      // later updates for this session stop retrying against it.
+      await DataManager.get.updateActivity(
+        (ActivityBuilder.fromActivity(
+          activity,
+        )..currentLiveActivityId = null).build,
+      );
+    }
   }
 
   Future<void> _onSessionEndedOrDeleted(Session session) async {
