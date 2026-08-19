@@ -38,7 +38,7 @@ dependencies:
   path_provider: ^2.1.5                       # https://pub.dev/packages/path_provider
   quiver: ^3.2.2                              # https://pub.dev/packages/quiver
   shared_preferences: ^2.5.3                  # https://pub.dev/packages/shared_preferences
-  shared_preference_app_group: ^1.1.1         # https://pub.dev/packages/shared_preference_app_group
+  shared_preference_app_group: ^2.1.0         # https://pub.dev/packages/shared_preference_app_group
   shared_preferences_android: ^2.4.15         # https://pub.dev/packages/shared_preferences_android
   sqflite: ^2.4.2                             # https://pub.dev/packages/sqflite
   url_launcher: ^6.3.1                        # https://pub.dev/packages/url_launcher
