@@ -79,6 +79,7 @@ flutter:
   uses-material-design: true
 
   assets:
+    - assets/app.svg
     - assets/feedback_template
     - assets/sensitive.properties
 

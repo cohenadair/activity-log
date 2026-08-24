@@ -20,7 +20,7 @@ void main() {
   setUp(() async {
     managers = await StubbedManagers.create();
 
-    when(managers.appConfig.appIcon).thenReturn(Icons.add);
+    when(managers.appConfig.proLogo).thenReturn("assets/app.svg");
     when(managers.appConfig.appName).thenReturn(() => "Activity Log");
 
     when(

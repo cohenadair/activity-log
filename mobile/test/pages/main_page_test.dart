@@ -67,7 +67,7 @@ void main() {
       ),
     ).thenAnswer((_) => Future.value());
 
-    when(managers.appConfig.appIcon).thenReturn(Icons.add);
+    when(managers.appConfig.proLogo).thenReturn("assets/app.svg");
     when(managers.appConfig.appName).thenReturn(() => "Activity Log");
     when(managers.ioWrapper.isAndroid).thenReturn(true);
     when(managers.ioWrapper.isIOS).thenReturn(false);

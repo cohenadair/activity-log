@@ -12,7 +12,6 @@ import 'package:mobile/l10n/syncfusion_localizations.dart';
 import 'package:mobile/live_activities_manager.dart';
 import 'package:mobile/pages/main_page.dart';
 import 'package:mobile/preferences_manager.dart';
-import 'package:mobile/res/gen/custom_icons.dart';
 
 import 'database/data_manager.dart';
 import 'report_manager.dart';
@@ -38,7 +37,8 @@ class ActivityLogState extends State<ActivityLog> {
     AppConfig.get.init(
       appName: () => "Activity Log",
       companyName: () => "Cohen Adair",
-      appIcon: CustomIcons.app,
+      landingLogo: "assets/app.svg",
+      proLogo: "assets/app.svg",
       colorAppTheme: Colors.green,
     );
 

@@ -54,7 +54,7 @@ void main() {
       managers.dataManager.sessionStream,
     ).thenAnswer((_) => const Stream.empty());
 
-    when(managers.appConfig.appIcon).thenReturn(Icons.home);
+    when(managers.appConfig.proLogo).thenReturn("assets/app.svg");
     when(managers.appConfig.appName).thenReturn(() => "Activity Log");
   });
 
