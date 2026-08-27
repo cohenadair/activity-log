@@ -774,6 +774,42 @@
         },
         "screenshot": ""
       }
+    ],
+    "macos": [
+      {
+        "id": "s_mtatq02w_i",
+        "layout": "hero",
+        "label": {
+          "en": "MEET YOUR APP"
+        },
+        "headline": {
+          "en": "Made for\nthe desktop."
+        },
+        "screenshot": ""
+      },
+      {
+        "id": "s_mtatq02w_j",
+        "layout": "device-bottom",
+        "label": {
+          "en": "FEATURE 01"
+        },
+        "headline": {
+          "en": "Room to\nfocus."
+        },
+        "screenshot": ""
+      },
+      {
+        "id": "s_mtatq02w_k",
+        "layout": "device-top",
+        "label": {
+          "en": "FEATURE 02"
+        },
+        "headline": {
+          "en": "Built for\nyour workflow."
+        },
+        "screenshot": "",
+        "inverted": true
+      }
     ]
   },
   "crossScreenMockupsByDevice": {
@@ -783,5 +819,6 @@
     "android-7": [],
     "android-10": [],
     "feature-graphic": []
-  }
+  },
+  "tenants": []
 }
