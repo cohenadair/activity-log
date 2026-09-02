@@ -7,7 +7,7 @@
     "en"
   ],
   "locale": "en",
-  "device": "iphone",
+  "device": "ipad",
   "orientation": "portrait",
   "appIcon": "",
   "slidesByDevice": {
@@ -19,19 +19,9 @@
           "en": "THE HOOK"
         },
         "headline": {
-          "en": "Know where \nyour day went\n"
+          "en": "Know where \nyour day went"
         },
-        "screenshot": "/screenshots/apple/iphone/en/01.png",
-        "transforms": {
-          "caption": {
-            "x": 105.60000000000001,
-            "y": 229.44,
-            "width": 1108.8,
-            "height": 803.04,
-            "rotation": 0,
-            "zIndex": 4
-          }
-        }
+        "screenshot": "/screenshots/apple/iphone/en/01.png"
       },
       {
         "id": "al_iphone_2",
@@ -86,7 +76,7 @@
           "en": "POWER"
         },
         "headline": {
-          "en": "Organize however you need"
+          "en": "Organize however\nyou need"
         },
         "screenshot": "/screenshots/apple/iphone/en/06.png",
         "inverted": true
@@ -811,6 +801,16 @@
         "inverted": true
       }
     ]
+  },
+  "theme": {
+    "id": "activity-log-green",
+    "name": "Activity Log Green",
+    "bg": "#E8F5E9",
+    "bgAlt": "#2E7D32",
+    "fg": "#1B5E20",
+    "fgAlt": "#FFFFFF",
+    "accent": "#4CAF50",
+    "muted": "#558B5A"
   },
   "crossScreenMockupsByDevice": {
     "iphone": [],
