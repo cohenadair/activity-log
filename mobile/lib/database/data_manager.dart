@@ -296,8 +296,11 @@ class DataManager implements Manager {
 
     final session = await getSession(currentSessionId);
     if (session == null) {
-      // Shouldn't really happen.
-      _log.e(Exception("Cannot find ended session"));
+      // Can happen if the session was deleted (e.g. via EditSessionPage,
+      // or a racing native live-activity "end" replay) between the update
+      // above and this fetch. The DB is already consistent at this point,
+      // so this is a benign, expected miss rather than a bug.
+      _log.d("Cannot find ended session");
     } else {
       _sessionController.add(SessionEvent(.ended, session));
     }

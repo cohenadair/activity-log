@@ -137,6 +137,14 @@ class LiveActivitiesManager implements Manager {
         return;
       }
 
+      if (e.details is String &&
+          e.details.contains("Maximum number of activities")) {
+        // iOS enforces a system-wide cap on concurrent live activities;
+        // hitting it is an expected OS constraint, not an app bug.
+        _log.d("Maximum number of concurrent live activities reached");
+        return;
+      }
+
       _log.e(e, reason: "Live activity creation");
       return;
     }
