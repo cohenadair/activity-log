@@ -683,7 +683,7 @@ void main() {
   });
 
   test(
-    "endSession logs an exception if ended session can't be found",
+    "endSession logs a debug message if ended session can't be found",
     () async {
       final logs = await capturePrintStatements(() async {
         await DataManager.get.endSession(
@@ -691,6 +691,7 @@ void main() {
         );
       });
       expect(logs.length, 1);
+      expect(logs.first.startsWith("D/"), isTrue);
       expect(logs.first.contains("Cannot find ended session"), isTrue);
     },
   );
