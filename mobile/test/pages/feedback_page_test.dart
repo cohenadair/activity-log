@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:adair_flutter_lib/managers/email_manager.dart';
 import 'package:adair_flutter_lib/widgets/loading.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -67,10 +68,15 @@ void main() {
         replyToName: anyNamed("replyToName"),
         subject: anyNamed("subject"),
         text: anyNamed("text"),
+        userMessage: anyNamed("userMessage"),
         attachments: anyNamed("attachments"),
+        isSpamFilterEnabled: anyNamed("isSpamFilterEnabled"),
       ),
     ).thenAnswer(
-      (_) => Future.delayed(const Duration(milliseconds: 50), () => true),
+      (_) => Future.delayed(
+        const Duration(milliseconds: 50),
+        () => EmailSendResult.sent,
+      ),
     );
   });
 
@@ -169,7 +175,9 @@ void main() {
         replyToName: anyNamed("replyToName"),
         subject: anyNamed("subject"),
         text: captureAnyNamed("text"),
+        userMessage: anyNamed("userMessage"),
         attachments: anyNamed("attachments"),
+        isSpamFilterEnabled: anyNamed("isSpamFilterEnabled"),
       ),
     );
     result.called(1);
@@ -195,7 +203,9 @@ void main() {
         replyToName: anyNamed("replyToName"),
         subject: anyNamed("subject"),
         text: captureAnyNamed("text"),
+        userMessage: anyNamed("userMessage"),
         attachments: anyNamed("attachments"),
+        isSpamFilterEnabled: anyNamed("isSpamFilterEnabled"),
       ),
     );
     result.called(1);
@@ -214,9 +224,11 @@ void main() {
         replyToName: anyNamed("replyToName"),
         subject: anyNamed("subject"),
         text: anyNamed("text"),
+        userMessage: anyNamed("userMessage"),
         attachments: anyNamed("attachments"),
+        isSpamFilterEnabled: anyNamed("isSpamFilterEnabled"),
       ),
-    ).thenAnswer((_) => Future.value(false));
+    ).thenAnswer((_) => Future.value(EmailSendResult.failed));
 
     when(managers.ioWrapper.isIOS).thenReturn(true);
     managers.lib.stubIosDeviceInfo();
@@ -243,9 +255,11 @@ void main() {
         replyToName: anyNamed("replyToName"),
         subject: anyNamed("subject"),
         text: anyNamed("text"),
+        userMessage: anyNamed("userMessage"),
         attachments: anyNamed("attachments"),
+        isSpamFilterEnabled: anyNamed("isSpamFilterEnabled"),
       ),
-    ).thenAnswer((_) => Future.value(false));
+    ).thenAnswer((_) => Future.value(EmailSendResult.failed));
 
     when(managers.ioWrapper.isIOS).thenReturn(true);
     managers.lib.stubIosDeviceInfo();
@@ -268,10 +282,15 @@ void main() {
         replyToName: anyNamed("replyToName"),
         subject: anyNamed("subject"),
         text: anyNamed("text"),
+        userMessage: anyNamed("userMessage"),
         attachments: anyNamed("attachments"),
+        isSpamFilterEnabled: anyNamed("isSpamFilterEnabled"),
       ),
     ).thenAnswer(
-      (_) => Future.delayed(const Duration(milliseconds: 50), () => true),
+      (_) => Future.delayed(
+        const Duration(milliseconds: 50),
+        () => EmailSendResult.sent,
+      ),
     );
 
     await tester.tap(find.text("SEND"));
@@ -303,7 +322,9 @@ void main() {
         replyToName: anyNamed("replyToName"),
         subject: anyNamed("subject"),
         text: captureAnyNamed("text"),
+        userMessage: anyNamed("userMessage"),
         attachments: anyNamed("attachments"),
+        isSpamFilterEnabled: anyNamed("isSpamFilterEnabled"),
       ),
     );
     result.called(1);
@@ -331,7 +352,9 @@ void main() {
         replyToName: anyNamed("replyToName"),
         subject: anyNamed("subject"),
         text: captureAnyNamed("text"),
+        userMessage: anyNamed("userMessage"),
         attachments: anyNamed("attachments"),
+        isSpamFilterEnabled: anyNamed("isSpamFilterEnabled"),
       ),
     );
     result.called(1);
@@ -389,5 +412,60 @@ void main() {
     );
     await tapAndSettle(tester, find.text("OK"));
     expect(find.byType(FeedbackPage), findsNothing);
+  });
+
+  testWidgets("Rate limited send shows wait dialog", (tester) async {
+    managers.lib.stubIosDeviceInfo();
+    when(managers.ioWrapper.isIOS).thenReturn(true);
+    when(
+      managers.lib.emailManager.send(
+        appName: anyNamed("appName"),
+        replyToEmail: anyNamed("replyToEmail"),
+        replyToName: anyNamed("replyToName"),
+        subject: anyNamed("subject"),
+        text: anyNamed("text"),
+        userMessage: anyNamed("userMessage"),
+        attachments: anyNamed("attachments"),
+        isSpamFilterEnabled: anyNamed("isSpamFilterEnabled"),
+      ),
+    ).thenAnswer((_) => Future.value(EmailSendResult.rateLimited));
+
+    await pumpContext(tester, (_) => FeedbackPage());
+    await enterTextFieldAndSettle(tester, "Message", "Test");
+    await tapAndSettle(tester, find.text("SEND"));
+
+    expect(find.text("Please Wait"), findsOneWidget);
+    verifyNever(managers.preferencesManager.setUserInfo(any, any));
+
+    await tapAndSettle(tester, find.text("OK"));
+    expect(find.byType(FeedbackPage), findsOneWidget);
+    expect(find.text("SEND"), findsOneWidget);
+  });
+
+  testWidgets("Submitting while sending does not send again", (tester) async {
+    managers.lib.stubIosDeviceInfo();
+    when(managers.ioWrapper.isIOS).thenReturn(true);
+
+    await pumpContext(tester, (_) => FeedbackPage());
+    await enterTextFieldAndSettle(tester, "Message", "Test");
+    await tester.tap(find.text("SEND"));
+    await tester.pump();
+
+    // Submit via the keyboard while the first send is in flight.
+    await tester.testTextInput.receiveAction(TextInputAction.send);
+    await tester.pumpAndSettle(const Duration(milliseconds: 50));
+
+    verify(
+      managers.lib.emailManager.send(
+        appName: anyNamed("appName"),
+        replyToEmail: anyNamed("replyToEmail"),
+        replyToName: anyNamed("replyToName"),
+        subject: anyNamed("subject"),
+        text: anyNamed("text"),
+        userMessage: "Test",
+        attachments: anyNamed("attachments"),
+        isSpamFilterEnabled: anyNamed("isSpamFilterEnabled"),
+      ),
+    ).called(1);
   });
 }

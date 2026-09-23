@@ -1,3 +1,4 @@
+import 'package:adair_flutter_lib/l10n/gen/adair_flutter_lib_localizations.dart';
 import 'package:adair_flutter_lib/managers/email_manager.dart';
 import 'package:adair_flutter_lib/managers/properties_manager.dart';
 import 'package:adair_flutter_lib/managers/subscription_manager.dart';
@@ -128,6 +129,10 @@ class _FeedbackPageState extends State<FeedbackPage> {
   }
 
   void _send() async {
+    if (_isSending) {
+      return;
+    }
+
     // Check for valid input.
     if (!_formKey.currentState!.validate()) {
       showErrorSnackBar(
@@ -137,23 +142,24 @@ class _FeedbackPageState extends State<FeedbackPage> {
       return;
     }
 
+    setState(() {
+      _isSending = true;
+      _showSendError = false;
+    });
+
     // Check internet connection.
     if (!await isConnected()) {
       if (!mounted) {
         return;
       }
 
+      setState(() => _isSending = false);
       showErrorSnackBar(
         context,
         Strings.of(context).feedbackPageConnectionError,
       );
       return;
     }
-
-    setState(() {
-      _isSending = true;
-      _showSendError = false;
-    });
 
     // Gather app and device info.
     var appVersion = (await PackageInfoWrapper.get.fromPlatform()).version;
@@ -195,36 +201,21 @@ class _FeedbackPageState extends State<FeedbackPage> {
       message,
     ]);
 
-    var sent = await EmailManager.get.send(
+    var result = await EmailManager.get.send(
       appName: "Activity Log",
       replyToEmail: email,
       replyToName: name,
       subject: "User Feedback",
       text: text,
+      userMessage: message,
     );
 
-    if (!sent) {
+    if (result == EmailSendResult.failed) {
       _log.e(
         Exception("Error sending feedback"),
         reason: "Sending in-app feedback",
       );
-
-      if (!mounted) {
-        return;
-      }
-
-      setState(() {
-        _isSending = false;
-        _showSendError = true;
-      });
-
-      return;
     }
-
-    PreferencesManager.get.setUserInfo(
-      _nameController.text,
-      _emailController.text,
-    );
 
     if (!mounted) {
       return;
@@ -232,15 +223,34 @@ class _FeedbackPageState extends State<FeedbackPage> {
 
     setState(() {
       _isSending = false;
-      _showSendError = false;
+      _showSendError = result == EmailSendResult.failed;
     });
 
-    // Confirm feedback has been sent.
-    showOkDialog(
-      context: context,
-      description: Text(Strings.of(context).feedbackPageConfirmation),
-      onTapOk: () => Navigator.of(context).pop(),
-    );
+    switch (result) {
+      case EmailSendResult.failed:
+        return;
+      case EmailSendResult.rateLimited:
+        showOkDialog(
+          context: context,
+          title: AdairFlutterLibLocalizations.of(context).emailRateLimitedTitle,
+          description: Text(
+            AdairFlutterLibLocalizations.of(context).emailRateLimitedMessage,
+          ),
+        );
+        return;
+      case EmailSendResult.sent:
+        PreferencesManager.get.setUserInfo(
+          _nameController.text,
+          _emailController.text,
+        );
+
+        // Confirm feedback has been sent.
+        showOkDialog(
+          context: context,
+          description: Text(Strings.of(context).feedbackPageConfirmation),
+          onTapOk: () => Navigator.of(context).pop(),
+        );
+    }
   }
 
   String? _validateEmail(String? email) {
