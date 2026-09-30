@@ -10,7 +10,7 @@ import 'package:mobile/utils/date_range.dart';
 import 'package:mobile/utils/duration.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class PreferencesManager implements Manager {
+class PreferencesManager extends Manager {
   static var _instance = PreferencesManager._();
 
   static PreferencesManager get get => _instance;

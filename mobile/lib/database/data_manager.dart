@@ -22,7 +22,7 @@ import '../notification_manager.dart';
 import '../preferences_manager.dart';
 import '../utils/database.dart';
 
-class DataManager implements Manager {
+class DataManager extends Manager {
   static var _instance = DataManager._();
 
   static DataManager get get => _instance;

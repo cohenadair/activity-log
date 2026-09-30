@@ -6,7 +6,7 @@ import 'package:mobile/model/report.dart';
 import 'package:mobile/utils/database.dart';
 import 'package:sqflite/sqflite.dart';
 
-class ReportManager implements Manager {
+class ReportManager extends Manager {
   static var _instance = ReportManager._();
 
   static ReportManager get get => _instance;

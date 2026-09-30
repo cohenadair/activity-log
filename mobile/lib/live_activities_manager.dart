@@ -25,7 +25,7 @@ import 'package:shared_preferences_android/shared_preferences_android.dart';
 
 import 'model/session.dart';
 
-class LiveActivitiesManager implements Manager {
+class LiveActivitiesManager extends Manager {
   static var _instance = LiveActivitiesManager._();
 
   static LiveActivitiesManager get get => _instance;
