@@ -22,6 +22,9 @@ dependencies:
   adair_flutter_lib:
     # ignore: invalid_dependency
     path: ../../adair-flutter-lib
+  adair_install_attribution:
+    # ignore: invalid_dependency
+    path: ../../adair-flutter-lib/packages/install-attribution
 
   community_charts_flutter: ^1.0.4            # https://pub.dev/packages/community_charts_flutter
   collection: ^1.19.1                         # https://pub.dev/packages/collection (Dart)

@@ -6,6 +6,7 @@ import 'package:adair_flutter_lib/managers/time_manager.dart';
 import 'package:adair_flutter_lib/res/theme.dart';
 import 'package:adair_flutter_lib/utils/firebase_setup.dart';
 import 'package:adair_flutter_lib/widgets/adair_flutter_lib_app.dart';
+import 'package:adair_install_attribution/install_attribution_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile/i18n/strings.dart';
 import 'package:mobile/l10n/syncfusion_localizations.dart';
@@ -53,6 +54,7 @@ class ActivityLogState extends State<ActivityLog> {
         PropertiesManager.get,
         SubscriptionManager.get,
         AppReviewManager.get,
+        InstallAttributionManager.get,
 
         // App managers.
         PreferencesManager.get,
