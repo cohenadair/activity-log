@@ -7,9 +7,9 @@
     "en"
   ],
   "locale": "en",
-  "device": "ipad",
+  "device": "feature-graphic",
   "orientation": "portrait",
-  "appIcon": "",
+  "appIcon": "app-icon.png",
   "slidesByDevice": {
     "iphone": [
       {
@@ -323,9 +323,9 @@
         "transforms": {
           "device": {
             "x": 245.76,
-            "y": 420.2900000000001,
+            "y": 408.2666189111749,
             "width": 1428.48,
-            "height": 892.8,
+            "height": 916.8467621776504,
             "rotation": 0,
             "zIndex": 3
           },
@@ -354,9 +354,9 @@
         "transforms": {
           "device": {
             "x": 245.76,
-            "y": 420.2900000000001,
+            "y": 408.2666189111749,
             "width": 1428.48,
-            "height": 892.8,
+            "height": 916.8467621776504,
             "rotation": 0,
             "zIndex": 3
           },
@@ -384,9 +384,9 @@
         "transforms": {
           "device": {
             "x": 245.76,
-            "y": 420.2900000000001,
+            "y": 408.2666189111749,
             "width": 1428.48,
-            "height": 892.8,
+            "height": 916.8467621776504,
             "rotation": 0,
             "zIndex": 3
           },
@@ -415,9 +415,9 @@
         "transforms": {
           "device": {
             "x": 245.76,
-            "y": 420.2900000000001,
+            "y": 408.2666189111749,
             "width": 1428.48,
-            "height": 892.8,
+            "height": 916.8467621776504,
             "rotation": 0,
             "zIndex": 3
           },
@@ -445,9 +445,9 @@
         "transforms": {
           "device": {
             "x": 245.76,
-            "y": 420.2900000000001,
+            "y": 408.2666189111749,
             "width": 1428.48,
-            "height": 892.8,
+            "height": 916.8467621776504,
             "rotation": 0,
             "zIndex": 3
           },
@@ -476,9 +476,9 @@
         "transforms": {
           "device": {
             "x": 245.76,
-            "y": 420.2900000000001,
+            "y": 408.2666189111749,
             "width": 1428.48,
-            "height": 892.8,
+            "height": 916.8467621776504,
             "rotation": 0,
             "zIndex": 3
           },
@@ -583,9 +583,9 @@
         "transforms": {
           "device": {
             "x": 327.68,
-            "y": 560.3799999999999,
+            "y": 544.3488252148996,
             "width": 1904.64,
-            "height": 1190.4,
+            "height": 1222.4623495702006,
             "rotation": 0,
             "zIndex": 3
           },
@@ -614,9 +614,9 @@
         "transforms": {
           "device": {
             "x": 327.68,
-            "y": 560.3799999999999,
+            "y": 544.3488252148996,
             "width": 1904.64,
-            "height": 1190.4,
+            "height": 1222.4623495702006,
             "rotation": 0,
             "zIndex": 3
           },
@@ -644,9 +644,9 @@
         "transforms": {
           "device": {
             "x": 327.68,
-            "y": 560.3799999999999,
+            "y": 544.3488252148996,
             "width": 1904.64,
-            "height": 1190.4,
+            "height": 1222.4623495702006,
             "rotation": 0,
             "zIndex": 3
           },
@@ -675,9 +675,9 @@
         "transforms": {
           "device": {
             "x": 327.68,
-            "y": 560.3799999999999,
+            "y": 544.3488252148996,
             "width": 1904.64,
-            "height": 1190.4,
+            "height": 1222.4623495702006,
             "rotation": 0,
             "zIndex": 3
           },
@@ -705,9 +705,9 @@
         "transforms": {
           "device": {
             "x": 327.68,
-            "y": 560.3799999999999,
+            "y": 544.3488252148996,
             "width": 1904.64,
-            "height": 1190.4,
+            "height": 1222.4623495702006,
             "rotation": 0,
             "zIndex": 3
           },
@@ -736,9 +736,9 @@
         "transforms": {
           "device": {
             "x": 327.68,
-            "y": 560.3799999999999,
+            "y": 544.3488252148996,
             "width": 1904.64,
-            "height": 1190.4,
+            "height": 1222.4623495702006,
             "rotation": 0,
             "zIndex": 3
           },
@@ -757,12 +757,46 @@
     "feature-graphic": [
       {
         "id": "al_fg_1",
-        "layout": "feature-graphic",
-        "label": {},
-        "headline": {
-          "en": "Know where your time goes."
+        "layout": "banner",
+        "label": {
+          "en": "One tap to start. One tap to stop."
         },
-        "screenshot": ""
+        "headline": {
+          "en": "Know where your time actually goes"
+        },
+        "screenshot": "screenshots/android/phone/{locale}/01.png",
+        "screenshotSecondary": "screenshots/android/phone/{locale}/05.png",
+        "bannerFrame": "phone"
+      }
+    ],
+    "app-store-header": [
+      {
+        "id": "al_hdr_1",
+        "layout": "banner",
+        "label": {
+          "en": "One tap to start. One tap to stop."
+        },
+        "headline": {
+          "en": "Know where your time actually goes"
+        },
+        "screenshot": "screenshots/apple/iphone/{locale}/01.png",
+        "screenshotSecondary": "screenshots/apple/iphone/{locale}/05.png",
+        "bannerFrame": "phone"
+      }
+    ],
+    "app-store-search": [
+      {
+        "id": "al_srch_1",
+        "layout": "banner",
+        "label": {
+          "en": "One tap to start. One tap to stop."
+        },
+        "headline": {
+          "en": "Know where your time actually goes"
+        },
+        "screenshot": "screenshots/apple/iphone/{locale}/01.png",
+        "screenshotSecondary": "screenshots/apple/iphone/{locale}/05.png",
+        "bannerFrame": "phone"
       }
     ],
     "macos": [
