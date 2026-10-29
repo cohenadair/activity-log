@@ -7,7 +7,7 @@
     "en"
   ],
   "locale": "en",
-  "device": "feature-graphic",
+  "device": "android-7",
   "orientation": "portrait",
   "appIcon": "app-icon.png",
   "slidesByDevice": {

@@ -1,7 +1,7 @@
 # App Store Screenshots — Assets
 
 This folder holds **Activity Log's** project config and raw screenshots for
-the shared [`screenshots`](../../screenshots) tool — the
+the shared [`screenshots/studio`](../../../screenshots/studio) tool — the
 editor used to design and export App Store / Google Play marketing
 screenshots.
 
@@ -12,7 +12,7 @@ shared tool's editor, not by hand-editing files here.
 
 To work on this project's screenshots:
 
-1. From the `screenshots` repo, run the dev server (see its
+1. From `screenshots/studio`, run the dev server (see its
    README for setup).
 2. Open the editor and select **Activity Log** from the project picker.
 
