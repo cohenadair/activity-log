@@ -513,6 +513,15 @@ class MockDataManager extends _i1.Mock implements _i11.DataManager {
             ),
           )
           as _i5.Future<List<_i12.ActivityListTileModel>>);
+
+  @override
+  _i5.Future<void> onSignOut() =>
+      (super.noSuchMethod(
+            Invocation.method(#onSignOut, []),
+            returnValue: _i5.Future<void>.value(),
+            returnValueForMissingStub: _i5.Future<void>.value(),
+          )
+          as _i5.Future<void>);
 }
 
 /// A class which mocks [PreferencesManager].
@@ -678,6 +687,15 @@ class MockPreferencesManager extends _i1.Mock
   _i5.Future<void> setUserInfo(String? name, String? email) =>
       (super.noSuchMethod(
             Invocation.method(#setUserInfo, [name, email]),
+            returnValue: _i5.Future<void>.value(),
+            returnValueForMissingStub: _i5.Future<void>.value(),
+          )
+          as _i5.Future<void>);
+
+  @override
+  _i5.Future<void> onSignOut() =>
+      (super.noSuchMethod(
+            Invocation.method(#onSignOut, []),
             returnValue: _i5.Future<void>.value(),
             returnValueForMissingStub: _i5.Future<void>.value(),
           )
@@ -1344,6 +1362,15 @@ class MockLiveActivitiesManager extends _i1.Mock
             returnValue: _i5.Future<bool>.value(false),
           )
           as _i5.Future<bool>);
+
+  @override
+  _i5.Future<void> onSignOut() =>
+      (super.noSuchMethod(
+            Invocation.method(#onSignOut, []),
+            returnValue: _i5.Future<void>.value(),
+            returnValueForMissingStub: _i5.Future<void>.value(),
+          )
+          as _i5.Future<void>);
 }
 
 /// A class which mocks [LiveActivitiesWrapper].
@@ -1637,6 +1664,15 @@ class MockNotificationManager extends _i1.Mock
             returnValueForMissingStub: _i5.Future<void>.value(),
           )
           as _i5.Future<void>);
+
+  @override
+  _i5.Future<void> onSignOut() =>
+      (super.noSuchMethod(
+            Invocation.method(#onSignOut, []),
+            returnValue: _i5.Future<void>.value(),
+            returnValueForMissingStub: _i5.Future<void>.value(),
+          )
+          as _i5.Future<void>);
 }
 
 /// A class which mocks [SharedPreferencesAsync].
@@ -1886,6 +1922,15 @@ class MockReportManager extends _i1.Mock implements _i28.ReportManager {
   _i5.Future<void> removeReport(String? id) =>
       (super.noSuchMethod(
             Invocation.method(#removeReport, [id]),
+            returnValue: _i5.Future<void>.value(),
+            returnValueForMissingStub: _i5.Future<void>.value(),
+          )
+          as _i5.Future<void>);
+
+  @override
+  _i5.Future<void> onSignOut() =>
+      (super.noSuchMethod(
+            Invocation.method(#onSignOut, []),
             returnValue: _i5.Future<void>.value(),
             returnValueForMissingStub: _i5.Future<void>.value(),
           )
