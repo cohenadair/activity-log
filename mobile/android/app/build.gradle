@@ -60,17 +60,24 @@ android {
     }
 
     signingConfigs {
-        release {
-            keyAlias keystoreProperties['keyAlias']
-            keyPassword keystoreProperties['keyPassword']
-            storeFile file(keystoreProperties['storeFile'])
-            storePassword keystoreProperties['storePassword']
+        // Only define the release config when keystore.properties exists;
+        // `file(null)` throws at configuration time, which would also break
+        // debug builds.
+        if (keystorePropertiesFile.exists()) {
+            release {
+                keyAlias keystoreProperties['keyAlias']
+                keyPassword keystoreProperties['keyPassword']
+                storeFile file(keystoreProperties['storeFile'])
+                storePassword keystoreProperties['storePassword']
+            }
         }
     }
 
     buildTypes {
         release {
-            signingConfig signingConfigs.release
+            if (keystorePropertiesFile.exists()) {
+                signingConfig signingConfigs.release
+            }
         }
     }
 
@@ -82,6 +89,14 @@ android {
 
     kotlinOptions {
         jvmTarget = '17'
+    }
+}
+
+// Never produce an unsigned release build.
+gradle.taskGraph.whenReady { graph ->
+    if (!keystorePropertiesFile.exists() && graph.hasTask(":app:preReleaseBuild")) {
+        throw new GradleException("Release builds require android/keystore.properties "
+                + "with the release signing credentials.")
     }
 }
 
