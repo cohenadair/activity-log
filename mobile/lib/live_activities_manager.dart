@@ -145,6 +145,14 @@ class LiveActivitiesManager extends Manager {
         return;
       }
 
+      if (e.details is String &&
+          e.details.contains("Target is not foreground")) {
+        // iOS only starts live activities while the app is in the
+        // foreground; a session started in the background is expected.
+        _log.d("App isn't in the foreground; skipping live activity");
+        return;
+      }
+
       _log.e(e, reason: "Live activity creation");
       return;
     }
