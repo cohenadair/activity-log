@@ -100,8 +100,12 @@ class SessionsLineChartState extends State<SessionsLineChart> {
         selectionModels: [
           f_charts.SelectionModelConfig(
             changedListener: (f_charts.SelectionModel model) {
+              // Tapping away from a point clears the selection, leaving
+              // selectedDatum empty.
               setState(() {
-                _selectedSession = model.selectedDatum.first.datum;
+                _selectedSession = model.selectedDatum.isEmpty
+                    ? null
+                    : model.selectedDatum.first.datum;
               });
             },
           ),
