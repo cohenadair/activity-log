@@ -1,6 +1,6 @@
 import 'package:adair_flutter_lib/managers/manager.dart';
 import 'package:adair_flutter_lib/utils/void_stream_controller.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mobile/database/sqlite_open_helper.dart';
 import 'package:mobile/model/report.dart';
 import 'package:mobile/utils/database.dart';

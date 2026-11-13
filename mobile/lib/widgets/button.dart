@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mobile/i18n/strings.dart';
 
 /// A [TextButton] wrapper meant to be used as an action in an [AppBar].

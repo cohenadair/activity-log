@@ -4,7 +4,7 @@ import 'package:adair_flutter_lib/utils/device.dart';
 import 'package:adair_flutter_lib/utils/page.dart' as page;
 import 'package:adair_flutter_lib/widgets/async_builder.dart';
 import 'package:adair_flutter_lib/wrappers/io_wrapper.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mobile/l10n/l10n_extension.dart';
 import 'package:mobile/live_activities_manager.dart';
 

@@ -2,9 +2,9 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:adair_flutter_lib/res/theme.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mobile/database/data_manager.dart';
 import 'package:mobile/live_activities_manager.dart';
 import 'package:mobile/model/activity.dart';

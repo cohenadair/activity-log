@@ -12,7 +12,7 @@ import 'package:adair_flutter_lib/widgets/loading.dart';
 import 'package:adair_flutter_lib/wrappers/device_info_wrapper.dart';
 import 'package:adair_flutter_lib/wrappers/io_wrapper.dart';
 import 'package:adair_flutter_lib/wrappers/package_info_wrapper.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mobile/preferences_manager.dart';
 import 'package:mobile/widgets/button.dart';
 import 'package:mobile/widgets/my_page.dart';

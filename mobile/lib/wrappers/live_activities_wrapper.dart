@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:live_activities/live_activities.dart';
+import 'package:material_ui/material_ui.dart';
 
 class LiveActivitiesWrapper {
   static var _instance = LiveActivitiesWrapper._();

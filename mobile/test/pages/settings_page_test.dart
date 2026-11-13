@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:adair_flutter_lib/model/gen/adair_flutter_lib.pb.dart';
 import 'package:adair_flutter_lib/pages/pro_page.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mobile/pages/activity_log_pro_page.dart';
 import 'package:mobile/pages/settings_page.dart';

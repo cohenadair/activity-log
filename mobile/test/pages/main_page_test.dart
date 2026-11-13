@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:adair_flutter_lib/model/gen/adair_flutter_lib.pb.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mobile/database/data_manager.dart';
 import 'package:mobile/model/summarized_activity.dart';

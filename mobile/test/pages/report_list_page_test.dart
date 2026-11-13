@@ -1,6 +1,6 @@
 import 'package:adair_flutter_lib/model/gen/adair_flutter_lib.pb.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mobile/model/report.dart';
 import 'package:mobile/pages/edit_report_page.dart';
 import 'package:mobile/pages/report_list_page.dart';

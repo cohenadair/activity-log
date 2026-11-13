@@ -8,7 +8,7 @@ import 'package:adair_flutter_lib/utils/date_range.dart';
 import 'package:adair_flutter_lib/utils/log.dart';
 import 'package:adair_flutter_lib/utils/void_stream_controller.dart';
 import 'package:adair_flutter_lib/wrappers/io_wrapper.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mobile/database/sqlite_open_helper.dart';
 import 'package:mobile/model/activity.dart';
 import 'package:mobile/model/model.dart';

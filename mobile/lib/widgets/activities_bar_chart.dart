@@ -4,7 +4,7 @@ import 'package:adair_flutter_lib/res/theme.dart';
 import 'package:adair_flutter_lib/utils/duration.dart';
 import 'package:community_charts_flutter/community_charts_flutter.dart'
     as f_charts;
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mobile/i18n/strings.dart';
 import 'package:mobile/model/summarized_activity.dart';
 import 'package:mobile/preferences_manager.dart';
@@ -214,11 +214,11 @@ class _ActivitiesBarChartState extends State<_ActivitiesBarChart> {
         domainFn: (SummarizedActivity activity, _) => activity.value.name,
         measureFn: (SummarizedActivity activity, _) =>
             widget.onMeasure(activity),
-        colorFn: (_, __) =>
+        colorFn: (_, _) =>
             f_charts.ColorUtil.fromDartColor(AppConfig.get.colorAppTheme),
         labelAccessorFn: (SummarizedActivity activity, _) =>
             widget.onBuildLabel(activity),
-        outsideLabelStyleAccessorFn: (_, __) => f_charts.TextStyleSpec(
+        outsideLabelStyleAccessorFn: (_, _) => f_charts.TextStyleSpec(
           color: f_charts.ColorUtil.fromDartColor(context.colorText),
         ),
       ),

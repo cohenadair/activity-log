@@ -1,5 +1,5 @@
 import 'package:adair_flutter_lib/utils/color.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mobile/model/activity.dart';
 
 /// Returns a color for [activity] that is stable across app launches and

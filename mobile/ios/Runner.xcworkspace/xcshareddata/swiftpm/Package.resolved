@@ -50,8 +50,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/firebase/firebase-ios-sdk",
       "state" : {
-        "revision" : "8d5b4189f1f482df8d5c58c9985ea70491ef5382",
-        "version" : "12.14.0"
+        "revision" : "42cf1417c51c5e3bfbae5d3ab89b778f8fdc4bb8",
+        "version" : "12.19.3"
       }
     },
     {
@@ -59,8 +59,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/googleads/google-ads-on-device-conversion-ios-sdk",
       "state" : {
-        "revision" : "dc39082d8881109d35b94b1c122164c0e8d08a55",
-        "version" : "3.6.1"
+        "revision" : "0208e2681ec81f8a9c81084696f60fcce26cb7ee",
+        "version" : "3.7.0"
       }
     },
     {
@@ -68,8 +68,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/google/GoogleAppMeasurement.git",
       "state" : {
-        "revision" : "219e564a8510e983e675c94f77f7f7c50049f22d",
-        "version" : "12.14.0"
+        "revision" : "b8455dd2ff55cc269fda7a4f9eac6c1e3588c53f",
+        "version" : "12.19.2"
       }
     },
     {
@@ -86,8 +86,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/google/GoogleUtilities.git",
       "state" : {
-        "revision" : "9f183ae842be978784f2963a343682e0c46d8fb3",
-        "version" : "8.1.2"
+        "revision" : "5459ee5603def3db0fe14ca522185f42c48d978e",
+        "version" : "8.1.5"
       }
     },
     {
@@ -149,8 +149,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/RevenueCat/purchases-hybrid-common.git",
       "state" : {
-        "revision" : "a9d25f3d300cdb515b0cce464b59ebb29ad9ec14",
-        "version" : "18.10.0"
+        "revision" : "6af96ad29738d8f46120aa14705737d5b90d7c19",
+        "version" : "19.17.0"
       }
     },
     {
@@ -158,8 +158,17 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/RevenueCat/purchases-ios-spm",
       "state" : {
-        "revision" : "92e2804a6b84b3b7ce60bfe7e9ff63dc9524ef5b",
-        "version" : "5.76.0"
+        "revision" : "338022faafce4675788e405fbcaa4246aae2c93b",
+        "version" : "5.99.0"
+      }
+    },
+    {
+      "identity" : "recaptcha-enterprise-mobile-sdk",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/GoogleCloudPlatform/recaptcha-enterprise-mobile-sdk.git",
+      "state" : {
+        "revision" : "85588690041e63784be7bcb4b631c32565127ba2",
+        "version" : "18.9.1"
       }
     },
     {

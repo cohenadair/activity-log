@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mobile/database/data_manager.dart';
 import 'package:mobile/model/activity.dart';
 import 'package:mobile/model/session.dart';

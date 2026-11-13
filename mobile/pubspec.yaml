@@ -54,6 +54,7 @@ dependencies:
   syncfusion_flutter_xlsio: ^28.2.12          # https://pub.dev/packages/syncfusion_flutter_xlsio
   syncfusion_flutter_calendar: ^28.2.5        # https://pub.dev/packages/syncfusion_flutter_calendar
   syncfusion_flutter_core: ^28.2.5            # https://pub.dev/packages/syncfusion_flutter_core
+  material_ui: ^1.11.0
 
 dev_dependencies:
   flutter_test:

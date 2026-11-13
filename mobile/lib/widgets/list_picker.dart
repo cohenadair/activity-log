@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:adair_flutter_lib/res/dimen.dart';
 import 'package:adair_flutter_lib/utils/page.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mobile/model/activity.dart';
 import 'package:mobile/widgets/button.dart';
 import 'package:mobile/widgets/list_item.dart';

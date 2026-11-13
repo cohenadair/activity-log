@@ -1,6 +1,6 @@
 import 'dart:async' as d_async;
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 class Timer extends StatefulWidget {
   final int durationMillis;

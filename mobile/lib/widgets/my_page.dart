@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:adair_flutter_lib/res/dimen.dart';
 import 'package:adair_flutter_lib/res/theme.dart';
 import 'package:adair_flutter_lib/widgets/pro_chip_button.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mobile/pages/activity_log_pro_page.dart';
 
 class MyPageAppBarStyle {

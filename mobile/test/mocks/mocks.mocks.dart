@@ -7,7 +7,6 @@ import 'dart:async' as _i5;
 import 'dart:ui' as _i25;
 
 import 'package:adair_flutter_lib/model/gen/adair_flutter_lib.pb.dart' as _i3;
-import 'package:flutter/material.dart' as _i7;
 import 'package:flutter_local_notifications/flutter_local_notifications.dart'
     as _i24;
 import 'package:live_activities/live_activities.dart' as _i8;
@@ -15,6 +14,7 @@ import 'package:live_activities/models/activity_update.dart' as _i19;
 import 'package:live_activities/models/alert_config.dart' as _i20;
 import 'package:live_activities/models/live_activity_state.dart' as _i21;
 import 'package:live_activities/models/url_scheme_data.dart' as _i22;
+import 'package:material_ui/material_ui.dart' as _i7;
 import 'package:mobile/database/data_manager.dart' as _i11;
 import 'package:mobile/live_activities_manager.dart' as _i17;
 import 'package:mobile/model/activity.dart' as _i9;
@@ -1306,6 +1306,26 @@ class MockSession extends _i1.Mock implements _i13.Session {
             returnValue: <String, dynamic>{},
           )
           as Map<String, dynamic>);
+
+  @override
+  bool operator >(dynamic other) =>
+      (super.noSuchMethod(Invocation.method(#>, [other]), returnValue: false)
+          as bool);
+
+  @override
+  bool operator >=(dynamic other) =>
+      (super.noSuchMethod(Invocation.method(#>=, [other]), returnValue: false)
+          as bool);
+
+  @override
+  bool operator <(dynamic other) =>
+      (super.noSuchMethod(Invocation.method(#<, [other]), returnValue: false)
+          as bool);
+
+  @override
+  bool operator <=(dynamic other) =>
+      (super.noSuchMethod(Invocation.method(#<=, [other]), returnValue: false)
+          as bool);
 
   @override
   int compareTo(_i13.Session? other) =>

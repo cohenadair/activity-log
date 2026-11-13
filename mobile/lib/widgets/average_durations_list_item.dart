@@ -1,5 +1,5 @@
 import 'package:adair_flutter_lib/utils/duration.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../i18n/strings.dart';
 import '../utils/duration.dart';

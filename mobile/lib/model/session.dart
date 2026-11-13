@@ -1,7 +1,7 @@
 import 'package:adair_flutter_lib/managers/time_manager.dart';
 import 'package:adair_flutter_lib/model/gen/adair_flutter_lib.pb.dart';
 import 'package:adair_flutter_lib/utils/date_range.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mobile/model/model.dart';
 import 'package:timezone/timezone.dart';
 
@@ -73,21 +73,21 @@ class Session extends Model implements Comparable<Session> {
     }..addAll(super.toMap());
   }
 
-  operator >(other) {
+  bool operator >(other) {
     return other is Session &&
         millisecondsDuration > other.millisecondsDuration;
   }
 
-  operator >=(other) {
+  bool operator >=(other) {
     return other is Session &&
         millisecondsDuration >= other.millisecondsDuration;
   }
 
-  operator <(other) {
+  bool operator <(other) {
     return !(this >= other);
   }
 
-  operator <=(other) {
+  bool operator <=(other) {
     return !(this > other);
   }
 

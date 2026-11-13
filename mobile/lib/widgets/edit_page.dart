@@ -2,7 +2,7 @@ import 'package:adair_flutter_lib/l10n/gen/adair_flutter_lib_localizations.dart'
 import 'package:adair_flutter_lib/res/dimen.dart';
 import 'package:adair_flutter_lib/utils/dialog.dart';
 import 'package:adair_flutter_lib/widgets/button.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mobile/widgets/button.dart';
 import 'package:mobile/widgets/my_page.dart' as p;
 

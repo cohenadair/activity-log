@@ -1,6 +1,6 @@
 import 'package:adair_flutter_lib/l10n/sf_localizations_en_base.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:syncfusion_flutter_core/localizations.dart';
 
 /// Overrides the default English resource values used by Syncfusion widgets

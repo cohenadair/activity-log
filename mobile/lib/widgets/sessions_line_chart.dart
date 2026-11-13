@@ -3,7 +3,7 @@ import 'package:adair_flutter_lib/res/dimen.dart';
 import 'package:adair_flutter_lib/utils/duration.dart';
 import 'package:community_charts_flutter/community_charts_flutter.dart'
     as f_charts;
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mobile/i18n/strings.dart';
 import 'package:mobile/model/session.dart';
 import 'package:mobile/preferences_manager.dart';
@@ -115,7 +115,7 @@ class SessionsLineChartState extends State<SessionsLineChart> {
     return [
       f_charts.Series<Session, int>(
         id: _chartId,
-        colorFn: (_, __) =>
+        colorFn: (_, _) =>
             f_charts.ColorUtil.fromDartColor(AppConfig.get.colorAppTheme),
         domainFn: (_, int? index) => index ?? 0,
         measureFn: (Session session, _) => session.millisecondsDuration,

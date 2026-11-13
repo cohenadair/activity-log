@@ -7,7 +7,7 @@ import 'package:adair_flutter_lib/utils/date_format.dart';
 import 'package:adair_flutter_lib/utils/log.dart';
 import 'package:adair_flutter_lib/utils/page.dart';
 import 'package:adair_flutter_lib/widgets/month_year_picker.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mobile/i18n/strings.dart';
 import 'package:mobile/model/activity.dart';
 import 'package:mobile/model/session.dart';

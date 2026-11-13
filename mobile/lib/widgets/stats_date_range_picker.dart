@@ -4,7 +4,7 @@ import 'package:adair_flutter_lib/managers/time_manager.dart';
 import 'package:adair_flutter_lib/model/gen/adair_flutter_lib.pb.dart';
 import 'package:adair_flutter_lib/utils/date_range.dart';
 import 'package:fixnum/fixnum.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mobile/widgets/list_picker.dart';
 
 /// A [ListPicker] wrapper widget for selecting a date range, such as the

@@ -2,7 +2,7 @@ import 'package:adair_flutter_lib/res/dimen.dart';
 import 'package:adair_flutter_lib/utils/date_time.dart';
 import 'package:adair_flutter_lib/utils/duration.dart';
 import 'package:adair_flutter_lib/utils/string.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mobile/i18n/strings.dart';
 import 'package:mobile/model/summarized_activity.dart';
 import 'package:mobile/preferences_manager.dart';

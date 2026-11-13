@@ -1,7 +1,7 @@
 import 'package:adair_flutter_lib/managers/subscription_manager.dart';
 import 'package:adair_flutter_lib/res/dimen.dart';
 import 'package:adair_flutter_lib/widgets/pro_chip_button.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mobile/database/data_manager.dart';
 import 'package:mobile/model/activity.dart';
 import 'package:mobile/pages/activity_log_pro_page.dart';
