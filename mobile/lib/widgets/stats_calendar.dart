@@ -6,6 +6,7 @@ import 'package:adair_flutter_lib/res/theme.dart';
 import 'package:adair_flutter_lib/utils/date_format.dart';
 import 'package:adair_flutter_lib/utils/log.dart';
 import 'package:adair_flutter_lib/utils/page.dart';
+import 'package:adair_flutter_lib/utils/widget.dart';
 import 'package:adair_flutter_lib/widgets/month_year_picker.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:mobile/i18n/strings.dart';
@@ -73,17 +74,25 @@ class _StatsCalendarState extends State<StatsCalendar> {
                 context,
               ).colorScheme.copyWith(primary: context.colorApp),
             ),
-            child: SfCalendar(
-              controller: _controller,
-              dataSource: _dataSource,
-              view: CalendarView.month,
-              headerHeight: 0,
-              appointmentBuilder: _buildEvent,
-              monthViewSettings: const MonthViewSettings(
-                showAgenda: true,
-                agendaItemHeight: _agendaItemHeight,
+            // SfCalendar reads the legacy Material theme, which the app's
+            // root compatibility bridge maps from above this override, so
+            // re-bridge here for the override to reach it.
+            child: Builder(
+              builder: (context) => materialUiCompatibilityBuilder(
+                context,
+                SfCalendar(
+                  controller: _controller,
+                  dataSource: _dataSource,
+                  view: CalendarView.month,
+                  headerHeight: 0,
+                  appointmentBuilder: _buildEvent,
+                  monthViewSettings: const MonthViewSettings(
+                    showAgenda: true,
+                    agendaItemHeight: _agendaItemHeight,
+                  ),
+                  onViewChanged: _onViewChanged,
+                ),
               ),
-              onViewChanged: _onViewChanged,
             ),
           ),
         ),
