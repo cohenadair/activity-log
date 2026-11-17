@@ -14,6 +14,8 @@ import 'package:adair_flutter_lib/utils/page.dart';
 import 'package:adair_flutter_lib/utils/widget.dart';
 import 'package:adair_flutter_lib/widgets/app_version.dart';
 import 'package:adair_flutter_lib/widgets/loading.dart';
+import 'package:adair_flutter_lib/wrappers/io_wrapper.dart';
+import 'package:adair_flutter_lib/wrappers/url_launcher_wrapper.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_email_sender/flutter_email_sender.dart';
@@ -32,7 +34,6 @@ import 'package:mobile/widgets/widget.dart';
 import 'package:quiver/strings.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:url_launcher/url_launcher_string.dart';
 
 import '../utils/duration.dart';
 
@@ -226,7 +227,7 @@ class SettingsPageState extends State<SettingsPage> {
         String url;
         String errorMessage;
 
-        if (Platform.isAndroid) {
+        if (IoWrapper.get.isAndroid) {
           url = _playStoreUrl;
           errorMessage = Strings.of(
             context,
@@ -236,8 +237,8 @@ class SettingsPageState extends State<SettingsPage> {
           errorMessage = Strings.of(context).settingsPageIosErrorRateMessage;
         }
 
-        if (await canLaunchUrlString(url)) {
-          await launchUrlString(url);
+        if (await UrlLauncherWrapper.get.canLaunch(url)) {
+          await UrlLauncherWrapper.get.launch(url);
         } else if (mounted) {
           showErrorDialog(context: context, description: Text(errorMessage));
         }
@@ -257,8 +258,8 @@ class SettingsPageState extends State<SettingsPage> {
   Widget _buildPrivacy() {
     return ListItem(
       title: Text(Strings.of(context).settingsPagePrivacyPolicy),
-      onTap: () => launchUrl(
-        Uri.parse(_privacyUrl),
+      onTap: () => UrlLauncherWrapper.get.launch(
+        _privacyUrl,
         mode: LaunchMode.externalApplication,
       ),
     );
