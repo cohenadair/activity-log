@@ -1,3 +1,4 @@
+import 'package:community_charts_flutter/community_charts_flutter.dart';
 import 'package:live_activities/live_activities.dart';
 import 'package:mobile/database/data_manager.dart';
 import 'package:mobile/live_activities_manager.dart';
@@ -27,4 +28,5 @@ import 'package:sqflite/sqflite.dart';
 @GenerateMocks([SharedPreferencesAsync])
 @GenerateMocks([SharedPreferenceAppGroupWrapper])
 @GenerateMocks([ReportManager])
+@GenerateMocks([ImmutableSeries])
 void main() {}
