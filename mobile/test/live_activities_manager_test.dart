@@ -287,6 +287,40 @@ void main() {
   );
 
   testWidgets(
+    "On session started handles exception when the app isn't in the foreground",
+    (tester) async {
+      when(managers.subscriptionManager.isFree).thenReturn(false);
+
+      when(
+        managers.dataManager.activity(any),
+      ).thenAnswer((_) => Future.value(ActivityBuilder("Test").build));
+
+      // Exception is thrown on iOS when a live activity is requested while
+      // the app is in the background.
+      when(liveActivities.createActivity(any, any)).thenAnswer(
+        (_) => throw PlatformException(
+          code: "LIVE_ACTIVITY_ERROR",
+          details:
+              "The operation couldn\u2019t be completed. Target is not "
+              "foreground",
+        ),
+      );
+
+      final logs = await capturePrintStatements(() async {
+        await buildContext(tester);
+        await initManager();
+        await emitSessionEvent(.started);
+      });
+      expect(logs.length, 2);
+      expect(logs.last.startsWith("D/"), isTrue);
+      expect(logs.last.contains("isn't in the foreground"), isTrue);
+      verifyNever(managers.dataManager.updateActivity(any));
+
+      await flushPollingTimer();
+    },
+  );
+
+  testWidgets(
     "On session started handles unknown exception when creating a live activity",
     (tester) async {
       when(managers.subscriptionManager.isFree).thenReturn(false);
