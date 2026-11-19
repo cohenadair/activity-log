@@ -103,6 +103,10 @@ void main() {
     expect(result, equals(ImportResult.errorDecodingJson));
   });
 
+  test("errorDecodingJson when top level isn't an object", () async {
+    expect(await import(json: "[1, 2]"), ImportResult.errorDecodingJson);
+  });
+
   test("errorActivitiesNotList", () async {
     String json = "{}";
     ImportResult result = await import(json: json);

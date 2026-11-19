@@ -109,12 +109,18 @@ Future<ImportResult> import({String? json}) async {
     return ImportResult.errorNullInput;
   }
 
-  Map<String, dynamic> jsonMap;
+  dynamic decoded;
   try {
-    jsonMap = jsonDecode(json!);
+    decoded = jsonDecode(json!);
   } on FormatException {
     return ImportResult.errorDecodingJson;
   }
+
+  // Valid JSON that isn't an object (e.g. a list), so it can't be a backup.
+  if (decoded is! Map<String, dynamic>) {
+    return ImportResult.errorDecodingJson;
+  }
+  final jsonMap = decoded;
 
   // Get activities to add.
   if (jsonMap[_keyActivities] is! List) {
