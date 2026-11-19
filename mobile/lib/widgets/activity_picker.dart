@@ -12,7 +12,8 @@ typedef OnActivityDropdownItemSelected = void Function(Activity);
 class ActivityPicker extends StatefulWidget {
   final Set<Activity> initialActivities;
 
-  /// This function is invoked with `null` if "All activities" is selected.
+  /// This function is invoked with an empty set if "All activities" is
+  /// selected, or if nothing is selected.
   final OnListPickerChanged<Set<Activity>> onPickedActivitiesChanged;
 
   const ActivityPicker({
@@ -45,8 +46,11 @@ class ActivityPickerState extends State<ActivityPicker> {
               ? {_allActivitiesActivity}
               : widget.initialActivities,
           onChanged: (Set<Activity> newActivities) {
-            if (newActivities.first == _allActivitiesActivity) {
-              // Invoke the callback with null if "All activities" was picked.
+            if (newActivities.isEmpty ||
+                newActivities.first == _allActivitiesActivity) {
+              // Invoke the callback with an empty set if "All activities"
+              // was picked, or if nothing was picked, which defaults to
+              // "All activities".
               widget.onPickedActivitiesChanged({});
             } else {
               widget.onPickedActivitiesChanged(newActivities);
